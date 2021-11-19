@@ -43,7 +43,7 @@ public class Run {
         modDescr = "Ctrl";
 
 
-        GLFWErrorCallback.createPrint().set();
+        GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
