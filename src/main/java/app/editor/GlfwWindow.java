@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -62,13 +63,14 @@ public class GlfwWindow {
             glfwGetWindowSize(window, pWidth, pHeight);
 
             // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             // Center the window
+            assert videoMode != null;
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
+                    (videoMode.width() - pWidth.get(0)) / 2,
+                    (videoMode.height() - pHeight.get(0)) / 2
             );
         } // the stack frame is popped automatically
 
@@ -90,7 +92,7 @@ public class GlfwWindow {
         glfwDestroyWindow(window);
 
         glfwTerminate();
-        glfwSetErrorCallback(null).free();
+        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
 
     public void run() {
