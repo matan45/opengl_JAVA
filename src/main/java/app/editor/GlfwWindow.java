@@ -1,5 +1,8 @@
 package app.editor;
 
+import app.editor.imgui.ImguiHandler;
+import app.editor.imgui.MainImgui;
+import app.editor.imgui.SceneGraph;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -20,6 +23,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class GlfwWindow {
     long window;
     float deltaTime = 0;
+    ImguiHandler imgui;
     //TODO: read from a file
     final int width;
     final int height;
@@ -49,14 +53,14 @@ public class GlfwWindow {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
         //for imgui main window
-        //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window");
 
         // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
@@ -68,11 +72,7 @@ public class GlfwWindow {
 
             // Center the window
             assert videoMode != null;
-            glfwSetWindowPos(
-                    window,
-                    (videoMode.width() - pWidth.get(0)) / 2,
-                    (videoMode.height() - pHeight.get(0)) / 2
-            );
+            glfwSetWindowPos(window, (videoMode.width() - pWidth.get(0)) / 2, (videoMode.height() - pHeight.get(0)) / 2);
         } // the stack frame is popped automatically
 
 
@@ -88,10 +88,11 @@ public class GlfwWindow {
     }
 
     private void close() {
+        imgui.disposeImGui();
+
         setCapabilities(null);
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
@@ -99,6 +100,12 @@ public class GlfwWindow {
     public void run() {
         //create opengl context
         createCapabilities();
+
+        imgui = new ImguiHandler("#version 460", window);
+        //TODO: more generic to add imgui window
+        imgui.addLayer(new MainImgui(width, height, title));
+        imgui.addLayer(new SceneGraph());
+
         float dt = System.nanoTime();
 
         while (!glfwWindowShouldClose(window)) {
@@ -109,6 +116,10 @@ public class GlfwWindow {
             float frame = System.nanoTime();
             deltaTime = ((frame - dt) / 1000000000.0f);
             dt = frame;
+
+            imgui.startFrame();
+            imgui.renderImGui();
+            imgui.endFrame();
 
             glfwSwapBuffers(window);
         }
