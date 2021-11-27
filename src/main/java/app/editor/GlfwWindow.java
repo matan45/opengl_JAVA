@@ -4,10 +4,7 @@ import app.editor.imgui.ImguiHandler;
 import app.editor.imgui.MainImgui;
 import app.editor.imgui.SceneGraph;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
 
-import java.nio.IntBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -16,7 +13,6 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 
@@ -24,14 +20,11 @@ public class GlfwWindow {
     long window;
     float deltaTime = 0;
     ImguiHandler imgui;
-    //TODO: read from a file
-    final int width;
-    final int height;
     final String title;
+    public static final int WIDTH=1920;
+    public static final int HEIGHT =1080;
 
-    public GlfwWindow(int width, int height, String title) {
-        this.width = width;
-        this.height = height;
+    public GlfwWindow( String title) {
         this.title = title;
         init();
     }
@@ -55,26 +48,9 @@ public class GlfwWindow {
         //for imgui main window
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window");
-
-        // Get the thread stack and push a new frame
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
-
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            assert videoMode != null;
-            glfwSetWindowPos(window, (videoMode.width() - pWidth.get(0)) / 2, (videoMode.height() - pHeight.get(0)) / 2);
-        } // the stack frame is popped automatically
-
 
         //make opengl context
         glfwMakeContextCurrent(window);
@@ -103,7 +79,7 @@ public class GlfwWindow {
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
-        imgui.addLayer(new MainImgui(width, height, title));
+        imgui.addLayer(new MainImgui(title));
         imgui.addLayer(new SceneGraph());
 
         float dt = System.nanoTime();
