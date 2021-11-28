@@ -1,9 +1,7 @@
 package app.editor.imgui;
 
-import imgui.ImFontConfig;
-import imgui.ImFontGlyphRangesBuilder;
-import imgui.ImGui;
-import imgui.ImGuiIO;
+import imgui.*;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -11,8 +9,6 @@ import imgui.glfw.ImGuiImplGlfw;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
@@ -22,13 +18,11 @@ public class ImguiHandler {
     private final ImGuiImplGl3 imGuiGl3;
     private final long windowHandle;
     private final String glslVersion;
-    //TODO: remove window
-    List<ImguiLayer> imguiLayerList;
+    private static final int FONTSIZE = 20;
 
     public ImguiHandler(String glslVersion, long windowHandle) {
         imGuiGlfw = new ImGuiImplGlfw();
         imGuiGl3 = new ImGuiImplGl3();
-        imguiLayerList = new ArrayList<>();
         this.glslVersion = glslVersion;
         this.windowHandle = windowHandle;
         init();
@@ -38,8 +32,7 @@ public class ImguiHandler {
         ImGui.createContext();
         ImGuiIO io = ImGui.getIO();
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable | ImGuiConfigFlags.DockingEnable);
-
-        io.getFonts().addFontDefault(); // Add default font for latin glyphs
+        theme();
 
         // You can use the ImFontGlyphRangesBuilder helper to create glyph ranges based on text input.
         // For example: for a game where your script is known, if you can feed your entire script to it (using addText) and only build the characters the game needs.
@@ -48,13 +41,15 @@ public class ImguiHandler {
         rangesBuilder.addRanges(io.getFonts().getGlyphRangesDefault());
         rangesBuilder.addRanges(FontAwesomeIcons._IconRange);
 
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\COOKiE MILK Regular.ttf"), FONTSIZE); // font awesome
         // Font config for additional fonts
         // This is a natively allocated struct so don't forget to call destroy after atlas is built
         final ImFontConfig fontConfig = new ImFontConfig();
         fontConfig.setMergeMode(true);  // Enable merge mode to merge cyrillic, japanese and icons with default font
 
         final short[] glyphRanges = rangesBuilder.buildRanges();
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), 14, fontConfig, glyphRanges); // font awesome
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), FONTSIZE, fontConfig, glyphRanges); // font awesome
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-regular-400.ttf"), FONTSIZE, fontConfig, glyphRanges); // font awesome
         io.getFonts().build();
 
         fontConfig.destroy();
@@ -93,12 +88,31 @@ public class ImguiHandler {
         ImGui.destroyContext();
     }
 
-    public void renderImGui() {
-        for(ImguiLayer imguiLayer:imguiLayerList)
-            imguiLayer.render();
-    }
+    private void theme() {
+        ImGuiStyle style = ImGui.getStyle();
+        //TODO: read from a file the values
+        style.setWindowTitleAlign(0.5f, 0.5f);
+        style.setWindowMinSize(300, 300);
 
-    public void addLayer(ImguiLayer layer){
-        imguiLayerList.add(layer);
+        style.setFramePadding(8, 6);
+        style.setColor(ImGuiCol.TitleBg, 255, 101, 53, 255);
+        style.setColor(ImGuiCol.TitleBgActive, 255, 101, 53, 255);
+        style.setColor(ImGuiCol.TitleBgCollapsed, 0, 0, 0, 130);
+
+        style.setColor(ImGuiCol.Button, 31, 30, 31, 255);
+        style.setColor(ImGuiCol.ButtonHovered, 41, 40, 41, 255);
+        style.setColor(ImGuiCol.ButtonActive, 31, 30, 31, 130);
+
+        style.setColor(ImGuiCol.Header, 0, 0, 0, 0);
+        style.setColor(ImGuiCol.HeaderActive, 0, 0, 255, 255);
+        style.setColor(ImGuiCol.HeaderHovered, 255, 0, 0, 255);
+
+        style.setColor(ImGuiCol.Border, 0, 0, 200, 255);
+        style.setColor(ImGuiCol.BorderShadow, 255, 0, 0, 255);
+
+        style.setColor(ImGuiCol.WindowBg, 211, 211, 211, 100);
+        style.setColor(ImGuiCol.DockingPreview, 0, 0, 200, 255);
+
+
     }
 }

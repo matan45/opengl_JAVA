@@ -1,8 +1,6 @@
 package app.editor;
 
-import app.editor.imgui.ImguiHandler;
-import app.editor.imgui.MainImgui;
-import app.editor.imgui.SceneGraph;
+import app.editor.imgui.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 import java.util.Objects;
@@ -21,10 +19,10 @@ public class GlfwWindow {
     float deltaTime = 0;
     ImguiHandler imgui;
     final String title;
-    public static final int WIDTH=1920;
-    public static final int HEIGHT =1080;
+    public static final int WIDTH = 1920;
+    public static final int HEIGHT = 1080;
 
-    public GlfwWindow( String title) {
+    public GlfwWindow(String title) {
         this.title = title;
         init();
     }
@@ -79,8 +77,12 @@ public class GlfwWindow {
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
-        imgui.addLayer(new MainImgui(title));
-        imgui.addLayer(new SceneGraph());
+        ImguiLayerHandler.addLayer(new MainImgui(title));
+        ImguiLayerHandler.addLayer(new SceneGraph());
+        ImguiLayerHandler.addLayer(new LogWindow());
+        ImguiLayerHandler.addLayer(new ContentWindow());
+        ImguiLayerHandler.addLayer(new Inspector());
+        ImguiLayerHandler.addLayer(new ViewEditor());
 
         float dt = System.nanoTime();
 
@@ -94,7 +96,7 @@ public class GlfwWindow {
             dt = frame;
 
             imgui.startFrame();
-            imgui.renderImGui();
+            ImguiLayerHandler.renderImGui();
             imgui.endFrame();
 
             glfwSwapBuffers(window);
