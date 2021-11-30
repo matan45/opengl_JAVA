@@ -49,7 +49,6 @@ public class ImguiHandler {
 
         final short[] glyphRanges = rangesBuilder.buildRanges();
         io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), FONTSIZE, fontConfig, glyphRanges); // font awesome
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-regular-400.ttf"), FONTSIZE, fontConfig, glyphRanges); // font awesome
         io.getFonts().build();
 
         fontConfig.destroy();

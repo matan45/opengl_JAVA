@@ -51,6 +51,12 @@ public class MainImgui implements ImguiLayer {
                     }
                     ImGui.endMenu();
                 }
+                if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
+                    if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
+                       System.out.print("need to do");
+                    }
+                    ImGui.endMenu();
+                }
                 ImGui.endMenuBar();
             }
 
@@ -96,4 +102,5 @@ public class MainImgui implements ImguiLayer {
                 System.err.format("Error: %s\n", NFD_GetError());
         }
     }
+
 }

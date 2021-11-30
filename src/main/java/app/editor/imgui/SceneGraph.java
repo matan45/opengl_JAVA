@@ -9,6 +9,13 @@ public class SceneGraph implements ImguiLayer {
         if (ImGui.begin("Scene Graph")) {
             ImGui.button("test");
             ImGui.text("show the scene hierarchy");
+
+            if (ImGui.beginPopupContextWindow("ComponentAdder")) {
+                if (ImGui.menuItem("Game Object")) {
+                   System.out.print("TO DO add game object");
+                }
+                ImGui.endPopup();
+            }
         }
         ImGui.end();
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImguiLayerHandler {
+    //TODO add event system observer pattern
     private static final List<ImguiLayer> imguiLayerList = new ArrayList<>();
 
     private ImguiLayerHandler() {

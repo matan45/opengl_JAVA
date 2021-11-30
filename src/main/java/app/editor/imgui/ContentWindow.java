@@ -7,7 +7,7 @@ public class ContentWindow implements ImguiLayer {
     public void render() {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Content Folder")) {
-            ImGui.text("show Content Folder");
+            ImGui.text("show Content Folder TODO");
         }
         ImGui.end();
     }

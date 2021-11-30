@@ -7,7 +7,7 @@ public class Inspector implements ImguiLayer {
     public void render() {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Inspector")) {
-            ImGui.text("show ECS details");
+            ImGui.text("show ECS details TODO");
         }
         ImGui.end();
     }
