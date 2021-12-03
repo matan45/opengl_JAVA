@@ -24,7 +24,7 @@ public class MainImgui implements ImguiLayer {
     public MainImgui(String title) {
         this.title = title;
         closeWindow = new ImBoolean(true);
-        windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+        windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
     }
 
@@ -53,7 +53,7 @@ public class MainImgui implements ImguiLayer {
                 }
                 if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
                     if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
-                       System.out.print("need to do");
+                        System.out.print("need to do");
                     }
                     ImGui.endMenu();
                 }

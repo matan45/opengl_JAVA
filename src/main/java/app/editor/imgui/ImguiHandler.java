@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
-import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
-
 public class ImguiHandler {
     private final ImGuiImplGlfw imGuiGlfw;
     private final ImGuiImplGl3 imGuiGl3;
@@ -31,7 +28,7 @@ public class ImguiHandler {
     private void init() {
         ImGui.createContext();
         ImGuiIO io = ImGui.getIO();
-        io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable | ImGuiConfigFlags.DockingEnable);
+        io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
         theme();
 
         // You can use the ImFontGlyphRangesBuilder helper to create glyph ranges based on text input.
@@ -64,13 +61,6 @@ public class ImguiHandler {
     public void endFrame() {
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
-
-        if (ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
-            final long backupWindowPtr = glfwGetCurrentContext();
-            ImGui.updatePlatformWindows();
-            ImGui.renderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backupWindowPtr);
-        }
     }
 
     private static byte[] loadFromResources(String name) {
@@ -109,9 +99,8 @@ public class ImguiHandler {
         style.setColor(ImGuiCol.Border, 0, 0, 200, 255);
         style.setColor(ImGuiCol.BorderShadow, 255, 0, 0, 255);
 
-        style.setColor(ImGuiCol.WindowBg, 211, 211, 211, 100);
+        style.setColor(ImGuiCol.WindowBg, 50, 50, 50, 180);
         style.setColor(ImGuiCol.DockingPreview, 0, 0, 200, 255);
-
 
     }
 }
