@@ -1,11 +1,11 @@
 package app.editor;
 
+import app.editor.imgui.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
-import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,20 +20,20 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class GlfwWindow {
     long window;
     float deltaTime = 0;
-    //TODO: read from a file
-    final int width;
-    final int height;
+    ImguiHandler imgui;
     final String title;
+    public static int WIDTH = 800;
+    public static int HEIGHT = 600;
 
-    public GlfwWindow(int width, int height, String title) {
-        this.width = width;
-        this.height = height;
+    public GlfwWindow(String title) {
         this.title = title;
         init();
     }
 
     private void init() {
-        GLFWErrorCallback.createPrint(System.err).set();
+        try (GLFWErrorCallback glfwErrorCallback = GLFWErrorCallback.createPrint(System.err)) {
+            glfwErrorCallback.set();
+        }
 
         if (!glfwInit())
             throw new RuntimeException("Unable to initialize GLFW");
@@ -45,18 +45,17 @@ public class GlfwWindow {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         //window options
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
-        //for imgui main window
-        //glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
+        window = glfwCreateWindow(WIDTH, HEIGHT, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window");
 
         // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
@@ -74,7 +73,7 @@ public class GlfwWindow {
                     (videoMode.height() - pHeight.get(0)) / 2
             );
         } // the stack frame is popped automatically
-
+        glfwSetWindowSizeCallback(window, this::windowSizeChanged);
 
         //make opengl context
         glfwMakeContextCurrent(window);
@@ -87,18 +86,34 @@ public class GlfwWindow {
 
     }
 
+    private void windowSizeChanged(long window, int width, int height) {
+        WIDTH = width;
+        HEIGHT = height;
+    }
+
     private void close() {
+        imgui.disposeImGui();
+
         setCapabilities(null);
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
-
         glfwTerminate();
-        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+        glfwSetErrorCallback(null);
     }
 
     public void run() {
         //create opengl context
         createCapabilities();
+
+        imgui = new ImguiHandler("#version 460", window);
+        //TODO: more generic to add imgui window
+        ImguiLayerHandler.addLayer(new MainImgui(title));
+        ImguiLayerHandler.addLayer(new SceneGraph());
+        ImguiLayerHandler.addLayer(new LogWindow());
+        ImguiLayerHandler.addLayer(new ContentWindow());
+        ImguiLayerHandler.addLayer(new Inspector());
+        ImguiLayerHandler.addLayer(new ViewPort());
+
         float dt = System.nanoTime();
 
         while (!glfwWindowShouldClose(window)) {
@@ -109,6 +124,10 @@ public class GlfwWindow {
             float frame = System.nanoTime();
             deltaTime = ((frame - dt) / 1000000000.0f);
             dt = frame;
+
+            imgui.startFrame();
+            ImguiLayerHandler.renderImGui();
+            imgui.endFrame();
 
             glfwSwapBuffers(window);
         }
