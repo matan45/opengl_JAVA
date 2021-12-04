@@ -62,6 +62,9 @@ public class GlfwWindow {
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
 
+            WIDTH = pWidth.get();
+            HEIGHT = pHeight.get();
+
             // Get the resolution of the primary monitor
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
