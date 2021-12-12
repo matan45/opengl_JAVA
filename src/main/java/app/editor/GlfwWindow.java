@@ -1,6 +1,7 @@
 package app.editor;
 
 import app.editor.imgui.*;
+import app.utilities.logger.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -116,6 +117,8 @@ public class GlfwWindow {
         ImguiLayerHandler.addLayer(new ContentWindow());
         ImguiLayerHandler.addLayer(new Inspector());
         ImguiLayerHandler.addLayer(new ViewPort());
+
+        Logger.init();
 
         float dt = System.nanoTime();
 

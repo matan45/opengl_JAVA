@@ -15,7 +15,7 @@ public class ImguiHandler {
     private final ImGuiImplGl3 imGuiGl3;
     private final long windowHandle;
     private final String glslVersion;
-    private static final int FONTSIZE = 20;
+    private static final int FONT_SIZE = 20;
 
     public ImguiHandler(String glslVersion, long windowHandle) {
         imGuiGlfw = new ImGuiImplGlfw();
@@ -38,14 +38,14 @@ public class ImguiHandler {
         rangesBuilder.addRanges(io.getFonts().getGlyphRangesDefault());
         rangesBuilder.addRanges(FontAwesomeIcons._IconRange);
 
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\COOKiE MILK Regular.ttf"), FONTSIZE); // font awesome
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\COOKiE MILK Regular.ttf"), FONT_SIZE); // font awesome
         // Font config for additional fonts
         // This is a natively allocated struct so don't forget to call destroy after atlas is built
         final ImFontConfig fontConfig = new ImFontConfig();
         fontConfig.setMergeMode(true);  // Enable merge mode to merge cyrillic, japanese and icons with default font
 
         final short[] glyphRanges = rangesBuilder.buildRanges();
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), FONTSIZE, fontConfig, glyphRanges); // font awesome
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), FONT_SIZE, fontConfig, glyphRanges); // font awesome
         io.getFonts().build();
 
         fontConfig.destroy();
@@ -62,11 +62,12 @@ public class ImguiHandler {
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
     }
-
+    //TODO extract this function to a resource manager
     private static byte[] loadFromResources(String name) {
         try {
             return Files.readAllBytes(Paths.get(name));
         } catch (IOException e) {
+            //TODO custom excption handler
             throw new RuntimeException(e);
         }
     }

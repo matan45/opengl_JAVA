@@ -1,6 +1,8 @@
 package app.editor.imgui;
 
 import app.editor.GlfwWindow;
+import app.utilities.logger.LogError;
+import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
@@ -41,7 +43,7 @@ public class MainImgui implements ImguiLayer {
             if (ImGui.beginMenuBar()) {
                 if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
                     if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                        System.out.print("not implemented");
+                        LogInfo.println("not implemented");
                     } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
                         openFolder();
                     } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
@@ -53,7 +55,7 @@ public class MainImgui implements ImguiLayer {
                 }
                 if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
                     if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
-                        System.out.print("need to do");
+                        LogInfo.println("not implemented");
                     }
                     ImGui.endMenu();
                 }
@@ -91,15 +93,15 @@ public class MainImgui implements ImguiLayer {
     private void checkResult(int result, PointerBuffer path) {
         switch (result) {
             case NFD_OKAY:
-                System.out.println("Success!");
-                System.out.println(path.getStringUTF8(0));
+                LogInfo.println("Success!");
+                LogInfo.println(path.getStringUTF8(0));
                 nNFD_Free(path.get(0));
                 break;
             case NFD_CANCEL:
-                System.out.println("User pressed cancel.");
+                LogInfo.println("User pressed cancel.");
                 break;
             default: // NFD_ERROR
-                System.err.format("Error: %s\n", NFD_GetError());
+                LogError.println("Error: " + NFD_GetError());
         }
     }
 

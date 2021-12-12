@@ -1,17 +1,15 @@
 package app.ecs;
 
 import java.util.List;
-import java.util.UUID;
 
 public class Entity {
     String name;
     List<Component> components;
     boolean isDead;
-    UUID id;
+    int id;
 
     public Entity(String name) {
         this.name = name;
-        id = UUID.randomUUID();
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -39,6 +37,15 @@ public class Entity {
         }
     }
 
+    public <T extends Component> boolean hasComponent(Class<T> componentClass) {
+        for (Component c : components) {
+            if (componentClass.isAssignableFrom(c.getClass())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addComponent(Component c) {
         this.components.add(c);
     }
@@ -62,10 +69,6 @@ public class Entity {
 
     public void setDead(boolean dead) {
         isDead = dead;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
 }
