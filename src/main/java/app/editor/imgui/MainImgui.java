@@ -22,9 +22,13 @@ public class MainImgui implements ImguiLayer {
     private final ImBoolean closeWindow;
     final String title;
     int windowFlags;
+    int width;
+    int height;
 
-    public MainImgui(String title) {
+    public MainImgui(String title, int width, int height) {
         this.title = title;
+        this.width = width;
+        this.height = height;
         closeWindow = new ImBoolean(true);
         windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
@@ -33,7 +37,7 @@ public class MainImgui implements ImguiLayer {
     @Override
     public void render() {
         ImGui.setNextWindowPos(0, 0);
-        ImGui.setNextWindowSize(GlfwWindow.WIDTH, GlfwWindow.HEIGHT);
+        ImGui.setNextWindowSize(width, height);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0.0f, 0.0f);
         if (ImGui.begin(title, closeWindow, windowFlags)) {
             ImGui.popStyleVar();
@@ -68,6 +72,15 @@ public class MainImgui implements ImguiLayer {
             }
         }
         ImGui.end();
+    }
+
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     private void openFolder() {
