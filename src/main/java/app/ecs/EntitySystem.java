@@ -16,5 +16,7 @@ public class EntitySystem {
     public static void addEntity(Entity entity) {
         entityMap.add(entity);
     }
-
+    public static void removeEntity(int index) {
+        entityMap.remove(index);
+    }
 }
