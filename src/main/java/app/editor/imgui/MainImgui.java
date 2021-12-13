@@ -1,6 +1,5 @@
 package app.editor.imgui;
 
-import app.editor.GlfwWindow;
 import app.utilities.logger.LogError;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
@@ -44,27 +43,7 @@ public class MainImgui implements ImguiLayer {
 
             ImGui.dockSpace(ImGui.getID("Dockspace"), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
 
-            if (ImGui.beginMenuBar()) {
-                if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
-                    if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                        LogInfo.println("not implemented");
-                    } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                        openFolder();
-                    } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                        save();
-                    } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
-                        closeWindow.set(false);
-                    }
-                    ImGui.endMenu();
-                }
-                if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
-                    if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
-                        LogInfo.println("not implemented");
-                    }
-                    ImGui.endMenu();
-                }
-                ImGui.endMenuBar();
-            }
+            menuBar();
 
             if (!closeWindow.get()) {
                 final long backupWindowPtr = glfwGetCurrentContext();
@@ -72,6 +51,30 @@ public class MainImgui implements ImguiLayer {
             }
         }
         ImGui.end();
+    }
+
+    private void menuBar() {
+        if (ImGui.beginMenuBar()) {
+            if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
+                    LogInfo.println("not implemented");
+                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
+                    openFolder();
+                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
+                    save();
+                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
+                    closeWindow.set(false);
+                }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
+                    LogInfo.println("not implemented");
+                }
+                ImGui.endMenu();
+            }
+            ImGui.endMenuBar();
+        }
     }
 
 
