@@ -8,6 +8,11 @@ import imgui.flag.ImGuiTreeNodeFlags;
 public class SceneGraph implements ImguiLayer {
     boolean isRemove = false;
     int indexRemove = 0;
+    Inspector inspector;
+
+    public SceneGraph(Inspector inspector) {
+        this.inspector = inspector;
+    }
 
     @Override
     public void render() {
@@ -33,6 +38,7 @@ public class SceneGraph implements ImguiLayer {
         if (isRemove) {
             isRemove = false;
             EntitySystem.removeEntity(indexRemove);
+            inspector.setEntity(null);
         }
     }
 
@@ -44,12 +50,15 @@ public class SceneGraph implements ImguiLayer {
             indexRemove = index;
         }
         ImGui.sameLine();
-        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(),
-                ImGuiTreeNodeFlags.DefaultOpen | ImGuiTreeNodeFlags.FramePadding |
-                        ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.SpanAvailWidth);
+        if (ImGui.button(">")) {
+            inspector.setEntity(entity);
+        }
+        ImGui.sameLine();
+        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.SpanAvailWidth);
 
         ImGui.popID();
 
         return treeNodeOpen;
     }
+
 }

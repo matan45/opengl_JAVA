@@ -1,6 +1,7 @@
 package app.ecs.components;
 
 import app.ecs.Component;
+import imgui.ImGui;
 
 public class TransformComponent implements Component {
     @Override
@@ -10,6 +11,6 @@ public class TransformComponent implements Component {
 
     @Override
     public void imguiDraw() {
-
+        ImGui.text("hi TransformComponent" );
     }
 }

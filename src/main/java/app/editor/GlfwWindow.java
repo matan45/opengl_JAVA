@@ -1,5 +1,6 @@
 package app.editor;
 
+import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.utilities.logger.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -20,7 +21,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GlfwWindow {
     long window;
-    float deltaTime = 0;
     ImguiHandler imgui;
     final String title;
     int width = 800;
@@ -115,15 +115,16 @@ public class GlfwWindow {
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
         mainImgui = new MainImgui(title, width, height);
+        Inspector inspector = new Inspector();
         ImguiLayerHandler.addLayer(mainImgui);
-        ImguiLayerHandler.addLayer(new SceneGraph());
+        ImguiLayerHandler.addLayer(inspector);
+        ImguiLayerHandler.addLayer(new SceneGraph(inspector));
         ImguiLayerHandler.addLayer(new LogWindow());
         ImguiLayerHandler.addLayer(new ContentBrowser());
-        ImguiLayerHandler.addLayer(new Inspector());
         ImguiLayerHandler.addLayer(new ViewPort());
 
         Logger.init();
-
+        float deltaTime = 0;
         float dt = System.nanoTime();
 
         while (!glfwWindowShouldClose(window)) {
@@ -133,6 +134,7 @@ public class GlfwWindow {
             //calculate delta time
             float frame = System.nanoTime();
             deltaTime = ((frame - dt) / 1000000000.0f);
+            EntitySystem.updateEntity(deltaTime);
             dt = frame;
 
             imgui.startFrame();

@@ -22,7 +22,7 @@ public class LogWindow implements ImguiLayer {
             frameCount = 0;
             previousTime = currentTime;
         }
-        ImGui.setNextWindowSize(200, 200);
+
         if (ImGui.begin("Debug")) {
             if (ImGui.button("clear"))
                 Logger.clear();

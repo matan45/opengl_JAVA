@@ -13,7 +13,6 @@ public class ContentBrowser implements ImguiLayer {
 
     @Override
     public void render() {
-        ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Content Folder")) {
             if (ImGui.button("<--"))
                 absolutePath = absolutePath.getParent();
@@ -23,13 +22,12 @@ public class ContentBrowser implements ImguiLayer {
 
             assert listOfFiles != null;
             for (File listOfFile : listOfFiles) {
-                if (listOfFile.isFile()) {
+                if (listOfFile.isFile())
                     ImGui.labelText("File ", listOfFile.getName());
-                } else if (listOfFile.isDirectory()) {
+                else if (listOfFile.isDirectory()) {
                     ImGui.pushID(listOfFile.getName());
-                    if (ImGui.button("Directory " + listOfFile.getName())) {
+                    if (ImGui.button("Directory " + listOfFile.getName()))
                         absolutePath = Paths.get(absolutePath + "\\" + listOfFile.getName());
-                    }
                     ImGui.popID();
                 }
             }

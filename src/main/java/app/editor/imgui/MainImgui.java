@@ -108,16 +108,14 @@ public class MainImgui implements ImguiLayer {
 
     private void checkResult(int result, PointerBuffer path) {
         switch (result) {
-            case NFD_OKAY:
+            case NFD_OKAY -> {
                 LogInfo.println("Success!");
                 LogInfo.println(path.getStringUTF8(0));
                 nNFD_Free(path.get(0));
-                break;
-            case NFD_CANCEL:
-                LogInfo.println("User pressed cancel.");
-                break;
-            default: // NFD_ERROR
-                LogError.println("Error: " + NFD_GetError());
+            }
+            case NFD_CANCEL -> LogInfo.println("User pressed cancel.");
+            default -> // NFD_ERROR
+                    LogError.println("Error: " + NFD_GetError());
         }
     }
 

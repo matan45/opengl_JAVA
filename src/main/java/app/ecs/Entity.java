@@ -1,15 +1,19 @@
 package app.ecs;
 
+import app.ecs.components.TransformComponent;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Entity {
     String name;
     List<Component> components;
     boolean isDead;
-    int id;
 
     public Entity(String name) {
         this.name = name;
+        components = new ArrayList<>();
+        components.add(new TransformComponent());
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -61,7 +65,6 @@ public class Entity {
     public List<Component> getComponents() {
         return components;
     }
-
 
     public boolean isDead() {
         return isDead;
