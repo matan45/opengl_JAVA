@@ -118,7 +118,7 @@ public class GlfwWindow {
         ImguiLayerHandler.addLayer(mainImgui);
         ImguiLayerHandler.addLayer(new SceneGraph());
         ImguiLayerHandler.addLayer(new LogWindow());
-        ImguiLayerHandler.addLayer(new ContentWindow());
+        ImguiLayerHandler.addLayer(new ContentBrowser());
         ImguiLayerHandler.addLayer(new Inspector());
         ImguiLayerHandler.addLayer(new ViewPort());
 

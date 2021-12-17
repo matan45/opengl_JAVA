@@ -21,7 +21,7 @@ public class SceneGraph implements ImguiLayer {
                 index++;
             }
 
-            if (ImGui.beginPopupContextWindow("ComponentAdder")) {
+            if (ImGui.beginPopupContextWindow("Entity")) {
                 if (ImGui.menuItem("Add Game Object")) {
                     EntitySystem.addEntity(new Entity("Default Name"));
                 }
