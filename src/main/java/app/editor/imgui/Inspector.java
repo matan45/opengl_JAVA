@@ -12,7 +12,12 @@ public class Inspector implements ImguiLayer {
     public void render() {
         if (ImGui.begin("Inspector")) {
             if (entity != null) {
-                entity.getComponents().forEach(Component::imguiDraw);
+                for (Component component : entity.getComponents()) {
+                    if (ImGui.collapsingHeader(component.getName())) {
+                        component.imguiDraw();
+                    }
+                }
+
                 if (ImGui.beginPopupContextWindow("Component")) {
                     if (ImGui.menuItem("Add Component")) {
                         LogInfo.println("add custom components");

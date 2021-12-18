@@ -13,4 +13,9 @@ public class TransformComponent implements Component {
     public void imguiDraw() {
         ImGui.text("hi TransformComponent" );
     }
+
+    @Override
+    public String getName() {
+        return "Transform Component";
+    }
 }
