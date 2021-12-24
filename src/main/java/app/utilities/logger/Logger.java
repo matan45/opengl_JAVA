@@ -2,7 +2,7 @@ package app.utilities.logger;
 
 import java.io.ByteArrayOutputStream;
 
-abstract sealed class Logger permits LogError, LogInfo {
+public sealed class Logger permits LogError, LogInfo {
     static ByteArrayOutputStream logArray;
 
     protected Logger() {
@@ -13,8 +13,10 @@ abstract sealed class Logger permits LogError, LogInfo {
     }
 
     public static String outputLog() {
-        String result = logArray.toString();
+        return logArray.toString();
+    }
+
+    public static void clear() {
         logArray.reset();
-        return result;
     }
 }

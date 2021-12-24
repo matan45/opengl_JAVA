@@ -1,6 +1,8 @@
 package app.editor;
 
+import app.ecs.EntitySystem;
 import app.editor.imgui.*;
+import app.utilities.logger.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -19,11 +21,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GlfwWindow {
     long window;
-    float deltaTime = 0;
     ImguiHandler imgui;
     final String title;
-    public static int WIDTH = 800;
-    public static int HEIGHT = 600;
+    int width = 800;
+    int height = 600;
+    MainImgui mainImgui;
 
     public GlfwWindow(String title) {
         this.title = title;
@@ -50,7 +52,7 @@ public class GlfwWindow {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
-        window = glfwCreateWindow(WIDTH, HEIGHT, title, NULL, NULL);
+        window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window");
 
@@ -62,8 +64,8 @@ public class GlfwWindow {
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
 
-            WIDTH = pWidth.get();
-            HEIGHT = pHeight.get();
+            width = pWidth.get();
+            height = pHeight.get();
 
             // Get the resolution of the primary monitor
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -90,8 +92,10 @@ public class GlfwWindow {
     }
 
     private void windowSizeChanged(long window, int width, int height) {
-        WIDTH = width;
-        HEIGHT = height;
+        this.width = width;
+        this.height = height;
+        mainImgui.setHeight(height);
+        mainImgui.setWidth(width);
     }
 
     private void close() {
@@ -110,13 +114,17 @@ public class GlfwWindow {
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
-        ImguiLayerHandler.addLayer(new MainImgui(title));
-        ImguiLayerHandler.addLayer(new SceneGraph());
+        mainImgui = new MainImgui(title, width, height);
+        Inspector inspector = new Inspector();
+        ImguiLayerHandler.addLayer(mainImgui);
+        ImguiLayerHandler.addLayer(inspector);
+        ImguiLayerHandler.addLayer(new SceneGraph(inspector));
         ImguiLayerHandler.addLayer(new LogWindow());
-        ImguiLayerHandler.addLayer(new ContentWindow());
-        ImguiLayerHandler.addLayer(new Inspector());
+        ImguiLayerHandler.addLayer(new ContentBrowser());
         ImguiLayerHandler.addLayer(new ViewPort());
 
+        Logger.init();
+        float deltaTime = 0;
         float dt = System.nanoTime();
 
         while (!glfwWindowShouldClose(window)) {
@@ -126,6 +134,7 @@ public class GlfwWindow {
             //calculate delta time
             float frame = System.nanoTime();
             deltaTime = ((frame - dt) / 1000000000.0f);
+            EntitySystem.updateEntity(deltaTime);
             dt = frame;
 
             imgui.startFrame();
@@ -135,5 +144,14 @@ public class GlfwWindow {
             glfwSwapBuffers(window);
         }
         close();
+    }
+
+    //TODO manager window
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

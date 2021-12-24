@@ -1,17 +1,19 @@
 package app.ecs;
 
+import app.ecs.components.TransformComponent;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Entity {
     String name;
     List<Component> components;
     boolean isDead;
-    UUID id;
 
     public Entity(String name) {
         this.name = name;
-        id = UUID.randomUUID();
+        components = new ArrayList<>();
+        components.add(new TransformComponent());
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -39,6 +41,15 @@ public class Entity {
         }
     }
 
+    public <T extends Component> boolean hasComponent(Class<T> componentClass) {
+        for (Component c : components) {
+            if (componentClass.isAssignableFrom(c.getClass())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addComponent(Component c) {
         this.components.add(c);
     }
@@ -55,17 +66,12 @@ public class Entity {
         return components;
     }
 
-
     public boolean isDead() {
         return isDead;
     }
 
     public void setDead(boolean dead) {
         isDead = dead;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
 }

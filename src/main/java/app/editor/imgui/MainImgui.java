@@ -1,6 +1,7 @@
 package app.editor.imgui;
 
-import app.editor.GlfwWindow;
+import app.utilities.logger.LogError;
+import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
@@ -20,9 +21,13 @@ public class MainImgui implements ImguiLayer {
     private final ImBoolean closeWindow;
     final String title;
     int windowFlags;
+    int width;
+    int height;
 
-    public MainImgui(String title) {
+    public MainImgui(String title, int width, int height) {
         this.title = title;
+        this.width = width;
+        this.height = height;
         closeWindow = new ImBoolean(true);
         windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
@@ -31,34 +36,14 @@ public class MainImgui implements ImguiLayer {
     @Override
     public void render() {
         ImGui.setNextWindowPos(0, 0);
-        ImGui.setNextWindowSize(GlfwWindow.WIDTH, GlfwWindow.HEIGHT);
+        ImGui.setNextWindowSize(width, height);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0.0f, 0.0f);
         if (ImGui.begin(title, closeWindow, windowFlags)) {
             ImGui.popStyleVar();
 
             ImGui.dockSpace(ImGui.getID("Dockspace"), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
 
-            if (ImGui.beginMenuBar()) {
-                if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
-                    if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                        System.out.print("not implemented");
-                    } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                        openFolder();
-                    } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                        save();
-                    } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
-                        closeWindow.set(false);
-                    }
-                    ImGui.endMenu();
-                }
-                if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
-                    if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
-                        System.out.print("need to do");
-                    }
-                    ImGui.endMenu();
-                }
-                ImGui.endMenuBar();
-            }
+            menuBar();
 
             if (!closeWindow.get()) {
                 final long backupWindowPtr = glfwGetCurrentContext();
@@ -66,6 +51,39 @@ public class MainImgui implements ImguiLayer {
             }
         }
         ImGui.end();
+    }
+
+    private void menuBar() {
+        if (ImGui.beginMenuBar()) {
+            if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
+                    LogInfo.println("not implemented");
+                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
+                    openFolder();
+                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
+                    save();
+                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
+                    closeWindow.set(false);
+                }
+                ImGui.endMenu();
+            }
+            if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
+                    LogInfo.println("not implemented");
+                }
+                ImGui.endMenu();
+            }
+            ImGui.endMenuBar();
+        }
+    }
+
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     private void openFolder() {
@@ -90,16 +108,14 @@ public class MainImgui implements ImguiLayer {
 
     private void checkResult(int result, PointerBuffer path) {
         switch (result) {
-            case NFD_OKAY:
-                System.out.println("Success!");
-                System.out.println(path.getStringUTF8(0));
+            case NFD_OKAY -> {
+                LogInfo.println("Success!");
+                LogInfo.println(path.getStringUTF8(0));
                 nNFD_Free(path.get(0));
-                break;
-            case NFD_CANCEL:
-                System.out.println("User pressed cancel.");
-                break;
-            default: // NFD_ERROR
-                System.err.format("Error: %s\n", NFD_GetError());
+            }
+            case NFD_CANCEL -> LogInfo.println("User pressed cancel.");
+            default -> // NFD_ERROR
+                    LogError.println("Error: " + NFD_GetError());
         }
     }
 
