@@ -4,6 +4,7 @@ import app.ecs.Component;
 import imgui.ImGui;
 
 public class TransformComponent implements Component {
+
     @Override
     public void update(float dt) {
 

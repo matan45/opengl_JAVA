@@ -50,10 +50,9 @@ public class SceneGraph implements ImguiLayer {
             indexRemove = index;
         }
         ImGui.sameLine();
-        if (ImGui.button(">")) {
+        if (ImGui.isMouseClicked(0))
             inspector.setEntity(entity);
-        }
-        ImGui.sameLine();
+
         boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.SpanAvailWidth);
 
         ImGui.popID();
