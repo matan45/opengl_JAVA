@@ -1,4 +1,4 @@
-package math;
+package app.math;
 
 public class OLVector2f {
     public float x;

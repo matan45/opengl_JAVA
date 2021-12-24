@@ -7,6 +7,4 @@ public class Run {
         GlfwWindow glfwWindow = new GlfwWindow("OPENGL");
         glfwWindow.run();
     }
-
-
 }
