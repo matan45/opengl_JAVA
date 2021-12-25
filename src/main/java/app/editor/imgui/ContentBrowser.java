@@ -16,6 +16,9 @@ public class ContentBrowser implements ImguiLayer {
         if (ImGui.begin("Content Folder")) {
             if (ImGui.button("<--"))
                 absolutePath = absolutePath.getParent();
+            ImGui.sameLine();
+            ImGui.labelText("Current Path", absolutePath.toString());
+            ImGui.separator();
 
             folder = absolutePath.toFile();
             listOfFiles = folder.listFiles();
