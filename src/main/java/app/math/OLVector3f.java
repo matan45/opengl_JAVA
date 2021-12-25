@@ -16,4 +16,13 @@ public class OLVector3f {
         this.y = y;
         this.z = z;
     }
+
+    @Override
+    public String toString() {
+        return "OLVector3f{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }

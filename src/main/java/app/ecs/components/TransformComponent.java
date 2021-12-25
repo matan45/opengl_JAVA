@@ -3,14 +3,14 @@ package app.ecs.components;
 import app.ecs.Component;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
+import app.math.components.OLTransform;
+import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 
 public class TransformComponent implements Component {
-    OLVector3f position = new OLVector3f();
-    OLVector3f scale = new OLVector3f();
-    OLVector3f rotation = new OLVector3f();
+    OLTransform olTransform = new OLTransform();
 
     @Override
     public void update(float dt) {
@@ -19,9 +19,9 @@ public class TransformComponent implements Component {
 
     @Override
     public void imguiDraw() {
-        drawVector3("Position", position);
-        drawVector3("Scale", scale);
-        drawVector3("Rotation", rotation);
+        drawVector3("Position", olTransform.getPosition());
+        drawVector3("Scale", olTransform.getScale());
+        drawVector3("Rotation", olTransform.getRotation());
 
     }
 
