@@ -25,6 +25,19 @@ public class OLMatrix3f {
         this.m22 = m22;
     }
 
+    public OLMatrix3f identity() {
+        this.m00 = 1.0f;
+        this.m01 = 0.0f;
+        this.m02 = 0.0f;
+        this.m10 = 0.0f;
+        this.m11 = 1.0f;
+        this.m12 = 0.0f;
+        this.m20 = 0.0f;
+        this.m21 = 0.0f;
+        this.m22 = 1.0f;
+        return this;
+    }
+
     public OLMatrix3f set(OLQuaternion4f q) {
         float w2 = q.w * q.w;
         float x2 = q.x * q.x;
