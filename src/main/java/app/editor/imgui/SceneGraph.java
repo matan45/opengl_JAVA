@@ -50,11 +50,12 @@ public class SceneGraph implements ImguiLayer {
             indexRemove = index;
         }
         ImGui.sameLine();
+        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.SpanAvailWidth|ImGuiTreeNodeFlags.AllowItemOverlap);
+        ImGui.sameLine();
         if (ImGui.button("->"))
             inspector.setEntity(entity);
-        ImGui.sameLine();
-        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.SpanAvailWidth);
-
+        if(ImGui.isItemHovered())
+            ImGui.setTooltip("Show Components");
         ImGui.popID();
 
         return treeNodeOpen;
