@@ -22,10 +22,10 @@ public class OLQuaternion4f {
         this.w = 1.0f;
     }
 
-    public OLQuaternion4f(double x, double y, double z, double w) {
-        this.x = (float) x;
-        this.y = (float) y;
-        this.z = (float) z;
-        this.w = (float) w;
+    public OLQuaternion4f(float x, float y, float z, float w) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
     }
 }
