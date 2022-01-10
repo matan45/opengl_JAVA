@@ -34,10 +34,6 @@ public class Framebuffer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    public int getFboID() {
-        return fboID;
-    }
-
     public int getTextureId() {
         return texture.getTextureId();
     }

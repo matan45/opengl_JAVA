@@ -34,9 +34,8 @@ public class GlfwWindow {
     }
 
     private void init() {
-        try (GLFWErrorCallback glfwErrorCallback = GLFWErrorCallback.createPrint(System.err)) {
-            glfwErrorCallback.set();
-        }
+        GLFWErrorCallback glfwErrorCallback = GLFWErrorCallback.createPrint(System.err);
+        glfwErrorCallback.set();
 
         if (!glfwInit())
             throw new RuntimeException("Unable to initialize GLFW");
@@ -138,7 +137,7 @@ public class GlfwWindow {
             EntitySystem.updateEntity(deltaTime);
             dt = frame;
 
-            Renderer.defaultDraw();
+            Renderer.draw();
 
             imgui.startFrame();
             ImguiLayerHandler.renderImGui();
