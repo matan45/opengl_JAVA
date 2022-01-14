@@ -1,4 +1,6 @@
-package app.renderer;
+package app.renderer.draw;
+
+import app.renderer.framebuffer.Framebuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 

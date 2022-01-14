@@ -2,7 +2,7 @@ package app.editor;
 
 import app.ecs.EntitySystem;
 import app.editor.imgui.*;
-import app.renderer.Renderer;
+import app.renderer.draw.Renderer;
 import app.utilities.logger.Logger;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;

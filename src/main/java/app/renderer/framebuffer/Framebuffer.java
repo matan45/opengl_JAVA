@@ -1,10 +1,10 @@
-package app.renderer;
+package app.renderer.framebuffer;
 
 import static org.lwjgl.opengl.GL30.*;
 
 public class Framebuffer {
     private int fboID = 0;
-    private TextureData texture = null;
+    private FrameBufferTexture texture = null;
 
     public Framebuffer(int width, int height) {
         // Generate framebuffer
@@ -12,7 +12,7 @@ public class Framebuffer {
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
         // Create the texture to render the data to, and attach it to our framebuffer
-        this.texture = new TextureData(width, height);
+        this.texture = new FrameBufferTexture(width, height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                 this.texture.getTextureId(), 0);
 
