@@ -99,6 +99,7 @@ public class GlfwWindow {
     }
 
     private void close() {
+        ImguiLayerHandler.cleanLayer();
         imgui.disposeImGui();
 
         setCapabilities(null);

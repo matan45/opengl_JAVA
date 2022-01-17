@@ -29,6 +29,11 @@ public class Inspector implements ImguiLayer {
         ImGui.end();
     }
 
+    @Override
+    public void cleanUp() {
+
+    }
+
     public void setEntity(Entity entity) {
         this.entity = entity;
     }

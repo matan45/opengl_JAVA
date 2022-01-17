@@ -24,4 +24,9 @@ public class ViewPort implements ImguiLayer {
         }
         ImGui.end();
     }
+
+    @Override
+    public void cleanUp() {
+
+    }
 }
