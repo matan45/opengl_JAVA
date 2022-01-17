@@ -26,7 +26,7 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render() {
         if (ImGui.begin("Content Folder")) {
-            if (ImGui.button("<--"))
+            if (ImGui.button("<--") && absolutePath.getParent() != null)
                 absolutePath = absolutePath.getParent();
             ImGui.sameLine();
             ImGui.labelText("Current Path", absolutePath.toString());

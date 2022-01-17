@@ -4,7 +4,6 @@ import app.ecs.Component;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
-import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
