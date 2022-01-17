@@ -2,10 +2,6 @@ package app.renderer;
 
 import org.lwjgl.BufferUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -80,8 +76,6 @@ public class Textures {
     }
 
 
-
-
     //TODO extract this function to a resource manager
     private ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = createByteBuffer(newCapacity);
@@ -92,12 +86,12 @@ public class Textures {
 
     public ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
         ByteBuffer buffer;
-        int bufferSize=8*1024;
+        int bufferSize = 8 * 1024;
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = createByteBuffer((int) fc.size() + 1);
-                while (fc.read(buffer) != -1) {}
+                while (fc.read(buffer) != -1) ;
             }
         } else {
             try (InputStream source = Textures.class.getClassLoader().getResourceAsStream(resource);

@@ -20,7 +20,7 @@ public class ViewPort implements ImguiLayer {
             ImGui.endMenuBar();
 
             ImVec2 windowSize = ImGui.getWindowSize();
-            ImGui.image(Renderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 100, 0, 1, 1, 0);
+            ImGui.image(Renderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
         }
         ImGui.end();
     }

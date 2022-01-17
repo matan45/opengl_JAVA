@@ -4,20 +4,34 @@ import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.renderer.draw.Renderer;
 import app.utilities.logger.Logger;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.system.MemoryUtil.*;
 
 
 public class GlfwWindow {
@@ -55,6 +69,13 @@ public class GlfwWindow {
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create GLFW window");
+
+        //window icon
+        try {
+            setIcon("C:\\matan\\java\\src\\main\\resources\\editor\\icons\\icon-window.png", window);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
@@ -156,5 +177,81 @@ public class GlfwWindow {
 
     public int getHeight() {
         return height;
+    }
+
+
+    //TODO move to resource manger
+    public static void setIcon(String path, long window) throws Exception {
+        IntBuffer w = memAllocInt(1);
+        IntBuffer h = memAllocInt(1);
+        IntBuffer comp = memAllocInt(1);
+
+        // Icons
+        {
+            ByteBuffer icon16;
+            ByteBuffer icon32;
+            try {
+                icon16 = ioResourceToByteBuffer(path);
+                icon32 = ioResourceToByteBuffer(path);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            try (GLFWImage.Buffer icons = GLFWImage.malloc(2)) {
+                ByteBuffer pixels16 = stbi_load_from_memory(icon16, w, h, comp, 4);
+                icons.position(0).width(w.get(0)).height(h.get(0)).pixels(pixels16);
+
+                ByteBuffer pixels32 = stbi_load_from_memory(icon32, w, h, comp, 4);
+                icons.position(1).width(w.get(0)).height(h.get(0)).pixels(pixels32);
+
+                icons.position(0);
+                glfwSetWindowIcon(window, icons);
+
+                stbi_image_free(pixels32);
+                stbi_image_free(pixels16);
+            }
+        }
+
+        memFree(comp);
+        memFree(h);
+        memFree(w);
+
+    }
+
+    public static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
+        ByteBuffer buffer;
+        int bufferSize = 8 * 1024;
+        Path path = Paths.get(resource);
+        if (Files.isReadable(path)) {
+            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
+                buffer = createByteBuffer((int) fc.size() + 1);
+                while (fc.read(buffer) != -1) ;
+            }
+        } else {
+            try (InputStream source = GlfwWindow.class.getClassLoader().getResourceAsStream(resource);
+                 ReadableByteChannel rbc = Channels.newChannel(source)) {
+                buffer = createByteBuffer(bufferSize);
+
+                while (true) {
+                    int bytes = rbc.read(buffer);
+                    if (bytes == -1) {
+                        break;
+                    }
+                    if (buffer.remaining() == 0) {
+                        buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+                    }
+                }
+            }
+        }
+
+        buffer.flip();
+        return buffer;
+    }
+
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
     }
 }

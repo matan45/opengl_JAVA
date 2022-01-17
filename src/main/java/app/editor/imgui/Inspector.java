@@ -14,6 +14,9 @@ public class Inspector implements ImguiLayer {
             if (entity != null) {
                 for (Component component : entity.getComponents()) {
                     if (ImGui.collapsingHeader(component.getName())) {
+                        if (ImGui.button("Remove component"))
+                            LogInfo.println("not implemented");
+                        ImGui.separator();
                         component.imguiDraw();
                     }
                 }

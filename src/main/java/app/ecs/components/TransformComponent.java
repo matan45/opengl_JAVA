@@ -10,6 +10,7 @@ import imgui.flag.ImGuiStyleVar;
 
 public class TransformComponent implements Component {
     OLTransform olTransform = new OLTransform();
+    OLVector2f buttonSize = new OLVector2f();
 
     @Override
     public void update(float dt) {
@@ -32,8 +33,9 @@ public class TransformComponent implements Component {
 
         ImGui.pushStyleVar(ImGuiStyleVar.ItemInnerSpacing, 0, 0);
         float lineHeight = ImGui.getFontSize() + ImGui.getStyle().getFramePaddingY() * 0.2f;
-        OLVector2f buttonSize = new OLVector2f(lineHeight + 3.0f, lineHeight);
-        float widthEach = (ImGui.calcItemWidth() - buttonSize.x * 3.0f) / 3.0f;
+        buttonSize.x = lineHeight + 3.0f;
+        buttonSize.y = lineHeight;
+        float widthEach = (ImGui.calcItemWidth() - buttonSize.x) / 3.0f;
 
         ImGui.pushItemWidth(widthEach);
         ImGui.pushStyleColor(ImGuiCol.Button, 0.8f, 0.1f, 0.15f, 1.0f);
