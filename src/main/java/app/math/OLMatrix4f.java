@@ -7,6 +7,8 @@ public class OLMatrix4f {
     float m20, m21, m22, m23;
     float m30, m31, m32, m33;
 
+    float[] matrixArray = new float[4 * 4];
+
     public OLMatrix4f() {
         this.m00 = 1.0f;
         this.m11 = 1.0f;
@@ -109,5 +111,25 @@ public class OLMatrix4f {
         this.m32 = m32 - other.m32;
         this.m33 = m33 - other.m33;
         return this;
+    }
+
+    public float[] getAsArray() {
+        matrixArray[0] = m00;
+        matrixArray[1] = m01;
+        matrixArray[2] = m02;
+        matrixArray[3] = m03;
+        matrixArray[4] = m10;
+        matrixArray[5] = m11;
+        matrixArray[6] = m12;
+        matrixArray[7] = m13;
+        matrixArray[8] = m20;
+        matrixArray[9] = m21;
+        matrixArray[10] = m22;
+        matrixArray[11] = m23;
+        matrixArray[12] = m30;
+        matrixArray[13] = m31;
+        matrixArray[14] = m32;
+        matrixArray[15] = m33;
+        return matrixArray;
     }
 }

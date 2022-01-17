@@ -42,6 +42,7 @@ public abstract class ShaderProgram {
     }
 
     private int loadShader(String file, int type) {
+        //TODO extract this function to a resource manager
         StringBuilder shaderSource = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -55,6 +56,7 @@ public abstract class ShaderProgram {
             e.printStackTrace();
             System.exit(-1);
         }
+        //
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderSource);
         glCompileShader(shaderID);
