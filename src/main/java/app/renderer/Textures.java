@@ -29,7 +29,6 @@ public class Textures {
         ByteBuffer image;
         try {
             imageBuffer = ioResourceToByteBuffer(fileName);
-            //imageBuffer = ioResourceToByteBuffer(fileName,2*1024);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

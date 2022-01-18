@@ -1,6 +1,6 @@
 package app.editor.imgui;
 
-import app.renderer.draw.Renderer;
+import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -20,7 +20,7 @@ public class ViewPort implements ImguiLayer {
             ImGui.endMenuBar();
 
             ImVec2 windowSize = ImGui.getWindowSize();
-            ImGui.image(Renderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+            ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
         }
         ImGui.end();
     }

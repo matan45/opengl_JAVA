@@ -4,10 +4,10 @@ import app.renderer.framebuffer.Framebuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Renderer {
+public class EditorRenderer {
     static Framebuffer framebuffer = new Framebuffer(1920, 1080);
 
-    private Renderer() {
+    private EditorRenderer() {
     }
 
     public static void draw() {

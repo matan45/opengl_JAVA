@@ -2,7 +2,7 @@ package app.editor;
 
 import app.ecs.EntitySystem;
 import app.editor.imgui.*;
-import app.renderer.draw.Renderer;
+import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -159,7 +159,7 @@ public class GlfwWindow {
             EntitySystem.updateEntity(deltaTime);
             dt = frame;
 
-            Renderer.draw();
+            EditorRenderer.draw();
 
             imgui.startFrame();
             ImguiLayerHandler.renderImGui();

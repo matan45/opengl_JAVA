@@ -36,9 +36,8 @@ public class Inspector implements ImguiLayer {
             }
 
             if (ImGui.beginPopupContextWindow("Component")) {
-                if (ImGui.menuItem("Add Component")) {
+                if (ImGui.menuItem("Add Component"))
                     LogInfo.println("not implemented");
-                }
                 ImGui.endPopup();
             }
         }
