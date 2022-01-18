@@ -1,11 +1,15 @@
 package app.math;
 
+import java.nio.FloatBuffer;
+
 public class OLMatrix4f {
 
     float m00, m01, m02, m03;
     float m10, m11, m12, m13;
     float m20, m21, m22, m23;
     float m30, m31, m32, m33;
+
+    static float[] matrixArray = new float[4 * 4];
 
     public OLMatrix4f() {
         this.m00 = 1.0f;
@@ -109,5 +113,45 @@ public class OLMatrix4f {
         this.m32 = m32 - other.m32;
         this.m33 = m33 - other.m33;
         return this;
+    }
+
+    public float[] getAsArray() {
+        matrixArray[0] = m00;
+        matrixArray[1] = m01;
+        matrixArray[2] = m02;
+        matrixArray[3] = m03;
+        matrixArray[4] = m10;
+        matrixArray[5] = m11;
+        matrixArray[6] = m12;
+        matrixArray[7] = m13;
+        matrixArray[8] = m20;
+        matrixArray[9] = m21;
+        matrixArray[10] = m22;
+        matrixArray[11] = m23;
+        matrixArray[12] = m30;
+        matrixArray[13] = m31;
+        matrixArray[14] = m32;
+        matrixArray[15] = m33;
+        return matrixArray;
+    }
+
+    public void store(FloatBuffer buf) {
+        buf.clear();
+        buf.put(m00);
+        buf.put(m01);
+        buf.put(m02);
+        buf.put(m03);
+        buf.put(m10);
+        buf.put(m11);
+        buf.put(m12);
+        buf.put(m13);
+        buf.put(m20);
+        buf.put(m21);
+        buf.put(m22);
+        buf.put(m23);
+        buf.put(m30);
+        buf.put(m31);
+        buf.put(m32);
+        buf.put(m33);
     }
 }
