@@ -42,6 +42,11 @@ public class SceneGraph implements ImguiLayer {
         }
     }
 
+    @Override
+    public void cleanUp() {
+
+    }
+
 
     private boolean doTreeNode(Entity entity, int index) {
         ImGui.pushID(index);
@@ -50,7 +55,7 @@ public class SceneGraph implements ImguiLayer {
             indexRemove = index;
         }
         ImGui.sameLine();
-        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.SpanAvailWidth|ImGuiTreeNodeFlags.AllowItemOverlap);
+        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding |ImGuiTreeNodeFlags.AllowItemOverlap);
         ImGui.sameLine();
         if (ImGui.button("->"))
             inspector.setEntity(entity);

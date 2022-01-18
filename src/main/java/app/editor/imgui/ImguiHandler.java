@@ -38,7 +38,7 @@ public class ImguiHandler {
         rangesBuilder.addRanges(io.getFonts().getGlyphRangesDefault());
         rangesBuilder.addRanges(FontAwesomeIcons._IconRange);
 
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\COOKiE MILK Regular.ttf"), FONT_SIZE); // font awesome
+        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\Roboto-Regular.ttf"), FONT_SIZE); // font awesome
         // Font config for additional fonts
         // This is a natively allocated struct so don't forget to call destroy after atlas is built
         final ImFontConfig fontConfig = new ImFontConfig();
