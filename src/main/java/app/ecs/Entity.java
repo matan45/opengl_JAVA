@@ -8,7 +8,7 @@ import java.util.List;
 public class Entity {
     String name;
     List<Component> components;
-    boolean isDead;
+    boolean isActive;
 
     public Entity(String name) {
         this.name = name;
@@ -66,12 +66,12 @@ public class Entity {
         return components;
     }
 
-    public boolean isDead() {
-        return isDead;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setDead(boolean dead) {
-        isDead = dead;
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
 }

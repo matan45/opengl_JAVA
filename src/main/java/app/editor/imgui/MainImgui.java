@@ -53,6 +53,11 @@ public class MainImgui implements ImguiLayer {
         ImGui.end();
     }
 
+    @Override
+    public void cleanUp() {
+
+    }
+
     private void menuBar() {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
