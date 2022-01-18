@@ -83,8 +83,4 @@ public class TransformComponent implements Component {
         ImGui.popID();
     }
 
-    @Override
-    public String getName() {
-        return "Transform Component";
-    }
 }
