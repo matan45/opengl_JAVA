@@ -136,6 +136,7 @@ public class OLMatrix4f {
     }
 
     public void store(FloatBuffer buf) {
+        buf.clear();
         buf.put(m00);
         buf.put(m01);
         buf.put(m02);
