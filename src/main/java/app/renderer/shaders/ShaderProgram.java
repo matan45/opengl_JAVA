@@ -4,12 +4,14 @@ import app.math.OLMatrix4f;
 import app.math.OLQuaternion4f;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
+import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -87,21 +89,8 @@ public abstract class ShaderProgram {
     }
 
     private int loadShader(String file, int type) {
-        //TODO extract this function to a resource manager
-        StringBuilder shaderSource = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                shaderSource.append(line).append("\n");
-            }
-            reader.close();
-        } catch (IOException e) {
-            System.err.println("Could not read file");
-            e.printStackTrace();
-            System.exit(-1);
-        }
-        //
+        StringBuilder shaderSource = ResourceManager.readShader(Paths.get(file));
+
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderSource);
         glCompileShader(shaderID);
