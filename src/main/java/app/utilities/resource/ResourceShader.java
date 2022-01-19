@@ -10,13 +10,12 @@ public class ResourceShader {
 
     protected StringBuilder readShaderFile(Path path) {
         shaderSource.setLength(0);
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(path.toAbsolutePath().toString()));
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(path.toAbsolutePath().toString()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 shaderSource.append(line).append("\n");
             }
-            reader.close();
         } catch (IOException e) {
             System.err.println("Could not read file");
             e.printStackTrace();
