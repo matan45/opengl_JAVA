@@ -17,4 +17,8 @@ public class ResourceManager {
     public static byte[] loadFromResources(Path path) {
         return resourceImgui.loadAsByte(path);
     }
+
+    public static void setWindowGLFWIcon(Path path, long window) {
+        windowGLFW.setIcon(path, window);
+    }
 }
