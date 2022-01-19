@@ -3,6 +3,7 @@ package app.editor.imgui;
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import imgui.ImGui;
+import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public class SceneGraph implements ImguiLayer {
@@ -26,7 +27,7 @@ public class SceneGraph implements ImguiLayer {
                 index++;
             }
 
-            if (ImGui.beginPopupContextWindow("Entity")) {
+            if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
                 if (ImGui.menuItem("Add Game Object")) {
                     EntitySystem.addEntity(new Entity("Default Name"));
                 }
@@ -59,7 +60,7 @@ public class SceneGraph implements ImguiLayer {
         ImGui.sameLine();
         boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
 
-        if (ImGui.isItemClicked(0))
+        if (ImGui.isItemActive())
             inspector.setEntity(entity);
         ImGui.popID();
 
