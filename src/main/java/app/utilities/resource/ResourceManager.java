@@ -1,5 +1,7 @@
 package app.utilities.resource;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 
 public class ResourceManager {
@@ -20,5 +22,9 @@ public class ResourceManager {
 
     public static void setWindowGLFWIcon(Path path, long window) {
         windowGLFW.setIcon(path, window);
+    }
+
+    public static ByteBuffer readToByte(Path path) throws IOException {
+        return ResourceUtilies.ioResourceToByteBuffer(path.toAbsolutePath().toString());
     }
 }
