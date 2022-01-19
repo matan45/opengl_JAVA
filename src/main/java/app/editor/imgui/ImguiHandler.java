@@ -1,5 +1,6 @@
 package app.editor.imgui;
 
+import app.utilities.resource.ResourceManager;
 import imgui.*;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
@@ -8,6 +9,7 @@ import imgui.glfw.ImGuiImplGlfw;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ImguiHandler {
@@ -38,14 +40,14 @@ public class ImguiHandler {
         rangesBuilder.addRanges(io.getFonts().getGlyphRangesDefault());
         rangesBuilder.addRanges(FontAwesomeIcons._IconRange);
 
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\Roboto-Regular.ttf"), FONT_SIZE); // font awesome
+        io.getFonts().addFontFromMemoryTTF(ResourceManager.loadFromResources(Paths.get("src\\main\\resources\\editor\\Roboto-Regular.ttf")), FONT_SIZE); // font awesome
         // Font config for additional fonts
         // This is a natively allocated struct so don't forget to call destroy after atlas is built
         final ImFontConfig fontConfig = new ImFontConfig();
         fontConfig.setMergeMode(true);  // Enable merge mode to merge cyrillic, japanese and icons with default font
 
         final short[] glyphRanges = rangesBuilder.buildRanges();
-        io.getFonts().addFontFromMemoryTTF(loadFromResources("src\\main\\resources\\editor\\fa-solid-900.ttf"), FONT_SIZE, fontConfig, glyphRanges); // font awesome
+        io.getFonts().addFontFromMemoryTTF(ResourceManager.loadFromResources(Paths.get("src\\main\\resources\\editor\\fa-solid-900.ttf")), FONT_SIZE, fontConfig, glyphRanges); // font awesome
         io.getFonts().build();
 
         fontConfig.destroy();
@@ -62,15 +64,7 @@ public class ImguiHandler {
         ImGui.render();
         imGuiGl3.renderDrawData(ImGui.getDrawData());
     }
-    //TODO extract this function to a resource manager
-    private static byte[] loadFromResources(String name) {
-        try {
-            return Files.readAllBytes(Paths.get(name));
-        } catch (IOException e) {
-            //TODO custom excption handler
-            throw new RuntimeException(e);
-        }
-    }
+
 
     public void disposeImGui() {
         imGuiGl3.dispose();

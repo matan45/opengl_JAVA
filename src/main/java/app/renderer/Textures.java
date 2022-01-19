@@ -1,5 +1,6 @@
 package app.renderer;
 
+import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class Textures {
         ByteBuffer imageBuffer;
         ByteBuffer image;
         try {
-            imageBuffer = ioResourceToByteBuffer(fileName);
+            imageBuffer = ResourceManager.readToByte(Paths.get(fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -72,45 +73,6 @@ public class Textures {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         return id;
-    }
-
-
-    //TODO extract this function to a resource manager
-    private ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = createByteBuffer(newCapacity);
-        buffer.flip();
-        newBuffer.put(buffer);
-        return newBuffer;
-    }
-
-    public ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
-        ByteBuffer buffer;
-        int bufferSize = 8 * 1024;
-        Path path = Paths.get(resource);
-        if (Files.isReadable(path)) {
-            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = createByteBuffer((int) fc.size() + 1);
-                while (fc.read(buffer) != -1) ;
-            }
-        } else {
-            try (InputStream source = Textures.class.getClassLoader().getResourceAsStream(resource);
-                 ReadableByteChannel rbc = Channels.newChannel(source)) {
-                buffer = createByteBuffer(bufferSize);
-
-                while (true) {
-                    int bytes = rbc.read(buffer);
-                    if (bytes == -1) {
-                        break;
-                    }
-                    if (buffer.remaining() == 0) {
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 2);
-                    }
-                }
-            }
-        }
-
-        buffer.flip();
-        return buffer;
     }
 
 

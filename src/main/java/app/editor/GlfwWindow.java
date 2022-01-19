@@ -4,6 +4,7 @@ import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.Logger;
+import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -71,11 +72,7 @@ public class GlfwWindow {
             throw new RuntimeException("Failed to create GLFW window");
 
         //window icon
-        try {
-            setIcon("C:\\matan\\java\\src\\main\\resources\\editor\\icons\\icon-window.png", window);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ResourceManager.setWindowGLFWIcon(Paths.get("src\\main\\resources\\editor\\icons\\icon-window.png"), window);
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
@@ -180,78 +177,4 @@ public class GlfwWindow {
     }
 
 
-    //TODO move to resource manger
-    public static void setIcon(String path, long window) throws Exception {
-        IntBuffer w = memAllocInt(1);
-        IntBuffer h = memAllocInt(1);
-        IntBuffer comp = memAllocInt(1);
-
-        // Icons
-        {
-            ByteBuffer icon16;
-            ByteBuffer icon32;
-            try {
-                icon16 = ioResourceToByteBuffer(path);
-                icon32 = ioResourceToByteBuffer(path);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            try (GLFWImage.Buffer icons = GLFWImage.malloc(2)) {
-                ByteBuffer pixels16 = stbi_load_from_memory(icon16, w, h, comp, 4);
-                icons.position(0).width(w.get(0)).height(h.get(0)).pixels(pixels16);
-
-                ByteBuffer pixels32 = stbi_load_from_memory(icon32, w, h, comp, 4);
-                icons.position(1).width(w.get(0)).height(h.get(0)).pixels(pixels32);
-
-                icons.position(0);
-                glfwSetWindowIcon(window, icons);
-
-                stbi_image_free(pixels32);
-                stbi_image_free(pixels16);
-            }
-        }
-
-        memFree(comp);
-        memFree(h);
-        memFree(w);
-
-    }
-
-    public static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
-        ByteBuffer buffer;
-        int bufferSize = 8 * 1024;
-        Path path = Paths.get(resource);
-        if (Files.isReadable(path)) {
-            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = createByteBuffer((int) fc.size() + 1);
-                while (fc.read(buffer) != -1) ;
-            }
-        } else {
-            try (InputStream source = GlfwWindow.class.getClassLoader().getResourceAsStream(resource);
-                 ReadableByteChannel rbc = Channels.newChannel(source)) {
-                buffer = createByteBuffer(bufferSize);
-
-                while (true) {
-                    int bytes = rbc.read(buffer);
-                    if (bytes == -1) {
-                        break;
-                    }
-                    if (buffer.remaining() == 0) {
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 2);
-                    }
-                }
-            }
-        }
-
-        buffer.flip();
-        return buffer;
-    }
-
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-        buffer.flip();
-        newBuffer.put(buffer);
-        return newBuffer;
-    }
 }

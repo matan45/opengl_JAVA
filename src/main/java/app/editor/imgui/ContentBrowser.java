@@ -19,8 +19,8 @@ public class ContentBrowser implements ImguiLayer {
     float cellSize = padding + thumbnailSize;
 
     public ContentBrowser() {
-        this.folderIcon = textures.loadTextureHdr("C:\\matan\\java\\src\\main\\resources\\editor\\icons\\icon-folder.png");
-        this.fileIcon = textures.loadTextureHdr("C:\\matan\\java\\src\\main\\resources\\editor\\icons\\icon-file.png");
+        this.folderIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\icon-folder.png");
+        this.fileIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\icon-file.png");
     }
 
     @Override
