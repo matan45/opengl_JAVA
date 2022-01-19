@@ -28,11 +28,14 @@ public class LogWindow implements ImguiLayer {
                 Logger.clear();
             ImGui.sameLine();
             ImGui.text("FPS: " + fps);
+            ImGui.separator();
+            ImGui.pushStyleColor(ImGuiCol.ChildBg, ImColor.intToColor(0, 0, 0));
             if (ImGui.beginChild("Log", 0, 0, false, ImGuiWindowFlags.HorizontalScrollbar)) {
                 ImGui.pushStyleColor(ImGuiCol.Text, ImColor.intToColor(0, 255, 0));
                 ImGui.textUnformatted(Logger.outputLog());
                 ImGui.popStyleColor();
             }
+            ImGui.popStyleColor();
             ImGui.endChild();
         }
         ImGui.end();
