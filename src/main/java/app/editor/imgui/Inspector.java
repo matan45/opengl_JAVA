@@ -41,8 +41,15 @@ public class Inspector implements ImguiLayer {
             }
 
             if (ImGui.beginPopupContextWindow("Component")) {
-                if (ImGui.menuItem("Add Component"))
-                    LogInfo.println("not implemented");
+                if (ImGui.beginMenu("Light")) {
+                    if (ImGui.menuItem("Directional Light"))
+                        LogInfo.println("not implement");
+                    if (ImGui.menuItem("Point Light"))
+                        LogInfo.println("not implement");
+                    if (ImGui.menuItem("Spot Light"))
+                        LogInfo.println("not implement");
+                    ImGui.endMenu();
+                }
                 ImGui.endPopup();
             }
         }
