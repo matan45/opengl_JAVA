@@ -5,6 +5,10 @@ public class OLVector3f {
     public float y;
     public float z;
 
+    public static final OLVector3f Xaxis = new OLVector3f(1, 0, 0);
+    public static final OLVector3f Yaxis = new OLVector3f(0, 1, 0);
+    public static final OLVector3f Zaxis = new OLVector3f(0, 0, 1);
+
     public OLVector3f() {
         this.x = 0;
         this.y = 0;

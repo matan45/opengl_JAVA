@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
+import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
@@ -31,14 +32,7 @@ public class ViewPort implements ImguiLayer {
     private static final float[] INPUT_MATRIX_TRANSLATION = new float[3];
     private static final float[] INPUT_MATRIX_SCALE = new float[3];
     private static final float[] INPUT_MATRIX_ROTATION = new float[3];
-    private static final float[][] OBJECT_MATRICES = {
-            {
-                    1.f, 0.f, 0.f, 0.f,
-                    0.f, 1.f, 0.f, 0.f,
-                    0.f, 0.f, 1.f, 0.f,
-                    0.f, 0.f, 0.f, 1.f
-            }
-    };
+    private OLMatrix4f modelMatrix = new OLMatrix4f();
     private static final float[] IDENTITY_MATRIX = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -70,7 +64,6 @@ public class ViewPort implements ImguiLayer {
             //Gizmos
             Entity entity = inspector.getEntity();
 
-
             if (ImGui.isKeyPressed(GLFW_KEY_T))
                 currentGizmoOperation = Operation.TRANSLATE;
             else if (ImGui.isKeyPressed(GLFW_KEY_R))
@@ -78,7 +71,7 @@ public class ViewPort implements ImguiLayer {
             else if (ImGui.isKeyPressed(GLFW_KEY_S))
                 currentGizmoOperation = Operation.SCALE;
             if (entity != null) {
-
+                //move to camera class
                 if (firstFrame) {
                     float[] eye = new float[]{
                             (float) (Math.cos(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE),
@@ -90,25 +83,26 @@ public class ViewPort implements ImguiLayer {
                     lookAt(eye, at, up, INPUT_CAMERA_VIEW);
                     firstFrame = false;
                 }
-                //move to camera class
+
                 float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
                 float[] cameraProjection = perspective(27, aspect, 0.1f, 100f);
 
-
+                TransformComponent component = entity.getComponent(TransformComponent.class);
+                float[] model = modelMatrix.getAsArray();
                 ImGuizmo.setOrthographic(false);
                 ImGuizmo.setDrawList();
                 ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
-                ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, OBJECT_MATRICES[0], currentGizmoOperation, Mode.LOCAL);
+                ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, model, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
-                    TransformComponent component = entity.getComponent(TransformComponent.class);
-                    ImGuizmo.decomposeMatrixToComponents(OBJECT_MATRICES[0], INPUT_MATRIX_TRANSLATION, INPUT_MATRIX_ROTATION, INPUT_MATRIX_SCALE);
+                    ImGuizmo.decomposeMatrixToComponents(model, INPUT_MATRIX_TRANSLATION, INPUT_MATRIX_ROTATION, INPUT_MATRIX_SCALE);
                     component.getOlTransform().setPosition(new OLVector3f(INPUT_MATRIX_TRANSLATION[0], INPUT_MATRIX_TRANSLATION[1], INPUT_MATRIX_TRANSLATION[2]));
                     component.getOlTransform().setScale(new OLVector3f(INPUT_MATRIX_SCALE[0], INPUT_MATRIX_SCALE[1], INPUT_MATRIX_SCALE[2]));
                     component.getOlTransform().setRotation(new OLVector3f(INPUT_MATRIX_ROTATION[0], INPUT_MATRIX_ROTATION[1], INPUT_MATRIX_ROTATION[2]));
+                    modelMatrix = component.getOlTransform().getModelMatrix();
                 }
-                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 100);
+                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
 
             }
 
