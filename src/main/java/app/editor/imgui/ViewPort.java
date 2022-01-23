@@ -22,13 +22,20 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
+    private static final float FLT_EPSILON = 1.19209290E-07f;
+    private static final int CAM_DISTANCE = 8;
+    private static final float CAM_Y_ANGLE = 165.f / 180.f * (float) Math.PI;
+    private static final float CAM_X_ANGLE = 32.f / 180.f * (float) Math.PI;
     private static final float[][] OBJECT_MATRICES = {
             {
                     1.f, 0.f, 0.f, 0.f,
                     0.f, 1.f, 0.f, 0.f,
                     0.f, 0.f, 1.f, 0.f,
                     0.f, 0.f, 0.f, 1.f
-            }};
+            }
+    };
+
+    private static boolean firstFrame = true;
 
 
     public ViewPort() {
@@ -51,26 +58,40 @@ public class ViewPort implements ImguiLayer {
             ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
             Entity entity = inspector.getEntity();
-            if (entity != null) {
+            if (entity != null && inputKey() != -1) {
+
+                if (firstFrame) {
+                    float[] eye = new float[]{
+                            (float) (Math.cos(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE),
+                            (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
+                            (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
+                    };
+                    float[] at = new float[]{0.f, 0.f, 0.f};
+                    float[] up = new float[]{0.f, 1.f, 0.f};
+                    lookAt(eye, at, up, INPUT_CAMERA_VIEW);
+                    firstFrame = false;
+                }
                 //move to camera class
                 float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
                 float[] cameraProjection = perspective(27, aspect, 0.1f, 100f);
 
-                LogInfo.println(String.valueOf(inputKey()));
+
                 ImGuizmo.setOrthographic(false);
                 ImGuizmo.setDrawList();
                 ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
                 ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, OBJECT_MATRICES[0], inputKey(), Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
-                    LogInfo.println("hit2");
                     //from model matrix need to set scale translate rotation
                     TransformComponent component = entity.getComponent(TransformComponent.class);
                     /*component.getOlTransform().setPosition();
                     component.getOlTransform().setScale();
                     component.getOlTransform().setRotation();*/
                 }
+                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, INPUT_CAMERA_VIEW, 100);
+
             }
+
         }
         ImGui.end();
     }
@@ -123,6 +144,63 @@ public class ViewPort implements ImguiLayer {
         r[14] = (-temp * far) / temp4;
         r[15] = 0.0f;
         return r;
+    }
+
+    private static float dot(float[] a, float[] b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    }
+
+    private static float[] normalize(float[] a) {
+        float[] r = new float[3];
+        float il = (float) (1.f / (Math.sqrt(dot(a, a)) + FLT_EPSILON));
+        r[0] = a[0] * il;
+        r[1] = a[1] * il;
+        r[2] = a[2] * il;
+        return r;
+    }
+
+    private static float[] cross(float[] a, float[] b) {
+        float[] r = new float[3];
+        r[0] = a[1] * b[2] - a[2] * b[1];
+        r[1] = a[2] * b[0] - a[0] * b[2];
+        r[2] = a[0] * b[1] - a[1] * b[0];
+        return r;
+    }
+
+    private static void lookAt(float[] eye, float[] at, float[] up, float[] m16) {
+        float[] x;
+        float[] y;
+        float[] z;
+        float[] tmp = new float[3];
+
+        tmp[0] = eye[0] - at[0];
+        tmp[1] = eye[1] - at[1];
+        tmp[2] = eye[2] - at[2];
+        z = normalize(tmp);
+        y = normalize(up);
+
+        tmp = cross(y, z);
+        x = normalize(tmp);
+
+        tmp = cross(z, x);
+        y = normalize(tmp);
+
+        m16[0] = x[0];
+        m16[1] = y[0];
+        m16[2] = z[0];
+        m16[3] = 0.0f;
+        m16[4] = x[1];
+        m16[5] = y[1];
+        m16[6] = z[1];
+        m16[7] = 0.0f;
+        m16[8] = x[2];
+        m16[9] = y[2];
+        m16[10] = z[2];
+        m16[11] = 0.0f;
+        m16[12] = -dot(x, eye);
+        m16[13] = -dot(y, eye);
+        m16[14] = -dot(z, eye);
+        m16[15] = 1.0f;
     }
 
 }
