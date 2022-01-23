@@ -37,7 +37,7 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 0.f, 1.f
     };
     private static final float FLT_EPSILON = 1.19209290E-07f;
-    private static final int CAM_DISTANCE = 8;
+    private static final int CAM_DISTANCE = 20;
     private static final float CAM_Y_ANGLE = 360.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 30.f / 180.f * (float) Math.PI;
     private static final float[] IDENTITY_MATRIX = {

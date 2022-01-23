@@ -17,9 +17,9 @@ public class OLTransform {
     }
 
     public OLTransform() {
-        this.position = new OLVector3f(1.0f,1.0f,1.0f);
-        this.scale = new OLVector3f(1.0f,1.0f,1.0f);
-        this.rotation = new OLVector3f(1.0f,1.0f,1.0f);
+        this.position = new OLVector3f();
+        this.scale = new OLVector3f(1.0f, 1.0f, 1.0f);
+        this.rotation = new OLVector3f();
         modelMatrix = new OLMatrix4f();
     }
 
