@@ -62,6 +62,10 @@ public class Inspector implements ImguiLayer {
 
     }
 
+    public Entity getEntity() {
+        return entity;
+    }
+
     public void setEntity(Entity entity) {
         this.entity = entity;
     }

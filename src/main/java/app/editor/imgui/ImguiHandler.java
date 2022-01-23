@@ -2,14 +2,12 @@ package app.editor.imgui;
 
 import app.utilities.resource.ResourceManager;
 import imgui.*;
+import imgui.extension.imguizmo.ImGuizmo;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ImguiHandler {
@@ -58,6 +56,7 @@ public class ImguiHandler {
     public void startFrame() {
         imGuiGlfw.newFrame();
         ImGui.newFrame();
+        ImGuizmo.beginFrame();
     }
 
     public void endFrame() {

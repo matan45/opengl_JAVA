@@ -17,6 +17,10 @@ public class TransformComponent implements Component {
 
     }
 
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
+
     @Override
     public void imguiDraw() {
         drawVector3("Position", olTransform.getPosition());

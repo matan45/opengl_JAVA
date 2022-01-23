@@ -11,8 +11,8 @@ public class SceneGraph implements ImguiLayer {
     int indexRemove = 0;
     Inspector inspector;
 
-    public SceneGraph(Inspector inspector) {
-        this.inspector = inspector;
+    public SceneGraph() {
+        this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
     }
 
     @Override
