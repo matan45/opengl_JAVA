@@ -26,6 +26,7 @@ public class ViewPort implements ImguiLayer {
     private static final int CAM_DISTANCE = 8;
     private static final float CAM_Y_ANGLE = 165.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 32.f / 180.f * (float) Math.PI;
+    private static int currentGizmoOperation;
     private static final float[][] OBJECT_MATRICES = {
             {
                     1.f, 0.f, 0.f, 0.f,
@@ -33,6 +34,12 @@ public class ViewPort implements ImguiLayer {
                     0.f, 0.f, 1.f, 0.f,
                     0.f, 0.f, 0.f, 1.f
             }
+    };
+    private static final float[] IDENTITY_MATRIX = {
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f
     };
 
     private static boolean firstFrame = true;
@@ -58,7 +65,15 @@ public class ViewPort implements ImguiLayer {
             ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
             Entity entity = inspector.getEntity();
-            if (entity != null && inputKey() != -1) {
+
+
+            if (ImGui.isKeyPressed(GLFW_KEY_T))
+                currentGizmoOperation = Operation.TRANSLATE;
+             else if (ImGui.isKeyPressed(GLFW_KEY_R))
+                currentGizmoOperation = Operation.ROTATE;
+             else if (ImGui.isKeyPressed(GLFW_KEY_S))
+                currentGizmoOperation = Operation.SCALE;
+            if (entity != null) {
 
                 if (firstFrame) {
                     float[] eye = new float[]{
@@ -79,7 +94,7 @@ public class ViewPort implements ImguiLayer {
                 ImGuizmo.setOrthographic(false);
                 ImGuizmo.setDrawList();
                 ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
-                ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, OBJECT_MATRICES[0], inputKey(), Mode.LOCAL);
+                ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, OBJECT_MATRICES[0], currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
@@ -88,24 +103,12 @@ public class ViewPort implements ImguiLayer {
                     component.getOlTransform().setScale();
                     component.getOlTransform().setRotation();*/
                 }
-                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, INPUT_CAMERA_VIEW, 100);
+                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 100);
 
             }
 
         }
         ImGui.end();
-    }
-
-    private int inputKey() {
-        //need to set key callback
-        if (ImGui.isKeyPressed(GLFW_KEY_T)) {
-            return Operation.TRANSLATE;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
-            return Operation.ROTATE;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
-            return Operation.SCALE;
-        }
-        return -1;
     }
 
     @Override
