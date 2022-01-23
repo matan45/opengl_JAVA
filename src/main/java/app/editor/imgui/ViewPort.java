@@ -15,15 +15,18 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class ViewPort implements ImguiLayer {
     Inspector inspector;
-    Entity preEntity = new Entity("temp");
+    Entity preEntity;
     TransformComponent component;
     int currentGizmoOperation = -1;
+
     final float[] inputVectorTranslation = new float[3];
     final float[] inputVectorScale = new float[3];
     final float[] inputVectorRotation = new float[3];
+
     float[] inputSapValue = new float[3];
     boolean snap = false;
     float snapValue;
+
     float[] objectMatrices =
             {
                     1.f, 0.f, 0.f, 0.f,
@@ -53,7 +56,8 @@ public class ViewPort implements ImguiLayer {
 
 
     public ViewPort() {
-        this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
+        preEntity = new Entity("temp");
+        inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
     }
 
     @Override
@@ -80,10 +84,10 @@ public class ViewPort implements ImguiLayer {
                     snapValue = 0.5f;
                 } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
                     currentGizmoOperation = Operation.ROTATE;
-                    snapValue = 0.5f;
+                    snapValue = 45.0f;
                 } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
                     currentGizmoOperation = Operation.SCALE;
-                    snapValue = 45.0f;
+                    snapValue = 0.5f;
                 } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
