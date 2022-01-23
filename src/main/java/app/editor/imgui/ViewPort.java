@@ -47,7 +47,8 @@ public class ViewPort implements ImguiLayer {
     };
 
     private static boolean firstFrame = true;
-
+    Entity preEntity = new Entity("temp");
+    TransformComponent component;
 
     public ViewPort() {
         this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
@@ -76,13 +77,6 @@ public class ViewPort implements ImguiLayer {
                     currentGizmoOperation = Operation.ROTATE;
                 else if (ImGui.isKeyPressed(GLFW_KEY_S))
                     currentGizmoOperation = Operation.SCALE;
-                else if (ImGui.isKeyPressed(GLFW_KEY_C))
-                    OBJECT_MATRICES = new float[]{
-                            1.f, 0.f, 0.f, 0.f,
-                            0.f, 1.f, 0.f, 0.f,
-                            0.f, 0.f, 1.f, 0.f,
-                            0.f, 0.f, 0.f, 1.f
-                    };
             }
 
             if (entity != null) {
@@ -99,6 +93,12 @@ public class ViewPort implements ImguiLayer {
                     firstFrame = false;
                 }
 
+                if (!entity.equals(preEntity)) {
+                    component = entity.getComponent(TransformComponent.class);
+                    OBJECT_MATRICES = component.getOlTransform().getModelMatrix().getAsArray();
+                    preEntity = entity;
+                }
+
                 float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
                 float[] cameraProjection = perspective(27, aspect, 0.1f, 100f);
 
@@ -108,7 +108,6 @@ public class ViewPort implements ImguiLayer {
                 ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, OBJECT_MATRICES, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
-                    TransformComponent component = entity.getComponent(TransformComponent.class);
                     //from model matrix need to set scale translate rotation
                     ImGuizmo.decomposeMatrixToComponents(OBJECT_MATRICES, INPUT_MATRIX_TRANSLATION, INPUT_MATRIX_ROTATION, INPUT_MATRIX_SCALE);
                     component.getOlTransform().setPosition(new OLVector3f(INPUT_MATRIX_TRANSLATION[0], INPUT_MATRIX_TRANSLATION[1], INPUT_MATRIX_TRANSLATION[2]));
@@ -116,7 +115,6 @@ public class ViewPort implements ImguiLayer {
                     component.getOlTransform().setRotation(new OLVector3f(INPUT_MATRIX_ROTATION[0], INPUT_MATRIX_ROTATION[1], INPUT_MATRIX_ROTATION[2]));
                 }
                 ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
-
             }
 
         }
