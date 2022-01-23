@@ -18,9 +18,12 @@ public class ViewPort implements ImguiLayer {
     Entity preEntity = new Entity("temp");
     TransformComponent component;
     int currentGizmoOperation = -1;
-    final float[] inputMatrixTranslation = new float[3];
-    final float[] inputMatrixScale = new float[3];
-    final float[] inputMatrixRotation = new float[3];
+    final float[] inputVectorTranslation = new float[3];
+    final float[] inputVectorScale = new float[3];
+    final float[] inputVectorRotation = new float[3];
+    float[] inputSapValue = new float[3];
+    boolean snap = false;
+    float snapValue;
     float[] objectMatrices =
             {
                     1.f, 0.f, 0.f, 0.f,
@@ -68,17 +71,26 @@ public class ViewPort implements ImguiLayer {
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
+            //TODO for mouse picking need to find for select entity
             Entity entity = inspector.getEntity();
 
             if (ImGui.isWindowFocused()) {
-                if (ImGui.isKeyPressed(GLFW_KEY_T))
+                if (ImGui.isKeyPressed(GLFW_KEY_T)) {
                     currentGizmoOperation = Operation.TRANSLATE;
-                else if (ImGui.isKeyPressed(GLFW_KEY_R))
+                    snapValue = 0.5f;
+                } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
                     currentGizmoOperation = Operation.ROTATE;
-                else if (ImGui.isKeyPressed(GLFW_KEY_S))
+                    snapValue = 0.5f;
+                } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
                     currentGizmoOperation = Operation.SCALE;
-                else if (ImGui.isKeyPressed(GLFW_KEY_Q))
+                    snapValue = 45.0f;
+                } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
                     currentGizmoOperation = -1;
+                    snapValue = 0f;
+                } else if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
+                    snap = true;
+                else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
+                    snap = false;
             }
             //TODO move to camera class
             if (firstFrame) {
@@ -99,7 +111,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setOrthographic(false);
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
-            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80);
 
             ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
 
@@ -111,22 +123,30 @@ public class ViewPort implements ImguiLayer {
                     preEntity = entity;
                 }
 
-                ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
+                inputSapValue[0] = snapValue;
+                inputSapValue[1] = snapValue;
+                inputSapValue[2] = snapValue;
+
+                if (snap)
+                    ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL, inputSapValue);
+                else
+                    ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
-                    ImGuizmo.decomposeMatrixToComponents(objectMatrices, inputMatrixTranslation, inputMatrixRotation, inputMatrixScale);
-                    component.getOlTransform().getPosition().x = inputMatrixTranslation[0];
-                    component.getOlTransform().getPosition().y = inputMatrixTranslation[1];
-                    component.getOlTransform().getPosition().z = inputMatrixTranslation[2];
+                    ImGuizmo.decomposeMatrixToComponents(objectMatrices, inputVectorTranslation, inputVectorRotation, inputVectorScale);
 
-                    component.getOlTransform().getScale().x = inputMatrixScale[0];
-                    component.getOlTransform().getScale().y = inputMatrixScale[1];
-                    component.getOlTransform().getScale().z = inputMatrixScale[2];
+                    component.getOlTransform().getPosition().x = inputVectorTranslation[0];
+                    component.getOlTransform().getPosition().y = inputVectorTranslation[1];
+                    component.getOlTransform().getPosition().z = inputVectorTranslation[2];
 
-                    component.getOlTransform().getRotation().x = inputMatrixRotation[0];
-                    component.getOlTransform().getRotation().y = inputMatrixRotation[1];
-                    component.getOlTransform().getRotation().z = inputMatrixRotation[2];
+                    component.getOlTransform().getScale().x = inputVectorScale[0];
+                    component.getOlTransform().getScale().y = inputVectorScale[1];
+                    component.getOlTransform().getScale().z = inputVectorScale[2];
+
+                    component.getOlTransform().getRotation().x = inputVectorRotation[0];
+                    component.getOlTransform().getRotation().y = inputVectorRotation[1];
+                    component.getOlTransform().getRotation().z = inputVectorRotation[2];
                 } else
                     objectMatrices = component.getOlTransform().getModelMatrix().getAsArray();
             }
