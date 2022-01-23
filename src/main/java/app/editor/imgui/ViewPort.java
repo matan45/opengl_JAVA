@@ -32,7 +32,7 @@ public class ViewPort implements ImguiLayer {
     private static final float[] INPUT_MATRIX_TRANSLATION = new float[3];
     private static final float[] INPUT_MATRIX_SCALE = new float[3];
     private static final float[] INPUT_MATRIX_ROTATION = new float[3];
-    private static final float[] OBJECT_MATRICES =
+    private static float[] OBJECT_MATRICES =
             {
                     1.f, 0.f, 0.f, 0.f,
                     0.f, 1.f, 0.f, 0.f,
@@ -69,13 +69,22 @@ public class ViewPort implements ImguiLayer {
             ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
             Entity entity = inspector.getEntity();
+            if (ImGui.isWindowFocused()) {
+                if (ImGui.isKeyPressed(GLFW_KEY_T))
+                    currentGizmoOperation = Operation.TRANSLATE;
+                else if (ImGui.isKeyPressed(GLFW_KEY_R))
+                    currentGizmoOperation = Operation.ROTATE;
+                else if (ImGui.isKeyPressed(GLFW_KEY_S))
+                    currentGizmoOperation = Operation.SCALE;
+                else if (ImGui.isKeyPressed(GLFW_KEY_C))
+                    OBJECT_MATRICES = new float[]{
+                            1.f, 0.f, 0.f, 0.f,
+                            0.f, 1.f, 0.f, 0.f,
+                            0.f, 0.f, 1.f, 0.f,
+                            0.f, 0.f, 0.f, 1.f
+                    };
+            }
 
-            if (ImGui.isKeyPressed(GLFW_KEY_T))
-                currentGizmoOperation = Operation.TRANSLATE;
-            else if (ImGui.isKeyPressed(GLFW_KEY_R))
-                currentGizmoOperation = Operation.ROTATE;
-            else if (ImGui.isKeyPressed(GLFW_KEY_S))
-                currentGizmoOperation = Operation.SCALE;
             if (entity != null) {
                 //move to camera class
                 if (firstFrame) {
