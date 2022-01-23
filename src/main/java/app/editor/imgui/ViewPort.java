@@ -2,8 +2,6 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
-import app.math.OLMatrix4f;
-import app.math.OLVector3f;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
@@ -28,11 +26,11 @@ public class ViewPort implements ImguiLayer {
     private static final int CAM_DISTANCE = 8;
     private static final float CAM_Y_ANGLE = 165.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 32.f / 180.f * (float) Math.PI;
-    private static int currentGizmoOperation;
+    private int currentGizmoOperation;
     private static final float[] INPUT_MATRIX_TRANSLATION = new float[3];
     private static final float[] INPUT_MATRIX_SCALE = new float[3];
     private static final float[] INPUT_MATRIX_ROTATION = new float[3];
-    private static float[] OBJECT_MATRICES =
+    private float[] OBJECT_MATRICES =
             {
                     1.f, 0.f, 0.f, 0.f,
                     0.f, 1.f, 0.f, 0.f,
@@ -93,11 +91,12 @@ public class ViewPort implements ImguiLayer {
                     firstFrame = false;
                 }
 
-                if (!entity.equals(preEntity)) {
+               if (!entity.equals(preEntity)) {
                     component = entity.getComponent(TransformComponent.class);
                     OBJECT_MATRICES = component.getOlTransform().getModelMatrix().getAsArray();
                     preEntity = entity;
                 }
+
 
                 float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
                 float[] cameraProjection = perspective(27, aspect, 0.1f, 100f);
@@ -110,10 +109,19 @@ public class ViewPort implements ImguiLayer {
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
                     ImGuizmo.decomposeMatrixToComponents(OBJECT_MATRICES, INPUT_MATRIX_TRANSLATION, INPUT_MATRIX_ROTATION, INPUT_MATRIX_SCALE);
-                    component.getOlTransform().setPosition(new OLVector3f(INPUT_MATRIX_TRANSLATION[0], INPUT_MATRIX_TRANSLATION[1], INPUT_MATRIX_TRANSLATION[2]));
-                    component.getOlTransform().setScale(new OLVector3f(INPUT_MATRIX_SCALE[0], INPUT_MATRIX_SCALE[1], INPUT_MATRIX_SCALE[2]));
-                    component.getOlTransform().setRotation(new OLVector3f(INPUT_MATRIX_ROTATION[0], INPUT_MATRIX_ROTATION[1], INPUT_MATRIX_ROTATION[2]));
-                }
+                    component.getOlTransform().getPosition().x = INPUT_MATRIX_TRANSLATION[0];
+                    component.getOlTransform().getPosition().y = INPUT_MATRIX_TRANSLATION[1];
+                    component.getOlTransform().getPosition().z = INPUT_MATRIX_TRANSLATION[2];
+
+                    component.getOlTransform().getScale().x = INPUT_MATRIX_SCALE[0];
+                    component.getOlTransform().getScale().y = INPUT_MATRIX_SCALE[1];
+                    component.getOlTransform().getScale().z = INPUT_MATRIX_SCALE[2];
+
+                    component.getOlTransform().getRotation().x = INPUT_MATRIX_ROTATION[0];
+                    component.getOlTransform().getRotation().y = INPUT_MATRIX_ROTATION[1];
+                    component.getOlTransform().getRotation().z = INPUT_MATRIX_ROTATION[2];
+                }else
+                    OBJECT_MATRICES = component.getOlTransform().getModelMatrix().getAsArray();
                 ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
             }
 

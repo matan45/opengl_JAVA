@@ -9,7 +9,7 @@ public class OLMatrix4f {
     float m20, m21, m22, m23;
     float m30, m31, m32, m33;
 
-    static float[] matrixArray = new float[4 * 4];
+     float[] matrixArray = new float[4 * 4];
 
     public OLMatrix4f() {
         this.m00 = 1.0f;
