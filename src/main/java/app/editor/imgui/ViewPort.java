@@ -80,20 +80,30 @@ public class ViewPort implements ImguiLayer {
                 else if (ImGui.isKeyPressed(GLFW_KEY_Q))
                     currentGizmoOperation = -1;
             }
+            //TODO move to camera class
+            if (firstFrame) {
+                float[] eye = new float[]{
+                        (float) (Math.cos(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE),
+                        (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
+                        (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
+                };
+                float[] at = new float[]{0.f, 0.f, 0.f};
+                float[] up = new float[]{0.f, 1.f, 0.f};
+                lookAt(eye, at, up, INPUT_CAMERA_VIEW);
+                firstFrame = false;
+            }
+
+            float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
+            float[] cameraProjection = perspective(30, aspect, 0.1f, 100f);
+            //
+            ImGuizmo.setOrthographic(false);
+            ImGuizmo.setAllowAxisFlip(false);
+            ImGuizmo.setDrawList();
+            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+
+            ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
 
             if (entity != null && currentGizmoOperation != -1) {
-                //move to camera class
-                if (firstFrame) {
-                    float[] eye = new float[]{
-                            (float) (Math.cos(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE),
-                            (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
-                            (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
-                    };
-                    float[] at = new float[]{0.f, 0.f, 0.f};
-                    float[] up = new float[]{0.f, 1.f, 0.f};
-                    lookAt(eye, at, up, INPUT_CAMERA_VIEW);
-                    firstFrame = false;
-                }
 
                 if (!entity.equals(preEntity)) {
                     component = entity.getComponent(TransformComponent.class);
@@ -101,14 +111,6 @@ public class ViewPort implements ImguiLayer {
                     preEntity = entity;
                 }
 
-
-                float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-                float[] cameraProjection = perspective(27, aspect, 0.1f, 100f);
-
-                ImGuizmo.setOrthographic(false);
-                ImGuizmo.setAllowAxisFlip(false);
-                ImGuizmo.setDrawList();
-                ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
                 ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
@@ -127,8 +129,6 @@ public class ViewPort implements ImguiLayer {
                     component.getOlTransform().getRotation().z = inputMatrixRotation[2];
                 } else
                     objectMatrices = component.getOlTransform().getModelMatrix().getAsArray();
-
-                ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
             }
 
         }
