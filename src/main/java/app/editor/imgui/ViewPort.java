@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
+import app.math.OLVector3f;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
@@ -27,6 +28,9 @@ public class ViewPort implements ImguiLayer {
     private static final float CAM_Y_ANGLE = 165.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 32.f / 180.f * (float) Math.PI;
     private static int currentGizmoOperation;
+    private static final float[] INPUT_MATRIX_TRANSLATION = new float[3];
+    private static final float[] INPUT_MATRIX_SCALE = new float[3];
+    private static final float[] INPUT_MATRIX_ROTATION = new float[3];
     private static final float[][] OBJECT_MATRICES = {
             {
                     1.f, 0.f, 0.f, 0.f,
@@ -69,9 +73,9 @@ public class ViewPort implements ImguiLayer {
 
             if (ImGui.isKeyPressed(GLFW_KEY_T))
                 currentGizmoOperation = Operation.TRANSLATE;
-             else if (ImGui.isKeyPressed(GLFW_KEY_R))
+            else if (ImGui.isKeyPressed(GLFW_KEY_R))
                 currentGizmoOperation = Operation.ROTATE;
-             else if (ImGui.isKeyPressed(GLFW_KEY_S))
+            else if (ImGui.isKeyPressed(GLFW_KEY_S))
                 currentGizmoOperation = Operation.SCALE;
             if (entity != null) {
 
@@ -99,9 +103,10 @@ public class ViewPort implements ImguiLayer {
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
                     TransformComponent component = entity.getComponent(TransformComponent.class);
-                    /*component.getOlTransform().setPosition();
-                    component.getOlTransform().setScale();
-                    component.getOlTransform().setRotation();*/
+                    ImGuizmo.decomposeMatrixToComponents(OBJECT_MATRICES[0], INPUT_MATRIX_TRANSLATION, INPUT_MATRIX_ROTATION, INPUT_MATRIX_SCALE);
+                    component.getOlTransform().setPosition(new OLVector3f(INPUT_MATRIX_TRANSLATION[0], INPUT_MATRIX_TRANSLATION[1], INPUT_MATRIX_TRANSLATION[2]));
+                    component.getOlTransform().setScale(new OLVector3f(INPUT_MATRIX_SCALE[0], INPUT_MATRIX_SCALE[1], INPUT_MATRIX_SCALE[2]));
+                    component.getOlTransform().setRotation(new OLVector3f(INPUT_MATRIX_ROTATION[0], INPUT_MATRIX_ROTATION[1], INPUT_MATRIX_ROTATION[2]));
                 }
                 ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 100);
 
