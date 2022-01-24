@@ -17,15 +17,19 @@ public class TransformComponent implements Component {
 
     }
 
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
+
     @Override
     public void imguiDraw() {
-        drawVector3("Position", olTransform.getPosition());
-        drawVector3("Scale", olTransform.getScale());
-        drawVector3("Rotation", olTransform.getRotation());
+        drawVector3("Position", olTransform.getPosition(), 0.0f);
+        drawVector3("Rotation", olTransform.getRotation(), 0.0f);
+        drawVector3("Scale", olTransform.getScale(), 1.0f);
 
     }
 
-    private void drawVector3(String title, OLVector3f olVector3f) {
+    private void drawVector3(String title, OLVector3f olVector3f, float resetValue) {
         ImGui.pushID(title);
         ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 1.0f, 1.0f, 1.0f);
         ImGui.text(title);
@@ -42,7 +46,7 @@ public class TransformComponent implements Component {
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.9f, 0.2f, 0.2f, 1.0f);
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.8f, 0.1f, 0.15f, 1.0f);
         if (ImGui.button("X"))
-            olVector3f.x = 0.0f;
+            olVector3f.x = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
         float[] XValue = {olVector3f.x};
@@ -55,7 +59,7 @@ public class TransformComponent implements Component {
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.2f, 0.9f, 0.2f, 1.0f);
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.1f, 0.8f, 0.15f, 1.0f);
         if (ImGui.button("Y"))
-            olVector3f.y = 0.0f;
+            olVector3f.y = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
         float[] YValue = {olVector3f.y};
@@ -68,7 +72,7 @@ public class TransformComponent implements Component {
         ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.1f, 0.2f, 0.9f, 1.0f);
         ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.1f, 0.15f, 0.8f, 1.0f);
         if (ImGui.button("Z"))
-            olVector3f.z = 0.0f;
+            olVector3f.z = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
         float[] ZValue = {olVector3f.z};

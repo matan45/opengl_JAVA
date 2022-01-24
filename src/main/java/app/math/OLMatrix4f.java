@@ -9,7 +9,7 @@ public class OLMatrix4f {
     float m20, m21, m22, m23;
     float m30, m31, m32, m33;
 
-    static float[] matrixArray = new float[4 * 4];
+     float[] matrixArray = new float[4 * 4];
 
     public OLMatrix4f() {
         this.m00 = 1.0f;
@@ -153,5 +153,95 @@ public class OLMatrix4f {
         buf.put(m31);
         buf.put(m32);
         buf.put(m33);
+    }
+
+    public void translate(OLVector3f translate) {
+
+        m30 += m00 * translate.x + m10 * translate.y + m20 * translate.z;
+        m31 += m01 * translate.x + m11 * translate.y + m21 * translate.z;
+        m32 += m02 * translate.x + m12 * translate.y + m22 * translate.z;
+        m33 += m03 * translate.x + m13 * translate.y + m23 * translate.z;
+    }
+
+    public void rotate(float angle, OLVector3f axis) {
+        float c = (float) Math.cos(angle);
+        float s = (float) Math.sin(angle);
+        float oneminusc = 1.0f - c;
+        float xy = axis.x * axis.y;
+        float yz = axis.y * axis.z;
+        float xz = axis.x * axis.z;
+        float xs = axis.x * s;
+        float ys = axis.y * s;
+        float zs = axis.z * s;
+
+        float f00 = axis.x * axis.x * oneminusc + c;
+        float f01 = xy * oneminusc + zs;
+        float f02 = xz * oneminusc - ys;
+        // n[3] not used
+        float f10 = xy * oneminusc - zs;
+        float f11 = axis.y * axis.y * oneminusc + c;
+        float f12 = yz * oneminusc + xs;
+        // n[7] not used
+        float f20 = xz * oneminusc + ys;
+        float f21 = yz * oneminusc - xs;
+        float f22 = axis.z * axis.z * oneminusc + c;
+
+        float t00 = m00 * f00 + m10 * f01 + this.m20 * f02;
+        float t01 = m01 * f00 + m11 * f01 + m21 * f02;
+        float t02 = m02 * f00 + m12 * f01 + m22 * f02;
+        float t03 = m03 * f00 + m13 * f01 + m23 * f02;
+        float t10 = m00 * f10 + m10 * f11 + m20 * f12;
+        float t11 = m01 * f10 + m11 * f11 + m21 * f12;
+        float t12 = m02 * f10 + m12 * f11 + m22 * f12;
+        float t13 = m03 * f10 + m13 * f11 + m23 * f12;
+        m20 = m00 * f20 + m10 * f21 + m20 * f22;
+        m21 = m01 * f20 + m11 * f21 + m21 * f22;
+        m22 = m02 * f20 + m12 * f21 + m22 * f22;
+        m23 = m03 * f20 + m13 * f21 + m23 * f22;
+        m00 = t00;
+        m01 = t01;
+        m02 = t02;
+        m03 = t03;
+        m10 = t10;
+        m11 = t11;
+        m12 = t12;
+        m13 = t13;
+    }
+
+    public void scale(OLVector3f scale) {
+        m00 = m00 * scale.x;
+        m01 = m01 * scale.x;
+        m02 = m02 * scale.x;
+        m03 = m03 * scale.x;
+        m10 = m10 * scale.y;
+        m11 = m11 * scale.y;
+        m12 = m12 * scale.y;
+        m13 = m13 * scale.y;
+        m20 = m20 * scale.z;
+        m21 = m21 * scale.z;
+        m22 = m22 * scale.z;
+        m23 = m23 * scale.z;
+    }
+
+    @Override
+    public String toString() {
+        return "OLMatrix4f{" +
+                "m00=" + m00 +
+                ", m01=" + m01 +
+                ", m02=" + m02 +
+                ", m03=" + m03 +
+                ", m10=" + m10 +
+                ", m11=" + m11 +
+                ", m12=" + m12 +
+                ", m13=" + m13 +
+                ", m20=" + m20 +
+                ", m21=" + m21 +
+                ", m22=" + m22 +
+                ", m23=" + m23 +
+                ", m30=" + m30 +
+                ", m31=" + m31 +
+                ", m32=" + m32 +
+                ", m33=" + m33 +
+                '}';
     }
 }

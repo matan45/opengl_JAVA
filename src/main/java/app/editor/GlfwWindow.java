@@ -137,10 +137,9 @@ public class GlfwWindow {
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
         mainImgui = new MainImgui(title, width, height);
-        Inspector inspector = new Inspector();
         ImguiLayerHandler.addLayer(mainImgui);
-        ImguiLayerHandler.addLayer(inspector);
-        ImguiLayerHandler.addLayer(new SceneGraph(inspector));
+        ImguiLayerHandler.addLayer(new Inspector());
+        ImguiLayerHandler.addLayer(new SceneGraph());
         ImguiLayerHandler.addLayer(new LogWindow());
         ImguiLayerHandler.addLayer(new ContentBrowser());
         ImguiLayerHandler.addLayer(new ViewPort());
