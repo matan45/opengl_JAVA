@@ -43,7 +43,7 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 0.f, 1.f
     };
     private static final float FLT_EPSILON = 1.19209290E-07f;
-    private static final int CAM_DISTANCE = 20;
+    private int CAM_DISTANCE = 20;
     private static final float CAM_Y_ANGLE = 360.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 30.f / 180.f * (float) Math.PI;
     private static final float[] IDENTITY_MATRIX = {
@@ -53,7 +53,8 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 0.f, 1.f
     };
     private static boolean firstFrame = true;
-
+    float camtst1;
+    float camtst2;
 
     public ViewPort() {
         preEntity = new Entity("temp");
@@ -103,11 +104,13 @@ public class ViewPort implements ImguiLayer {
                         (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
                         (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
                 };
-                float[] at = new float[]{0.f, 0.f, 0.f};
-                float[] up = new float[]{0.f, 1.f, 0.f};
+                float[] at = new float[]{0.f, 0.f, 0.f};//looking dir
+                float[] up = new float[]{0.f, 1.f, 0.f};//roll
                 lookAt(eye, at, up, INPUT_CAMERA_VIEW);
                 firstFrame = false;
             }
+
+            test();
 
             float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
             float[] cameraProjection = perspective(30, aspect, 0.1f, 100f);
@@ -157,6 +160,32 @@ public class ViewPort implements ImguiLayer {
 
         }
         ImGui.end();
+    }
+
+    private void test() {
+        if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
+            camtst1 += 1;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_4)) {
+            camtst2 += 1;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_6)) {
+            camtst2 -= 1;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
+            camtst1 -= 1;
+        }else if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
+            CAM_DISTANCE += 1;
+        }else if (ImGui.isKeyPressed(GLFW_KEY_KP_2)) {
+            CAM_DISTANCE -= 1;
+        }
+
+        float[] at = new float[]{0.0f, camtst1, camtst2};
+        float[] up = new float[]{0.0f, 1.0f, 0.0f};//roll
+        float[] eye = new float[]{
+                (float) (Math.cos(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE),
+                (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
+                (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
+        };
+        //System.out.println(Arrays.toString(at));
+        lookAt(eye, at, up, INPUT_CAMERA_VIEW);
     }
 
     @Override
