@@ -115,7 +115,7 @@ public class ViewPort implements ImguiLayer {
 
             test();
 
-            if (preWindowHeight != ImGui.getWindowWidth() && preWindowWidth != ImGui.getWindowHeight()) {
+            if (preWindowHeight != ImGui.getWindowHeight() || preWindowWidth != ImGui.getWindowWidth()) {
                 aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
                 cameraProjection = perspective(30, aspect, 0.1f, 100f);
                 preWindowWidth = ImGui.getWindowWidth();
