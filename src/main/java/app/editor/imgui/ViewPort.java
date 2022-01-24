@@ -80,22 +80,7 @@ public class ViewPort implements ImguiLayer {
             Entity entity = inspector.getEntity();
 
             if (ImGui.isWindowFocused()) {
-                if (ImGui.isKeyPressed(GLFW_KEY_T)) {
-                    currentGizmoOperation = Operation.TRANSLATE;
-                    snapValue = 0.5f;
-                } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
-                    currentGizmoOperation = Operation.ROTATE;
-                    snapValue = 45.0f;
-                } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
-                    currentGizmoOperation = Operation.SCALE;
-                    snapValue = 0.5f;
-                } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
-                    currentGizmoOperation = -1;
-                    snapValue = 0f;
-                } else if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
-                    snap = true;
-                else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
-                    snap = false;
+                inputImGuizo();
             }
             //TODO move to camera class
             if (firstFrame) {
@@ -115,11 +100,11 @@ public class ViewPort implements ImguiLayer {
             float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
             float[] cameraProjection = perspective(30, aspect, 0.1f, 100f);
             //
-           float wheel=ImGui.getIO().getMouseWheel();
-           if(wheel>0)
-               LogInfo.println("hit1");
-           else if(wheel<0)
-               LogInfo.println("hit2");
+            float wheel = ImGui.getIO().getMouseWheel();
+            if (wheel > 0)
+                LogInfo.println("hit1");
+            else if (wheel < 0)
+                LogInfo.println("hit2");
 
             ImGuizmo.setOrthographic(false);
             ImGuizmo.setAllowAxisFlip(false);
@@ -168,6 +153,25 @@ public class ViewPort implements ImguiLayer {
         ImGui.end();
     }
 
+    private void inputImGuizo() {
+        if (ImGui.isKeyPressed(GLFW_KEY_T)) {
+            currentGizmoOperation = Operation.TRANSLATE;
+            snapValue = 0.5f;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
+            currentGizmoOperation = Operation.ROTATE;
+            snapValue = 45.0f;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
+            currentGizmoOperation = Operation.SCALE;
+            snapValue = 0.5f;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
+            currentGizmoOperation = -1;
+            snapValue = 0f;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
+            snap = true;
+        else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
+            snap = false;
+    }
+
     private void test() {
         if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
             camtst1 += 1;
@@ -177,9 +181,9 @@ public class ViewPort implements ImguiLayer {
             camtst2 -= 1;
         } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
             camtst1 -= 1;
-        }else if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
             CAM_DISTANCE += 1;
-        }else if (ImGui.isKeyPressed(GLFW_KEY_KP_2)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_2)) {
             CAM_DISTANCE -= 1;
         }
 
@@ -190,7 +194,6 @@ public class ViewPort implements ImguiLayer {
                 (float) (Math.sin(CAM_X_ANGLE) * CAM_DISTANCE),
                 (float) (Math.sin(CAM_Y_ANGLE) * Math.cos(CAM_X_ANGLE) * CAM_DISTANCE)
         };
-        //System.out.println(Arrays.toString(at));
         lookAt(eye, at, up, INPUT_CAMERA_VIEW);
     }
 
