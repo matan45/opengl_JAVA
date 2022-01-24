@@ -34,7 +34,12 @@ public class ViewPort implements ImguiLayer {
                     0.f, 0.f, 1.f, 0.f,
                     0.f, 0.f, 0.f, 1.f
             };
-
+    private static final float[] gridMatrix = {
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f
+    };
     //TODO swap it for camera view
     private static final float[] INPUT_CAMERA_VIEW = {
             1.f, 0.f, 0.f, 0.f,
@@ -46,12 +51,7 @@ public class ViewPort implements ImguiLayer {
     private int CAM_DISTANCE = 20;
     private static final float CAM_Y_ANGLE = 360.f / 180.f * (float) Math.PI;
     private static final float CAM_X_ANGLE = 30.f / 180.f * (float) Math.PI;
-    private static final float[] IDENTITY_MATRIX = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+
     private static boolean firstFrame = true;
     float camtst1;
     float camtst2;
@@ -120,7 +120,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80);
 
-            ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, IDENTITY_MATRIX, 10);
+            ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, gridMatrix, 10);
 
             if (entity != null && currentGizmoOperation != -1) {
 
