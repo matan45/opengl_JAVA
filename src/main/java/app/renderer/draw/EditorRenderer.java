@@ -1,11 +1,13 @@
 package app.renderer.draw;
 
+import app.math.components.Camera;
 import app.renderer.framebuffer.Framebuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorRenderer {
     static Framebuffer framebuffer = new Framebuffer(1920, 1080);
+    static Camera editorCamera = new Camera();
 
     private EditorRenderer() {
     }
@@ -19,5 +21,9 @@ public class EditorRenderer {
 
     public static Framebuffer getFramebuffer() {
         return framebuffer;
+    }
+
+    public static Camera getEditorCamera() {
+        return editorCamera;
     }
 }

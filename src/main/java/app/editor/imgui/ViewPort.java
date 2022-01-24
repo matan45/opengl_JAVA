@@ -17,15 +17,20 @@ public class ViewPort implements ImguiLayer {
     Inspector inspector;
     Entity preEntity;
     TransformComponent component;
-    int currentGizmoOperation = -1;
+    int currentGizmoOperation;
 
-    final float[] inputVectorTranslation = new float[3];
-    final float[] inputVectorScale = new float[3];
-    final float[] inputVectorRotation = new float[3];
+    final float[] inputVectorTranslation;
+    final float[] inputVectorScale;
+    final float[] inputVectorRotation;
 
-    float[] inputSapValue = new float[3];
-    boolean snap = false;
+    float[] inputSapValue;
+    boolean snap;
     float snapValue;
+
+    float preWindowWidth;
+    float preWindowHeight;
+    float[] cameraProjection;
+    float aspect;
 
     float[] objectMatrices =
             {
@@ -57,8 +62,21 @@ public class ViewPort implements ImguiLayer {
     float camtst2;
 
     public ViewPort() {
-        preEntity = new Entity("temp");
+        preEntity = new Entity();
         inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
+
+        currentGizmoOperation = -1;
+
+        inputVectorTranslation = new float[3];
+        inputVectorScale = new float[3];
+        inputVectorRotation = new float[3];
+
+        inputSapValue = new float[3];
+        snap = false;
+
+        preWindowWidth = 0;
+        preWindowHeight = 0;
+        aspect = 0;
     }
 
     @Override
@@ -76,11 +94,11 @@ public class ViewPort implements ImguiLayer {
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
-            //TODO for mouse picking need to find for select entity
+            //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
 
             if (ImGui.isWindowFocused()) {
-                inputImGuizo();
+                keyInputImGuizo();
             }
             //TODO move to camera class
             if (firstFrame) {
@@ -97,8 +115,12 @@ public class ViewPort implements ImguiLayer {
 
             test();
 
-            float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-            float[] cameraProjection = perspective(30, aspect, 0.1f, 100f);
+            if (preWindowHeight != ImGui.getWindowWidth() && preWindowWidth != ImGui.getWindowHeight()) {
+                aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
+                cameraProjection = perspective(30, aspect, 0.1f, 100f);
+                preWindowWidth = ImGui.getWindowWidth();
+                preWindowHeight = ImGui.getWindowHeight();
+            }
             //
             float wheel = ImGui.getIO().getMouseWheel();
             if (wheel > 0)
@@ -153,7 +175,11 @@ public class ViewPort implements ImguiLayer {
         ImGui.end();
     }
 
-    private void inputImGuizo() {
+    public float getAspect() {
+        return aspect;
+    }
+
+    private void keyInputImGuizo() {
         if (ImGui.isKeyPressed(GLFW_KEY_T)) {
             currentGizmoOperation = Operation.TRANSLATE;
             snapValue = 0.5f;

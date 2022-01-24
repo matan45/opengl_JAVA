@@ -16,6 +16,10 @@ public class Entity {
         components.add(new TransformComponent());
     }
 
+    public Entity() {
+        components = new ArrayList<>();
+    }
+
     public <T extends Component> T getComponent(Class<T> componentClass) {
         for (Component c : components) {
             if (componentClass.isAssignableFrom(c.getClass())) {

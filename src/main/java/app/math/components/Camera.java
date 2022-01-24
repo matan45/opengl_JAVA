@@ -11,24 +11,27 @@ public class Camera {
     OLMatrix4f projectionMatrix;
 
     public Camera() {
-        this.position = new OLVector3f();
-        this.rotation = new OLVector3f();
+        position = new OLVector3f();
+        rotation = new OLVector3f();
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
+        viewMatrix = createViewMatrix();
+
     }
 
     public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
 
-        float y_scale = (float) (1f / Math.tan(Math.toRadians(fovY / 2f)));
-        float x_scale = y_scale / aspect;
-        float frustum_length = far - near;
+        float yScale = (float) (1f / Math.tan(Math.toRadians(fovY / 2f)));
+        float xScale = yScale / aspect;
+        float frustumLength = far - near;
 
-        projectionMatrix.m00 = x_scale;
-        projectionMatrix.m11 = y_scale;
-        projectionMatrix.m22 = -((far - near) / frustum_length);
+        projectionMatrix.m00 = xScale;
+        projectionMatrix.m11 = yScale;
+        projectionMatrix.m22 = -((far - near) / frustumLength);
         projectionMatrix.m23 = -1;
-        projectionMatrix.m32 = -((2 * near * far) / frustum_length);
+        projectionMatrix.m32 = -((2 * near * far) / frustumLength);
         projectionMatrix.m33 = 0;
+
         return projectionMatrix;
     }
 
