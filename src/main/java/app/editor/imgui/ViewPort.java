@@ -115,6 +115,12 @@ public class ViewPort implements ImguiLayer {
             float aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
             float[] cameraProjection = perspective(30, aspect, 0.1f, 100f);
             //
+           float wheel=ImGui.getIO().getMouseWheel();
+           if(wheel>0)
+               LogInfo.println("hit1");
+           else if(wheel<0)
+               LogInfo.println("hit2");
+
             ImGuizmo.setOrthographic(false);
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
