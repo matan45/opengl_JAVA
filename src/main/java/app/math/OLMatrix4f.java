@@ -18,7 +18,7 @@ public class OLMatrix4f {
         this.m33 = 1.0f;
     }
 
-    public OLMatrix4f identity() {
+    public void identity() {
         this.m00 = 1.0f;
         this.m01 = 0.0f;
         this.m02 = 0.0f;
@@ -35,7 +35,6 @@ public class OLMatrix4f {
         this.m31 = 0.0f;
         this.m32 = 0.0f;
         this.m33 = 1.0f;
-        return this;
     }
 
     public OLMatrix4f mul(OLMatrix4f right) {
