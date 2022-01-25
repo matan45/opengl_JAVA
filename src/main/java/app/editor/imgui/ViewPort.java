@@ -35,32 +35,29 @@ public class ViewPort implements ImguiLayer {
     float aspect;
 
     Camera editorCamera;
-
-    float[] objectMatrices =
-            {
-                    1.f, 0.f, 0.f, 0.f,
-                    0.f, 1.f, 0.f, 0.f,
-                    0.f, 0.f, 1.f, 0.f,
-                    0.f, 0.f, 0.f, 1.f
-            };
-    static final float[] gridMatrix = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
     float speed = 0.2f;
-    boolean isChange = false;
-    //TODO swap it for camera view
-    private float[] INPUT_CAMERA_VIEW = {
+    boolean isViewChange = false;
+
+    boolean firstFrame = true;
+
+    float[] objectMatrices = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
-
-    private static boolean firstFrame = true;
-
+    final float[] gridMatrix = {
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f
+    };
+    float[] inputViewMatrix = {
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f
+    };
 
     public ViewPort() {
         preEntity = new Entity();
@@ -105,7 +102,7 @@ public class ViewPort implements ImguiLayer {
 
             if (firstFrame) {
                 editorCamera = EditorRenderer.getEditorCamera();
-                INPUT_CAMERA_VIEW = editorCamera.createViewMatrix().getAsArray();
+                inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
                 firstFrame = false;
             }
 
@@ -121,7 +118,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80);
 
-            ImGuizmo.drawGrid(INPUT_CAMERA_VIEW, cameraProjection, gridMatrix, 10);
+            ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
 
             if (entity != null && currentGizmoOperation != -1) {
 
@@ -136,9 +133,9 @@ public class ViewPort implements ImguiLayer {
                 inputSapValue[2] = snapValue;
 
                 if (snap)
-                    ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL, inputSapValue);
+                    ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL, inputSapValue);
                 else
-                    ImGuizmo.manipulate(INPUT_CAMERA_VIEW, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
+                    ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
                     //from model matrix need to set scale translate rotation
@@ -197,51 +194,51 @@ public class ViewPort implements ImguiLayer {
             if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
                 position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
                 position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                isChange = true;
+                isViewChange = true;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_4)) {
                 position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
                 position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                isChange = true;
+                isViewChange = true;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_6)) {
                 position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
                 position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                isChange = true;
+                isViewChange = true;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
                 position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
                 position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                isChange = true;
+                isViewChange = true;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_7)) {
                 position.y += -1 * speed;
-                isChange = true;
+                isViewChange = true;
                 if (position.y < -360)
                     position.y = 0;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_9)) {
                 position.y += 1 * speed;
-                isChange = true;
+                isViewChange = true;
                 if (position.y > 360)
                     position.y = 0;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
-                rotation.y += 1;
-                isChange = true;
-                if (rotation.y > 360)
+                rotation.y -= 1;
+                isViewChange = true;
+                if (rotation.y < -360)
                     rotation.y = 0;
             } else if (ImGui.isKeyPressed(GLFW_KEY_KP_3)) {
-                rotation.y -= 1;
-                isChange = true;
-                if (rotation.y < -360)
+                rotation.y += 1;
+                isViewChange = true;
+                if (rotation.y > 360)
                     rotation.y = 0;
             }
             float wheel = ImGui.getIO().getMouseWheel();
             if (wheel > 0) {
-                isChange = true;
+                isViewChange = true;
                 rotation.x += 10.0f;
             } else if (wheel < 0) {
-                isChange = true;
+                isViewChange = true;
                 rotation.x -= 10.0f;
             }
-            if (isChange) {
-                INPUT_CAMERA_VIEW = editorCamera.createViewMatrix().getAsArray();
-                isChange = false;
+            if (isViewChange) {
+                inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
+                isViewChange = false;
             }
         }
     }

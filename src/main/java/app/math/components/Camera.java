@@ -13,8 +13,8 @@ public class Camera {
     OLVector3f lookAtTemp;
 
     public Camera() {
-        position = new OLVector3f(0, 1, 0);
-        rotation = new OLVector3f(0, 0, 0);
+        position = new OLVector3f(0.5f, 7f, 13);
+        rotation = new OLVector3f(30, 0, 0);
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
         lookAtTemp = new OLVector3f();
