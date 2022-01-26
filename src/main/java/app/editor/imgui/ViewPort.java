@@ -211,12 +211,12 @@ public class ViewPort implements ImguiLayer {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
             cameraMovement(position, rotation);
-            if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
+            if (ImGui.isKeyPressed(GLFW_KEY_LEFT)) {
                 rotation.y -= 1;
                 isViewChange = true;
                 if (rotation.y < -360)
                     rotation.y = 0;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_3)) {
+            } else if (ImGui.isKeyPressed(GLFW_KEY_RIGHT)) {
                 rotation.y += 1;
                 isViewChange = true;
                 if (rotation.y > 360)
@@ -238,28 +238,28 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation) {
-        if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
+        if (ImGui.isKeyPressed(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_4)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_A)) {
             position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_6)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_D)) {
             position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
             position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_7)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_E)) {
             position.y += -1 * speed;
             isViewChange = true;
             if (position.y < -360)
                 position.y = 0;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_9)) {
+        } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
             position.y += 1 * speed;
             isViewChange = true;
             if (position.y > 360)
