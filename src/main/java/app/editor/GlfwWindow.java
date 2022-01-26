@@ -5,34 +5,21 @@ import app.editor.imgui.*;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.Logger;
 import app.utilities.resource.ResourceManager;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.lwjgl.BufferUtils.createByteBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class GlfwWindow {
@@ -120,7 +107,7 @@ public class GlfwWindow {
     }
 
     private void close() {
-        ImguiLayerHandler.cleanLayer();
+        EditorRenderer.cleanUp();
         imgui.disposeImGui();
 
         setCapabilities(null);
@@ -133,6 +120,7 @@ public class GlfwWindow {
     public void run() {
         //create opengl context
         createCapabilities();
+        EditorRenderer.init();
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
@@ -145,7 +133,7 @@ public class GlfwWindow {
         ImguiLayerHandler.addLayer(new ViewPort());
 
         Logger.init();
-        float deltaTime = 0;
+        float deltaTime;
         float dt = System.nanoTime();
 
         while (!glfwWindowShouldClose(window)) {

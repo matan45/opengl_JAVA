@@ -60,9 +60,9 @@ public class OLVector3f {
     }
 
     public OLVector3f mul(float scalar) {
-        this.x = x * scalar;
-        this.y = y * scalar;
-        this.z = z * scalar;
+        x = x * scalar;
+        y = y * scalar;
+        z = z * scalar;
         return this;
     }
 

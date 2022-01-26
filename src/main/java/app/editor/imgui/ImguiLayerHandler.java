@@ -41,8 +41,4 @@ public class ImguiLayerHandler {
         imguiLayerList.remove(layer);
     }
 
-    public static void cleanLayer() {
-        for (ImguiLayer imguiLayer : imguiLayerList)
-            imguiLayer.cleanUp();
-    }
 }

@@ -1,13 +1,23 @@
 package app.renderer.draw;
 
+import app.math.components.Camera;
+import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorRenderer {
-    static Framebuffer framebuffer = new Framebuffer(1920, 1080);
+    static Framebuffer framebuffer;
+    static Camera editorCamera;
+    static Textures textures;
 
     private EditorRenderer() {
+    }
+
+    public static void init() {
+        textures = new Textures();
+        editorCamera = new Camera();
+        framebuffer = new Framebuffer(1920, 1080);
     }
 
     public static void draw() {
@@ -17,7 +27,19 @@ public class EditorRenderer {
         framebuffer.unbind();
     }
 
+    public static void cleanUp() {
+        textures.cleanUp();
+    }
+
     public static Framebuffer getFramebuffer() {
         return framebuffer;
+    }
+
+    public static Camera getEditorCamera() {
+        return editorCamera;
+    }
+
+    public static Textures getTextures() {
+        return textures;
     }
 }

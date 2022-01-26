@@ -57,11 +57,6 @@ public class Inspector implements ImguiLayer {
         ImGui.end();
     }
 
-    @Override
-    public void cleanUp() {
-
-    }
-
     public Entity getEntity() {
         return entity;
     }

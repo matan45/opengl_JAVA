@@ -4,10 +4,10 @@ import java.nio.FloatBuffer;
 
 public class OLMatrix4f {
 
-    float m00, m01, m02, m03;
-    float m10, m11, m12, m13;
-    float m20, m21, m22, m23;
-    float m30, m31, m32, m33;
+    public float m00, m01, m02, m03;
+    public float m10, m11, m12, m13;
+    public float m20, m21, m22, m23;
+    public float m30, m31, m32, m33;
 
      float[] matrixArray = new float[4 * 4];
 
@@ -18,7 +18,7 @@ public class OLMatrix4f {
         this.m33 = 1.0f;
     }
 
-    public OLMatrix4f identity() {
+    public void identity() {
         this.m00 = 1.0f;
         this.m01 = 0.0f;
         this.m02 = 0.0f;
@@ -35,7 +35,6 @@ public class OLMatrix4f {
         this.m31 = 0.0f;
         this.m32 = 0.0f;
         this.m33 = 1.0f;
-        return this;
     }
 
     public OLMatrix4f mul(OLMatrix4f right) {
