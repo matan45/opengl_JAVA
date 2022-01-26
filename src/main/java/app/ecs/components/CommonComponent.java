@@ -2,7 +2,7 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 
-public sealed class CommonComponent implements Component permits TransformComponent {
+public class CommonComponent implements Component {
     protected Entity ownerEntity;
 
     public CommonComponent(Entity ownerEntity) {

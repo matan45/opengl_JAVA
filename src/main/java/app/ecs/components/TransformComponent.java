@@ -26,6 +26,7 @@ public final class TransformComponent extends CommonComponent {
 
     @Override
     public void imguiDraw() {
+        ImGui.text("Entity Name");
         if (ImGui.inputText("##", entityName))
             ownerEntity.setName(entityName.get());
 

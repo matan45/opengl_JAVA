@@ -19,6 +19,8 @@ public class SceneGraph implements ImguiLayer {
     public void render() {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Scene Hierarchy")) {
+            ImGui.text("Scene Name "+ "todo scene class");
+            ImGui.separator();
             int index = 0;
             for (Entity entity : EntitySystem.getEntities()) {
                 boolean treeNodeOpen = doTreeNode(entity, index);
@@ -52,7 +54,7 @@ public class SceneGraph implements ImguiLayer {
         if (ImGui.isItemHovered())
             ImGui.setTooltip("Remove Component");
         ImGui.sameLine();
-        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.AllowItemOverlap);
+        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding);
 
         if (ImGui.isItemActive())
             inspector.setEntity(entity);
