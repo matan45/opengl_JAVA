@@ -1,15 +1,11 @@
 package app.renderer.shaders;
 
 import app.math.OLMatrix4f;
-import app.math.OLQuaternion4f;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -55,8 +51,8 @@ public abstract class ShaderProgram {
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
 
-    protected void load4DVector(int location, OLQuaternion4f vector) {
-        glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+    protected void load4DVector(int location, float x,float y,float z,float w) {
+        glUniform4f(location, x, y, z, w);
     }
 
     protected void load2DVector(int location, OLVector2f vector) {

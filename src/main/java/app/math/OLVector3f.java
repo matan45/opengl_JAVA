@@ -121,13 +121,6 @@ public class OLVector3f {
         return this;
     }
 
-    public OLVector3f mul(OLMatrix3f mat) {
-        float lx = x, ly = y, lz = z;
-        this.x = Math.fma(mat.m00, lx, Math.fma(mat.m10, ly, mat.m20 * lz));
-        this.y = Math.fma(mat.m01, lx, Math.fma(mat.m11, ly, mat.m21 * lz));
-        this.z = Math.fma(mat.m02, lx, Math.fma(mat.m12, ly, mat.m22 * lz));
-        return this;
-    }
 
     public OLVector3f max(OLVector3f v) {
         float x = this.x, y = this.y, z = this.z;
