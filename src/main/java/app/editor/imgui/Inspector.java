@@ -1,6 +1,6 @@
 package app.editor.imgui;
 
-import app.ecs.Component;
+import app.ecs.components.Component;
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
 import app.utilities.logger.LogInfo;
