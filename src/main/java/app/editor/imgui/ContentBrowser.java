@@ -3,6 +3,7 @@ package app.editor.imgui;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -41,6 +42,7 @@ public class ContentBrowser implements ImguiLayer {
             int columnCount = (int) (panelWidth / cellSize);
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
+            ImGui.pushStyleColor(ImGuiCol.Button,0,0,0,0);
             for (File listOfFile : listOfFiles) {
                 if (listOfFile.isFile()) {
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
@@ -55,6 +57,7 @@ public class ContentBrowser implements ImguiLayer {
                     ImGui.nextColumn();
                 }
             }
+            ImGui.popStyleColor();
         }
         ImGui.columns(1);
         ImGui.end();
