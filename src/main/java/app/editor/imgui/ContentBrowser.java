@@ -1,6 +1,7 @@
 package app.editor.imgui;
 
 import app.renderer.Textures;
+import app.renderer.draw.EditorRenderer;
 import imgui.ImGui;
 
 import java.io.File;
@@ -13,14 +14,15 @@ public class ContentBrowser implements ImguiLayer {
     File[] listOfFiles;
     int folderIcon;
     int fileIcon;
-    Textures textures = new Textures();
+    Textures textures;
     float padding = 16.0f;
     float thumbnailSize = 128.0f;
     float cellSize = padding + thumbnailSize;
 
     public ContentBrowser() {
-        this.folderIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\icon-folder.png");
-        this.fileIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\icon-file.png");
+        textures = EditorRenderer.getTextures();
+        this.folderIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
+        this.fileIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
     }
 
     @Override
@@ -58,8 +60,4 @@ public class ContentBrowser implements ImguiLayer {
         ImGui.end();
     }
 
-    @Override
-    public void cleanUp() {
-        textures.cleanUp();
-    }
 }

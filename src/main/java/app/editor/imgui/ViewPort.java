@@ -4,6 +4,7 @@ import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
 import app.math.OLVector3f;
 import app.math.components.Camera;
+import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
@@ -40,6 +41,13 @@ public class ViewPort implements ImguiLayer {
 
     boolean firstFrame = true;
 
+    int scaleIcon;
+    int rotateIcon;
+    int translateIcon;
+    int cancelIcon;
+    int playIcon;
+    int stopIcon;
+
     float[] objectMatrices = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -58,6 +66,7 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
+    Textures textures;
 
     public ViewPort() {
         preEntity = new Entity();
@@ -75,6 +84,15 @@ public class ViewPort implements ImguiLayer {
         preWindowWidth = 0;
         preWindowHeight = 0;
         aspect = 0;
+
+        textures = EditorRenderer.getTextures();
+        scaleIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
+        rotateIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");
+        translateIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\translate.png");
+        playIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
+        stopIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
+        cancelIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
+
     }
 
     @Override
@@ -82,10 +100,23 @@ public class ViewPort implements ImguiLayer {
         if (ImGui.begin("Scene View", ImGuiWindowFlags.MenuBar)) {
 
             if (ImGui.beginMenuBar()) {
-                if (ImGui.menuItem("Play"))
+                if (ImGui.imageButton(playIcon, 30, 20))
                     LogInfo.println("not implement");
-                if (ImGui.menuItem("Stop"))
+                else if (ImGui.imageButton(stopIcon, 30, 20))
                     LogInfo.println("not implement");
+                else if (ImGui.imageButton(translateIcon, 30, 20)) {
+                    currentGizmoOperation = Operation.TRANSLATE;
+                    snapValue = 0.5f;
+                } else if (ImGui.imageButton(rotateIcon, 30, 20)) {
+                    currentGizmoOperation = Operation.ROTATE;
+                    snapValue = 45.0f;
+                } else if (ImGui.imageButton(scaleIcon, 30, 20)) {
+                    currentGizmoOperation = Operation.SCALE;
+                    snapValue = 0.5f;
+                } else if (ImGui.imageButton(cancelIcon, 30, 20)) {
+                    currentGizmoOperation = -1;
+                    snapValue = 0f;
+                }
             }
             ImGui.endMenuBar();
 
@@ -169,19 +200,7 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void keyInputImGuizo() {
-        if (ImGui.isKeyPressed(GLFW_KEY_T)) {
-            currentGizmoOperation = Operation.TRANSLATE;
-            snapValue = 0.5f;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_R)) {
-            currentGizmoOperation = Operation.ROTATE;
-            snapValue = 45.0f;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
-            currentGizmoOperation = Operation.SCALE;
-            snapValue = 0.5f;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
-            currentGizmoOperation = -1;
-            snapValue = 0f;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
+        if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
             snap = true;
         else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
             snap = false;
@@ -191,33 +210,8 @@ public class ViewPort implements ImguiLayer {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
-                position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                isViewChange = true;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_4)) {
-                position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                isViewChange = true;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_6)) {
-                position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                isViewChange = true;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
-                position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-                position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-                isViewChange = true;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_7)) {
-                position.y += -1 * speed;
-                isViewChange = true;
-                if (position.y < -360)
-                    position.y = 0;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_9)) {
-                position.y += 1 * speed;
-                isViewChange = true;
-                if (position.y > 360)
-                    position.y = 0;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
+            cameraMovement(position, rotation);
+            if (ImGui.isKeyPressed(GLFW_KEY_KP_1)) {
                 rotation.y -= 1;
                 isViewChange = true;
                 if (rotation.y < -360)
@@ -243,8 +237,34 @@ public class ViewPort implements ImguiLayer {
         }
     }
 
-    @Override
-    public void cleanUp() {
-
+    private void cameraMovement(OLVector3f position, OLVector3f rotation) {
+        if (ImGui.isKeyPressed(GLFW_KEY_KP_8)) {
+            position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            isViewChange = true;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_4)) {
+            position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            isViewChange = true;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_6)) {
+            position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            isViewChange = true;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_5)) {
+            position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            isViewChange = true;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_7)) {
+            position.y += -1 * speed;
+            isViewChange = true;
+            if (position.y < -360)
+                position.y = 0;
+        } else if (ImGui.isKeyPressed(GLFW_KEY_KP_9)) {
+            position.y += 1 * speed;
+            isViewChange = true;
+            if (position.y > 360)
+                position.y = 0;
+        }
     }
+
 }

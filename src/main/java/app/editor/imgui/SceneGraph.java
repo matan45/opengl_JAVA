@@ -43,12 +43,6 @@ public class SceneGraph implements ImguiLayer {
         }
     }
 
-    @Override
-    public void cleanUp() {
-
-    }
-
-
     private boolean doTreeNode(Entity entity, int index) {
         ImGui.pushID(index);
         if (ImGui.button("-")) {
