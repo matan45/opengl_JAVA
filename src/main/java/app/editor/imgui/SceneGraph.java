@@ -3,13 +3,14 @@ package app.editor.imgui;
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public class SceneGraph implements ImguiLayer {
-    boolean isRemove = false;
     int indexRemove = 0;
     Inspector inspector;
+    int selectionNode = -1;
 
     public SceneGraph() {
         this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
@@ -19,46 +20,46 @@ public class SceneGraph implements ImguiLayer {
     public void render() {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Scene Hierarchy")) {
-            ImGui.text("Scene Name "+ "todo scene class");
+            ImGui.text("Scene Name " + "todo scene class");
             ImGui.separator();
             int index = 0;
+            ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
             for (Entity entity : EntitySystem.getEntities()) {
                 boolean treeNodeOpen = doTreeNode(entity, index);
                 if (treeNodeOpen)
                     ImGui.treePop();
                 index++;
             }
+            ImGui.popStyleColor();
 
             if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
                 if (ImGui.menuItem("Add Game Object")) {
                     EntitySystem.addEntity(new Entity("Default Name"));
+                } else if (selectionNode != -1) {
+                    if (ImGui.menuItem("Remove Game Object")) {
+                        EntitySystem.removeEntity(indexRemove);
+                        inspector.setEntity(null);
+                        selectionNode = -1;
+                    }
                 }
                 ImGui.endPopup();
             }
         }
         ImGui.end();
 
-        if (isRemove) {
-            isRemove = false;
-            EntitySystem.removeEntity(indexRemove);
-            inspector.setEntity(null);
-        }
     }
 
     private boolean doTreeNode(Entity entity, int index) {
-        ImGui.pushID(index);
-        if (ImGui.button("-")) {
-            isRemove = true;
-            indexRemove = index;
-        }
-        if (ImGui.isItemHovered())
-            ImGui.setTooltip("Remove Component");
-        ImGui.sameLine();
-        boolean treeNodeOpen = ImGui.treeNodeEx(entity.getName(), ImGuiTreeNodeFlags.FramePadding);
+        boolean treeNodeOpen;
+        if (index == selectionNode)
+            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.Selected, entity.getName());
+        else
+            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow, entity.getName());
 
-        if (ImGui.isItemActive())
+        if (ImGui.isItemActive()) {
             inspector.setEntity(entity);
-        ImGui.popID();
+            selectionNode = index;
+        }
 
         return treeNodeOpen;
     }
