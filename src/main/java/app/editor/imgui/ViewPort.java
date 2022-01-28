@@ -68,6 +68,10 @@ public class ViewPort implements ImguiLayer {
     };
     Textures textures;
 
+    float xLastPos;
+    float yLastPos;
+    boolean isFirst = false;
+
     public ViewPort() {
         preEntity = new Entity();
         inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
@@ -147,7 +151,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setOrthographic(false);
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
-            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80);
+            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
             ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
 
@@ -211,25 +215,31 @@ public class ViewPort implements ImguiLayer {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
             cameraMovement(position, rotation);
-            if (ImGui.isKeyPressed(GLFW_KEY_LEFT)) {
-                rotation.y -= 1;
+
+            if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
+                isFirst = true;
+            if (ImGui.isMouseDown(GLFW_MOUSE_BUTTON_2)) {
+                ImVec2 mousePos = ImGui.getMousePos();
+                if (isFirst) {
+                    xLastPos = mousePos.x;
+                    yLastPos = mousePos.y;
+                    isFirst = false;
+                }
+                float xOffset = mousePos.x - xLastPos;
+                float yOffset = mousePos.y - yLastPos;
+                rotation.y += xOffset * 0.1;
+                rotation.x += yOffset * 0.1;
+
+                if (rotation.y > 89.0f)
+                    rotation.y = 89.0f;
+                if (rotation.y < -89.0f)
+                    rotation.y = -89.0f;
+                xLastPos = mousePos.x;
+                yLastPos = mousePos.y;
+
                 isViewChange = true;
-                if (rotation.y < -360)
-                    rotation.y = 0;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_RIGHT)) {
-                rotation.y += 1;
-                isViewChange = true;
-                if (rotation.y > 360)
-                    rotation.y = 0;
             }
-            float wheel = ImGui.getIO().getMouseWheel();
-            if (wheel > 0) {
-                isViewChange = true;
-                rotation.x += 10.0f;
-            } else if (wheel < 0) {
-                isViewChange = true;
-                rotation.x -= 10.0f;
-            }
+
             if (isViewChange) {
                 inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
                 isViewChange = false;
