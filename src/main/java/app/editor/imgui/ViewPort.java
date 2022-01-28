@@ -12,6 +12,7 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiMouseCursor;
 import imgui.flag.ImGuiWindowFlags;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -219,6 +220,7 @@ public class ViewPort implements ImguiLayer {
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;
             if (ImGui.isMouseDown(GLFW_MOUSE_BUTTON_2)) {
+                ImGui.setMouseCursor(ImGuiMouseCursor.None);
                 ImVec2 mousePos = ImGui.getMousePos();
                 if (isFirst) {
                     xLastPos = mousePos.x;

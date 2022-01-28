@@ -7,8 +7,9 @@ import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -18,9 +19,8 @@ public abstract class ShaderProgram {
     Set<Integer> shadersID = new HashSet<>();
     static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
-    protected ShaderProgram(ShaderModel[] shaderModels) {
-        for (ShaderModel shaderModel : shaderModels)
-            shadersID.add(loadShader(shaderModel.shaderPath(), shaderModel.type().getValue()));
+    protected ShaderProgram(Path path) {
+        loadShader(path);
 
         programID = glCreateProgram();
         for (int id : shadersID)
@@ -51,7 +51,7 @@ public abstract class ShaderProgram {
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
 
-    protected void load4DVector(int location, float x,float y,float z,float w) {
+    protected void load4DVector(int location, float x, float y, float z, float w) {
         glUniform4f(location, x, y, z, w);
     }
 
@@ -84,18 +84,22 @@ public abstract class ShaderProgram {
         glUseProgram(0);
     }
 
-    private int loadShader(String file, int type) {
-        StringBuilder shaderSource = ResourceManager.readShader(Paths.get(file));
+    private void loadShader(Path file) {
+        List<ShaderModel> shaderModels = ResourceManager.readShader(file);
 
-        int shaderID = glCreateShader(type);
-        glShaderSource(shaderID, shaderSource);
-        glCompileShader(shaderID);
-        if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-            System.out.println(glGetShaderInfoLog(shaderID, 500));
-            System.err.println("Could not compile shader");
-            System.exit(-1);
+        for (ShaderModel tempShader : shaderModels) {
+            int shaderID = glCreateShader(tempShader.type().getValue());
+            glShaderSource(shaderID, tempShader.shaderSource());
+            glCompileShader(shaderID);
+            if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
+                System.out.println(glGetShaderInfoLog(shaderID, 500));
+                System.err.println("Could not compile shader");
+                System.exit(-1);
+            }
+            shadersID.add(shaderID);
         }
-        return shaderID;
+
+
     }
 
     public void cleanUp() {
