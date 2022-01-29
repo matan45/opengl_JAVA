@@ -2,10 +2,13 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
+import app.ecs.components.Component;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
+
+import java.util.List;
 
 public class SceneGraph implements ImguiLayer {
     int indexRemove = 0;
@@ -22,13 +25,12 @@ public class SceneGraph implements ImguiLayer {
         if (ImGui.begin("Scene Hierarchy")) {
             ImGui.text("Scene Name " + "todo scene class");
             ImGui.separator();
-            int index = 0;
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
-            for (Entity entity : EntitySystem.getEntities()) {
-                boolean treeNodeOpen = doTreeNode(entity, index);
+            List<Entity> componentList = EntitySystem.getEntities();
+            for (int index = 0; index < componentList.size(); index++) {
+                boolean treeNodeOpen = doTreeNode(componentList.get(index), index);
                 if (treeNodeOpen)
                     ImGui.treePop();
-                index++;
             }
             ImGui.popStyleColor();
 

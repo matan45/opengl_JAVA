@@ -17,9 +17,9 @@ public class OLTransform {
     }
 
     public OLTransform() {
-        this.position = new OLVector3f();
-        this.scale = new OLVector3f(1.0f, 1.0f, 1.0f);
-        this.rotation = new OLVector3f();
+        position = new OLVector3f();
+        scale = new OLVector3f(1.0f, 1.0f, 1.0f);
+        rotation = new OLVector3f();
         modelMatrix = new OLMatrix4f();
     }
 
@@ -53,7 +53,7 @@ public class OLTransform {
         modelMatrix.rotate((float) Math.toRadians(rotation.x), OLVector3f.Xaxis);
         modelMatrix.rotate((float) Math.toRadians(rotation.y), OLVector3f.Yaxis);
         modelMatrix.rotate((float) Math.toRadians(rotation.z), OLVector3f.Zaxis);
-        modelMatrix.scale(scale);
+        modelMatrix.scale(scale.absolute());
         return modelMatrix;
     }
 
