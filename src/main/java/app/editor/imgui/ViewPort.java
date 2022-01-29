@@ -243,28 +243,28 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation) {
-        if (ImGui.isKeyPressed(GLFW_KEY_W)) {
+        if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_A)) {
+        } else if (ImGui.isKeyDown(GLFW_KEY_A)) {
             position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_D)) {
+        } else if (ImGui.isKeyDown(GLFW_KEY_D)) {
             position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_S)) {
+        } else if (ImGui.isKeyDown(GLFW_KEY_S)) {
             position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
             isViewChange = true;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_E)) {
+        } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed;
             isViewChange = true;
             if (position.y < -360)
                 position.y = 0;
-        } else if (ImGui.isKeyPressed(GLFW_KEY_Q)) {
+        } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
             position.y += 1 * speed;
             isViewChange = true;
             if (position.y > 360)
