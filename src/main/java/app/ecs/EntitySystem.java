@@ -4,24 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntitySystem {
-    static List<Entity> entityArray = new ArrayList<>();
+    static List<Entity> entitiesArray = new ArrayList<>();
 
     private EntitySystem() {
     }
 
-    public static List<Entity> getEntities() {
-        return entityArray;
+    public static List<Entity> getEntitiesArray() {
+        return entitiesArray;
     }
 
     public static void addEntity(Entity entity) {
-        entityArray.add(entity);
+        entitiesArray.add(entity);
     }
 
     public static void removeEntity(int index) {
-        entityArray.remove(index);
+        entitiesArray.remove(index);
     }
 
-    public static void updateEntity(float dt) {
-        entityArray.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+    public static List<Entity> getEntitiesByName(String name) {
+        return entitiesArray.stream().filter(e -> e.getName().equals(name)).toList();
+    }
+
+    public static void updateEntities(float dt) {
+        entitiesArray.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
     }
 }

@@ -10,12 +10,14 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 
 public final class TransformComponent extends CommonComponent {
-    OLTransform olTransform = new OLTransform();
-    OLVector2f buttonSize = new OLVector2f();
+    OLTransform olTransform;
+    OLVector2f buttonSize;
     ImString entityName;
 
-    public TransformComponent(Entity ownerEntity) {
+    public TransformComponent(Entity ownerEntity, OLTransform olTransform) {
         super(ownerEntity);
+        this.olTransform = olTransform;
+        buttonSize = new OLVector2f();
         entityName = new ImString(ownerEntity.getName(), 256);
     }
 

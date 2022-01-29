@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
+import app.math.components.OLTransform;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiPopupFlags;
@@ -25,7 +26,7 @@ public class SceneGraph implements ImguiLayer {
             ImGui.text("Scene Name " + "todo scene class");
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
-            List<Entity> componentList = EntitySystem.getEntities();
+            List<Entity> componentList = EntitySystem.getEntitiesArray();
             for (int index = 0; index < componentList.size(); index++) {
                 boolean treeNodeOpen = doTreeNode(componentList.get(index), index);
                 if (treeNodeOpen)
@@ -35,7 +36,7 @@ public class SceneGraph implements ImguiLayer {
 
             if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
                 if (ImGui.menuItem("Add Game Object")) {
-                    EntitySystem.addEntity(new Entity("Default Name"));
+                    EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
                 } else if (selectionNode != -1) {
                     if (ImGui.menuItem("Remove Game Object")) {
                         EntitySystem.removeEntity(indexRemove);

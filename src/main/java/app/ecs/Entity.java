@@ -2,6 +2,7 @@ package app.ecs;
 
 import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
+import app.math.components.OLTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,10 @@ public class Entity {
     List<Component> components;
     boolean isActive;
 
-    public Entity(String name) {
+    public Entity(String name, OLTransform olTransform) {
         this.name = name;
         components = new ArrayList<>();
-        components.add(new TransformComponent(this));
+        components.add(new TransformComponent(this, olTransform));
     }
 
     public Entity() {
