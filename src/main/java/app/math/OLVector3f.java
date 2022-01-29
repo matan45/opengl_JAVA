@@ -10,9 +10,15 @@ public class OLVector3f {
     public static final OLVector3f Zaxis = new OLVector3f(0, 0, 1);
 
     public OLVector3f() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+
+    public OLVector3f(OLVector3f other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
     }
 
     public OLVector3f(float x, float y, float z) {
@@ -21,124 +27,113 @@ public class OLVector3f {
         this.z = z;
     }
 
-    public void setOLVector3f(OLVector3f v) {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-    }
-
-    public OLVector3f getOLVector3f() {
+    public OLVector3f setOLVector3f(OLVector3f v) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
         return this;
     }
 
     public OLVector3f sub(OLVector3f v) {
-        this.x = x - v.x;
-        this.y = y - v.y;
-        this.z = z - v.z;
+        x -= v.x;
+        y -= v.y;
+        z -= v.z;
         return this;
     }
 
     public OLVector3f add(OLVector3f v) {
-        this.x = this.x + v.x;
-        this.y = this.y + v.y;
-        this.z = this.z + v.z;
+        x += v.x;
+        y += v.y;
+        z += v.z;
         return this;
     }
 
-    public OLVector3f mulAdd(OLVector3f a, OLVector3f b) {
-        this.x = Math.fma(x, a.x, b.x);
-        this.y = Math.fma(y, a.y, b.y);
-        this.z = Math.fma(z, a.z, b.z);
-        return this;
-    }
 
     public OLVector3f mul(OLVector3f v) {
-        this.x = x * v.x;
-        this.y = y * v.y;
-        this.z = z * v.z;
+        x *= v.x;
+        y *= v.y;
+        z *= v.z;
         return this;
     }
 
     public OLVector3f mul(float scalar) {
-        x = x * scalar;
-        y = y * scalar;
-        z = z * scalar;
-        return this;
-    }
-
-    public OLVector3f div(OLVector3f v) {
-        this.x = this.x / v.x;
-        this.y = this.y / v.y;
-        this.z = this.z / v.z;
+        x += scalar;
+        y += scalar;
+        z += scalar;
         return this;
     }
 
     public float lengthSquared() {
-        return Math.fma(x, x, Math.fma(y, y, z * z));
+        return x * x + y * y + z * z;
     }
 
     public float length() {
-        return (float) Math.sqrt(Math.fma(x, x, Math.fma(y, y, z * z)));
+        return (float) Math.sqrt(lengthSquared());
     }
 
     public OLVector3f normalize() {
-        float scalar = MathUtil.invsqrt(Math.fma(x, x, Math.fma(y, y, z * z)));
-        this.x = this.x * scalar;
-        this.y = this.y * scalar;
-        this.z = this.z * scalar;
+        float scalar = length();
+        x /= scalar;
+        y /= scalar;
+        z /= scalar;
         return this;
     }
 
     public OLVector3f cross(OLVector3f v) {
-        float rx = Math.fma(y, v.z, -z * v.y);
-        float ry = Math.fma(z, v.x, -x * v.z);
-        float rz = Math.fma(x, v.y, -y * v.x);
-        this.x = rx;
-        this.y = ry;
-        this.z = rz;
+        float rx = y * v.z - z * v.y;
+        float ry = x * v.z - z * v.x;
+        float rz = x * v.y - y * v.x;
+        x = rx;
+        y = ry;
+        z = rz;
+        return this;
+    }
+
+    public OLVector3f negate() {
+        x = -x;
+        y = -y;
+        z = -z;
         return this;
     }
 
     public float distance(OLVector3f v) {
-        float dx = this.x - v.x;
-        float dy = this.y - v.y;
-        float dz = this.z - v.z;
+        float dx = x - v.x;
+        float dy = y - v.y;
+        float dz = z - v.z;
         return (float) Math.sqrt(Math.fma(dx, dx, Math.fma(dy, dy, dz * dz)));
     }
 
     public float distanceSquared(OLVector3f v) {
-        float dx = this.x - v.x;
-        float dy = this.y - v.y;
-        float dz = this.z - v.z;
-        return Math.fma(dx, dx, Math.fma(dy, dy, dz * dz));
+        float dx = x - v.x;
+        float dy = y - v.y;
+        float dz = z - v.z;
+        return dx * dx + dy * dy + dz * dz;
     }
 
     public OLVector3f min(OLVector3f v) {
-        float x = this.x, y = this.y, z = this.z;
-        this.x = Math.min(x, v.x);
-        this.y = Math.min(y, v.y);
-        this.z = Math.min(z, v.z);
+        x = Math.min(x, v.x);
+        y = Math.min(y, v.y);
+        z = Math.min(z, v.z);
         return this;
     }
 
 
     public OLVector3f max(OLVector3f v) {
-        float x = this.x, y = this.y, z = this.z;
-        this.x = Math.max(x, v.x);
-        this.y = Math.max(y, v.y);
-        this.z = Math.max(z, v.z);
+        x = Math.max(x, v.x);
+        y = Math.max(y, v.y);
+        z = Math.max(z, v.z);
         return this;
     }
 
     public OLVector3f absolute() {
-        this.x = Math.abs(this.x);
-        this.y = Math.abs(this.y);
-        this.z = Math.abs(this.z);
+        x = Math.abs(x);
+        y = Math.abs(y);
+        z = Math.abs(z);
         return this;
     }
 
     public float dot(OLVector3f v) {
-        return Math.fma(this.x, v.x, Math.fma(this.y, v.y, this.z * v.z));
+        return x * v.x + y * v.y + z * v.z;
     }
 
     @Override
