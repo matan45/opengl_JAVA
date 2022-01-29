@@ -220,6 +220,77 @@ public class OLMatrix4f {
         m23 *= scale.z;
     }
 
+    /*
+     * @param eye
+     *            the position of the camera
+     * @param center
+     *            the point in space to look at
+     * @param up
+     *            the direction of 'up'
+     */
+    public OLMatrix4f lookAt(OLVector3f eye, OLVector3f center, OLVector3f up) {
+        // Compute direction from position to lookAt
+        float dirX, dirY, dirZ;
+        dirX = eye.x - center.x;
+        dirY = eye.y - center.y;
+        dirZ = eye.z - center.z;
+        // Normalize direction
+        float invDirLength = MathUtil.invsqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+        dirX *= invDirLength;
+        dirY *= invDirLength;
+        dirZ *= invDirLength;
+        // left = up x direction
+        float leftX, leftY, leftZ;
+        leftX = up.y * dirZ - up.z * dirY;
+        leftY = up.z * dirX - up.x * dirZ;
+        leftZ = up.x * dirY - up.y * dirX;
+        // normalize left
+        float invLeftLength = MathUtil.invsqrt(leftX * leftX + leftY * leftY + leftZ * leftZ);
+        leftX *= invLeftLength;
+        leftY *= invLeftLength;
+        leftZ *= invLeftLength;
+        // up = direction x left
+        float upnX = dirY * leftZ - dirZ * leftY;
+        float upnY = dirZ * leftX - dirX * leftZ;
+        float upnZ = dirX * leftY - dirY * leftX;
+
+        // calculate right matrix elements
+        float rm30 = -(leftX * eye.x + leftY * eye.y + leftZ * eye.z);
+        float rm31 = -(upnX * eye.x + upnY * eye.y + upnZ * eye.z);
+        float rm32 = -(dirX * eye.x + dirY * eye.y + dirZ * eye.z);
+        // introduce temporaries for dependent results
+        float nm00 = m00 * leftX + m10 * upnX + m20 * dirX;
+        float nm01 = m01 * leftX + m11 * upnX + m21 * dirX;
+        float nm02 = m02 * leftX + m12 * upnX + m22 * dirX;
+        float nm03 = m03 * leftX + m13 * upnX + m23 * dirX;
+        float nm10 = m00 * leftY + m10 * upnY + m20 * dirY;
+        float nm11 = m01 * leftY + m11 * upnY + m21 * dirY;
+        float nm12 = m02 * leftY + m12 * upnY + m22 * dirY;
+        float nm13 = m03 * leftY + m13 * upnY + m23 * dirY;
+
+        m30 = m00 * rm30 + m10 * rm31 + m20 * rm32 + m30;
+        m31 = m01 * rm30 + m11 * rm31 + m21 * rm32 + m31;
+        m32 = m02 * rm30 + m12 * rm31 + m22 * rm32 + m32;
+        m33 = m03 * rm30 + m13 * rm31 + m23 * rm32 + m33;
+        m20 = m00 * leftZ + m10 * upnZ + m20 * dirZ;
+        m21 = m01 * leftZ + m11 * upnZ + m21 * dirZ;
+        m22 = m02 * leftZ + m12 * upnZ + m22 * dirZ;
+        m23 = m03 * leftZ + m13 * upnZ + m23 * dirZ;
+        m00 = nm00;
+        m01 = nm01;
+        m02 = nm02;
+        m03 = nm03;
+        m10 = nm10;
+        m11 = nm11;
+        m12 = nm12;
+        m13 = nm13;
+
+        // perform optimized matrix multiplication
+        // compute last column first, because others do not depend on it
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return "OLMatrix4f{" +

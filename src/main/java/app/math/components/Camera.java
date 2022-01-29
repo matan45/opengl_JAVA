@@ -10,14 +10,11 @@ public class Camera {
     OLMatrix4f viewMatrix;
     OLMatrix4f projectionMatrix;
 
-    OLVector3f lookAtTemp;
-
     public Camera() {
         position = new OLVector3f(0.5f, 7f, 13);
         rotation = new OLVector3f(30, 0, 0);
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
-        lookAtTemp = new OLVector3f();
     }
 
     public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
@@ -69,44 +66,6 @@ public class Camera {
         return viewMatrix;
     }
 
-    public OLMatrix4f lookAt(OLVector3f eye) {
-        OLVector3f x;
-        OLVector3f y;
-        OLVector3f z;
-
-        lookAtTemp.x = eye.x - position.x;
-        lookAtTemp.y = eye.y - position.y;
-        lookAtTemp.z = eye.z - position.z;
-
-        z = lookAtTemp.normalize();
-        y = OLVector3f.Yaxis;
-
-        lookAtTemp = y.cross(z);
-        x = lookAtTemp.normalize();
-
-        lookAtTemp = z.cross(x);
-        y = lookAtTemp.normalize();
-
-        viewMatrix.m00 = x.x;
-        viewMatrix.m01 = y.x;
-        viewMatrix.m02 = z.x;
-        viewMatrix.m03 = 0.0f;
-        viewMatrix.m10 = x.y;
-        viewMatrix.m11 = y.y;
-        viewMatrix.m12 = z.y;
-        viewMatrix.m13 = 0.0f;
-        viewMatrix.m20 = x.z;
-        viewMatrix.m21 = y.z;
-        viewMatrix.m22 = z.z;
-        viewMatrix.m23 = 0.0f;
-        viewMatrix.m30 = -x.dot(eye);
-        viewMatrix.m31 = -y.dot(eye);
-        viewMatrix.m32 = -z.dot(eye);
-        viewMatrix.m33 = 1.0f;
-
-        return viewMatrix;
-    }
-
     public OLVector3f getPosition() {
         return position;
     }
@@ -121,5 +80,13 @@ public class Camera {
 
     public OLMatrix4f getProjectionMatrix() {
         return projectionMatrix;
+    }
+
+    public void setViewMatrix(OLMatrix4f viewMatrix) {
+        this.viewMatrix = viewMatrix;
+    }
+
+    public void setProjectionMatrix(OLMatrix4f projectionMatrix) {
+        this.projectionMatrix = projectionMatrix;
     }
 }
