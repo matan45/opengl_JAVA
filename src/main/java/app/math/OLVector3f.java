@@ -34,6 +34,13 @@ public class OLVector3f {
         return this;
     }
 
+    public OLVector3f setOLVector3f(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        return this;
+    }
+
     public OLVector3f sub(OLVector3f v) {
         x -= v.x;
         y -= v.y;

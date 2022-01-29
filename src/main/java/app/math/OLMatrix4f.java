@@ -160,6 +160,14 @@ public class OLMatrix4f {
         m33 += m03 * translate.x + m13 * translate.y + m23 * translate.z;
     }
 
+    public void translate(OLVector2f translate) {
+
+        m30 += m00 * translate.x + m10 * translate.y;
+        m31 += m01 * translate.x + m11 * translate.y;
+        m32 += m02 * translate.x + m12 * translate.y;
+        m33 += m03 * translate.x + m13 * translate.y;
+    }
+
     public void rotate(float angle, OLVector3f axis) {
         float c = (float) Math.cos(angle);
         float s = (float) Math.sin(angle);
@@ -218,6 +226,17 @@ public class OLMatrix4f {
         m21 *= scale.z;
         m22 *= scale.z;
         m23 *= scale.z;
+    }
+
+    public void scale(OLVector2f scale) {
+        m00 *= scale.x;
+        m01 *= scale.x;
+        m02 *= scale.x;
+        m03 *= scale.x;
+        m10 *= scale.y;
+        m11 *= scale.y;
+        m12 *= scale.y;
+        m13 *= scale.y;
     }
 
     /*

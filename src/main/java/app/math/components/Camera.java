@@ -59,9 +59,8 @@ public class Camera {
         viewMatrix.rotate((float) Math.toRadians(rotation.y), OLVector3f.Yaxis);
         //Roll
         viewMatrix.rotate((float) Math.toRadians(rotation.z), OLVector3f.Zaxis);
-        negativeCameraPosition.x = -position.x;
-        negativeCameraPosition.y = -position.y;
-        negativeCameraPosition.z = -position.z;
+
+        negativeCameraPosition.setOLVector3f(-position.x, -position.y, -position.z);
         viewMatrix.translate(negativeCameraPosition);
         return viewMatrix;
     }

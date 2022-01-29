@@ -19,6 +19,12 @@ public class OLVector2f {
         this.y = y;
     }
 
+    public OLVector2f setOLVector2f(float x, float y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     public OLVector2f setOLVector2f(OLVector2f v) {
         x = v.x;
         y = v.y;

@@ -86,9 +86,7 @@ public final class TransformComponent extends CommonComponent {
         ImGui.dragFloat("##Z", ZValue, 0.1f);
         ImGui.popItemWidth();
 
-        olVector3f.x = XValue[0];
-        olVector3f.y = YValue[0];
-        olVector3f.z = ZValue[0];
+        olVector3f.setOLVector3f(XValue[0], YValue[0], ZValue[0]);
 
         ImGui.popStyleVar();
         ImGui.popID();

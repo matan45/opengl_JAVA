@@ -181,17 +181,10 @@ public class ViewPort implements ImguiLayer {
                     OLVector3f rotation = component.getOlTransform().getRotation();
                     OLVector3f scale = component.getOlTransform().getScale();
 
-                    position.x = inputVectorTranslation[0];
-                    position.y = inputVectorTranslation[1];
-                    position.z = inputVectorTranslation[2];
+                    position.setOLVector3f(inputVectorTranslation[0], inputVectorTranslation[1], inputVectorTranslation[2]);
+                    rotation.setOLVector3f(inputVectorRotation[0], inputVectorRotation[1], inputVectorRotation[2]);
+                    scale.setOLVector3f(inputVectorScale[0], inputVectorScale[1], inputVectorScale[2]);
 
-                    scale.x = inputVectorScale[0];
-                    scale.y = inputVectorScale[1];
-                    scale.z = inputVectorScale[2];
-
-                    rotation.x = inputVectorRotation[0];
-                    rotation.y = inputVectorRotation[1];
-                    rotation.z = inputVectorRotation[2];
                 } else
                     objectMatrices = component.getOlTransform().getModelMatrix().getAsArray();
             }
