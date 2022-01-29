@@ -1,8 +1,11 @@
 package app.utilities.resource;
 
+import app.renderer.shaders.ShaderModel;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.util.List;
 
 public class ResourceManager {
     static ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
@@ -12,7 +15,7 @@ public class ResourceManager {
     private ResourceManager() {
     }
 
-    public static StringBuilder readShader(Path path) {
+    public static List<ShaderModel> readShader(Path path) {
         return resourceShader.readShaderFile(path);
     }
 

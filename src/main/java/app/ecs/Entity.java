@@ -1,5 +1,6 @@
 package app.ecs;
 
+import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class Entity {
     public Entity(String name) {
         this.name = name;
         components = new ArrayList<>();
-        components.add(new TransformComponent());
+        components.add(new TransformComponent(this));
     }
 
     public Entity() {

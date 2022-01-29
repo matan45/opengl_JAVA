@@ -24,6 +24,8 @@ public class MainImgui implements ImguiLayer {
     int width;
     int height;
 
+    static final String DOCK_SPACE = "Dockspace";
+
     public MainImgui(String title, int width, int height) {
         this.title = title;
         this.width = width;
@@ -41,7 +43,7 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.begin(title, closeWindow, windowFlags)) {
             ImGui.popStyleVar();
 
-            ImGui.dockSpace(ImGui.getID("Dockspace"), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
+            ImGui.dockSpace(ImGui.getID(DOCK_SPACE), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
 
             menuBar();
 
@@ -57,9 +59,9 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                    LogInfo.println("not implemented");
-                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
                     openFolder();
+                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
+                    openFile();
                 } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
                     save();
                 } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
@@ -67,9 +69,11 @@ public class MainImgui implements ImguiLayer {
                 }
                 ImGui.endMenu();
             }
-            if (ImGui.beginMenu(FontAwesomeIcons.LayerGroup + " Layout")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Redo + " Rest", null, false)) {
+            if (ImGui.beginMenu(FontAwesomeIcons.Wrench + " Settings")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Camera + " Editor Camera", null, false)) {
                     LogInfo.println("not implemented");
+                } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
+                    LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
             }
@@ -91,6 +95,16 @@ public class MainImgui implements ImguiLayer {
 
         try {
             checkResult(NFD_PickFolder((ByteBuffer) null, outPath), outPath);
+        } finally {
+            memFree(outPath);
+        }
+    }
+
+    private void openFile() {
+        PointerBuffer outPath = memAllocPointer(1);
+
+        try {
+            checkResult(NFD_OpenDialog("png,jpg;pdf", null, outPath), outPath);
         } finally {
             memFree(outPath);
         }

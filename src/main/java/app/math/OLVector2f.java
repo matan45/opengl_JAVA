@@ -5,8 +5,13 @@ public class OLVector2f {
     public float y;
 
     public OLVector2f() {
-        this.x = 0;
-        this.y = 0;
+        x = 0;
+        y = 0;
+    }
+
+    public OLVector2f(OLVector2f other) {
+        this.x = other.x;
+        this.y = other.y;
     }
 
     public OLVector2f(float x, float y) {
@@ -14,18 +19,28 @@ public class OLVector2f {
         this.y = y;
     }
 
-    public void setOLVector2f(OLVector2f v) {
-        this.x = v.x;
-        this.y = v.y;
-    }
-
-    public OLVector2f getOLVector2f() {
+    public OLVector2f setOLVector2f(float x, float y) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 
+    public OLVector2f setOLVector2f(OLVector2f v) {
+        x = v.x;
+        y = v.y;
+        return this;
+    }
+
+    public OLVector2f negate() {
+        x = -x;
+        y = -y;
+        return this;
+    }
+
+
     public OLVector2f sub(OLVector2f v) {
-        this.x = x - v.x;
-        this.y = y - v.y;
+        x -= v.x;
+        y -= v.y;
         return this;
     }
 
@@ -37,23 +52,17 @@ public class OLVector2f {
         return x * v.x + y * v.y;
     }
 
-    public float angle(OLVector2f v) {
-        float dot = x * v.x + y * v.y;
-        float det = x * v.y - y * v.x;
-        return (float) Math.atan2(det, dot);
-    }
-
     public float lengthSquared() {
         return x * x + y * y;
     }
 
     public float length() {
-        return (float) Math.sqrt(x * x + y * y);
+        return (float) Math.sqrt(lengthSquared());
     }
 
     public float distance(OLVector2f v) {
-        float dx = this.x - v.x;
-        float dy = this.y - v.y;
+        float dx = x - v.x;
+        float dy = y - v.y;
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
@@ -64,34 +73,22 @@ public class OLVector2f {
     }
 
     public OLVector2f normalize() {
-        float invLength = MathUtil.invsqrt(x * x + y * y);
+        float invLength = length();
         this.x = x * invLength;
         this.y = y * invLength;
         return this;
     }
 
+
     public OLVector2f add(OLVector2f v) {
-        this.x = x + v.x;
-        this.y = y + v.y;
+        x += v.x;
+        y += v.y;
         return this;
     }
 
     public OLVector2f mul(float scalar) {
-        this.x = x * scalar;
-        this.y = y * scalar;
-        return this;
-    }
-
-    public OLVector2f div(OLVector2f v) {
-        this.x = this.x / v.x;
-        this.y = this.y / v.y;
-        return this;
-    }
-
-    public OLVector2f div(float scalar) {
-        float inv = 1.0f / scalar;
-        this.x = this.x * inv;
-        this.y = this.y * inv;
+        x *= scalar;
+        y *= scalar;
         return this;
     }
 

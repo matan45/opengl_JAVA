@@ -1,7 +1,5 @@
 package app.editor.imgui;
 
-import app.ecs.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 

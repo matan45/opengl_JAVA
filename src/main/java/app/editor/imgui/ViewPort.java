@@ -12,6 +12,7 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiMouseCursor;
 import imgui.flag.ImGuiWindowFlags;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -67,6 +68,10 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 0.f, 1.f
     };
     Textures textures;
+
+    float xLastPos;
+    float yLastPos;
+    boolean isFirst = false;
 
     public ViewPort() {
         preEntity = new Entity();
@@ -147,7 +152,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setOrthographic(false);
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
-            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80);
+            ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
             ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
 
@@ -176,17 +181,10 @@ public class ViewPort implements ImguiLayer {
                     OLVector3f rotation = component.getOlTransform().getRotation();
                     OLVector3f scale = component.getOlTransform().getScale();
 
-                    position.x = inputVectorTranslation[0];
-                    position.y = inputVectorTranslation[1];
-                    position.z = inputVectorTranslation[2];
+                    position.setOLVector3f(inputVectorTranslation[0], inputVectorTranslation[1], inputVectorTranslation[2]);
+                    rotation.setOLVector3f(inputVectorRotation[0], inputVectorRotation[1], inputVectorRotation[2]);
+                    scale.setOLVector3f(inputVectorScale[0], inputVectorScale[1], inputVectorScale[2]);
 
-                    scale.x = inputVectorScale[0];
-                    scale.y = inputVectorScale[1];
-                    scale.z = inputVectorScale[2];
-
-                    rotation.x = inputVectorRotation[0];
-                    rotation.y = inputVectorRotation[1];
-                    rotation.z = inputVectorRotation[2];
                 } else
                     objectMatrices = component.getOlTransform().getModelMatrix().getAsArray();
             }
@@ -211,25 +209,32 @@ public class ViewPort implements ImguiLayer {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
             cameraMovement(position, rotation);
-            if (ImGui.isKeyPressed(GLFW_KEY_LEFT)) {
-                rotation.y -= 1;
+
+            if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
+                isFirst = true;
+            if (ImGui.isMouseDown(GLFW_MOUSE_BUTTON_2)) {
+                ImGui.setMouseCursor(ImGuiMouseCursor.None);
+                ImVec2 mousePos = ImGui.getMousePos();
+                if (isFirst) {
+                    xLastPos = mousePos.x;
+                    yLastPos = mousePos.y;
+                    isFirst = false;
+                }
+                float xOffset = mousePos.x - xLastPos;
+                float yOffset = mousePos.y - yLastPos;
+                rotation.y += xOffset * 0.1;
+                rotation.x += yOffset * 0.1;
+
+                if (rotation.y > 89.0f)
+                    rotation.y = 89.0f;
+                if (rotation.y < -89.0f)
+                    rotation.y = -89.0f;
+                xLastPos = mousePos.x;
+                yLastPos = mousePos.y;
+
                 isViewChange = true;
-                if (rotation.y < -360)
-                    rotation.y = 0;
-            } else if (ImGui.isKeyPressed(GLFW_KEY_RIGHT)) {
-                rotation.y += 1;
-                isViewChange = true;
-                if (rotation.y > 360)
-                    rotation.y = 0;
             }
-            float wheel = ImGui.getIO().getMouseWheel();
-            if (wheel > 0) {
-                isViewChange = true;
-                rotation.x += 10.0f;
-            } else if (wheel < 0) {
-                isViewChange = true;
-                rotation.x -= 10.0f;
-            }
+
             if (isViewChange) {
                 inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
                 isViewChange = false;

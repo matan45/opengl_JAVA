@@ -1,21 +1,24 @@
 package app.ecs.components;
 
-import app.ecs.Component;
+import app.ecs.Entity;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
+import imgui.type.ImString;
 
-public class TransformComponent implements Component {
+public final class TransformComponent extends CommonComponent {
     OLTransform olTransform = new OLTransform();
     OLVector2f buttonSize = new OLVector2f();
+    ImString entityName;
 
-    @Override
-    public void update(float dt) {
-
+    public TransformComponent(Entity ownerEntity) {
+        super(ownerEntity);
+        entityName = new ImString(ownerEntity.getName(), 256);
     }
+
 
     public OLTransform getOlTransform() {
         return olTransform;
@@ -23,6 +26,10 @@ public class TransformComponent implements Component {
 
     @Override
     public void imguiDraw() {
+        ImGui.text("Entity Name");
+        if (ImGui.inputText("##", entityName))
+            ownerEntity.setName(entityName.get());
+
         drawVector3("Position", olTransform.getPosition(), 0.0f);
         drawVector3("Rotation", olTransform.getRotation(), 0.0f);
         drawVector3("Scale", olTransform.getScale(), 1.0f);
@@ -49,8 +56,8 @@ public class TransformComponent implements Component {
             olVector3f.x = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] XValue = {olVector3f.x};
-        ImGui.dragFloat("##X", XValue, 0.1f);
+        float[] xValue = {olVector3f.x};
+        ImGui.dragFloat("##X", xValue, 0.1f);
         ImGui.popItemWidth();
 
         ImGui.sameLine();
@@ -62,8 +69,8 @@ public class TransformComponent implements Component {
             olVector3f.y = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] YValue = {olVector3f.y};
-        ImGui.dragFloat("##Y", YValue, 0.1f);
+        float[] yValue = {olVector3f.y};
+        ImGui.dragFloat("##Y", yValue, 0.1f);
         ImGui.popItemWidth();
 
         ImGui.sameLine();
@@ -75,13 +82,11 @@ public class TransformComponent implements Component {
             olVector3f.z = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] ZValue = {olVector3f.z};
-        ImGui.dragFloat("##Z", ZValue, 0.1f);
+        float[] zValue = {olVector3f.z};
+        ImGui.dragFloat("##Z", zValue, 0.1f);
         ImGui.popItemWidth();
 
-        olVector3f.x = XValue[0];
-        olVector3f.y = YValue[0];
-        olVector3f.z = ZValue[0];
+        olVector3f.setOLVector3f(xValue[0], yValue[0], zValue[0]);
 
         ImGui.popStyleVar();
         ImGui.popID();

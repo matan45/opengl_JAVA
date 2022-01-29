@@ -1,11 +1,14 @@
 package app.math.components;
 
+import app.math.OLMatrix4f;
 import app.math.OLVector2f;
+import app.math.OLVector3f;
 
 public class OLTransform2D {
     OLVector2f position;
     OLVector2f scale;
     OLVector2f rotation;
+    OLMatrix4f modelMatrix;
 
     public OLTransform2D(OLVector2f position, OLVector2f scale, OLVector2f rotation) {
         this.position = position;
@@ -43,5 +46,12 @@ public class OLTransform2D {
         this.rotation = rotation;
     }
 
-
+    public OLMatrix4f getModelMatrix() {
+        modelMatrix.identity();
+        modelMatrix.translate(position);
+        modelMatrix.rotate((float) Math.toRadians(rotation.x), OLVector3f.Xaxis);
+        modelMatrix.rotate((float) Math.toRadians(rotation.y), OLVector3f.Yaxis);
+        modelMatrix.scale(scale.absolute());
+        return modelMatrix;
+    }
 }
