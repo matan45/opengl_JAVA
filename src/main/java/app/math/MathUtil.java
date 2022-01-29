@@ -3,7 +3,7 @@ package app.math;
 public class MathUtil {
     public static final float epsilon = 1.e-8f;
 
-    public static float invsqrt(float r) {
+    public static float inverseSqrt(float r) {
         return 1.0f / (float) java.lang.Math.sqrt(r);
     }
 

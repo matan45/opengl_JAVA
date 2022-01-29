@@ -24,6 +24,8 @@ public class MainImgui implements ImguiLayer {
     int width;
     int height;
 
+    static final String DOCK_SPACE = "Dockspace";
+
     public MainImgui(String title, int width, int height) {
         this.title = title;
         this.width = width;
@@ -41,7 +43,7 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.begin(title, closeWindow, windowFlags)) {
             ImGui.popStyleVar();
 
-            ImGui.dockSpace(ImGui.getID("Dockspace"), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
+            ImGui.dockSpace(ImGui.getID(DOCK_SPACE), 0, 0, ImGuiDockNodeFlags.PassthruCentralNode);
 
             menuBar();
 

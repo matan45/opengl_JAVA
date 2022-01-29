@@ -2,7 +2,6 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
-import app.ecs.components.Component;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiPopupFlags;

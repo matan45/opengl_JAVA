@@ -56,8 +56,8 @@ public final class TransformComponent extends CommonComponent {
             olVector3f.x = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] XValue = {olVector3f.x};
-        ImGui.dragFloat("##X", XValue, 0.1f);
+        float[] xValue = {olVector3f.x};
+        ImGui.dragFloat("##X", xValue, 0.1f);
         ImGui.popItemWidth();
 
         ImGui.sameLine();
@@ -69,8 +69,8 @@ public final class TransformComponent extends CommonComponent {
             olVector3f.y = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] YValue = {olVector3f.y};
-        ImGui.dragFloat("##Y", YValue, 0.1f);
+        float[] yValue = {olVector3f.y};
+        ImGui.dragFloat("##Y", yValue, 0.1f);
         ImGui.popItemWidth();
 
         ImGui.sameLine();
@@ -82,11 +82,11 @@ public final class TransformComponent extends CommonComponent {
             olVector3f.z = resetValue;
         ImGui.popStyleColor(3);
         ImGui.sameLine();
-        float[] ZValue = {olVector3f.z};
-        ImGui.dragFloat("##Z", ZValue, 0.1f);
+        float[] zValue = {olVector3f.z};
+        ImGui.dragFloat("##Z", zValue, 0.1f);
         ImGui.popItemWidth();
 
-        olVector3f.setOLVector3f(XValue[0], YValue[0], ZValue[0]);
+        olVector3f.setOLVector3f(xValue[0], yValue[0], zValue[0]);
 
         ImGui.popStyleVar();
         ImGui.popID();

@@ -254,7 +254,7 @@ public class OLMatrix4f {
         dirY = eye.y - center.y;
         dirZ = eye.z - center.z;
         // Normalize direction
-        float invDirLength = MathUtil.invsqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+        float invDirLength = MathUtil.inverseSqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
         dirX *= invDirLength;
         dirY *= invDirLength;
         dirZ *= invDirLength;
@@ -264,7 +264,7 @@ public class OLMatrix4f {
         leftY = up.z * dirX - up.x * dirZ;
         leftZ = up.x * dirY - up.y * dirX;
         // normalize left
-        float invLeftLength = MathUtil.invsqrt(leftX * leftX + leftY * leftY + leftZ * leftZ);
+        float invLeftLength = MathUtil.inverseSqrt(leftX * leftX + leftY * leftY + leftZ * leftZ);
         leftX *= invLeftLength;
         leftY *= invLeftLength;
         leftZ *= invLeftLength;
