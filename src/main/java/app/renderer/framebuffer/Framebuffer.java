@@ -1,20 +1,29 @@
 package app.renderer.framebuffer;
 
+import app.renderer.Textures;
+
 import static org.lwjgl.opengl.GL30.*;
 
 public class Framebuffer {
-    private int fboID = 0;
-    private final FrameBufferTexture texture;
+    int width;
+    int height;
+    Textures textures;
 
-    public Framebuffer(int width, int height) {
+    public Framebuffer(int width, int height, Textures textures) {
+        this.width = width;
+        this.height = height;
+        this.textures = textures;
+    }
+
+    public int[] createFrameRenderBuffer() {
         // Generate framebuffer
-        fboID = glGenFramebuffers();
+        int fboID = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
 
         // Create the texture to render the data to, and attach it to our framebuffer
-        this.texture = new FrameBufferTexture(width, height);
+        int texture = textures.frameBufferTexture(width, height);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                this.texture.getTextureId(), 0);
+                texture, 0);
 
         // Create renderers store the depth info
         int rboID = glGenRenderbuffers();
@@ -24,17 +33,16 @@ public class Framebuffer {
 
         assert glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE : "Error: Framebuffer is not complete";
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        return new int[]{fboID, texture};
     }
 
-    public void bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, fboID);
+    public void bind(int id) {
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
     }
 
     public void unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    public int getTextureId() {
-        return texture.getTextureId();
-    }
 }

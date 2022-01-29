@@ -16,11 +16,12 @@ import static org.lwjgl.opengl.GL20.*;
 
 public abstract class ShaderProgram {
     int programID;
-    Set<Integer> shadersID = new HashSet<>();
+    Set<Integer> shadersID;
     static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
     protected ShaderProgram(Path path) {
         loadShader(path);
+        shadersID = new HashSet<>();
 
         programID = glCreateProgram();
         for (int id : shadersID)

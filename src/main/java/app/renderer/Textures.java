@@ -16,7 +16,11 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
-    List<Integer> textures = new ArrayList<>();
+    List<Integer> texturesID;
+
+    public Textures() {
+        texturesID = new ArrayList<>();
+    }
 
     public int loadTextureHdr(String fileName) {
         ByteBuffer imageBuffer;
@@ -44,7 +48,7 @@ public class Textures {
         }
 
         int id = glGenTextures();
-        textures.add(id);
+        texturesID.add(id);
 
         glBindTexture(GL_TEXTURE_2D, id);
 
@@ -68,9 +72,25 @@ public class Textures {
         return id;
     }
 
+    public int frameBufferTexture(int width, int height) {
+
+        int id = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        texturesID.add(id);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
+                0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+        return id;
+    }
+
 
     public void cleanUp() {
-        for (int texture : textures) {
+        for (int texture : texturesID) {
             glDeleteTextures(texture);
         }
     }

@@ -126,7 +126,7 @@ public class ViewPort implements ImguiLayer {
             ImGui.endMenuBar();
 
             ImVec2 windowSize = ImGui.getWindowSize();
-            ImGui.image(EditorRenderer.getFramebuffer().getTextureId(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+            ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
