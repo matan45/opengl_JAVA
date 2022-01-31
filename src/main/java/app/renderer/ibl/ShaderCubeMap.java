@@ -16,14 +16,15 @@ public class ShaderCubeMap extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
-        super.bindAttribute(0, "position");
+        locationProjectionMatrix = super.getUniformLocation("projection");
+        locationViewMatrix = super.getUniformLocation("view");
+        locationEnvironmentMap = super.getUniformLocation("environmentMap");
+
     }
 
     @Override
     protected void bindAttributes() {
-        locationProjectionMatrix = super.getUniformLocation("projection");
-        locationViewMatrix = super.getUniformLocation("view");
-        locationEnvironmentMap = super.getUniformLocation("environmentMap");
+        super.bindAttribute(0, "position");
     }
 
     public void connectTextureUnits() {

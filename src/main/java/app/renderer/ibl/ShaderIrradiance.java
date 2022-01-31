@@ -16,14 +16,15 @@ public class ShaderIrradiance extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
-        super.bindAttribute(0, "position");
+        locationProjectionMatrix = super.getUniformLocation("projection");
+        locationViewMatrix = super.getUniformLocation("view");
+        locationEquirectangularMap = super.getUniformLocation("equirectangularMap");
+
     }
 
     @Override
     protected void bindAttributes() {
-        locationProjectionMatrix = super.getUniformLocation("projection");
-        locationViewMatrix = super.getUniformLocation("view");
-        locationEquirectangularMap = super.getUniformLocation("equirectangularMap");
+        super.bindAttribute(0, "position");
     }
 
     public void connectTextureUnits() {
