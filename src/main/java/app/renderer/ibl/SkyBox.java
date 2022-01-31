@@ -1,5 +1,7 @@
 package app.renderer.ibl;
 
+import app.math.components.Camera;
+
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -7,6 +9,11 @@ import static org.lwjgl.opengl.GL11.*;
 public class SkyBox {
     ShaderCubeMap shaderCubeMap;
     ShaderIrradiance shaderIrradiance;
+    Camera editorCamera;
+
+    public SkyBox(Camera editorCamera) {
+        this.editorCamera = editorCamera;
+    }
 
     public void init() {
         shaderCubeMap = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
