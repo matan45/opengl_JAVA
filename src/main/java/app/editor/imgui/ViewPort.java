@@ -92,12 +92,12 @@ public class ViewPort implements ImguiLayer {
         aspect = 0;
 
         textures = EditorRenderer.getTextures();
-        scaleIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
-        rotateIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");
-        translateIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\translate.png");
-        playIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
-        stopIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
-        cancelIcon = textures.loadTextureHdr("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
+        scaleIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
+        rotateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");
+        translateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\translate.png");
+        playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
+        stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
+        cancelIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
 
     }
 

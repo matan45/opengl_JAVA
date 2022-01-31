@@ -22,7 +22,7 @@ public class Textures {
         texturesID = new ArrayList<>();
     }
 
-    public int loadTextureHdr(String fileName) {
+    public int loadTexture(String fileName) {
         ByteBuffer imageBuffer;
         ByteBuffer image;
         try {
