@@ -3,6 +3,7 @@ package app.renderer.draw;
 import app.math.components.Camera;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
+import app.renderer.ibl.SkyBox;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -14,6 +15,8 @@ public class EditorRenderer {
     static int texturesID;
     static int fboID;
 
+    static SkyBox skyBox;
+
     private EditorRenderer() {
     }
 
@@ -24,6 +27,8 @@ public class EditorRenderer {
         int[] temp = framebuffer.createFrameRenderBuffer();
         texturesID = temp[0];
         fboID = temp[1];
+        skyBox = new SkyBox();
+        skyBox.init();
     }
 
     public static void draw() {

@@ -20,8 +20,8 @@ public abstract class ShaderProgram {
     static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
     protected ShaderProgram(Path path) {
-        loadShader(path);
         shadersID = new HashSet<>();
+        loadShader(path);
 
         programID = glCreateProgram();
         for (int id : shadersID)
