@@ -1,6 +1,7 @@
 package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
+import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import org.lwjgl.BufferUtils;
@@ -9,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -123,7 +125,7 @@ public class SkyBox {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, hdrTexture);
 
-        glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+        glViewport(0, 0, 800, 600); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
             shaderIrradiance.loadViewMatrix(captureViews[i]);
@@ -137,6 +139,7 @@ public class SkyBox {
         shaderCubeMap.start();
         shaderCubeMap.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         //glfwGetFramebufferSize
+        glViewport(0, 0, 800, 600);
     }
 
     private void renderCube() {
@@ -202,11 +205,6 @@ public class SkyBox {
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
             glEnableVertexAttribArray(1);
-            /*glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 3);
-            glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 6);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindVertexArray(0);*/
         }
         // render Cube
         glBindVertexArray(cubeVAO);
