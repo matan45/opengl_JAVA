@@ -43,7 +43,7 @@ public class EditorRenderer {
     }
 
     public static int getTexturesID() {
-        return texturesID;
+        return skyBox.getCaptureFBO();
     }
 
     public static Framebuffer getFramebuffer() {
