@@ -59,8 +59,7 @@ public class SkyBox {
         stbi_set_flip_vertically_on_load(true);
         String pathfile = "C:\\matan\\test\\Arches_E_PineTree_3k.hdr";
 
-        FloatBuffer image;
-        ByteBuffer path = BufferUtils.createByteBuffer(pathfile.length()+1);
+        ByteBuffer path = BufferUtils.createByteBuffer(pathfile.length() + 1);
         path.put(pathfile.getBytes());
         path.rewind();
 
@@ -70,7 +69,7 @@ public class SkyBox {
 
 
         // Decode the image
-        image = stbi_loadf(path, w, h, comp, 0);
+        FloatBuffer image = stbi_loadf(path, w, h, comp, 0);
 
         System.out.println(w.get(0));
         System.out.println(h.get(0));
