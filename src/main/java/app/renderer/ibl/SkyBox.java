@@ -57,7 +57,7 @@ public class SkyBox {
 
     private void loadHDR() {
         stbi_set_flip_vertically_on_load(true);
-        String pathfile = "C:/matan/test/newport_loft.hdr";
+        String pathfile = "C:\\matan\\test\\Arches_E_PineTree_3k.hdr";
 
         FloatBuffer image;
         ByteBuffer path = BufferUtils.createByteBuffer(pathfile.length()+1);
@@ -72,6 +72,8 @@ public class SkyBox {
         // Decode the image
         image = stbi_loadf(path, w, h, comp, 0);
 
+        System.out.println(w.get(0));
+        System.out.println(h.get(0));
         int hdrTexture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, hdrTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w.get(0), h.get(0), 0, GL_RGB, GL_FLOAT, image); // note how we specify the texture's data value to be float
