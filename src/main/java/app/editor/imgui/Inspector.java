@@ -52,6 +52,8 @@ public class Inspector implements ImguiLayer {
                         LogInfo.println("not implement");
                     ImGui.endMenu();
                 }
+                if (ImGui.menuItem("Sky Box"))
+                    LogInfo.println("not implement");
                 ImGui.endPopup();
             }
         }
