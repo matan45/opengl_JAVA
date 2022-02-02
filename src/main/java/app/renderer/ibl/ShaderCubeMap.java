@@ -22,11 +22,6 @@ public class ShaderCubeMap extends ShaderProgram {
 
     }
 
-    @Override
-    protected void bindAttributes() {
-        super.bindAttribute(0, "position");
-    }
-
     public void connectTextureUnits() {
         super.loadInt(locationEnvironmentMap, 0);
     }

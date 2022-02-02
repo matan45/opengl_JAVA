@@ -26,7 +26,6 @@ public abstract class ShaderProgram {
         programID = glCreateProgram();
         for (int id : shadersID)
             glAttachShader(programID, id);
-        bindAttributes();
         glLinkProgram(programID);
         glValidateProgram(programID);
         getAllUniformLocations();
@@ -34,7 +33,6 @@ public abstract class ShaderProgram {
 
     protected abstract void getAllUniformLocations();
 
-    protected abstract void bindAttributes();
 
     protected int getUniformLocation(String uniformName) {
         return glGetUniformLocation(programID, uniformName);

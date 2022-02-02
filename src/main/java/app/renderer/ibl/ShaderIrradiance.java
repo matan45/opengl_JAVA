@@ -19,12 +19,6 @@ public class ShaderIrradiance extends ShaderProgram {
         locationProjectionMatrix = super.getUniformLocation("projection");
         locationViewMatrix = super.getUniformLocation("view");
         locationEquirectangularMap = super.getUniformLocation("equirectangularMap");
-
-    }
-
-    @Override
-    protected void bindAttributes() {
-        super.bindAttribute(0, "position");
     }
 
     public void connectTextureUnits() {
