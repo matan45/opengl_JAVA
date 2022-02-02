@@ -12,7 +12,6 @@ public class EditorRenderer {
     static Camera editorCamera;
     static Textures textures;
 
-    static int texturesID;
     static int fboID;
 
     static SkyBox skyBox;
@@ -24,9 +23,7 @@ public class EditorRenderer {
         textures = new Textures();
         editorCamera = new Camera();
         framebuffer = new Framebuffer(1920, 1080, textures);
-        int[] temp = framebuffer.createFrameRenderBuffer();
-        texturesID = temp[0];
-        fboID = temp[1];
+        fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera);
         skyBox.init();
     }
@@ -43,10 +40,6 @@ public class EditorRenderer {
         textures.cleanUp();
     }
 
-    public static int getTexturesID() {
-        return fboID;
-    }
-
     public static Framebuffer getFramebuffer() {
         return framebuffer;
     }
@@ -57,5 +50,8 @@ public class EditorRenderer {
 
     public static Textures getTextures() {
         return textures;
+    }
+
+    public static int getTexturesID() {return fboID;
     }
 }

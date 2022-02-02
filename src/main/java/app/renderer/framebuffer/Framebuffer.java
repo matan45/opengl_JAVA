@@ -15,7 +15,7 @@ public class Framebuffer {
         this.textures = textures;
     }
 
-    public int[] createFrameRenderBuffer() {
+    public int createFrameRenderBuffer() {
         // Generate framebuffer
         int fboID = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
@@ -34,7 +34,7 @@ public class Framebuffer {
         assert glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE : "Error: Framebuffer is not complete";
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        return new int[]{fboID, texture};
+        return fboID;
     }
 
     public void bind(int id) {

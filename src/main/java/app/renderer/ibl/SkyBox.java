@@ -1,7 +1,6 @@
 package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
-import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.utilities.resource.ResourceManager;
@@ -12,7 +11,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -22,10 +20,6 @@ public class SkyBox {
     ShaderCubeMap shaderCubeMap;
     ShaderIrradiance shaderIrradiance;
     Camera editorCamera;
-
-    public int getCaptureFBO() {
-        return captureFBO;
-    }
 
     int captureFBO;
     int hdrTexture;
@@ -124,7 +118,7 @@ public class SkyBox {
         // ----------------------------------------------------------------------
         shaderIrradiance.start();
         shaderIrradiance.connectTextureUnits();
-        shaderIrradiance.loadProjectionMatrix(editorCamera.createPerspectiveMatrix((float) Math.toRadians(180.0f), 1.0f, 0.1f, 10.0f));
+        shaderIrradiance.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         OLMatrix4f captureViews[] =
                 {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
@@ -152,48 +146,50 @@ public class SkyBox {
     private void renderCube() {
         // initialize (if necessary)
         if (cubeVAO == 0) {
-            float vertices[] = {
-                    -1.0f,  1.0f, -1.0f,
-                    -1.0f, -1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    1.0f,  1.0f, -1.0f,
-                    -1.0f,  1.0f, -1.0f,
+            final float SIZE = 1f;
 
-                    -1.0f, -1.0f,  1.0f,
-                    -1.0f, -1.0f, -1.0f,
-                    -1.0f,  1.0f, -1.0f,
-                    -1.0f,  1.0f, -1.0f,
-                    -1.0f,  1.0f,  1.0f,
-                    -1.0f, -1.0f,  1.0f,
+            final float[] vertices = {
+                    -SIZE, SIZE, -SIZE,
+                    -SIZE, -SIZE, -SIZE,
+                    SIZE, -SIZE, -SIZE,
+                    SIZE, -SIZE, -SIZE,
+                    SIZE, SIZE, -SIZE,
+                    -SIZE, SIZE, -SIZE,
 
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, -1.0f,  1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    1.0f,  1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
+                    -SIZE, -SIZE, SIZE,
+                    -SIZE, -SIZE, -SIZE,
+                    -SIZE, SIZE, -SIZE,
+                    -SIZE, SIZE, -SIZE,
+                    -SIZE, SIZE, SIZE,
+                    -SIZE, -SIZE, SIZE,
 
-                    -1.0f, -1.0f,  1.0f,
-                    -1.0f,  1.0f,  1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    1.0f, -1.0f,  1.0f,
-                    -1.0f, -1.0f,  1.0f,
+                    SIZE, -SIZE, -SIZE,
+                    SIZE, -SIZE, SIZE,
+                    SIZE, SIZE, SIZE,
+                    SIZE, SIZE, SIZE,
+                    SIZE, SIZE, -SIZE,
+                    SIZE, -SIZE, -SIZE,
 
-                    -1.0f,  1.0f, -1.0f,
-                    1.0f,  1.0f, -1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    1.0f,  1.0f,  1.0f,
-                    -1.0f,  1.0f,  1.0f,
-                    -1.0f,  1.0f, -1.0f,
+                    -SIZE, -SIZE, SIZE,
+                    -SIZE, SIZE, SIZE,
+                    SIZE, SIZE, SIZE,
+                    SIZE, SIZE, SIZE,
+                    SIZE, -SIZE, SIZE,
+                    -SIZE, -SIZE, SIZE,
 
-                    -1.0f, -1.0f, -1.0f,
-                    -1.0f, -1.0f,  1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    1.0f, -1.0f, -1.0f,
-                    -1.0f, -1.0f,  1.0f,
-                    1.0f, -1.0f,  1.0f
+                    -SIZE, SIZE, -SIZE,
+                    SIZE, SIZE, -SIZE,
+                    SIZE, SIZE, SIZE,
+                    SIZE, SIZE, SIZE,
+                    -SIZE, SIZE, SIZE,
+                    -SIZE, SIZE, -SIZE,
+
+                    -SIZE, -SIZE, -SIZE,
+                    -SIZE, -SIZE, SIZE,
+                    SIZE, -SIZE, -SIZE,
+                    SIZE, -SIZE, -SIZE,
+                    -SIZE, -SIZE, SIZE,
+                    SIZE, -SIZE, SIZE
             };
 
             FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.length);
@@ -210,7 +206,6 @@ public class SkyBox {
             glBindVertexArray(cubeVAO);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-            glEnableVertexAttribArray(1);
         }
         // render Cube
         glBindVertexArray(cubeVAO);
@@ -227,6 +222,15 @@ public class SkyBox {
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
         renderCube();
         shaderCubeMap.stop();
+
+        /*shaderIrradiance.start();
+        shaderIrradiance.loadViewMatrix(editorCamera.getViewMatrix());
+        shaderIrradiance.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, hdrTexture);
+        renderCube();
+        shaderIrradiance.stop();*/
+
     }
 
 }
