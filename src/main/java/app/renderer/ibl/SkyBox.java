@@ -92,12 +92,12 @@ public class SkyBox {
     }
 
     private void cubemap() {
-        final ShaderIrradiance equirectangularToCubemapShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
+        final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
 
         final int hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
 
-        final OLMatrix4f captureViews[] =
+        final OLMatrix4f[] captureViews =
                 {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
@@ -111,15 +111,13 @@ public class SkyBox {
         glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 
         envCubeMap = textures.createCubTexture(512, 512);
-
-        convert(captureViews, envCubeMap, 512, 512, hdrTexture, equirectangularToCubemapShader);
+        convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
 
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
         irradianceMap = textures.createCubTexture(32, 32);
-
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
         glDisable(GL_DEPTH_TEST);
