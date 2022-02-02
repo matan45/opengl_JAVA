@@ -90,6 +90,7 @@ public class SkyBox {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        stbi_set_flip_vertically_on_load(false);
         assert image != null;
         stbi_image_free(image);
     }
@@ -146,48 +147,47 @@ public class SkyBox {
         // initialize (if necessary)
         if (cubeVAO == 0) {
             float vertices[] = {
-                    // back face
-                    -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-                    1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
-                    1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, // bottom-right
-                    1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, // top-right
-                    -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-                    -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, // top-left
-                    // front face
-                    -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
-                    1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // bottom-right
-                    1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
-                    1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // top-right
-                    -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // top-left
-                    -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom-left
-                    // left face
-                    -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
-                    -1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-left
-                    -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
-                    -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-left
-                    -1.0f, -1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-right
-                    -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-right
-                    // right face
-                    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
-                    1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
-                    1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top-right
-                    1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom-right
-                    1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // top-left
-                    1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom-left
-                    // bottom face
-                    -1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
-                    1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, // top-left
-                    1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
-                    1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-left
-                    -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-right
-                    -1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, // top-right
-                    // top face
-                    -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
-                    1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
-                    1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top-right
-                    1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
-                    -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top-left
-                    -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  // bottom-left
+                    -1.0f,  1.0f, -1.0f,
+                    -1.0f, -1.0f, -1.0f,
+                    1.0f, -1.0f, -1.0f,
+                    1.0f, -1.0f, -1.0f,
+                    1.0f,  1.0f, -1.0f,
+                    -1.0f,  1.0f, -1.0f,
+
+                    -1.0f, -1.0f,  1.0f,
+                    -1.0f, -1.0f, -1.0f,
+                    -1.0f,  1.0f, -1.0f,
+                    -1.0f,  1.0f, -1.0f,
+                    -1.0f,  1.0f,  1.0f,
+                    -1.0f, -1.0f,  1.0f,
+
+                    1.0f, -1.0f, -1.0f,
+                    1.0f, -1.0f,  1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    1.0f,  1.0f, -1.0f,
+                    1.0f, -1.0f, -1.0f,
+
+                    -1.0f, -1.0f,  1.0f,
+                    -1.0f,  1.0f,  1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    1.0f, -1.0f,  1.0f,
+                    -1.0f, -1.0f,  1.0f,
+
+                    -1.0f,  1.0f, -1.0f,
+                    1.0f,  1.0f, -1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    1.0f,  1.0f,  1.0f,
+                    -1.0f,  1.0f,  1.0f,
+                    -1.0f,  1.0f, -1.0f,
+
+                    -1.0f, -1.0f, -1.0f,
+                    -1.0f, -1.0f,  1.0f,
+                    1.0f, -1.0f, -1.0f,
+                    1.0f, -1.0f, -1.0f,
+                    -1.0f, -1.0f,  1.0f,
+                    1.0f, -1.0f,  1.0f
             };
 
             FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.length);

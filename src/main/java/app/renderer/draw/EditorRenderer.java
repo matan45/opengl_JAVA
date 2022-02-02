@@ -35,6 +35,7 @@ public class EditorRenderer {
         framebuffer.bind(fboID);
         glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        skyBox.render();
         framebuffer.unbind();
     }
 
@@ -43,7 +44,7 @@ public class EditorRenderer {
     }
 
     public static int getTexturesID() {
-        return skyBox.getCaptureFBO();
+        return fboID;
     }
 
     public static Framebuffer getFramebuffer() {
