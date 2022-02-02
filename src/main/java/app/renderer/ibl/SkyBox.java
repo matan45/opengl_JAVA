@@ -109,52 +109,42 @@ public class SkyBox {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 
-        envCubeMap = textures.createCubTexture(512,512);
+        envCubeMap = textures.createCubTexture(512, 512);
 
-        equirectangularToCubemapShader.start();
-        equirectangularToCubemapShader.connectTextureUnits();
-        equirectangularToCubemapShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, hdrTexture);
-        glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        for (int i = 0; i < 6; ++i) {
-            equirectangularToCubemapShader.loadViewMatrix(captureViews[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubeMap, 0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            renderCube();
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glActiveTexture(0);
-        equirectangularToCubemapShader.stop();
-
-        irradianceMap = textures.createCubTexture(32,32);
+        convert(captureViews, envCubeMap, 512, 512, hdrTexture, equirectangularToCubemapShader);
 
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
 
-        irradianceShader.start();
-        irradianceShader.connectTextureUnits();
-        irradianceShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        irradianceMap = textures.createCubTexture(32, 32);
 
-        glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+        convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
+
+        glDisable(GL_DEPTH_TEST);
+        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
+    }
+
+
+    private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int heigh, int texture, CommonShaderSkyBox shader) {
+        shader.start();
+        shader.connectTextureUnits();
+        shader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+        glViewport(0, 0, width, heigh); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
-            irradianceShader.loadViewMatrix(captureViews[i]);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
+            shader.loadViewMatrix(captureViews[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubTexture, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             renderCube();
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
-        irradianceShader.stop();
-
-        glDisable(GL_DEPTH_TEST);
-        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
+        shader.stop();
     }
 
     private void renderCube() {
@@ -170,8 +160,8 @@ public class SkyBox {
         backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
         backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
         renderCube();
         glActiveTexture(0);
         backgroundShader.stop();
