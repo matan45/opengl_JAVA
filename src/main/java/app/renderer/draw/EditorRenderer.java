@@ -24,7 +24,7 @@ public class EditorRenderer {
         editorCamera = new Camera();
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
-        skyBox = new SkyBox(editorCamera);
+        skyBox = new SkyBox(editorCamera,textures);
         skyBox.init();
     }
 

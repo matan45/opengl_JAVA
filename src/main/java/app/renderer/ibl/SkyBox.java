@@ -3,6 +3,7 @@ package app.renderer.ibl;
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
+import app.renderer.Textures;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
@@ -22,6 +23,8 @@ public class SkyBox {
     ShaderIrradianceConvolution irradianceShader;
     Camera editorCamera;
 
+    Textures textures;
+
     int captureFBO;
     int hdrTexture;
 
@@ -31,8 +34,9 @@ public class SkyBox {
 
     int envCubemap;
 
-    public SkyBox(Camera editorCamera) {
+    public SkyBox(Camera editorCamera, Textures textures) {
         this.editorCamera = editorCamera;
+        this.textures = textures;
     }
 
     public void init() {
@@ -46,8 +50,9 @@ public class SkyBox {
 
         backgroundShader.start();
         backgroundShader.connectTextureUnits();
+        backgroundShader.stop();
         framebuffer();
-        loadHDR();
+        hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
         cubemap();
     }
 
@@ -62,46 +67,6 @@ public class SkyBox {
 
     }
 
-    private void loadHDR() {
-        stbi_set_flip_vertically_on_load(true);
-        String pathfile = "C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr";
-
-        ByteBuffer imageBuffer;
-        FloatBuffer image;
-        try {
-            imageBuffer = ResourceManager.readToByte(Paths.get(pathfile));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        IntBuffer w = BufferUtils.createIntBuffer(1);
-        IntBuffer h = BufferUtils.createIntBuffer(1);
-        IntBuffer comp = BufferUtils.createIntBuffer(1);
-
-        // Use info to read image metadata without decoding the entire image.
-        // We don't need this for this demo, just testing the API.
-        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-            throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-        }
-
-        // Decode the image
-        image = stbi_loadf_from_memory(imageBuffer, w, h, comp, 0);
-        if (image == null) {
-            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-        }
-
-        hdrTexture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, hdrTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w.get(0), h.get(0), 0, GL_RGB, GL_FLOAT, image); // note how we specify the texture's data value to be float
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_set_flip_vertically_on_load(false);
-        stbi_image_free(image);
-    }
 
     private void cubemap() {
         // pbr: setup cubemap to render to and attach to framebuffer
@@ -132,6 +97,8 @@ public class SkyBox {
         equirectangularToCubemapShader.start();
         equirectangularToCubemapShader.connectTextureUnits();
         equirectangularToCubemapShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, hdrTexture);
         glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
@@ -141,6 +108,7 @@ public class SkyBox {
             renderCube();
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glActiveTexture(0);
         equirectangularToCubemapShader.stop();
 
         irradianceMap = glGenTextures();
@@ -176,6 +144,7 @@ public class SkyBox {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
         irradianceShader.stop();
+
         glViewport(0, 0, 1920, 1080);
     }
 
