@@ -45,4 +45,11 @@ public class Framebuffer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

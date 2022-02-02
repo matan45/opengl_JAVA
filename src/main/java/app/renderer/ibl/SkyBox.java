@@ -25,7 +25,6 @@ public class SkyBox {
     int hdrTexture;
 
     int cubeVAO = 0;
-    int cubeVBO = 0;
 
     int envCubemap;
 
@@ -61,7 +60,7 @@ public class SkyBox {
 
     private void loadHDR() {
         stbi_set_flip_vertically_on_load(true);
-        String pathfile = "C:\\matan\\test\\Arches_E_PineTree_3k.hdr";
+        String pathfile = "C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr";
 
         ByteBuffer imageBuffer;
         FloatBuffer image;
@@ -197,7 +196,7 @@ public class SkyBox {
             buffer.flip();
 
             cubeVAO = glGenVertexArrays();
-            cubeVBO = glGenBuffers();
+            int cubeVBO = glGenBuffers();
 
             // fill buffer
             glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
