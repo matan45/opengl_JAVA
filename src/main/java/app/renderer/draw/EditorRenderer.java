@@ -41,6 +41,7 @@ public class EditorRenderer {
 
     public static void cleanUp() {
         textures.cleanUp();
+        openGLObjects.cleanUp();
     }
 
     public static Framebuffer getFramebuffer() {

@@ -7,9 +7,7 @@ import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.utilities.data.structures.Pair;
-import org.lwjgl.BufferUtils;
 
-import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -110,21 +108,8 @@ public class SkyBox {
                 };
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
-        // pbr: setup cubemap to render to and attach to framebuffer
-        // ---------------------------------------------------------
-        envCubeMap = glGenTextures();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-        for (int i = 0; i < 6; ++i) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, 0);
-        }
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // pbr: convert HDR equirectangular environment map to cubemap equivalent
-        // ----------------------------------------------------------------------
+        envCubeMap = textures.createCubTexture();
 
         equirectangularToCubemapShader.start();
         equirectangularToCubemapShader.connectTextureUnits();
@@ -143,16 +128,7 @@ public class SkyBox {
         glActiveTexture(0);
         equirectangularToCubemapShader.stop();
 
-        irradianceMap = glGenTextures();
-        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-        for (int i = 0; i < 6; ++i) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, 0);
-        }
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        irradianceMap = textures.createCubTexture();
 
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -176,6 +152,7 @@ public class SkyBox {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
         irradianceShader.stop();
+
         glDisable(GL_DEPTH_TEST);
         glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
