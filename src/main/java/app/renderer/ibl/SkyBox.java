@@ -89,14 +89,7 @@ public class SkyBox {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         equirectangularToCubemapShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        // configure global opengl state
-        // -----------------------------
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 
-        backgroundShader.start();
-        backgroundShader.connectTextureUnits();
-        backgroundShader.stop();
         cubeVAO = openGLObjects.loadToVAO(vertices);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
@@ -106,6 +99,17 @@ public class SkyBox {
     }
 
     private void cubemap() {
+        OLMatrix4f captureViews[] =
+                {
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f)),
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f)),
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
+                };
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
         // pbr: setup cubemap to render to and attach to framebuffer
         // ---------------------------------------------------------
         envCubeMap = glGenTextures();
@@ -121,15 +125,6 @@ public class SkyBox {
 
         // pbr: convert HDR equirectangular environment map to cubemap equivalent
         // ----------------------------------------------------------------------
-        OLMatrix4f captureViews[] =
-                {
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
-                };
 
         equirectangularToCubemapShader.start();
         equirectangularToCubemapShader.connectTextureUnits();
@@ -181,8 +176,8 @@ public class SkyBox {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
         irradianceShader.stop();
-
-        glViewport(0, 0, 1920, 1080);
+        glDisable(GL_DEPTH_TEST);
+        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
     private void renderCube() {
@@ -194,7 +189,6 @@ public class SkyBox {
     }
 
     public void render() {
-        // render skybox (render as last to prevent overdraw)
         backgroundShader.start();
         backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
         backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
