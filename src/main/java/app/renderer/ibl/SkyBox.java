@@ -4,6 +4,8 @@ import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.Textures;
+import app.renderer.framebuffer.Framebuffer;
+import app.utilities.data.structures.Pair;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
@@ -21,22 +23,25 @@ public class SkyBox {
     ShaderCubeMap backgroundShader;
     ShaderIrradiance equirectangularToCubemapShader;
     ShaderIrradianceConvolution irradianceShader;
-    Camera editorCamera;
 
+    Camera editorCamera;
     Textures textures;
+    Framebuffer framebuffer;
 
     int captureFBO;
-    int hdrTexture;
-
-    int cubeVAO = 0;
     int captureRBO;
-    int irradianceMap;
 
+    int hdrTexture;
+    int irradianceMap;
     int envCubemap;
 
-    public SkyBox(Camera editorCamera, Textures textures) {
+    int cubeVAO = 0;
+
+
+    public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer) {
         this.editorCamera = editorCamera;
         this.textures = textures;
+        this.framebuffer = framebuffer;
     }
 
     public void init() {
@@ -51,22 +56,13 @@ public class SkyBox {
         backgroundShader.start();
         backgroundShader.connectTextureUnits();
         backgroundShader.stop();
-        framebuffer();
+
+        Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
+        captureFBO = temp.getValue();
+        captureRBO = temp.getValue2();
         hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
         cubemap();
     }
-
-    private void framebuffer() {
-        captureFBO = glGenFramebuffers();
-        captureRBO = glGenRenderbuffers();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
-    }
-
 
     private void cubemap() {
         // pbr: setup cubemap to render to and attach to framebuffer

@@ -1,6 +1,7 @@
 package app.renderer.framebuffer;
 
 import app.renderer.Textures;
+import app.utilities.data.structures.Pair;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -35,6 +36,17 @@ public class Framebuffer {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         return fboID;
+    }
+
+    public Pair<Integer, Integer> frameBufferFixSize(int width, int height) {
+        int captureFBO = glGenFramebuffers();
+        int captureRBO = glGenRenderbuffers();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+        return new Pair<>(captureFBO, captureRBO);
     }
 
     public void bind(int id) {
