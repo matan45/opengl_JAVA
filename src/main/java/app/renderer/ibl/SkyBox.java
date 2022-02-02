@@ -124,7 +124,7 @@ public class SkyBox {
         // ----------------------------------------------------------------------
         shaderIrradiance.start();
         shaderIrradiance.connectTextureUnits();
-        shaderIrradiance.loadProjectionMatrix(editorCamera.createPerspectiveMatrix((float) Math.toRadians(90.0f), 1.0f, 0.1f, 10.0f));
+        shaderIrradiance.loadProjectionMatrix(editorCamera.createPerspectiveMatrix((float) Math.toRadians(180.0f), 1.0f, 0.1f, 10.0f));
         OLMatrix4f captureViews[] =
                 {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
@@ -134,24 +134,19 @@ public class SkyBox {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
                 };
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, hdrTexture);
 
-        glViewport(0, 0, 800, 600); // don't forget to configure the viewport to the capture dimensions.
+        glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
             shaderIrradiance.loadViewMatrix(captureViews[i]);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             renderCube();
         }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        shaderIrradiance.stop();
 
-        shaderCubeMap.start();
-        shaderCubeMap.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-        //glfwGetFramebufferSize
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, 1920, 1080);
     }
 
     private void renderCube() {
@@ -227,9 +222,11 @@ public class SkyBox {
         // render skybox (render as last to prevent overdraw)
         shaderCubeMap.start();
         shaderCubeMap.loadViewMatrix(editorCamera.getViewMatrix());
+        shaderCubeMap.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
         renderCube();
+        shaderCubeMap.stop();
     }
 
 }
