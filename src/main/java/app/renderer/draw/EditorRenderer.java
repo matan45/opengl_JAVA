@@ -1,6 +1,7 @@
 package app.renderer.draw;
 
 import app.math.components.Camera;
+import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
@@ -11,6 +12,7 @@ public class EditorRenderer {
     static Framebuffer framebuffer;
     static Camera editorCamera;
     static Textures textures;
+    static OpenGLObjects openGLObjects;
 
     static int fboID;
 
@@ -22,9 +24,10 @@ public class EditorRenderer {
     public static void init() {
         textures = new Textures();
         editorCamera = new Camera();
+        openGLObjects = new OpenGLObjects();
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
-        skyBox = new SkyBox(editorCamera,textures,framebuffer);
+        skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         skyBox.init();
     }
 
@@ -52,6 +55,7 @@ public class EditorRenderer {
         return textures;
     }
 
-    public static int getTexturesID() {return fboID;
+    public static int getTexturesID() {
+        return fboID;
     }
 }

@@ -26,6 +26,13 @@ public class OpenGLObjects {
         return new VaoModel(vaoID, indices.length);
     }
 
+    public int loadToVAO(float[] positions) {
+        int vaoID = createVAO();
+        storeDataInAttributeList(0, 3, positions);
+        unbindVAO();
+        return vaoID;
+    }
+
     public void updateVbo(int vbo, float[] data, FloatBuffer buffer) {
         buffer.clear();
         buffer.put(data);
