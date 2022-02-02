@@ -109,7 +109,7 @@ public class SkyBox {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 
-        envCubeMap = textures.createCubTexture();
+        envCubeMap = textures.createCubTexture(512,512);
 
         equirectangularToCubemapShader.start();
         equirectangularToCubemapShader.connectTextureUnits();
@@ -128,7 +128,7 @@ public class SkyBox {
         glActiveTexture(0);
         equirectangularToCubemapShader.stop();
 
-        irradianceMap = textures.createCubTexture();
+        irradianceMap = textures.createCubTexture(32,32);
 
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
@@ -170,8 +170,8 @@ public class SkyBox {
         backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
         backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
         renderCube();
         glActiveTexture(0);
         backgroundShader.stop();

@@ -138,12 +138,12 @@ public class Textures {
         return hdrTexture;
     }
 
-    public int createCubTexture() {
+    public int createCubTexture(int width,int height) {
         int envCubeMap = glGenTextures();
         texturesID.add(envCubeMap);
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
         for (int i = 0; i < 6; ++i) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, 0);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, 0);
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
