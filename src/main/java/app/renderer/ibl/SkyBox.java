@@ -4,8 +4,10 @@ import app.math.OLMatrix4f;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
+import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -67,20 +69,30 @@ public class SkyBox {
         stbi_set_flip_vertically_on_load(true);
         String pathfile = "C:\\matan\\test\\Arches_E_PineTree_3k.hdr";
 
-        ByteBuffer path = BufferUtils.createByteBuffer(pathfile.length() + 1);
-        path.put(pathfile.getBytes());
-        path.rewind();
+        ByteBuffer imageBuffer;
+        FloatBuffer image;
+        try {
+            imageBuffer = ResourceManager.readToByte(Paths.get(pathfile));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer comp = BufferUtils.createIntBuffer(1);
 
+        // Use info to read image metadata without decoding the entire image.
+        // We don't need this for this demo, just testing the API.
+        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+            throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
+        }
 
         // Decode the image
-        FloatBuffer image = stbi_loadf(path, w, h, comp, 0);
+        image = stbi_loadf_from_memory(imageBuffer, w, h, comp, 0);
+        if (image == null) {
+            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+        }
 
-        System.out.println(w.get(0));
-        System.out.println(h.get(0));
         hdrTexture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, hdrTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w.get(0), h.get(0), 0, GL_RGB, GL_FLOAT, image); // note how we specify the texture's data value to be float
@@ -91,7 +103,6 @@ public class SkyBox {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_set_flip_vertically_on_load(false);
-        assert image != null;
         stbi_image_free(image);
     }
 
