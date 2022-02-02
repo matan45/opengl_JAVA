@@ -117,9 +117,6 @@ public class SkyBox {
 
         // pbr: convert HDR equirectangular environment map to cubemap equivalent
         // ----------------------------------------------------------------------
-        shaderIrradiance.start();
-        shaderIrradiance.connectTextureUnits();
-        shaderIrradiance.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         OLMatrix4f captureViews[] =
                 {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
@@ -130,6 +127,9 @@ public class SkyBox {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
                 };
 
+        shaderIrradiance.start();
+        shaderIrradiance.connectTextureUnits();
+        shaderIrradiance.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
@@ -249,8 +249,8 @@ public class SkyBox {
         shaderCubeMap.loadViewMatrix(editorCamera.getViewMatrix());
         shaderCubeMap.loadProjectionMatrix(editorCamera.getProjectionMatrix());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
         renderCube();
         shaderCubeMap.stop();
 
