@@ -35,8 +35,10 @@ public class Inspector implements ImguiLayer {
                 ImGui.popID();
             }
             if (!removeComponent.isEmpty()) {
-                for (Component component : removeComponent)
+                for (Component component : removeComponent) {
+                    component.cleanUp();
                     entity.removeComponent(component.getClass());
+                }
                 removeComponent.clear();
             }
 

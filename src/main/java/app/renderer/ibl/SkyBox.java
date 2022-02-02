@@ -24,6 +24,7 @@ public class SkyBox {
     int captureFBO;
     int captureRBO;
 
+    boolean isActive;
 
     int irradianceMap;
     int envCubeMap;
@@ -83,7 +84,7 @@ public class SkyBox {
 
     public void init() {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
-
+        isActive = true;
         cubeVAO = openGLObjects.loadToVAO(vertices);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
@@ -95,7 +96,7 @@ public class SkyBox {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
 
-        final int hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
+        final int hdrTexture = textures.hdr("C:\\matan\\test\\Arches_E_PineTree_3k.hdr");
 
         final OLMatrix4f[] captureViews =
                 {
@@ -155,16 +156,28 @@ public class SkyBox {
     }
 
     public void render() {
-        backgroundShader.start();
-        backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
-        backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-        renderCube();
-        glActiveTexture(0);
-        backgroundShader.stop();
-
+        if (isActive) {
+            backgroundShader.start();
+            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
+            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+            //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            renderCube();
+            glActiveTexture(0);
+            backgroundShader.stop();
+        }
     }
 
+    public int getIrradianceMap() {
+        return irradianceMap;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }
