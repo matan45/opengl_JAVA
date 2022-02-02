@@ -15,8 +15,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class SkyBox {
     ShaderCubeMap backgroundShader;
-    ShaderIrradiance equirectangularToCubemapShader;
-    ShaderIrradianceConvolution irradianceShader;
 
     Camera editorCamera;
     Textures textures;
@@ -26,7 +24,7 @@ public class SkyBox {
     int captureFBO;
     int captureRBO;
 
-    int hdrTexture;
+
     int irradianceMap;
     int envCubeMap;
 
@@ -85,19 +83,21 @@ public class SkyBox {
 
     public void init() {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
-        equirectangularToCubemapShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
-        irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
 
         cubeVAO = openGLObjects.loadToVAO(vertices);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
-        hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
         cubemap();
     }
 
     private void cubemap() {
-        OLMatrix4f captureViews[] =
+        final ShaderIrradiance equirectangularToCubemapShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
+        final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
+
+        final int hdrTexture = textures.hdr("C:\\matan\\test\\HDR_029_Sky_Cloudy_Ref.hdr");
+
+        final OLMatrix4f captureViews[] =
                 {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
@@ -106,6 +106,7 @@ public class SkyBox {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
                 };
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
 
