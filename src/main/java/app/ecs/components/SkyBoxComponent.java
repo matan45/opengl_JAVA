@@ -6,18 +6,23 @@ import app.renderer.ibl.SkyBox;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 
 import java.io.File;
 
 public class SkyBoxComponent extends CommonComponent {
     SkyBox skyBox;
     ImBoolean showLightMap;
+    ImBoolean showPreFilterMap;
     String result;
+    ImInt select;
 
     public SkyBoxComponent(Entity ownerEntity) {
         super(ownerEntity);
         skyBox = EditorRenderer.getSkyBox();
         showLightMap = new ImBoolean(false);
+        showPreFilterMap = new ImBoolean(false);
+        select = new ImInt(0);
     }
 
     @Override
@@ -33,8 +38,19 @@ public class SkyBoxComponent extends CommonComponent {
             ImGui.textWrapped(file.getName());
         }
 
-        if (ImGui.checkbox("Light Map", showLightMap))
-            skyBox.setShowLightMap(showLightMap.get());
+        if (ImGui.radioButton("cub map", select, 0)) {
+            select.set(0);
+            skyBox.setShowLightMap(false);
+            skyBox.setShowPreFilterMap(false);
+        } else if (ImGui.radioButton("Light Map", select, 1)) {
+            select.set(1);
+            skyBox.setShowLightMap(true);
+            skyBox.setShowPreFilterMap(false);
+        } else if (ImGui.radioButton("PreFilter Map", select, 2)) {
+            select.set(2);
+            skyBox.setShowLightMap(false);
+            skyBox.setShowPreFilterMap(true);
+        }
 
     }
 

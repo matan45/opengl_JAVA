@@ -28,9 +28,11 @@ public class SkyBox {
 
     boolean isActive;
     boolean showLightMap;
+    boolean showPreFilterMap;
 
     int irradianceMap;
     int envCubeMap;
+    int prefilterMap;
 
     int cubeVAO;
     private static final float[] vertices = {
@@ -127,7 +129,7 @@ public class SkyBox {
         irradianceMap = textures.createCubTexture(32, 32);
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
-        int prefilterMap = textures.createCubTexture(128, 128);
+        prefilterMap = textures.createCubTexture(128, 128);
 
         shaderPreFilter.start();
         shaderPreFilter.connectTextureUnits();
@@ -261,6 +263,8 @@ public class SkyBox {
 
             if (showLightMap)
                 glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            else if (showPreFilterMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
             else
                 glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
 
@@ -274,6 +278,10 @@ public class SkyBox {
         return irradianceMap;
     }
 
+    public int getPrefilterMap() {
+        return prefilterMap;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -284,5 +292,9 @@ public class SkyBox {
 
     public void setShowLightMap(boolean showLightMap) {
         this.showLightMap = showLightMap;
+    }
+
+    public void setShowPreFilterMap(boolean showPreFilterMap) {
+        this.showPreFilterMap = showPreFilterMap;
     }
 }
