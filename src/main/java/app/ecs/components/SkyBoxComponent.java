@@ -38,7 +38,7 @@ public class SkyBoxComponent extends CommonComponent {
             ImGui.textWrapped(file.getName());
         }
 
-        if (ImGui.radioButton("cub map", select, 0)) {
+        if (ImGui.radioButton("Cube Map", select, 0)) {
             select.set(0);
             skyBox.setShowLightMap(false);
             skyBox.setShowPreFilterMap(false);
