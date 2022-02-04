@@ -8,7 +8,6 @@ import imgui.ImGui;
 import imgui.type.ImBoolean;
 
 import java.io.File;
-import java.util.Optional;
 
 public class SkyBoxComponent extends CommonComponent {
     SkyBox skyBox;

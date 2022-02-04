@@ -4,11 +4,9 @@ import app.ecs.Entity;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
-import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
-import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
 public final class TransformComponent extends CommonComponent {

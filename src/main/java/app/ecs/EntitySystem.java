@@ -18,11 +18,8 @@ public class EntitySystem {
     }
 
     public static void removeEntity(int index) {
+        entitiesArray.get(index).cleanUp();
         entitiesArray.remove(index);
-    }
-
-    public static void removeEntity(Entity entity) {
-        entitiesArray.remove(entity);
     }
 
     public static List<Entity> getEntitiesByName(String name) {

@@ -1,22 +1,15 @@
 package app.editor.imgui;
 
 import app.utilities.OpenFileDialog;
-import app.utilities.logger.LogError;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
-import org.lwjgl.PointerBuffer;
-
-import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.system.MemoryUtil.memAllocPointer;
-import static org.lwjgl.system.MemoryUtil.memFree;
-import static org.lwjgl.util.nfd.NativeFileDialog.*;
 
 public class MainImgui implements ImguiLayer {
     private final ImBoolean closeWindow;

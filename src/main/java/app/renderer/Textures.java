@@ -138,7 +138,7 @@ public class Textures {
         return hdrTexture;
     }
 
-    public int createCubTexture(int width,int height) {
+    public int createCubTexture(int width, int height) {
         int envCubeMap = glGenTextures();
         texturesID.add(envCubeMap);
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);

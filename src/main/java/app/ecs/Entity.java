@@ -71,6 +71,13 @@ public class Entity {
         return components;
     }
 
+    public void cleanUp() {
+        for (Component c : components)
+            c.cleanUp();
+
+        components.clear();
+    }
+
     public boolean isActive() {
         return isActive;
     }

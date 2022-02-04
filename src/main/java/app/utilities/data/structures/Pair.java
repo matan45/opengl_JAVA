@@ -1,6 +1,6 @@
 package app.utilities.data.structures;
 
-public class Pair <T,K>{
+public class Pair<T, K> {
     T value;
     K value2;
 
