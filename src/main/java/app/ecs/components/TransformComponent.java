@@ -4,21 +4,25 @@ import app.ecs.Entity;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
+import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
+import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
 public final class TransformComponent extends CommonComponent {
     OLTransform olTransform;
     OLVector2f buttonSize;
     ImString entityName;
+    ImBoolean active;
 
     public TransformComponent(Entity ownerEntity, OLTransform olTransform) {
         super(ownerEntity);
         this.olTransform = olTransform;
         buttonSize = new OLVector2f();
         entityName = new ImString(ownerEntity.getName(), 256);
+        active=new ImBoolean(true);
     }
 
 
@@ -31,6 +35,10 @@ public final class TransformComponent extends CommonComponent {
         ImGui.text("Entity Name");
         if (ImGui.inputText("##", entityName))
             ownerEntity.setName(entityName.get());
+
+        if(ImGui.checkbox("Active",active)){
+            LogInfo.println(active.get()+"");
+        }
 
         drawVector3("Position", olTransform.getPosition(), 0.0f);
         drawVector3("Rotation", olTransform.getRotation(), 0.0f);

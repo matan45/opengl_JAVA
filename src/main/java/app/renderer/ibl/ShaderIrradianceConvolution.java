@@ -1,14 +1,13 @@
 package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
-import app.renderer.shaders.ShaderProgram;
 
 import java.nio.file.Path;
 
-public class ShaderIrradianceConvolution extends CommonShaderSkyBox {
+public final class ShaderIrradianceConvolution extends CommonShaderSkyBox {
     int locationEnvironmentMap;
 
-    protected ShaderIrradianceConvolution(Path path) {
+    ShaderIrradianceConvolution(Path path) {
         super(path);
     }
 

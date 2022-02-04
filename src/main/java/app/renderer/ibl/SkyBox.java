@@ -82,21 +82,22 @@ public class SkyBox {
         this.openGLObjects = openGLObjects;
     }
 
-    public void init() {
+    public void init(String filePath) {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         isActive = true;
         cubeVAO = openGLObjects.loadToVAO(vertices);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
-        cubemap();
+        cubemap(filePath);
     }
 
-    private void cubemap() {
+    private void cubemap(String filePath) {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
 
-        final int hdrTexture = textures.hdr("C:\\matan\\test\\Arches_E_PineTree_3k.hdr");
+        //final int hdrTexture = textures.hdr("C:\\matan\\test\\Arches_E_PineTree_3k.hdr");
+        final int hdrTexture = textures.hdr(filePath);
 
         final OLMatrix4f[] captureViews =
                 {

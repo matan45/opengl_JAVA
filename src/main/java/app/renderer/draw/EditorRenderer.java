@@ -28,7 +28,6 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
-        skyBox.init();
     }
 
     public static void draw() {
@@ -58,5 +57,9 @@ public class EditorRenderer {
 
     public static int getTexturesID() {
         return fboID;
+    }
+
+    public static SkyBox getSkyBox() {
+        return skyBox;
     }
 }

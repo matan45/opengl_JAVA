@@ -1,14 +1,13 @@
 package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
-import app.renderer.shaders.ShaderProgram;
 
 import java.nio.file.Path;
 
-public class ShaderIrradiance extends CommonShaderSkyBox {
+public final class ShaderIrradiance extends CommonShaderSkyBox {
     int locationEquirectangularMap;
 
-    protected ShaderIrradiance(Path path) {
+    ShaderIrradiance(Path path) {
         super(path);
     }
 

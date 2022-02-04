@@ -21,6 +21,10 @@ public class EntitySystem {
         entitiesArray.remove(index);
     }
 
+    public static void removeEntity(Entity entity) {
+        entitiesArray.remove(entity);
+    }
+
     public static List<Entity> getEntitiesByName(String name) {
         return entitiesArray.stream().filter(e -> e.getName().equals(name)).toList();
     }

@@ -4,22 +4,22 @@ import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Entity {
     String name;
-    List<Component> components;
+    Set<Component> components;
     boolean isActive;
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
-        components = new ArrayList<>();
+        components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
     }
 
     public Entity() {
-        components = new ArrayList<>();
+        components = new HashSet<>();
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -38,10 +38,9 @@ public class Entity {
     }
 
     public <T extends Component> void removeComponent(Class<T> componentClass) {
-        for (int i = 0; i < components.size(); i++) {
-            Component c = components.get(i);
+        for (Component c : components) {
             if (componentClass.isAssignableFrom(c.getClass())) {
-                components.remove(i);
+                components.remove(c);
                 return;
             }
         }
@@ -68,7 +67,7 @@ public class Entity {
         this.name = name;
     }
 
-    public List<Component> getComponents() {
+    public Set<Component> getComponents() {
         return components;
     }
 

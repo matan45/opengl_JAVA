@@ -4,10 +4,10 @@ import app.math.OLMatrix4f;
 
 import java.nio.file.Path;
 
-public class ShaderCubeMap extends CommonShaderSkyBox {
+public final class ShaderCubeMap extends CommonShaderSkyBox {
     int locationEnvironmentMap;
 
-    protected ShaderCubeMap(Path path) {
+    ShaderCubeMap(Path path) {
         super(path);
     }
 
