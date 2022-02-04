@@ -25,6 +25,7 @@ public class SkyBox {
     int captureRBO;
 
     boolean isActive;
+    boolean showLightMap;
 
     int irradianceMap;
     int envCubeMap;
@@ -96,7 +97,6 @@ public class SkyBox {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
 
-        //final int hdrTexture = textures.hdr("C:\\matan\\test\\Arches_E_PineTree_3k.hdr");
         final int hdrTexture = textures.hdr(filePath);
 
         final OLMatrix4f[] captureViews =
@@ -127,14 +127,14 @@ public class SkyBox {
     }
 
 
-    private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int heigh, int texture, CommonShaderSkyBox shader) {
+    private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int height, int texture, CommonShaderSkyBox shader) {
         shader.start();
         shader.connectTextureUnits();
-        shader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+        shader.loadProjectionMatrix(new OLMatrix4f());
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
-        glViewport(0, 0, width, heigh); // don't forget to configure the viewport to the capture dimensions.
+        glViewport(0, 0, width, height); // don't forget to configure the viewport to the capture dimensions.
         glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
         for (int i = 0; i < 6; ++i) {
             shader.loadViewMatrix(captureViews[i]);
@@ -163,8 +163,12 @@ public class SkyBox {
             backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
             backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-            //glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+
+            if (showLightMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            else
+                glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
             renderCube();
             glActiveTexture(0);
             backgroundShader.stop();
@@ -181,5 +185,9 @@ public class SkyBox {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public void setShowLightMap(boolean showLightMap) {
+        this.showLightMap = showLightMap;
     }
 }
