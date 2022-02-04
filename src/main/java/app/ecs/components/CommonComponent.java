@@ -2,6 +2,8 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 
+import java.util.Objects;
+
 public class CommonComponent implements Component {
     protected Entity ownerEntity;
 
@@ -27,5 +29,18 @@ public class CommonComponent implements Component {
     @Override
     public void cleanUp() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommonComponent that = (CommonComponent) o;
+        return Objects.equals(ownerEntity, that.ownerEntity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ownerEntity);
     }
 }

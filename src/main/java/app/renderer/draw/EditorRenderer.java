@@ -1,8 +1,10 @@
 package app.renderer.draw;
 
 import app.math.components.Camera;
+import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
+import app.renderer.ibl.SkyBox;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -10,9 +12,11 @@ public class EditorRenderer {
     static Framebuffer framebuffer;
     static Camera editorCamera;
     static Textures textures;
+    static OpenGLObjects openGLObjects;
 
-    static int texturesID;
     static int fboID;
+
+    static SkyBox skyBox;
 
     private EditorRenderer() {
     }
@@ -20,25 +24,23 @@ public class EditorRenderer {
     public static void init() {
         textures = new Textures();
         editorCamera = new Camera();
+        openGLObjects = new OpenGLObjects();
         framebuffer = new Framebuffer(1920, 1080, textures);
-        int[] temp = framebuffer.createFrameRenderBuffer();
-        texturesID = temp[0];
-        fboID = temp[1];
+        fboID = framebuffer.createFrameRenderBuffer();
+        skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
     }
 
     public static void draw() {
         framebuffer.bind(fboID);
         glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        skyBox.render();
         framebuffer.unbind();
     }
 
     public static void cleanUp() {
         textures.cleanUp();
-    }
-
-    public static int getTexturesID() {
-        return texturesID;
+        openGLObjects.cleanUp();
     }
 
     public static Framebuffer getFramebuffer() {
@@ -51,5 +53,13 @@ public class EditorRenderer {
 
     public static Textures getTextures() {
         return textures;
+    }
+
+    public static int getTexturesID() {
+        return fboID;
+    }
+
+    public static SkyBox getSkyBox() {
+        return skyBox;
     }
 }

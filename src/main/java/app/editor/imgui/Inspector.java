@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.Component;
+import app.ecs.components.SkyBoxComponent;
 import app.ecs.components.TransformComponent;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
@@ -28,15 +29,19 @@ public class Inspector implements ImguiLayer {
                 else
                     nodeHeader = ImGui.collapsingHeader(component.getClass().getSimpleName() + "\t", headerClose, ImGuiTreeNodeFlags.AllowItemOverlap | ImGuiTreeNodeFlags.FramePadding);
 
-                if (!headerClose.get())
+                if (!headerClose.get()) {
                     removeComponent.add(component);
+                    headerClose.set(true);
+                }
                 if (nodeHeader)
                     component.imguiDraw();
                 ImGui.popID();
             }
             if (!removeComponent.isEmpty()) {
-                for (Component component : removeComponent)
+                for (Component component : removeComponent) {
+                    component.cleanUp();
                     entity.removeComponent(component.getClass());
+                }
                 removeComponent.clear();
             }
 
@@ -50,6 +55,8 @@ public class Inspector implements ImguiLayer {
                         LogInfo.println("not implement");
                     ImGui.endMenu();
                 }
+                if (ImGui.menuItem("Sky Box"))
+                    entity.addComponent(new SkyBoxComponent(entity));
                 ImGui.endPopup();
             }
         }

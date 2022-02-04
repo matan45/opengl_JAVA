@@ -49,13 +49,12 @@ public class ResourceShader {
     }
 
     private ShaderType getShaderType(String shaderType) {
-        switch (shaderType) {
-            case "VERTEX":
-                return ShaderType.VERTEX;
-            case "FRAGMENT":
-                return ShaderType.FRAGMENT;
-            default:
-                return null;
-        }
+        return switch (shaderType) {
+            case "VERTEX" -> ShaderType.VERTEX;
+            case "FRAGMENT" -> ShaderType.FRAGMENT;
+            case "COMPUTE" -> ShaderType.COMPUTE;
+            case "GEOMETRY" -> ShaderType.GEOMETRY;
+            default -> null;
+        };
     }
 }

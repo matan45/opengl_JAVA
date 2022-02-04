@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class ResourceWindowGLFW {
 
-    protected   void setIcon(Path path, long window) {
+    protected void setIcon(Path path, long window) {
         IntBuffer w = memAllocInt(1);
         IntBuffer h = memAllocInt(1);
         IntBuffer comp = memAllocInt(1);

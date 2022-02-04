@@ -18,6 +18,7 @@ public class EntitySystem {
     }
 
     public static void removeEntity(int index) {
+        entitiesArray.get(index).cleanUp();
         entitiesArray.remove(index);
     }
 

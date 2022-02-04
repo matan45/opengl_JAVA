@@ -1,21 +1,15 @@
 package app.editor.imgui;
 
-import app.utilities.logger.LogError;
+import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
-import org.lwjgl.PointerBuffer;
-
-import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.system.MemoryUtil.memAllocPointer;
-import static org.lwjgl.system.MemoryUtil.memFree;
-import static org.lwjgl.util.nfd.NativeFileDialog.*;
 
 public class MainImgui implements ImguiLayer {
     private final ImBoolean closeWindow;
@@ -59,11 +53,11 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                    openFolder();
+                    LogInfo.println(OpenFileDialog.openFolder());
                 } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                    openFile();
+                    LogInfo.println(OpenFileDialog.openFile("png,jpg;pdf"));
                 } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                    save();
+                    LogInfo.println(OpenFileDialog.save("png,jpg;pdf"));
                 } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
                     closeWindow.set(false);
                 }
@@ -88,49 +82,6 @@ public class MainImgui implements ImguiLayer {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    private void openFolder() {
-        PointerBuffer outPath = memAllocPointer(1);
-
-        try {
-            checkResult(NFD_PickFolder((ByteBuffer) null, outPath), outPath);
-        } finally {
-            memFree(outPath);
-        }
-    }
-
-    private void openFile() {
-        PointerBuffer outPath = memAllocPointer(1);
-
-        try {
-            checkResult(NFD_OpenDialog("png,jpg;pdf", null, outPath), outPath);
-        } finally {
-            memFree(outPath);
-        }
-    }
-
-    private void save() {
-        PointerBuffer savePath = memAllocPointer(1);
-
-        try {
-            checkResult(NFD_SaveDialog("png,jpg;pdf", null, savePath), savePath);
-        } finally {
-            memFree(savePath);
-        }
-    }
-
-    private void checkResult(int result, PointerBuffer path) {
-        switch (result) {
-            case NFD_OKAY -> {
-                LogInfo.println("Success!");
-                LogInfo.println(path.getStringUTF8(0));
-                nNFD_Free(path.get(0));
-            }
-            case NFD_CANCEL -> LogInfo.println("User pressed cancel.");
-            default -> // NFD_ERROR
-                    LogError.println("Error: " + NFD_GetError());
-        }
     }
 
 }

@@ -14,6 +14,7 @@ public final class TransformComponent extends CommonComponent {
     OLVector2f buttonSize;
     ImString entityName;
 
+
     public TransformComponent(Entity ownerEntity, OLTransform olTransform) {
         super(ownerEntity);
         this.olTransform = olTransform;

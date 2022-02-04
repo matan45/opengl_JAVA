@@ -1,6 +1,5 @@
 package app.utilities.resource;
 
-import app.editor.GlfwWindow;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -16,8 +15,10 @@ import java.nio.file.Paths;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 
 public class ResourceUtilies {
+    private ResourceUtilies() {
+    }
 
-   protected static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
+    protected static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
         ByteBuffer buffer;
         int bufferSize = 8 * 1024;
         Path path = Paths.get(resource);
