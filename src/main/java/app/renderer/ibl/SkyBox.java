@@ -7,9 +7,7 @@ import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.utilities.data.structures.Pair;
-import org.lwjgl.BufferUtils;
 
-import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -30,9 +28,26 @@ public class SkyBox {
     boolean showLightMap;
     boolean showPreFilterMap;
 
-    int irradianceMap;
     int envCubeMap;
+    int irradianceMap;
     int prefilterMap;
+    int brdfLUTTexture;
+
+    int quadVAO;
+    private static final float[] quadVertices = {
+            // positions
+            -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f,
+    };
+    private static final float[] quadTextureCoords = {
+            // positions
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+    };
 
     int cubeVAO;
     private static final float[] vertices = {
@@ -79,7 +94,6 @@ public class SkyBox {
             1.0f, -1.0f, 1.0f
     };
 
-
     public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.editorCamera = editorCamera;
         this.textures = textures;
@@ -91,16 +105,19 @@ public class SkyBox {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         isActive = true;
         cubeVAO = openGLObjects.loadToVAO(vertices);
+        quadVAO = openGLObjects.loadToVAO(quadVertices, quadTextureCoords);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
         cubemap(filePath);
     }
 
+    Shaderbrdf shaderbrdf;
+
     private void cubemap(String filePath) {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        final Shaderbrdf shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
+        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
         final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
 
 
@@ -162,7 +179,7 @@ public class SkyBox {
         shaderPreFilter.stop();
 
 
-        int brdfLUTTexture = glGenTextures();
+        brdfLUTTexture = glGenTextures();
 
         // pre-allocate enough memory for the LUT texture.
         glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
@@ -192,33 +209,11 @@ public class SkyBox {
         glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
-    int quadVAO = 0;
-    int quadVBO;
 
     private void renderQuad() {
-        if (quadVAO == 0) {
-            float[] quadVertices = {
-                    // positions        // texture Coords
-                    -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-                    1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                    1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-            };
-            FloatBuffer buffer = BufferUtils.createFloatBuffer(quadVertices.length);
-            buffer.put(quadVertices);
-            buffer.flip();
-            // setup plane VAO
-            quadVAO = glGenVertexArrays();
-            quadVBO = glGenBuffers();
-            glBindVertexArray(quadVAO);
-            glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-            glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 3);
-        }
         glBindVertexArray(quadVAO);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
     }
@@ -271,6 +266,10 @@ public class SkyBox {
             renderCube();
             glActiveTexture(0);
             backgroundShader.stop();
+
+           /* shaderbrdf.start();
+            renderQuad();
+            shaderbrdf.stop();*/
         }
     }
 
@@ -280,6 +279,10 @@ public class SkyBox {
 
     public int getPrefilterMap() {
         return prefilterMap;
+    }
+
+    public int getBrdfLUTTexture() {
+        return brdfLUTTexture;
     }
 
     public boolean isActive() {
