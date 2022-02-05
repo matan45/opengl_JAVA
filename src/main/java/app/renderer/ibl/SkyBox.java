@@ -141,17 +141,60 @@ public class SkyBox {
 
         envCubeMap = textures.createCubTexture(512, 512);
         convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
-
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         bindFrameBuffer(32, 32);
-
         irradianceMap = textures.createCubTexture(32, 32);
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
-        prefilterMap = textures.createCubTexture(128, 128);
+        prefilterMap(shaderPreFilter, captureViews);
 
+        brdfLUTTexture = textures.createBrdfTexture(512, 512);
+
+        // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+        bindFrameBuffer(512, 512);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+        glViewport(0, 0, 512, 512);
+
+        shaderbrdf.start();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderQuad();
+        shaderbrdf.stop();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glDisable(GL_DEPTH_TEST);
+        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
+    }
+
+    public void render() {
+        if (isActive) {
+            backgroundShader.start();
+            backgroundShader.connectTextureUnits();
+            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
+            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+            glActiveTexture(GL_TEXTURE0);
+
+            if (showLightMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            else if (showPreFilterMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
+            else
+                glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+            renderCube();
+            glActiveTexture(0);
+            backgroundShader.stop();
+
+           /* shaderbrdf.start();
+            renderQuad();
+            shaderbrdf.stop();*/
+        }
+    }
+
+    private void prefilterMap(ShaderPreFilter shaderPreFilter, OLMatrix4f[] captureViews) {
+        prefilterMap = textures.createCubTexture(128, 128);
         shaderPreFilter.start();
         shaderPreFilter.connectTextureUnits();
         shaderPreFilter.loadProjectionMatrix(new OLMatrix4f());
@@ -181,26 +224,6 @@ public class SkyBox {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
         shaderPreFilter.stop();
-
-
-        brdfLUTTexture = textures.createBrdfTexture(512, 512);
-
-        // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
-        bindFrameBuffer(512, 512);
-
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
-
-        glViewport(0, 0, 512, 512);
-
-        shaderbrdf.start();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderQuad();
-        shaderbrdf.stop();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glDisable(GL_DEPTH_TEST);
-        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
     private void bindFrameBuffer(int width, int height) {
@@ -244,31 +267,6 @@ public class SkyBox {
         glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-    }
-
-    public void render() {
-        if (isActive) {
-            backgroundShader.start();
-            backgroundShader.connectTextureUnits();
-            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
-            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-            glActiveTexture(GL_TEXTURE0);
-
-            if (showLightMap)
-                glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-            else if (showPreFilterMap)
-                glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-            else
-                glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-
-            renderCube();
-            glActiveTexture(0);
-            backgroundShader.stop();
-
-           /* shaderbrdf.start();
-            renderQuad();
-            shaderbrdf.stop();*/
-        }
     }
 
     public int getIrradianceMap() {
