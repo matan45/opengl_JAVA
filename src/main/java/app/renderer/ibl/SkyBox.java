@@ -16,6 +16,8 @@ import static org.lwjgl.opengl.GL30.*;
 public class SkyBox {
     ShaderCubeMap backgroundShader;
 
+    String path;
+
     Camera editorCamera;
     Textures textures;
     Framebuffer framebuffer;
@@ -26,9 +28,28 @@ public class SkyBox {
 
     boolean isActive;
     boolean showLightMap;
+    boolean showPreFilterMap;
 
-    int irradianceMap;
     int envCubeMap;
+    int irradianceMap;
+    int prefilterMap;
+    int brdfLUTTexture;
+
+    int quadVAO;
+    private static final float[] quadVertices = {
+            // positions
+            -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f,
+    };
+    private static final float[] quadTextureCoords = {
+            // positions
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+    };
 
     int cubeVAO;
     private static final float[] vertices = {
@@ -75,7 +96,6 @@ public class SkyBox {
             1.0f, -1.0f, 1.0f
     };
 
-
     public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.editorCamera = editorCamera;
         this.textures = textures;
@@ -87,17 +107,24 @@ public class SkyBox {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         isActive = true;
         cubeVAO = openGLObjects.loadToVAO(vertices);
+        quadVAO = openGLObjects.loadToVAO(quadVertices, quadTextureCoords);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
         cubemap(filePath);
     }
 
+    Shaderbrdf shaderbrdf;
+
     private void cubemap(String filePath) {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
+        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
+        final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
 
-        final int hdrTexture = textures.hdr(filePath);
+
+        int hdrTexture = textures.hdr(filePath);
+        path = filePath;
 
         final OLMatrix4f[] captureViews =
                 {
@@ -114,18 +141,96 @@ public class SkyBox {
 
         envCubeMap = textures.createCubTexture(512, 512);
         convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
-
+        bindFrameBuffer(32, 32);
         irradianceMap = textures.createCubTexture(32, 32);
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
+
+        prefilterMap(shaderPreFilter, captureViews);
+
+        brdfLUTTexture = textures.createBrdfTexture(512, 512);
+
+        // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+        bindFrameBuffer(512, 512);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+        glViewport(0, 0, 512, 512);
+
+        shaderbrdf.start();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderQuad();
+        shaderbrdf.stop();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glDisable(GL_DEPTH_TEST);
         glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
+    public void render() {
+        if (isActive) {
+            backgroundShader.start();
+            backgroundShader.connectTextureUnits();
+            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
+            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+            glActiveTexture(GL_TEXTURE0);
+
+            if (showLightMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+            else if (showPreFilterMap)
+                glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
+            else
+                glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+            renderCube();
+            glActiveTexture(0);
+            backgroundShader.stop();
+
+           /* shaderbrdf.start();
+            renderQuad();
+            shaderbrdf.stop();*/
+        }
+    }
+
+    private void prefilterMap(ShaderPreFilter shaderPreFilter, OLMatrix4f[] captureViews) {
+        prefilterMap = textures.createCubTexture(128, 128);
+        shaderPreFilter.start();
+        shaderPreFilter.connectTextureUnits();
+        shaderPreFilter.loadProjectionMatrix(new OLMatrix4f());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        int maxMipLevels = 5;
+        for (int mip = 0; mip < maxMipLevels; ++mip) {
+            // reisze framebuffer according to mip-level size.
+            int mipWidth = (int) (128 * Math.pow(0.5, mip));
+            int mipHeight = (int) (128 * Math.pow(0.5, mip));
+            glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+            glViewport(0, 0, mipWidth, mipHeight);
+
+            float roughness = (float) mip / (float) (maxMipLevels - 1);
+            shaderPreFilter.loadRoughness(roughness);
+            for (int i = 0; i < 6; ++i) {
+                shaderPreFilter.loadViewMatrix(captureViews[i]);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                renderCube();
+            }
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glActiveTexture(0);
+        shaderPreFilter.stop();
+    }
+
+    private void bindFrameBuffer(int width, int height) {
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+    }
 
     private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int height, int texture, CommonShaderSkyBox shader) {
         shader.start();
@@ -148,6 +253,14 @@ public class SkyBox {
         shader.stop();
     }
 
+    private void renderQuad() {
+        glBindVertexArray(quadVAO);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+    }
+
     private void renderCube() {
         // render Cube
         glBindVertexArray(cubeVAO);
@@ -156,27 +269,20 @@ public class SkyBox {
         glBindVertexArray(0);
     }
 
-    public void render() {
-        if (isActive) {
-            backgroundShader.start();
-            backgroundShader.connectTextureUnits();
-            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
-            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
-            glActiveTexture(GL_TEXTURE0);
-
-            if (showLightMap)
-                glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-            else
-                glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-
-            renderCube();
-            glActiveTexture(0);
-            backgroundShader.stop();
-        }
-    }
-
     public int getIrradianceMap() {
         return irradianceMap;
+    }
+
+    public int getPrefilterMap() {
+        return prefilterMap;
+    }
+
+    public int getBrdfLUTTexture() {
+        return brdfLUTTexture;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public boolean isActive() {
@@ -189,5 +295,9 @@ public class SkyBox {
 
     public void setShowLightMap(boolean showLightMap) {
         this.showLightMap = showLightMap;
+    }
+
+    public void setShowPreFilterMap(boolean showPreFilterMap) {
+        this.showPreFilterMap = showPreFilterMap;
     }
 }

@@ -4,6 +4,7 @@ import app.utilities.logger.LogError;
 import org.lwjgl.PointerBuffer;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 
 import static org.lwjgl.system.MemoryUtil.memAllocPointer;
 import static org.lwjgl.system.MemoryUtil.memFree;
@@ -15,7 +16,7 @@ public class OpenFileDialog {
     }
 
 
-    public static String openFolder() {
+    public static Optional<String> openFolder() {
         PointerBuffer outPath = memAllocPointer(1);
 
         try {
@@ -25,7 +26,7 @@ public class OpenFileDialog {
         }
     }
 
-    public static String openFile(String filters) {
+    public static Optional<String> openFile(String filters) {
         PointerBuffer outPath = memAllocPointer(1);
 
         try {
@@ -35,7 +36,7 @@ public class OpenFileDialog {
         }
     }
 
-    public static String save(String filters) {
+    public static Optional<String> save(String filters) {
         PointerBuffer savePath = memAllocPointer(1);
 
         try {
@@ -45,21 +46,21 @@ public class OpenFileDialog {
         }
     }
 
-    private static String checkResult(int result, PointerBuffer path) {
+    private static Optional<String> checkResult(int result, PointerBuffer path) {
         String pathResult;
         switch (result) {
             case NFD_OKAY -> {
                 pathResult = path.getStringUTF8(0);
                 nNFD_Free(path.get(0));
-                return pathResult;
+                return Optional.of(pathResult);
             }
             case NFD_CANCEL -> {
-                return null;
+                return Optional.empty();
             }
             default -> {
                 // NFD_ERROR
                 LogError.println("Error: " + NFD_GetError());
-                return null;
+                return Optional.empty();
             }
         }
     }
