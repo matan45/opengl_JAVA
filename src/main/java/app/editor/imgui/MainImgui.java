@@ -53,11 +53,11 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                    LogInfo.println(OpenFileDialog.openFolder());
+                    LogInfo.println(OpenFileDialog.openFolder().get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                    LogInfo.println(OpenFileDialog.openFile("png,jpg;pdf"));
+                    LogInfo.println(OpenFileDialog.openFile("png,jpg;pdf").get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                    LogInfo.println(OpenFileDialog.save("png,jpg;pdf"));
+                    LogInfo.println(OpenFileDialog.save("png,jpg;pdf").get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
                     closeWindow.set(false);
                 }

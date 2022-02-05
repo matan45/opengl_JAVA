@@ -16,6 +16,8 @@ import static org.lwjgl.opengl.GL30.*;
 public class SkyBox {
     ShaderCubeMap backgroundShader;
 
+    String path;
+
     Camera editorCamera;
     Textures textures;
     Framebuffer framebuffer;
@@ -121,7 +123,8 @@ public class SkyBox {
         final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
 
 
-        final int hdrTexture = textures.hdr(filePath);
+        int hdrTexture = textures.hdr(filePath);
+        path = filePath;
 
         final OLMatrix4f[] captureViews =
                 {
@@ -139,9 +142,10 @@ public class SkyBox {
         envCubeMap = textures.createCubTexture(512, 512);
         convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+        bindFrameBuffer(32, 32);
 
         irradianceMap = textures.createCubTexture(32, 32);
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
@@ -179,21 +183,11 @@ public class SkyBox {
         shaderPreFilter.stop();
 
 
-        brdfLUTTexture = glGenTextures();
-
-        // pre-allocate enough memory for the LUT texture.
-        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-        // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        brdfLUTTexture = textures.createBrdfTexture(512, 512);
 
         // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
-        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+        bindFrameBuffer(512, 512);
+
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
 
         glViewport(0, 0, 512, 512);
@@ -209,15 +203,11 @@ public class SkyBox {
         glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
-
-    private void renderQuad() {
-        glBindVertexArray(quadVAO);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glBindVertexArray(0);
+    private void bindFrameBuffer(int width, int height) {
+        glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
     }
-
 
     private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int height, int texture, CommonShaderSkyBox shader) {
         shader.start();
@@ -238,6 +228,14 @@ public class SkyBox {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(0);
         shader.stop();
+    }
+
+    private void renderQuad() {
+        glBindVertexArray(quadVAO);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
     }
 
     private void renderCube() {
@@ -283,6 +281,10 @@ public class SkyBox {
 
     public int getBrdfLUTTexture() {
         return brdfLUTTexture;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public boolean isActive() {

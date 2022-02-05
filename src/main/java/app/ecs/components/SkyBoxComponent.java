@@ -14,7 +14,6 @@ public class SkyBoxComponent extends CommonComponent {
     SkyBox skyBox;
     ImBoolean showLightMap;
     ImBoolean showPreFilterMap;
-    String result;
     ImInt select;
 
     public SkyBoxComponent(Entity ownerEntity) {
@@ -28,13 +27,11 @@ public class SkyBoxComponent extends CommonComponent {
     @Override
     public void imguiDraw() {
         if (ImGui.button("HDR")) {
-            result = OpenFileDialog.openFile("hdr");
-            if (result != null)
-                skyBox.init(result);
+            OpenFileDialog.openFile("hdr").ifPresent(s -> skyBox.init(s));
 
-        } else if (result != null) {
+        } else if (skyBox.getPath() != null && !skyBox.getPath().isBlank()) {
             ImGui.sameLine();
-            File file = new File(result);
+            File file = new File(skyBox.getPath());
             ImGui.textWrapped(file.getName());
         }
 
