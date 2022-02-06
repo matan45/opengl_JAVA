@@ -12,7 +12,10 @@ public enum ShaderType {
     COMPUTE(GL_COMPUTE_SHADER);
 
     private final int value;
-    ShaderType(int value) { this.value = value; }
+
+    ShaderType(int value) {
+        this.value = value;
+    }
 
     public int getValue() {
         return value;

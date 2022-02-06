@@ -1,6 +1,9 @@
 package app.math;
 
 public class MathUtil {
+    private MathUtil() {
+    }
+
     public static final float epsilon = 1.e-8f;
 
     public static float inverseSqrt(float r) {

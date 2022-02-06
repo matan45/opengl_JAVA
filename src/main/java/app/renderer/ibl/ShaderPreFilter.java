@@ -1,6 +1,7 @@
 package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
+import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Path;
 
@@ -8,7 +9,7 @@ public final class ShaderPreFilter extends CommonShaderSkyBox {
     int locationEnvironmentMap;
     int locationroughness;
 
-    protected ShaderPreFilter(Path path) {
+    ShaderPreFilter(Path path) {
         super(path);
     }
 
@@ -33,8 +34,8 @@ public final class ShaderPreFilter extends CommonShaderSkyBox {
 
     @Override
     protected void getAllUniformLocations() {
-        locationProjectionMatrix = super.getUniformLocation("projection");
-        locationViewMatrix = super.getUniformLocation("view");
+        locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
+        locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationEnvironmentMap = super.getUniformLocation("environmentMap");
         locationroughness = super.getUniformLocation("roughness");
     }

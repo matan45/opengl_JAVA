@@ -74,7 +74,6 @@ public class Entity {
     public void cleanUp() {
         for (Component c : components)
             c.cleanUp();
-
         components.clear();
     }
 

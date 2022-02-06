@@ -27,8 +27,8 @@ public class ContentBrowser implements ImguiLayer {
 
     public ContentBrowser() {
         textures = EditorRenderer.getTextures();
-        this.folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
-        this.fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
+        folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
+        fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
     }
 
     @Override
