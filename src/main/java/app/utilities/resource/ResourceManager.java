@@ -8,9 +8,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ResourceManager {
+    //TODO Resource pooling
     static ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
     static ResourceShader resourceShader = new ResourceShader();
     static ResourceImgui resourceImgui = new ResourceImgui();
+    static ResourceMesh resourceMesh = new ResourceMesh();
 
     private ResourceManager() {
     }

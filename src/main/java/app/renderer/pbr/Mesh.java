@@ -1,4 +1,5 @@
 package app.renderer.pbr;
 
-public class Mesh {
+public record Mesh(float[] vertices, float[] textures, float[] normals, int[] indices) {
 }
+
