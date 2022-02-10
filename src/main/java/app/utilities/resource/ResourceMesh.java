@@ -26,6 +26,7 @@ public class ResourceMesh {
         AIScene aiScene = aiImportFile(fileName, flags);
         if (aiScene == null) {
             System.err.println("Error loading model");
+            return null;
         }
 
         int numMeshes = aiScene.mNumMeshes();
@@ -46,7 +47,6 @@ public class ResourceMesh {
         List<Float> textures = processNormals(aiMesh);
         List<Float> normals = processTextCoords(aiMesh);
         List<Integer> indices = processIndices(aiMesh);
-
 
         return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices));
     }
