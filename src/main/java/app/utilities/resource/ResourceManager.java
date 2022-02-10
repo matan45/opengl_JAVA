@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ResourceManager {
-    //TODO Resource pooling
+    //TODO Resource pooling map path and object Map<path,object>
     static ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
     static ResourceShader resourceShader = new ResourceShader();
     static ResourceImgui resourceImgui = new ResourceImgui();
