@@ -19,7 +19,7 @@ public class ShaderMesh extends ShaderProgram {
     protected void getAllUniformLocations() {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
-        locationModelMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
+        locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
     }
 
 

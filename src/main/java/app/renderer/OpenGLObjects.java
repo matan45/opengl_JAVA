@@ -25,8 +25,8 @@ public class OpenGLObjects {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, positions);
-        storeDataInAttributeList(1, 2, textureCoords);
-        storeDataInAttributeList(2, 3, normals);
+        storeDataInAttributeList(1, 3, normals);
+        storeDataInAttributeList(2, 2, textureCoords);
         unbindVAO();
         return new VaoModel(vaoID, indices.length);
     }

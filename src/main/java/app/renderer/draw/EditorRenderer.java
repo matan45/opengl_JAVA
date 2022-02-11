@@ -32,13 +32,17 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         meshRenderer = new MeshRenderer(editorCamera, openGLObjects);
+        meshRenderer.init();
     }
 
     public static void draw() {
         framebuffer.bind(fboID);
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        meshRenderer.renderer();
         skyBox.render();
+        glDisable(GL_DEPTH_TEST);
         framebuffer.unbind();
     }
 

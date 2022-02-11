@@ -1,12 +1,11 @@
 package app.renderer.pbr;
 
-import app.math.OLMatrix4f;
 import app.math.components.Camera;
+import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
 import app.renderer.VaoModel;
 import app.utilities.resource.ResourceManager;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -22,6 +21,7 @@ public class MeshRenderer {
 
     Mesh[] meshes;
     VaoModel vaoModel;
+    OLTransform olTransform;
 
     public MeshRenderer(Camera camera, OpenGLObjects openGLObjects) {
         this.camera = camera;
@@ -30,13 +30,16 @@ public class MeshRenderer {
     }
 
     public void init() {
-        meshes = ResourceManager.loadMeshFromFile(Paths.get(""));
+        meshes = ResourceManager.loadMeshFromFile(Paths.get("C:\\matan\\test\\untitled.obj"));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
+        olTransform = new OLTransform();
     }
 
-    public void renderer(){
+    public void renderer() {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         shaderMesh.start();
-        shaderMesh.loadModelMatrix(new OLMatrix4f());
+        shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
         shaderMesh.loadViewMatrix(camera.getViewMatrix());
         shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
 
@@ -53,5 +56,6 @@ public class MeshRenderer {
         glBindVertexArray(0);
 
         shaderMesh.stop();
+        glDisable(GL_CULL_FACE);
     }
 }

@@ -56,12 +56,6 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
-    final float[] gridMatrix = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
     float[] inputViewMatrix = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -127,8 +121,7 @@ public class ViewPort implements ImguiLayer {
             ImGui.endMenuBar();
             ImGui.popStyleColor();
 
-            ImVec2 windowSize = ImGui.getWindowSize();
-            ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+            ImGui.image(EditorRenderer.getTexturesID(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80, 0, 1, 1, 0);
             //Gizmos
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
@@ -155,8 +148,6 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
-
-            ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
 
             if (entity != null && currentGizmoOperation != -1) {
 

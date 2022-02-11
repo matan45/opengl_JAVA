@@ -11,7 +11,7 @@ uniform mat4 model;
 
 void main()
 {
-    vec4 worldPosition = model * vec4(position.x, position.y, position.z, 1.0);
+    vec4 worldPosition = model * vec4(position, 1.0);
 	vec4 positionRelativeToCam = view * worldPosition;
  	gl_Position = projection * positionRelativeToCam;
 }
