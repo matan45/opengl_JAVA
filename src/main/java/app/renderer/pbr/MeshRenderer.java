@@ -1,5 +1,6 @@
 package app.renderer.pbr;
 
+import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
@@ -32,7 +33,7 @@ public class MeshRenderer {
     public void init(String filePath) {
         meshes = ResourceManager.loadMeshFromFile(Paths.get("C:\\matan\\test\\bolter.stl"));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
-        olTransform = new OLTransform();
+        olTransform = new OLTransform(new OLVector3f(5,5,5),new OLVector3f(1,1,1),new OLVector3f(0,1,0));
     }
 
     public void renderer() {
