@@ -32,7 +32,7 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         meshRenderer = new MeshRenderer(editorCamera, openGLObjects);
-        meshRenderer.init();
+        meshRenderer.init("");
     }
 
     public static void draw() {

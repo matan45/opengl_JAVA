@@ -17,8 +17,8 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class ResourceMesh {
 
-    static final int flags = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
-            | aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_LimitBoneWeights;
+    private static final int flags = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
+            | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
 
     protected Mesh[] readMeshFile(Path path) {
         return loadMeshItem(path.toString());
