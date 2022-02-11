@@ -1,5 +1,6 @@
 package app.utilities.resource;
 
+import app.renderer.pbr.Mesh;
 import app.renderer.shaders.ShaderModel;
 
 import java.io.IOException;
@@ -31,5 +32,9 @@ public class ResourceManager {
 
     public static ByteBuffer readToByte(Path path) throws IOException {
         return ResourceUtilies.ioResourceToByteBuffer(path.toAbsolutePath().toString());
+    }
+
+    public static Mesh[] loadMeshFromFile(Path path) {
+        return resourceMesh.readMeshFile(path);
     }
 }

@@ -29,6 +29,8 @@ public abstract class ShaderProgram {
         glLinkProgram(programID);
         glValidateProgram(programID);
         getAllUniformLocations();
+
+        ShaderManager.add(this);
     }
 
     protected abstract void getAllUniformLocations();

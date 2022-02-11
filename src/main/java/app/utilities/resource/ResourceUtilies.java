@@ -20,7 +20,7 @@ public class ResourceUtilies {
 
     protected static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
         ByteBuffer buffer;
-        int bufferSize = 8 * 1024;
+        int bufferSize = 10 * 1024;
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {

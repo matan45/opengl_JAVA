@@ -6,7 +6,7 @@ import app.renderer.shaders.UniformsNames;
 import java.nio.file.Path;
 
 public final class ShaderIrradiance extends CommonShaderSkyBox {
-    int locationEquirectangularMap;
+    private int locationEquirectangularMap;
 
     ShaderIrradiance(Path path) {
         super(path);

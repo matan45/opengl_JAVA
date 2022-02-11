@@ -5,18 +5,21 @@ import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
+import app.renderer.pbr.MeshRenderer;
+import app.renderer.shaders.ShaderManager;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorRenderer {
-    static Framebuffer framebuffer;
-    static Camera editorCamera;
-    static Textures textures;
-    static OpenGLObjects openGLObjects;
+    private static Framebuffer framebuffer;
+    private static Camera editorCamera;
+    private static Textures textures;
+    private static OpenGLObjects openGLObjects;
 
-    static int fboID;
+    private static int fboID;
 
-    static SkyBox skyBox;
+    private static SkyBox skyBox;
+    private static MeshRenderer meshRenderer;
 
     private EditorRenderer() {
     }
@@ -28,6 +31,7 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
+        meshRenderer = new MeshRenderer(editorCamera, openGLObjects);
     }
 
     public static void draw() {
@@ -41,6 +45,7 @@ public class EditorRenderer {
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
+        ShaderManager.cleanUp();
     }
 
     public static Framebuffer getFramebuffer() {

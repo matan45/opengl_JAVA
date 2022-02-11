@@ -17,12 +17,14 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class ResourceMesh {
 
+    static final int flags = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
+            | aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_LimitBoneWeights;
+
     protected Mesh[] readMeshFile(Path path) {
-        return loadMeshItem(path.toString(), aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
-                | aiProcess_Triangulate | aiProcess_FixInfacingNormals | aiProcess_LimitBoneWeights);
+        return loadMeshItem(path.toString());
     }
 
-    private Mesh[] loadMeshItem(String fileName, int flags) {
+    private Mesh[] loadMeshItem(String fileName) {
         AIScene aiScene = aiImportFile(fileName, flags);
         if (aiScene == null) {
             System.err.println("Error loading model");

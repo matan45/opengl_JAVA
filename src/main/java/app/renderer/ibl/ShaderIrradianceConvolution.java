@@ -6,7 +6,7 @@ import app.renderer.shaders.UniformsNames;
 import java.nio.file.Path;
 
 public final class ShaderIrradianceConvolution extends CommonShaderSkyBox {
-    int locationEnvironmentMap;
+    private int locationEnvironmentMap;
 
     ShaderIrradianceConvolution(Path path) {
         super(path);

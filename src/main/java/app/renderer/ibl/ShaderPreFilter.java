@@ -6,8 +6,8 @@ import app.renderer.shaders.UniformsNames;
 import java.nio.file.Path;
 
 public final class ShaderPreFilter extends CommonShaderSkyBox {
-    int locationEnvironmentMap;
-    int locationroughness;
+    private int locationEnvironmentMap;
+    private int locationroughness;
 
     ShaderPreFilter(Path path) {
         super(path);
