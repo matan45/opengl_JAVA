@@ -156,7 +156,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
-            ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
+            //ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 10);
 
             if (entity != null && currentGizmoOperation != -1) {
 
