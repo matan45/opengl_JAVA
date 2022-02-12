@@ -30,10 +30,10 @@ public class MeshRenderer {
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
     }
 
-    public void init(String filePath) {
-        meshes = ResourceManager.loadMeshFromFile(Paths.get("C:\\matan\\test\\bolter.stl"));
+    public void init(String filePath, OLTransform olTransform) {
+        meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
-        olTransform = new OLTransform(new OLVector3f(5,5,5),new OLVector3f(1,1,1),new OLVector3f(0,1,0));
+        this.olTransform = olTransform;
     }
 
     public void renderer() {

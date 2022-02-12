@@ -146,7 +146,7 @@ public class ViewPort implements ImguiLayer {
 
             if (preWindowHeight != ImGui.getWindowHeight() || preWindowWidth != ImGui.getWindowWidth()) {
                 aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-                cameraProjection = editorCamera.createPerspectiveMatrix(30, aspect, 0.1f, 1000f).getAsArray();
+                cameraProjection = editorCamera.createPerspectiveMatrix(30, aspect, 0.1f, 100f).getAsArray();
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
             }
@@ -156,7 +156,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
-            ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 100);
+            //ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 100);
 
             if (entity != null && currentGizmoOperation != -1) {
 

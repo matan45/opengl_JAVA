@@ -6,7 +6,11 @@ import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.pbr.MeshRenderer;
+import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.shaders.ShaderManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -19,7 +23,7 @@ public class EditorRenderer {
     private static int fboID;
 
     private static SkyBox skyBox;
-    private static MeshRenderer meshRenderer;
+    private static MeshRendererHandler meshRenderer;
 
     private EditorRenderer() {
     }
@@ -31,8 +35,7 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
-        meshRenderer = new MeshRenderer(editorCamera, openGLObjects);
-        meshRenderer.init("");
+        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects);
     }
 
     public static void draw() {
@@ -40,7 +43,7 @@ public class EditorRenderer {
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        meshRenderer.renderer();
+        meshRenderer.renderers();
         skyBox.render();
         glDisable(GL_DEPTH_TEST);
         framebuffer.unbind();
@@ -71,4 +74,9 @@ public class EditorRenderer {
     public static SkyBox getSkyBox() {
         return skyBox;
     }
+
+    public static MeshRendererHandler getMeshRenderer() {
+        return meshRenderer;
+    }
+
 }
