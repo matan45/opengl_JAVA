@@ -35,7 +35,7 @@ public class Grid {
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
         init();
         vaoModel = openGLObjects.loadToVAO(listToArray(vertices), listIntToArray(indices));
-        olTransform = new OLTransform(new OLVector3f(), new OLVector3f(10, 0, 10), new OLVector3f());
+        olTransform = new OLTransform(new OLVector3f(-10f,0,-10), new OLVector3f(50, 0, 50), new OLVector3f());
     }
 
     public void init() {
@@ -70,8 +70,7 @@ public class Grid {
     }
 
     public void render() {
-        glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-        glEnable(GL_LINE_SMOOTH);
+
         shaderGrid.start();
         shaderGrid.loadModelMatrix(olTransform.getModelMatrix());
         shaderGrid.loadViewMatrix(camera.getViewMatrix());
