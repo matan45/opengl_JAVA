@@ -49,6 +49,8 @@ public class ViewPort implements ImguiLayer {
     int cancelIcon;
     int playIcon;
     int stopIcon;
+    int gridIcon;
+    boolean isViewGrid = false;
 
     final float[] gridMatrix = {
             1.f, 0.f, 0.f, 0.f,
@@ -99,6 +101,7 @@ public class ViewPort implements ImguiLayer {
         playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
         stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
         cancelIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
+        gridIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\grid.png");
 
     }
 
@@ -123,6 +126,9 @@ public class ViewPort implements ImguiLayer {
                 } else if (ImGui.imageButton(cancelIcon, 30, 20)) {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
+                } else if (ImGui.imageButton(gridIcon, 30, 20)) {
+                    System.out.println(isViewGrid);
+                    isViewGrid = !isViewGrid;
                 }
             }
             ImGui.endMenuBar();
@@ -156,7 +162,13 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
-            //ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 100);
+            if (isViewGrid) {
+                ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 100);
+                float windowWidth = ImGui.getWindowWidth();
+                float viewManipulateRight = ImGui.getWindowPosX() + windowWidth;
+                float viewManipulateTop = ImGui.getWindowPosY() + 30;
+                ImGuizmo.viewManipulate(inputViewMatrix, 8, new float[]{viewManipulateRight - 128, viewManipulateTop}, new float[]{128f, 128f}, 0x10101010);
+            }
 
             if (entity != null && currentGizmoOperation != -1) {
 

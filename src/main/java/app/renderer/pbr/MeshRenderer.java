@@ -1,6 +1,5 @@
 package app.renderer.pbr;
 
-import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
@@ -8,6 +7,7 @@ import app.renderer.VaoModel;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -19,7 +19,7 @@ public class MeshRenderer {
     Camera camera;
     OpenGLObjects openGLObjects;
 
-
+    String path;
     Mesh[] meshes;
     VaoModel vaoModel;
     OLTransform olTransform;
@@ -34,6 +34,7 @@ public class MeshRenderer {
         meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
         this.olTransform = olTransform;
+        path = filePath;
     }
 
     public void renderer() {
@@ -58,5 +59,22 @@ public class MeshRenderer {
 
         shaderMesh.stop();
         glDisable(GL_CULL_FACE);
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MeshRenderer that = (MeshRenderer) o;
+        return Objects.equals(path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
     }
 }

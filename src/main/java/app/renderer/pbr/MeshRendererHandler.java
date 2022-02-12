@@ -23,14 +23,22 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        MeshRenderer meshRenderer = new MeshRenderer(editorCamera, openGLObjects);
-        meshRenderers.add(meshRenderer);
-        return meshRenderer;
+        return new MeshRenderer(editorCamera, openGLObjects);
     }
+
+    public void addInstant(MeshRenderer meshRenderer) {
+        meshRenderers.add(meshRenderer);
+    }
+
 
     public void removeInstant(MeshRenderer meshRenderer) {
         meshRenderers.remove(meshRenderer);
     }
+
+    public boolean isContains(MeshRenderer meshRenderer) {
+        return meshRenderers.contains(meshRenderer);
+    }
+
 
     public void renderers() {
         meshRenderers.forEach(MeshRenderer::renderer);

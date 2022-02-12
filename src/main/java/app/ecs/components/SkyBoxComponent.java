@@ -11,10 +11,10 @@ import imgui.type.ImInt;
 import java.io.File;
 
 public class SkyBoxComponent extends CommonComponent {
-    SkyBox skyBox;
-    ImBoolean showLightMap;
-    ImBoolean showPreFilterMap;
-    ImInt select;
+    private  SkyBox skyBox;
+    private ImBoolean showLightMap;
+    private ImBoolean showPreFilterMap;
+    private ImInt select;
 
     public SkyBoxComponent(Entity ownerEntity) {
         super(ownerEntity);
