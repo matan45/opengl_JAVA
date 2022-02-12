@@ -127,7 +127,6 @@ public class ViewPort implements ImguiLayer {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
                 } else if (ImGui.imageButton(gridIcon, 30, 20)) {
-                    System.out.println(isViewGrid);
                     isViewGrid = !isViewGrid;
                 }
             }
