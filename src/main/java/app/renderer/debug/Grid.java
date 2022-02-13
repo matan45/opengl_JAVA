@@ -2,6 +2,7 @@ package app.renderer.debug;
 
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
+import app.utilities.ArrayUtil;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,13 +23,16 @@ public class Grid {
     Camera camera;
     int vaoModel;
 
+    boolean render;
+
     public Grid(OpenGLObjects openGLObjects, Camera camera) {
         this.openGLObjects = openGLObjects;
         this.camera = camera;
         vertices = new ArrayList<>();
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
+        render = true;
         init();
-        vaoModel = openGLObjects.loadToVAO(listToArray(vertices));
+        vaoModel = openGLObjects.loadToVAO(ArrayUtil.listToArray(vertices));
     }
 
     public void init() {
@@ -59,29 +63,24 @@ public class Grid {
     }
 
     public void render() {
+        if (render) {
+            shaderGrid.start();
+            shaderGrid.loadViewMatrix(camera.getViewMatrix());
+            shaderGrid.loadProjectionMatrix(camera.getProjectionMatrix());
 
-        shaderGrid.start();
-        shaderGrid.loadViewMatrix(camera.getViewMatrix());
-        shaderGrid.loadProjectionMatrix(camera.getProjectionMatrix());
+            glBindVertexArray(vaoModel);
+            glEnableVertexAttribArray(0);
 
-        glBindVertexArray(vaoModel);
-        glEnableVertexAttribArray(0);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+            glDisableVertexAttribArray(0);
+            glBindVertexArray(0);
 
-        glDisableVertexAttribArray(0);
-        glBindVertexArray(0);
-
-        shaderGrid.stop();
+            shaderGrid.stop();
+        }
     }
 
-    //TODO MOVE IT after mirage
-    public static float[] listToArray(List<Float> list) {
-        int size = list != null ? list.size() : 0;
-        float[] floatArr = new float[size];
-        for (int i = 0; i < size; i++) {
-            floatArr[i] = list.get(i);
-        }
-        return floatArr;
+    public void setRender(boolean render) {
+        this.render = render;
     }
 }

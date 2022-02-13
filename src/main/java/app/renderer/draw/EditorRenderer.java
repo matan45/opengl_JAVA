@@ -6,20 +6,21 @@ import app.renderer.Textures;
 import app.renderer.debug.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
+import app.renderer.pbr.MeshRendererHandler;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorRenderer {
-    static Framebuffer framebuffer;
-    static Camera editorCamera;
-    static Textures textures;
-    static OpenGLObjects openGLObjects;
+    private static Framebuffer framebuffer;
+    private static Camera editorCamera;
+    private static Textures textures;
+    private static OpenGLObjects openGLObjects;
 
-    static int fboID;
+    private static int fboID;
 
-    static SkyBox skyBox;
-
-    static Grid grid;
+    private static SkyBox skyBox;
+    private static MeshRendererHandler meshRenderer;
+    private static Grid grid;
 
     private EditorRenderer() {
     }
@@ -32,6 +33,7 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, editorCamera);
+        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects);
     }
 
     public static void draw() {
@@ -40,17 +42,15 @@ public class EditorRenderer {
         glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         grid.render();
+        meshRenderer.renderers();
         skyBox.render();
+        glDisable(GL_DEPTH_TEST);
         framebuffer.unbind();
     }
 
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
-    }
-
-    public static Framebuffer getFramebuffer() {
-        return framebuffer;
     }
 
     public static Camera getEditorCamera() {
@@ -67,5 +67,13 @@ public class EditorRenderer {
 
     public static SkyBox getSkyBox() {
         return skyBox;
+    }
+
+    public static Grid getGrid() {
+        return grid;
+    }
+
+    public static MeshRendererHandler getMeshRenderer() {
+        return meshRenderer;
     }
 }

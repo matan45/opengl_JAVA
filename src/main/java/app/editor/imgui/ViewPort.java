@@ -49,6 +49,8 @@ public class ViewPort implements ImguiLayer {
     int cancelIcon;
     int playIcon;
     int stopIcon;
+    int gridIcon;
+    boolean isGrid;
 
     float[] objectMatrices = {
             1.f, 0.f, 0.f, 0.f,
@@ -56,12 +58,7 @@ public class ViewPort implements ImguiLayer {
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
-    final float[] gridMatrix = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+
     float[] inputViewMatrix = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -98,6 +95,7 @@ public class ViewPort implements ImguiLayer {
         playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
         stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
         cancelIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
+        gridIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\grid.png");
 
     }
 
@@ -122,6 +120,9 @@ public class ViewPort implements ImguiLayer {
                 } else if (ImGui.imageButton(cancelIcon, 30, 20)) {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
+                } else if (ImGui.imageButton(gridIcon, 30, 20)) {
+                    isGrid = !isGrid;
+                    EditorRenderer.getGrid().setRender(isGrid);
                 }
             }
             ImGui.endMenuBar();
@@ -192,10 +193,6 @@ public class ViewPort implements ImguiLayer {
 
         }
         ImGui.end();
-    }
-
-    public float getAspect() {
-        return aspect;
     }
 
     private void keyInputImGuizo() {
