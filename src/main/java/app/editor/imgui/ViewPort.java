@@ -161,14 +161,6 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
-            if (isViewGrid) {
-                ImGuizmo.drawGrid(inputViewMatrix, cameraProjection, gridMatrix, 100);
-                float windowWidth = ImGui.getWindowWidth();
-                float viewManipulateRight = ImGui.getWindowPosX() + windowWidth;
-                float viewManipulateTop = ImGui.getWindowPosY() + 30;
-                ImGuizmo.viewManipulate(inputViewMatrix, 8, new float[]{viewManipulateRight - 128, viewManipulateTop}, new float[]{128f, 128f}, 0x10101010);
-            }
-
             if (entity != null && currentGizmoOperation != -1) {
 
                 if (!entity.equals(preEntity)) {
