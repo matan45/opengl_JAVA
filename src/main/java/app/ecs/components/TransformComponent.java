@@ -10,9 +10,9 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 
 public final class TransformComponent extends CommonComponent {
-    OLTransform olTransform;
-    OLVector2f buttonSize;
-    ImString entityName;
+    private final OLTransform olTransform;
+    private final OLVector2f buttonSize;
+    private final ImString entityName;
 
 
     public TransformComponent(Entity ownerEntity, OLTransform olTransform) {

@@ -1,14 +1,17 @@
-package app.renderer.ibl;
+package app.renderer.pbr;
 
 import app.math.OLMatrix4f;
+import app.renderer.shaders.ShaderProgram;
 import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Path;
 
-public final class ShaderCubeMap extends CommonShaderSkyBox {
-    private int locationEnvironmentMap;
+public class ShaderMesh extends ShaderProgram {
+    private int locationProjectionMatrix;
+    private int locationViewMatrix;
+    private int locationModelMatrix;
 
-    ShaderCubeMap(Path path) {
+    protected ShaderMesh(Path path) {
         super(path);
     }
 
@@ -16,21 +19,18 @@ public final class ShaderCubeMap extends CommonShaderSkyBox {
     protected void getAllUniformLocations() {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
-        locationEnvironmentMap = super.getUniformLocation("environmentMap");
-
+        locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
     }
 
-    @Override
-    public void connectTextureUnits() {
-        super.loadInt(locationEnvironmentMap, 0);
-    }
 
-    @Override
     public void loadViewMatrix(OLMatrix4f view) {
         super.loadMatrix(locationViewMatrix, view);
     }
 
-    @Override
+    public void loadModelMatrix(OLMatrix4f model) {
+        super.loadMatrix(locationModelMatrix, model);
+    }
+
     public void loadProjectionMatrix(OLMatrix4f projection) {
         super.loadMatrix(locationProjectionMatrix, projection);
     }

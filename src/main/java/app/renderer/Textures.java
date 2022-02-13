@@ -2,6 +2,7 @@ package app.renderer;
 
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -73,6 +74,9 @@ public class Textures {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        float amount = Math.min(4f, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
+        glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
+
         stbi_image_free(image);
         return id;
     }
@@ -95,7 +99,6 @@ public class Textures {
 
     public int hdr(String fileName) {
         stbi_set_flip_vertically_on_load(true);
-
 
         ByteBuffer imageBuffer;
         FloatBuffer image;

@@ -268,6 +268,7 @@ public class SkyBox {
         glBindVertexArray(cubeVAO);
         glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDisableVertexAttribArray(0);
         glBindVertexArray(0);
     }
 
@@ -292,6 +293,8 @@ public class SkyBox {
     }
 
     public void setActive(boolean active) {
+        if (!active)
+            path = "";
         isActive = active;
     }
 

@@ -2,7 +2,8 @@ package app.renderer.shaders;
 
 public enum UniformsNames {
     PROJECTION("projection"),
-    VIEW("view");
+    VIEW("view"),
+    MODEL("model");
 
     private final String uniformsName;
 

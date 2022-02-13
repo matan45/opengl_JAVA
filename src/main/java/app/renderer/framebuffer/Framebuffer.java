@@ -5,16 +5,7 @@ import app.utilities.data.structures.Pair;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class Framebuffer {
-    int width;
-    int height;
-    Textures textures;
-
-    public Framebuffer(int width, int height, Textures textures) {
-        this.width = width;
-        this.height = height;
-        this.textures = textures;
-    }
+public record Framebuffer(int width, int height, Textures textures) {
 
     public int createFrameRenderBuffer() {
         // Generate framebuffer

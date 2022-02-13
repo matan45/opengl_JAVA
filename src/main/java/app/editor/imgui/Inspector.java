@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.Component;
+import app.ecs.components.MeshComponent;
 import app.ecs.components.SkyBoxComponent;
 import app.ecs.components.TransformComponent;
 import app.utilities.logger.LogInfo;
@@ -57,6 +58,8 @@ public class Inspector implements ImguiLayer {
                 }
                 if (ImGui.menuItem("Sky Box"))
                     entity.addComponent(new SkyBoxComponent(entity));
+                if (ImGui.menuItem("Mesh"))
+                    entity.addComponent(new MeshComponent(entity));
                 ImGui.endPopup();
             }
         }
