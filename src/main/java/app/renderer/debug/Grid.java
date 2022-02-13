@@ -16,22 +16,20 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Grid {
     List<Float> vertices;
-    List<Integer> indices;
 
     ShaderGrid shaderGrid;
 
     OpenGLObjects openGLObjects;
     Camera camera;
-    VaoModel vaoModel;
+    int vaoModel;
 
     public Grid(OpenGLObjects openGLObjects, Camera camera) {
         this.openGLObjects = openGLObjects;
         this.camera = camera;
         vertices = new ArrayList<>();
-        indices = new ArrayList<>();
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
         init();
-        vaoModel = openGLObjects.loadToVAO(listToArray(vertices), listIntToArray(indices));
+        vaoModel = openGLObjects.loadToVAO(listToArray(vertices));
     }
 
     public void init() {
@@ -67,13 +65,12 @@ public class Grid {
         shaderGrid.loadViewMatrix(camera.getViewMatrix());
         shaderGrid.loadProjectionMatrix(camera.getProjectionMatrix());
 
-        glBindVertexArray(vaoModel.vaoID());
+        glBindVertexArray(vaoModel);
         glEnableVertexAttribArray(0);
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glDisableVertexAttribArray(0);
-
         glBindVertexArray(0);
 
         shaderGrid.stop();
