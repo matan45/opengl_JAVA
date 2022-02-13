@@ -2,7 +2,6 @@ package app.renderer.debug;
 
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
-import app.renderer.VaoModel;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
