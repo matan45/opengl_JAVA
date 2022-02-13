@@ -19,10 +19,17 @@ public class Camera {
 
     public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
 
-        float yScale = (float) (near * Math.tan(fovY * Math.PI / 180.0f));
-        float xScale = yScale * aspect;
+        float y_scale = (float) (1f / Math.tan(Math.toRadians(fovY / 2f)));
+        float x_scale = y_scale / aspect;
+        float frustum_length = far - near;
+        projectionMatrix.m00 = x_scale;
+        projectionMatrix.m11 = y_scale;
+        projectionMatrix.m22 = -((far + near) / frustum_length);
+        projectionMatrix.m23 = -1;
+        projectionMatrix.m32 = -((2 * near * far) / frustum_length);
+        projectionMatrix.m33 = 0;
 
-        return frustum(-xScale, xScale, -yScale, yScale, near, far);
+        return projectionMatrix;
     }
 
     private OLMatrix4f frustum(float left, float right, float bottom, float top, float near, float far) {

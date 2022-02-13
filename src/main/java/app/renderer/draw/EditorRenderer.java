@@ -3,6 +3,7 @@ package app.renderer.draw;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
+import app.renderer.debug.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 
@@ -18,6 +19,8 @@ public class EditorRenderer {
 
     static SkyBox skyBox;
 
+    static Grid grid;
+
     private EditorRenderer() {
     }
 
@@ -28,12 +31,15 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
+        grid = new Grid(openGLObjects, editorCamera);
     }
 
     public static void draw() {
         framebuffer.bind(fboID);
-        glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        grid.render();
         skyBox.render();
         framebuffer.unbind();
     }

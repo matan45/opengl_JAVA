@@ -41,6 +41,7 @@ public class OpenGLObjects {
         return vaoID;
     }
 
+
     public void updateVbo(int vbo, float[] data, FloatBuffer buffer) {
         buffer.clear();
         buffer.put(data);

@@ -93,7 +93,7 @@ public class ImguiHandler {
         style.setColor(ImGuiCol.Border, 0, 0, 200, 255);
         style.setColor(ImGuiCol.BorderShadow, 255, 0, 0, 255);
 
-        style.setColor(ImGuiCol.WindowBg, 50, 50, 50, 180);
+        style.setColor(ImGuiCol.WindowBg, 50, 50, 50, 255);
         style.setColor(ImGuiCol.DockingPreview, 0, 0, 200, 255);
 
     }
