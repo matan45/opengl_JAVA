@@ -37,7 +37,7 @@ public class EditorRenderer {
     public static void draw() {
         framebuffer.bind(fboID);
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
+        glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         grid.render();
         skyBox.render();

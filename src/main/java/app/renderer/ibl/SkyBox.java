@@ -258,6 +258,8 @@ public class SkyBox {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
         glBindVertexArray(0);
     }
 
