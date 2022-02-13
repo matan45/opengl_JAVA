@@ -49,17 +49,14 @@ public class ViewPort implements ImguiLayer {
     int cancelIcon;
     int playIcon;
     int stopIcon;
-    int gridIcon;
-    boolean isViewGrid = false;
 
-    final float[] gridMatrix = {
+    float[] objectMatrices = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
-
-    float[] objectMatrices = {
+    final float[] gridMatrix = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
             0.f, 0.f, 1.f, 0.f,
@@ -101,7 +98,6 @@ public class ViewPort implements ImguiLayer {
         playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
         stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
         cancelIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
-        gridIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\grid.png");
 
     }
 
@@ -126,14 +122,13 @@ public class ViewPort implements ImguiLayer {
                 } else if (ImGui.imageButton(cancelIcon, 30, 20)) {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
-                } else if (ImGui.imageButton(gridIcon, 30, 20)) {
-                    isViewGrid = !isViewGrid;
                 }
             }
             ImGui.endMenuBar();
             ImGui.popStyleColor();
 
-            ImGui.image(EditorRenderer.getTexturesID(), ImGui.getWindowWidth(), ImGui.getWindowHeight() - 80, 0, 1, 1, 0);
+            ImVec2 windowSize = ImGui.getWindowSize();
+            ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
             //Gizmos
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
@@ -160,6 +155,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setAllowAxisFlip(false);
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
+
 
             if (entity != null && currentGizmoOperation != -1) {
 
@@ -198,6 +194,9 @@ public class ViewPort implements ImguiLayer {
         ImGui.end();
     }
 
+    public float getAspect() {
+        return aspect;
+    }
 
     private void keyInputImGuizo() {
         if (ImGui.isKeyPressed(GLFW_KEY_LEFT_CONTROL))
@@ -227,10 +226,10 @@ public class ViewPort implements ImguiLayer {
                 rotation.y += xOffset * 0.1;
                 rotation.x += yOffset * 0.1;
 
-                if (rotation.y > 90.0f)
-                    rotation.y = 90.0f;
-                if (rotation.y < -90.0f)
-                    rotation.y = -90.0f;
+                if (rotation.y > 89.0f)
+                    rotation.y = 89.0f;
+                if (rotation.y < -89.0f)
+                    rotation.y = -89.0f;
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
 

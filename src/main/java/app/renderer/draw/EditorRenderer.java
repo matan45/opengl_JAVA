@@ -3,27 +3,23 @@ package app.renderer.draw;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
+import app.renderer.debug.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
-import app.renderer.pbr.MeshRenderer;
-import app.renderer.pbr.MeshRendererHandler;
-import app.renderer.shaders.ShaderManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorRenderer {
-    private static Framebuffer framebuffer;
-    private static Camera editorCamera;
-    private static Textures textures;
-    private static OpenGLObjects openGLObjects;
+    static Framebuffer framebuffer;
+    static Camera editorCamera;
+    static Textures textures;
+    static OpenGLObjects openGLObjects;
 
-    private static int fboID;
+    static int fboID;
 
-    private static SkyBox skyBox;
-    private static MeshRendererHandler meshRenderer;
+    static SkyBox skyBox;
+
+    static Grid grid;
 
     private EditorRenderer() {
     }
@@ -35,24 +31,22 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
-        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects);
+        grid = new Grid(openGLObjects, editorCamera);
     }
 
     public static void draw() {
         framebuffer.bind(fboID);
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.48f, 0.6f, 0.9f, 0.0f);
+        glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        meshRenderer.renderers();
+        grid.render();
         skyBox.render();
-        glDisable(GL_DEPTH_TEST);
         framebuffer.unbind();
     }
 
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
-        ShaderManager.cleanUp();
     }
 
     public static Framebuffer getFramebuffer() {
@@ -74,9 +68,4 @@ public class EditorRenderer {
     public static SkyBox getSkyBox() {
         return skyBox;
     }
-
-    public static MeshRendererHandler getMeshRenderer() {
-        return meshRenderer;
-    }
-
 }

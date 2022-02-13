@@ -32,6 +32,32 @@ public class Camera {
         return projectionMatrix;
     }
 
+    private OLMatrix4f frustum(float left, float right, float bottom, float top, float near, float far) {
+
+        float temp = 2.0f * near;
+        float temp2 = right - left;
+        float temp3 = top - bottom;
+        float temp4 = far - near;
+        projectionMatrix.m00 = temp / temp2;
+        projectionMatrix.m01 = 0.0f;
+        projectionMatrix.m02 = 0.0f;
+        projectionMatrix.m03 = 0.0f;
+        projectionMatrix.m10 = 0.0f;
+        projectionMatrix.m11 = temp / temp3;
+        projectionMatrix.m12 = 0.0f;
+        projectionMatrix.m13 = 0.0f;
+        projectionMatrix.m20 = (right + left) / temp2;
+        projectionMatrix.m21 = (top + bottom) / temp3;
+        projectionMatrix.m22 = (-far - near) / temp4;
+        projectionMatrix.m23 = -1.0f;
+        projectionMatrix.m30 = 0.0f;
+        projectionMatrix.m31 = 0.0f;
+        projectionMatrix.m32 = (-temp * far) / temp4;
+        projectionMatrix.m33 = 0.0f;
+
+        return projectionMatrix;
+    }
+
     public OLMatrix4f createViewMatrix() {
         viewMatrix.identity();
         //Pitch
