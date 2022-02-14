@@ -88,6 +88,8 @@ public class ViewPort implements ImguiLayer {
         preWindowHeight = 0;
         aspect = 0;
 
+        EditorRenderer.getGrid().setRender(true);
+
         textures = EditorRenderer.getTextures();
         scaleIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
         rotateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");

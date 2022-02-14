@@ -76,6 +76,6 @@ void main() {
     float linearDepth = computeLinearDepth(fragPos3D);
     float fading = max(0, (0.5 - linearDepth));
 
-    FragColor = (grid(fragPos3D, 30, true) + grid(fragPos3D, 30, true))* float(t > 0); // adding multiple resolution for the grid
+    FragColor = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
     FragColor.a *= fading;
 }

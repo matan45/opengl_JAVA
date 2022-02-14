@@ -30,7 +30,6 @@ public class Grid {
         this.camera = camera;
         vertices = new ArrayList<>();
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
-        render = true;
         init();
         vaoModel = openGLObjects.loadToVAO(ArrayUtil.listToArray(vertices));
     }

@@ -41,10 +41,12 @@ public class EditorRenderer {
         glEnable(GL_DEPTH_TEST);
         glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        grid.render();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         meshRenderer.renderers();
         skyBox.render();
-        glDisable(GL_DEPTH_TEST);
+        grid.render();
+        glDisable(GL_DEPTH_TEST | GL_BLEND);
         framebuffer.unbind();
     }
 
