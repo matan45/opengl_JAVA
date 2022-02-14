@@ -224,10 +224,8 @@ public class ViewPort implements ImguiLayer {
                 rotation.y += xOffset * 0.1;
                 rotation.x += yOffset * 0.1;
 
-                if (rotation.y > 89.0f)
-                    rotation.y = 89.0f;
-                if (rotation.y < -89.0f)
-                    rotation.y = -89.0f;
+                if (rotation.y >= 360.0f || rotation.y <= -360.0f)
+                    rotation.y = 0;
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
 
