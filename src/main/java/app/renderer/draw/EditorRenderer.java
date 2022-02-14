@@ -38,19 +38,20 @@ public class EditorRenderer {
 
     public static void draw() {
         framebuffer.bind(fboID);
-        glClearColor(0f, 0f, 0f, 0.0f);
+        glClearColor(0f, 0f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         skyBox.render();
+        meshRenderer.renderers();
         grid.render();
         disable();
-        meshRenderer.renderers();
         framebuffer.unbind();
     }
 
     private static void enable() {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
+        glDepthFunc(GL_LEQUAL);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     }
 
