@@ -22,11 +22,11 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
 void main()
 {
     vec3 p = position;
-     nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
-     farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
-     fragView=view;
-     fragProj=projection;
-     gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
+    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
+    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
+    fragView = view;
+    fragProj = projection;
+    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
 }
 
 #type FRAGMENT

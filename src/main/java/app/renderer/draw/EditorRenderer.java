@@ -41,10 +41,10 @@ public class EditorRenderer {
         glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
-        meshRenderer.renderers();
         skyBox.render();
         grid.render();
         disable();
+        meshRenderer.renderers();
         framebuffer.unbind();
     }
 
