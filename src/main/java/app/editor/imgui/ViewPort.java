@@ -19,57 +19,55 @@ import imgui.flag.ImGuiWindowFlags;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class ViewPort implements ImguiLayer {
-    Inspector inspector;
-    Entity preEntity;
-    TransformComponent component;
-    int currentGizmoOperation;
+    private final Inspector inspector;
+    private Entity preEntity;
+    private TransformComponent component;
+    private int currentGizmoOperation;
 
-    final float[] inputVectorTranslation;
-    final float[] inputVectorScale;
-    final float[] inputVectorRotation;
+    private final float[] inputVectorTranslation;
+    private final float[] inputVectorScale;
+    private final float[] inputVectorRotation;
 
-    float[] inputSapValue;
-    boolean snap;
-    float snapValue;
+    private final float[] inputSapValue;
+    private boolean snap;
+    private float snapValue;
 
-    float preWindowWidth;
-    float preWindowHeight;
-    float[] cameraProjection;
-    float aspect;
+    private float preWindowWidth;
+    private float preWindowHeight;
+    private float[] cameraProjection;
+    private float aspect;
 
-    Camera editorCamera;
-    float speed = 0.2f;
-    boolean isViewChange = false;
+    private Camera editorCamera;
+    private boolean isViewChange = false;
 
-    boolean firstFrame = true;
+    private boolean firstFrame = true;
 
-    int scaleIcon;
-    int rotateIcon;
-    int translateIcon;
-    int cancelIcon;
-    int playIcon;
-    int stopIcon;
-    int gridIcon;
-    boolean isGrid;
+    private final int scaleIcon;
+    private final int rotateIcon;
+    private final int translateIcon;
+    private final int cancelIcon;
+    private final int playIcon;
+    private final int stopIcon;
+    private final int gridIcon;
+    private boolean isGrid;
 
-    float[] objectMatrices = {
+    private float[] objectMatrices = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
 
-    float[] inputViewMatrix = {
+    private float[] inputViewMatrix = {
             1.f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f
     };
-    Textures textures;
 
-    float xLastPos;
-    float yLastPos;
-    boolean isFirst = false;
+    private float xLastPos;
+    private float yLastPos;
+    private boolean isFirst = false;
 
     public ViewPort() {
         preEntity = new Entity();
@@ -88,9 +86,10 @@ public class ViewPort implements ImguiLayer {
         preWindowHeight = 0;
         aspect = 0;
 
+        isGrid = true;
         EditorRenderer.getGrid().setRender(true);
 
-        textures = EditorRenderer.getTextures();
+        Textures textures = EditorRenderer.getTextures();
         scaleIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
         rotateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");
         translateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\translate.png");
@@ -243,6 +242,7 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation) {
+        float speed = 0.2f;
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;

@@ -38,17 +38,27 @@ public class EditorRenderer {
 
     public static void draw() {
         framebuffer.bind(fboID);
-        glEnable(GL_DEPTH_TEST);
         glClearColor(0f, 0f, 0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        enable();
         meshRenderer.renderers();
         skyBox.render();
         grid.render();
-        glDisable(GL_DEPTH_TEST | GL_BLEND);
+        disable();
         framebuffer.unbind();
     }
+
+    private static void enable() {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    private static void disable() {
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+    }
+
 
     public static void cleanUp() {
         textures.cleanUp();
