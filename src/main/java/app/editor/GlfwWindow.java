@@ -16,8 +16,6 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -137,7 +135,6 @@ public class GlfwWindow {
 
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-           // glClear(GL_COLOR_BUFFER_BIT);
 
             //calculate delta time
             float frame = System.nanoTime();
