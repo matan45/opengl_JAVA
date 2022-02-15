@@ -4,10 +4,10 @@ import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 
 public class OLTransform {
-    OLVector3f position;
-    OLVector3f scale;
-    OLVector3f rotation;
-    OLMatrix4f modelMatrix;
+    private OLVector3f position;
+    private OLVector3f scale;
+    private OLVector3f rotation;
+    private final OLMatrix4f modelMatrix;
 
     public OLTransform(OLVector3f position, OLVector3f scale, OLVector3f rotation) {
         this.position = position;

@@ -11,7 +11,7 @@ public class ShaderMesh extends ShaderProgram {
     private int locationViewMatrix;
     private int locationModelMatrix;
 
-    protected ShaderMesh(Path path) {
+    ShaderMesh(Path path) {
         super(path);
     }
 

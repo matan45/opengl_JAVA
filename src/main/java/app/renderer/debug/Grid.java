@@ -15,18 +15,16 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Grid {
-    List<Float> vertices;
+    private final List<Float> vertices;
 
-    ShaderGrid shaderGrid;
+    private final ShaderGrid shaderGrid;
 
-    OpenGLObjects openGLObjects;
-    Camera camera;
-    int vaoModel;
+    private final Camera camera;
+    private final int vaoModel;
 
-    boolean render;
+    private boolean render;
 
     public Grid(OpenGLObjects openGLObjects, Camera camera) {
-        this.openGLObjects = openGLObjects;
         this.camera = camera;
         vertices = new ArrayList<>();
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));

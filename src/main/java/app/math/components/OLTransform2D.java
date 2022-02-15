@@ -5,10 +5,10 @@ import app.math.OLVector2f;
 import app.math.OLVector3f;
 
 public class OLTransform2D {
-    OLVector2f position;
-    OLVector2f scale;
-    OLVector2f rotation;
-    OLMatrix4f modelMatrix;
+    private OLVector2f position;
+    private OLVector2f scale;
+    private OLVector2f rotation;
+    private OLMatrix4f modelMatrix;
 
     public OLTransform2D(OLVector2f position, OLVector2f scale, OLVector2f rotation) {
         this.position = position;

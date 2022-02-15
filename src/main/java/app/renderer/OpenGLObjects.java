@@ -11,8 +11,8 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
 public class OpenGLObjects {
-    private List<Integer> vaos;
-    private List<Integer> vbos;
+    private final List<Integer> vaos;
+    private final List<Integer> vbos;
 
     public OpenGLObjects() {
         vaos = new ArrayList<>();

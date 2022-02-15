@@ -15,14 +15,13 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class MeshRenderer {
-    ShaderMesh shaderMesh;
-    Camera camera;
-    OpenGLObjects openGLObjects;
+    private final ShaderMesh shaderMesh;
+    private final Camera camera;
+    private final OpenGLObjects openGLObjects;
 
-    String path;
-    Mesh[] meshes;
-    VaoModel vaoModel;
-    OLTransform olTransform;
+    private String path;
+    private VaoModel vaoModel;
+    private OLTransform olTransform;
 
     public MeshRenderer(Camera camera, OpenGLObjects openGLObjects) {
         this.camera = camera;
@@ -31,7 +30,7 @@ public class MeshRenderer {
     }
 
     public void init(String filePath, OLTransform olTransform) {
-        meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
+        Mesh[] meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
         this.olTransform = olTransform;
         path = filePath;

@@ -14,28 +14,28 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class SkyBox {
-    ShaderCubeMap backgroundShader;
+    private ShaderCubeMap backgroundShader;
 
-    String path;
+    private String path;
 
-    Camera editorCamera;
-    Textures textures;
-    Framebuffer framebuffer;
-    OpenGLObjects openGLObjects;
+    private final Camera editorCamera;
+    private final Textures textures;
+    private final Framebuffer framebuffer;
+    private final OpenGLObjects openGLObjects;
 
-    int captureFBO;
-    int captureRBO;
+    private int captureFBO;
+    private int captureRBO;
 
-    boolean isActive;
-    boolean showLightMap;
-    boolean showPreFilterMap;
+    private boolean isActive;
+    private boolean showLightMap;
+    private boolean showPreFilterMap;
 
-    int envCubeMap;
-    int irradianceMap;
-    int prefilterMap;
-    int brdfLUTTexture;
+    private int envCubeMap;
+    private int irradianceMap;
+    private int prefilterMap;
+    private int brdfLUTTexture;
 
-    int quadVAO;
+    private int quadVAO;
     private static final float[] quadVertices = {
             // positions
             -1.0f, 1.0f, 0.0f,
@@ -51,7 +51,7 @@ public class SkyBox {
             1.0f, 0.0f,
     };
 
-    int cubeVAO;
+    private int cubeVAO;
     private static final float[] vertices = {
             -1.0f, 1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,

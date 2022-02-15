@@ -15,9 +15,9 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL20.*;
 
 public abstract class ShaderProgram {
-    int programID;
-    Set<Integer> shadersID;
-    static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
+    private final int programID;
+    private final Set<Integer> shadersID;
+    private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
     protected ShaderProgram(Path path) {
         shadersID = new HashSet<>();

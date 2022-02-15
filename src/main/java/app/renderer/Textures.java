@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
-    List<Integer> texturesID;
+    private final List<Integer> texturesID;
 
     public Textures() {
         texturesID = new ArrayList<>();
