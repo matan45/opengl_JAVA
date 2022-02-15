@@ -9,6 +9,7 @@ import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 
 import java.io.File;
+import java.util.Optional;
 
 public class MeshComponent extends CommonComponent {
     private final MeshRenderer meshRenderer;
@@ -19,7 +20,7 @@ public class MeshComponent extends CommonComponent {
         super(ownerEntity);
         meshRenderer = EditorRenderer.getMeshRenderer().createNewInstant();
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
-        material = new Material();
+        material = meshRenderer.getMaterial();
     }
 
     @Override
@@ -39,18 +40,44 @@ public class MeshComponent extends CommonComponent {
         ImGui.textWrapped("Material");
         ImGui.separator();
 
-        materialPath("Albedo");
-        materialPath("Normal");
-        materialPath("Metallic");
-        materialPath("Ambient Occlusion");
-        materialPath("Displacement");
-        materialPath("Emissive");
+        material.setAlbedoMap(materialPath("Albedo"));
+        if (material.getAlbedoMapPath() != null && !material.getAlbedoMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getAlbedoMapPath());
+        }
+        material.setNormalMap(materialPath("Normal"));
+        if (material.getNormalMapPath() != null && !material.getNormalMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getNormalMapPath());
+        }
+        material.setMetallicMap(materialPath("Metallic"));
+        if (material.getMetallicMapPath() != null && !material.getMetallicMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getMetallicMapPath());
+        }
+        material.setAoMap(materialPath("Ambient Occlusion"));
+        if (material.getAoMapPath() != null && !material.getAoMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getAoMapPath());
+        }
+        material.setDisplacementMap(materialPath("Displacement"));
+        if (material.getDisplacementMapPath() != null && !material.getDisplacementMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getDisplacementMapPath());
+        }
+        material.setEmissiveMap(materialPath("Emissive"));
+        if (material.getEmissiveMapPath() != null && !material.getEmissiveMapPath().isEmpty()) {
+            ImGui.sameLine();
+            ImGui.textWrapped(material.getEmissiveMapPath());
+        }
 
     }
 
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
-            return OpenFileDialog.openFile("png,tga,jpg").get();
+            Optional<String> path = OpenFileDialog.openFile("png,tga,jpg");
+            if (path.isPresent())
+                return path.get();
         }
         return "";
     }

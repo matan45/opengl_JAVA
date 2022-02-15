@@ -23,7 +23,7 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects);
+        return new MeshRenderer(editorCamera, openGLObjects, textures);
     }
 
     public void addInstant(MeshRenderer meshRenderer) {

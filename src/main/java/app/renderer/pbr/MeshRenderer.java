@@ -3,6 +3,7 @@ package app.renderer.pbr;
 import app.math.components.Camera;
 import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
+import app.renderer.Textures;
 import app.renderer.VaoModel;
 import app.utilities.resource.ResourceManager;
 
@@ -18,15 +19,17 @@ public class MeshRenderer {
     private final ShaderMesh shaderMesh;
     private final Camera camera;
     private final OpenGLObjects openGLObjects;
+    private final Material material;
 
     private String path;
     private VaoModel vaoModel;
     private OLTransform olTransform;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects) {
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
+        material = new Material(textures);
     }
 
     public void init(String filePath, OLTransform olTransform) {
@@ -75,5 +78,9 @@ public class MeshRenderer {
     @Override
     public int hashCode() {
         return Objects.hash(path);
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }
