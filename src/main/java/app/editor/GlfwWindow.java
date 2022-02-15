@@ -137,7 +137,7 @@ public class GlfwWindow {
 
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            glClear(GL_COLOR_BUFFER_BIT);
+           // glClear(GL_COLOR_BUFFER_BIT);
 
             //calculate delta time
             float frame = System.nanoTime();
