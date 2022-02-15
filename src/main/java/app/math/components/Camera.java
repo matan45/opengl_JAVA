@@ -11,8 +11,8 @@ public class Camera {
     private final OLMatrix4f projectionMatrix;
 
     public Camera() {
-        position = new OLVector3f(0.5f, 7f, 13);
-        rotation = new OLVector3f(30, 0, 0);
+        position = new OLVector3f(0.0f, 2f, 5f);
+        rotation = new OLVector3f(45, 0, 0);
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
         negativeCameraPosition = new OLVector3f();

@@ -5,14 +5,14 @@ import java.util.List;
 
 public class ImguiLayerHandler {
     //TODO add event system observer pattern
-    static final List<ImguiLayer> imguiLayerList = new ArrayList<>();
+    private static final List<ImguiLayer> imguiLayerList = new ArrayList<>();
 
     private ImguiLayerHandler() {
     }
 
-    public static void renderImGui() {
+    public static void renderImGui(float dt) {
         for (ImguiLayer imguiLayer : imguiLayerList)
-            imguiLayer.render();
+            imguiLayer.render(dt);
     }
 
     public static <T extends ImguiLayer> T getImguiLayer(Class<T> imguiLayerClass) {

@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Entity {
-    String name;
-    Set<Component> components;
-    boolean isActive;
+    private String name;
+    private final Set<Component> components;
+    private boolean isActive;
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;

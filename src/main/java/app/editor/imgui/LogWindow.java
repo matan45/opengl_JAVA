@@ -9,12 +9,12 @@ import imgui.flag.ImGuiWindowFlags;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class LogWindow implements ImguiLayer {
-    double previousTime = 0;
-    int frameCount = 0;
-    int fps = 0;
+    private double previousTime = 0;
+    private int frameCount = 0;
+    private int fps = 0;
 
     @Override
-    public void render() {
+    public void render(float dt) {
         frameCount++;
         double currentTime = glfwGetTime();
         if (currentTime - previousTime >= 1.0) {
@@ -28,6 +28,8 @@ public class LogWindow implements ImguiLayer {
                 Logger.clear();
             ImGui.sameLine();
             ImGui.text("FPS: " + fps);
+            ImGui.sameLine();
+            ImGui.text("Delta Timea: " + dt);
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.ChildBg, ImColor.intToColor(0, 0, 0));
             if (ImGui.beginChild("Log", 0, 0, false, ImGuiWindowFlags.HorizontalScrollbar)) {

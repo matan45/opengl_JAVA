@@ -11,16 +11,15 @@ import imgui.flag.ImGuiTreeNodeFlags;
 import java.util.List;
 
 public class SceneGraph implements ImguiLayer {
-    int indexRemove = 0;
-    Inspector inspector;
-    int selectionNode = -1;
+    private final Inspector inspector;
+    private int selectionNode = -1;
 
     public SceneGraph() {
         this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
     }
 
     @Override
-    public void render() {
+    public void render(float dt) {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Scene Hierarchy")) {
             ImGui.text("Scene Name " + "todo scene class");
@@ -39,6 +38,7 @@ public class SceneGraph implements ImguiLayer {
                     EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
                 } else if (selectionNode != -1) {
                     if (ImGui.menuItem("Remove Game Object")) {
+                        int indexRemove = 0;
                         EntitySystem.removeEntity(indexRemove);
                         inspector.setEntity(null);
                         selectionNode = -1;

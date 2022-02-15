@@ -23,12 +23,12 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class GlfwWindow {
-    long window;
-    ImguiHandler imgui;
-    final String title;
-    int width = 800;
-    int height = 600;
-    MainImgui mainImgui;
+    private long window;
+    private ImguiHandler imgui;
+    private final String title;
+    private int width = 800;
+    private int height = 600;
+    private MainImgui mainImgui;
 
     public GlfwWindow(String title) {
         this.title = title;
@@ -148,7 +148,7 @@ public class GlfwWindow {
             EditorRenderer.draw();
 
             imgui.startFrame();
-            ImguiLayerHandler.renderImGui();
+            ImguiLayerHandler.renderImGui(deltaTime);
             imgui.endFrame();
 
             glfwSwapBuffers(window);

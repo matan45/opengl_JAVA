@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntitySystem {
-    static List<Entity> entitiesArray = new ArrayList<>();
+    private static final List<Entity> entitiesArray = new ArrayList<>();
 
     private EntitySystem() {
     }

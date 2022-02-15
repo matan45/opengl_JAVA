@@ -11,11 +11,11 @@ import imgui.glfw.ImGuiImplGlfw;
 import java.nio.file.Paths;
 
 public class ImguiHandler {
-    final ImGuiImplGlfw imGuiGlfw;
-    final ImGuiImplGl3 imGuiGl3;
-    final long windowHandle;
-    final String glslVersion;
-    static final int FONT_SIZE = 20;
+    private final ImGuiImplGlfw imGuiGlfw;
+    private final ImGuiImplGl3 imGuiGl3;
+    private final long windowHandle;
+    private final String glslVersion;
+    private static final int FONT_SIZE = 20;
 
     public ImguiHandler(String glslVersion, long windowHandle) {
         imGuiGlfw = new ImGuiImplGlfw();
