@@ -38,6 +38,11 @@ public class Material {
         return albedoMap;
     }
 
+    public void albedoMapRemove() {
+        albedoMapPath = "";
+        albedoMap = 0;
+    }
+
     public void setAlbedoMap(String albedoMapPath) {
         if (!albedoMapPath.isEmpty()) {
             this.albedoMapPath = new File(albedoMapPath).getName();
@@ -47,6 +52,11 @@ public class Material {
 
     public int getNormalMap() {
         return normalMap;
+    }
+
+    public void normalMapRemove() {
+        normalMapPath = "";
+        normalMap = 0;
     }
 
     public void setNormalMap(String normalMapPath) {
@@ -60,6 +70,11 @@ public class Material {
         return metallicMap;
     }
 
+    public void metallicMapRemove() {
+        metallicMapPath = "";
+        metallicMap = 0;
+    }
+
     public void setMetallicMap(String metallicMapPath) {
         if (!metallicMapPath.isEmpty()) {
             this.metallicMapPath = new File(metallicMapPath).getName();
@@ -69,6 +84,11 @@ public class Material {
 
     public int getRoughnessMap() {
         return roughnessMap;
+    }
+
+    public void roughnessMapRemove() {
+        roughnessMapPath = "";
+        roughnessMap = 0;
     }
 
     public void setRoughnessMap(String roughnessMapPath) {
@@ -82,6 +102,11 @@ public class Material {
         return aoMap;
     }
 
+    public void aoMapRemove() {
+        aoMapPath = "";
+        aoMap = 0;
+    }
+
     public void setAoMap(String aoMapPath) {
         if (!aoMapPath.isEmpty()) {
             this.aoMapPath = new File(aoMapPath).getName();
@@ -93,6 +118,11 @@ public class Material {
         return displacementMap;
     }
 
+    public void displacementMapRemove() {
+        displacementMapPath = "";
+        displacementMap = 0;
+    }
+
     public void setDisplacementMap(String displacementMapPath) {
         if (!displacementMapPath.isEmpty()) {
             this.displacementMapPath = new File(displacementMapPath).getName();
@@ -102,6 +132,11 @@ public class Material {
 
     public int getEmissiveMap() {
         return emissiveMap;
+    }
+
+    public void emissiveMapRemove() {
+        emissiveMapPath = "";
+        emissiveMap = 0;
     }
 
     public void setEmissiveMap(String emissiveMapPath) {
