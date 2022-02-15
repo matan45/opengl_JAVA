@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 public final class ShaderCubeMap extends CommonShaderSkyBox {
     private int locationEnvironmentMap;
+    private int locationExposure;
 
     ShaderCubeMap(Path path) {
         super(path);
@@ -17,7 +18,7 @@ public final class ShaderCubeMap extends CommonShaderSkyBox {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationEnvironmentMap = super.getUniformLocation("environmentMap");
-
+        locationExposure = super.getUniformLocation("exposure");
     }
 
     @Override
@@ -33,5 +34,9 @@ public final class ShaderCubeMap extends CommonShaderSkyBox {
     @Override
     public void loadProjectionMatrix(OLMatrix4f projection) {
         super.loadMatrix(locationProjectionMatrix, projection);
+    }
+
+    public void loadExposure(float exposure) {
+        super.loadFloat(locationExposure, exposure);
     }
 }

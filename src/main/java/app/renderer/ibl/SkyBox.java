@@ -26,6 +26,8 @@ public class SkyBox {
     private int captureFBO;
     private int captureRBO;
 
+    private float exposure;
+
     private boolean isActive;
     private boolean showLightMap;
     private boolean showPreFilterMap;
@@ -101,6 +103,7 @@ public class SkyBox {
         this.textures = textures;
         this.framebuffer = framebuffer;
         this.openGLObjects = openGLObjects;
+        exposure = 1.0f;
     }
 
     public void init(String filePath) {
@@ -174,6 +177,7 @@ public class SkyBox {
             backgroundShader.connectTextureUnits();
             backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
             backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+            backgroundShader.loadExposure(exposure);
             glActiveTexture(GL_TEXTURE0);
 
             if (showLightMap)
@@ -290,6 +294,10 @@ public class SkyBox {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void setExposure(float exposure) {
+        this.exposure = exposure;
     }
 
     public void setActive(boolean active) {

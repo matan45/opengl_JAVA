@@ -18,6 +18,7 @@ public class SkyBoxComponent extends CommonComponent {
         super(ownerEntity);
         skyBox = EditorRenderer.getSkyBox();
         select = new ImInt(0);
+        exposure = 2.2f;
     }
 
     @Override
@@ -51,6 +52,7 @@ public class SkyBoxComponent extends CommonComponent {
         float[] yValue = {exposure};
         ImGui.dragFloat("##Y", yValue, 0.1f);
         exposure = yValue[0];
+        skyBox.setExposure(exposure);
 
     }
 

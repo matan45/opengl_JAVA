@@ -18,7 +18,6 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
     return unprojectedPoint.xyz / unprojectedPoint.w;
 }
 
-
 void main()
 {
     vec3 p = position;
