@@ -25,6 +25,13 @@ public class Material {
 
     public Material(Textures textures) {
         this.textures = textures;
+        albedoMapPath = "";
+        normalMapPath = "";
+        metallicMapPath = "";
+        roughnessMapPath = "";
+        aoMapPath = "";
+        displacementMapPath = "";
+        emissiveMapPath = "";
     }
 
     public int getAlbedoMap() {

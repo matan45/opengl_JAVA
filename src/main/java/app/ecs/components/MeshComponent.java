@@ -39,38 +39,43 @@ public class MeshComponent extends CommonComponent {
         }
         ImGui.textWrapped("Material");
         ImGui.separator();
-
+        ImGui.columns(2, "", true);
         material.setAlbedoMap(materialPath("Albedo"));
-        if (material.getAlbedoMapPath() != null && !material.getAlbedoMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getAlbedoMapPath());
-        }
-        material.setNormalMap(materialPath("Normal"));
-        if (material.getNormalMapPath() != null && !material.getNormalMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getNormalMapPath());
-        }
-        material.setMetallicMap(materialPath("Metallic"));
-        if (material.getMetallicMapPath() != null && !material.getMetallicMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getMetallicMapPath());
-        }
-        material.setAoMap(materialPath("Ambient Occlusion"));
-        if (material.getAoMapPath() != null && !material.getAoMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getAoMapPath());
-        }
-        material.setDisplacementMap(materialPath("Displacement"));
-        if (material.getDisplacementMapPath() != null && !material.getDisplacementMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getDisplacementMapPath());
-        }
-        material.setEmissiveMap(materialPath("Emissive"));
-        if (material.getEmissiveMapPath() != null && !material.getEmissiveMapPath().isEmpty()) {
-            ImGui.sameLine();
-            ImGui.textWrapped(material.getEmissiveMapPath());
-        }
 
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getAlbedoMapPath());
+
+        ImGui.nextColumn();
+        material.setNormalMap(materialPath("Normal"));
+
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getNormalMapPath());
+
+        ImGui.nextColumn();
+        material.setMetallicMap(materialPath("Metallic"));
+
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getMetallicMapPath());
+
+        ImGui.nextColumn();
+        material.setAoMap(materialPath("Ambient Occlusion"));
+
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getAoMapPath());
+
+        ImGui.nextColumn();
+        material.setDisplacementMap(materialPath("Displacement"));
+
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getDisplacementMapPath());
+
+        ImGui.nextColumn();
+        material.setEmissiveMap(materialPath("Emissive"));
+
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getEmissiveMapPath());
+
+        ImGui.columns(1);
     }
 
     private String materialPath(String buttonName) {
