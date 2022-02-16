@@ -5,6 +5,7 @@ import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.VaoModel;
+import app.renderer.ibl.SkyBox;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -20,16 +21,18 @@ public class MeshRenderer {
     private final Camera camera;
     private final OpenGLObjects openGLObjects;
     private final Material material;
+    private final SkyBox skyBox;
 
     private String path;
     private VaoModel vaoModel;
     private OLTransform olTransform;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures) {
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         material = new Material(textures);
+        this.skyBox = skyBox;
     }
 
     public void init(String filePath, OLTransform olTransform) {

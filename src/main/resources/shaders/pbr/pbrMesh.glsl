@@ -44,6 +44,10 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D brdfLUT;
 
+uniform vec3 cameraPosition;
+
+const float PI = 3.14159265359;
+
 void main()
 {
 

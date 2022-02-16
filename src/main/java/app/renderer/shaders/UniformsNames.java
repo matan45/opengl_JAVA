@@ -3,7 +3,8 @@ package app.renderer.shaders;
 public enum UniformsNames {
     PROJECTION("projection"),
     VIEW("view"),
-    MODEL("model");
+    MODEL("model"),
+    CAMERA_POSITION("cameraPosition");
 
     private final String uniformsName;
 

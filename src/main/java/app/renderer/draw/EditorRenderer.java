@@ -33,7 +33,7 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, editorCamera);
-        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects);
+        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox);
     }
 
     public static void draw() {

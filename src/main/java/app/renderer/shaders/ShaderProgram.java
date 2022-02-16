@@ -48,7 +48,7 @@ public abstract class ShaderProgram {
         glUniform1f(location, value);
     }
 
-    protected void loadVector(int location, OLVector3f vector) {
+    protected void load3DVector(int location, OLVector3f vector) {
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
 

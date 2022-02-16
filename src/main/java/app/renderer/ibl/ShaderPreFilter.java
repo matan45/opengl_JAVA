@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 public final class ShaderPreFilter extends CommonShaderSkyBox {
     private int locationEnvironmentMap;
-    private int locationroughness;
+    private int locationRoughness;
 
     ShaderPreFilter(Path path) {
         super(path);
@@ -29,7 +29,7 @@ public final class ShaderPreFilter extends CommonShaderSkyBox {
     }
 
     public void loadRoughness(float roughness) {
-        super.loadFloat(locationroughness, roughness);
+        super.loadFloat(locationRoughness, roughness);
     }
 
     @Override
@@ -37,6 +37,6 @@ public final class ShaderPreFilter extends CommonShaderSkyBox {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationEnvironmentMap = super.getUniformLocation("environmentMap");
-        locationroughness = super.getUniformLocation("roughness");
+        locationRoughness = super.getUniformLocation("roughness");
     }
 }
