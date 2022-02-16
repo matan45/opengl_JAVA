@@ -33,6 +33,10 @@ public class MeshRenderer {
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         material = new Material(textures);
         this.skyBox = skyBox;
+
+        shaderMesh.start();
+        shaderMesh.connectTextureUnits();
+        shaderMesh.stop();
     }
 
     public void init(String filePath, OLTransform olTransform) {
@@ -49,6 +53,7 @@ public class MeshRenderer {
         shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
         shaderMesh.loadViewMatrix(camera.getViewMatrix());
         shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
+        shaderMesh.loadCameraPosition(camera.getPosition());
 
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);

@@ -45,24 +45,30 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         ImGui.textWrapped(material.getAlbedoMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Albedo");
         if (ImGui.button("X"))
             material.albedoMapRemove();
+        ImGui.popID();
 
         ImGui.nextColumn();
         material.setNormalMap(materialPath("Normal"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getNormalMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Normal");
         if (ImGui.button("X"))
             material.normalMapRemove();
+        ImGui.popID();
 
         ImGui.nextColumn();
         material.setRoughnessMap(materialPath("Roughness"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getRoughnessMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Roughness");
         if (ImGui.button("X"))
             material.roughnessMapRemove();
+        ImGui.popID();
 
 
         ImGui.nextColumn();
@@ -70,32 +76,40 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         ImGui.textWrapped(material.getMetallicMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Metallic");
         if (ImGui.button("X"))
             material.metallicMapRemove();
+        ImGui.popID();
 
         ImGui.nextColumn();
         material.setAoMap(materialPath("Ambient Occlusion"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getAoMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Ambient Occlusion");
         if (ImGui.button("X"))
             material.aoMapRemove();
+        ImGui.popID();
 
         ImGui.nextColumn();
         material.setDisplacementMap(materialPath("Displacement"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getDisplacementMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Displacement");
         if (ImGui.button("X"))
             material.displacementMapRemove();
+        ImGui.popID();
 
         ImGui.nextColumn();
         material.setEmissiveMap(materialPath("Emissive"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getEmissiveMapPath());
         ImGui.nextColumn();
+        ImGui.pushID("Emissive");
         if (ImGui.button("X"))
             material.emissiveMapRemove();
+        ImGui.popID();
 
         ImGui.columns(1);
     }
