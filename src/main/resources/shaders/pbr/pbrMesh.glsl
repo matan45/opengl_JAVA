@@ -125,7 +125,7 @@ void main()
     float metallic = texture(metallicMap, texCoords).r;
     float roughness = texture(roughnessMap, texCoords).r;
     float ao = texture(aoMap, texCoords).r;
-    vec3 emission = vec3(1.0) -  texture(emissiveMap, texCoords).rgb;
+    vec3 emission = texture(emissiveMap, texCoords).rgb;
 
     vec3 normal = getNormalFromMap();
     vec3 ref = reflect(-viewDir, normal);
