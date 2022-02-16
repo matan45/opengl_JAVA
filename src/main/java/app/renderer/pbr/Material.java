@@ -23,6 +23,8 @@ public class Material {
     private String displacementMapPath;
     private String emissiveMapPath;
 
+    private boolean hasDisplacement;
+
     public Material(Textures textures) {
         this.textures = textures;
         albedoMapPath = "";
@@ -32,6 +34,7 @@ public class Material {
         aoMapPath = "";
         displacementMapPath = "";
         emissiveMapPath = "";
+        hasDisplacement = false;
     }
 
     public int getAlbedoMap() {
@@ -121,13 +124,19 @@ public class Material {
     public void displacementMapRemove() {
         displacementMapPath = "";
         displacementMap = 0;
+        hasDisplacement = false;
     }
 
     public void setDisplacementMap(String displacementMapPath) {
         if (!displacementMapPath.isEmpty()) {
             this.displacementMapPath = new File(displacementMapPath).getName();
             displacementMap = textures.loadTexture(displacementMapPath);
+            hasDisplacement = true;
         }
+    }
+
+    public boolean isHasDisplacement() {
+        return hasDisplacement;
     }
 
     public int getEmissiveMap() {

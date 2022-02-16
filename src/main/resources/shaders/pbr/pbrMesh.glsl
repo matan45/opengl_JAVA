@@ -45,6 +45,7 @@ uniform samplerCube prefilterMap;
 uniform sampler2D brdfLUT;
 
 uniform vec3 cameraPosition;
+uniform float hasDisplacement;
 
 const float PI = 3.14159265359;
 const float heightScale = 0.1;
@@ -117,9 +118,11 @@ void main()
 {
     vec3 viewDir = normalize(cameraPosition - WorldPos);
     vec2 texCoords = ParallaxMapping(TexCoords, viewDir);
-    //TODO if has displacementMap
-    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-            discard;
+
+    if(hasDisplacement > 0){
+        if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+                discard;
+    }
 
     vec3 albedo = pow(texture(albedoMap, texCoords).rgb, vec3(2.2));
     float metallic = texture(metallicMap, texCoords).r;

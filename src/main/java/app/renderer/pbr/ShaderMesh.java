@@ -14,6 +14,8 @@ public class ShaderMesh extends ShaderProgram {
     private int locationModelMatrix;
     private int locationCameraPosition;
 
+    private int locationHasDisplacement;
+
     private int locationAlbedoMap;
     private int locationNormalMap;
     private int locationMetallicMap;
@@ -36,6 +38,8 @@ public class ShaderMesh extends ShaderProgram {
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
+
+        locationHasDisplacement = super.getUniformLocation("hasDisplacement");
 
         locationAlbedoMap = super.getUniformLocation("albedoMap");
         locationNormalMap = super.getUniformLocation("normalMap");
@@ -79,5 +83,9 @@ public class ShaderMesh extends ShaderProgram {
 
     public void loadCameraPosition(OLVector3f camera) {
         super.load3DVector(locationCameraPosition, camera);
+    }
+
+    public void loadHasDisplacement(boolean displacement) {
+        super.loadBoolean(locationHasDisplacement, displacement);
     }
 }

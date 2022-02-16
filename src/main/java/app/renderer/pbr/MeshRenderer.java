@@ -55,6 +55,8 @@ public class MeshRenderer {
         shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
         shaderMesh.loadCameraPosition(camera.getPosition());
 
+        shaderMesh.loadHasDisplacement(material.isHasDisplacement());
+
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
