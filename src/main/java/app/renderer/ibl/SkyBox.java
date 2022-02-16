@@ -117,15 +117,31 @@ public class SkyBox {
         cubemap(filePath);
     }
 
-    Shaderbrdf shaderbrdf;
-
     private void cubemap(String filePath) {
         final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
+        final Shaderbrdf shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
         final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
 
+        backgroundShader.start();
+        backgroundShader.connectTextureUnits();
+        backgroundShader.stop();
 
+        equiangularToCubeShader.start();
+        equiangularToCubeShader.connectTextureUnits();
+        equiangularToCubeShader.stop();
+
+        irradianceShader.start();
+        irradianceShader.connectTextureUnits();
+        irradianceShader.stop();
+
+        shaderPreFilter.start();
+        shaderPreFilter.connectTextureUnits();
+        shaderPreFilter.stop();
+
+        irradianceMap = 0;
+        prefilterMap = 0;
+        brdfLUTTexture = 0;
         int hdrTexture = textures.hdr(filePath);
         path = filePath;
 
@@ -152,6 +168,7 @@ public class SkyBox {
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
         prefilterMap(shaderPreFilter, captureViews);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         brdfLUTTexture = textures.createBrdfTexture(512, 512);
 
@@ -188,7 +205,7 @@ public class SkyBox {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
 
             renderCube();
-            glActiveTexture(0);
+            glDisable(GL_TEXTURE_CUBE_MAP);
             backgroundShader.stop();
 
            /* shaderbrdf.start();
