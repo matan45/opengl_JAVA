@@ -48,7 +48,7 @@ uniform vec3 cameraPosition;
 uniform float hasDisplacement;
 
 const float PI = 3.14159265359;
-const float heightScale = 0.1;
+const float heightScale = 0.1f;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
@@ -92,14 +92,14 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
     return finalTexCoords;
 }
 
-vec3 getNormalFromMap()
+vec3 getNormalFromMap(vec2 texCoords)
 {
-    vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(normalMap, texCoords).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec2 st1 = dFdx(texCoords);
+    vec2 st2 = dFdy(texCoords);
 
     vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
@@ -116,16 +116,25 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-        // material properties
-        vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-        float metallic = texture(metallicMap, TexCoords).r;
-        float roughness = texture(roughnessMap, TexCoords).r;
-        float ao = texture(aoMap, TexCoords).r;
-
         // input lighting data
-        vec3 N = getNormalFromMap();
         vec3 V = normalize(cameraPosition - WorldPos);
-        vec3 R = reflect(-V, N);
+
+        vec2 texCoords = TexCoords;
+        if(hasDisplacement > 0 ){
+            texCoords = ParallaxMapping(TexCoords,  V);
+            //if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+                    //discard;
+        }
+
+        // material properties
+        vec3 albedo = texture(albedoMap, texCoords).rgb;
+        vec3 emissive = texture(emissiveMap, texCoords).rgb;
+        float metallic = texture(metallicMap, texCoords).r;
+        float roughness = texture(roughnessMap, texCoords).r;
+        float ao = texture(aoMap, texCoords).r;
+
+         vec3 N = getNormalFromMap(texCoords);
+         vec3 R = reflect(-V, N);
 
         // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
         // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
@@ -150,7 +159,7 @@ void main()
 
         vec3 ambient = (kD * diffuse + specular) * ao;
 
-        vec3 color = ambient;
+        vec3 color = ambient + emissive;
 
         // HDR tonemapping
         color = color / (color + vec3(1.0));

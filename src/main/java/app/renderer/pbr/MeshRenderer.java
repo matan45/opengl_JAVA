@@ -58,12 +58,12 @@ public class MeshRenderer {
 
         shaderMesh.loadHasDisplacement(material.isHasDisplacement());
 
-        bind();
-
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
+
+        bind();
 
         glDrawElements(GL_TRIANGLES, vaoModel.VertexCount(), GL_UNSIGNED_INT, 0);
 
