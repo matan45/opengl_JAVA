@@ -56,17 +56,18 @@ public class ShaderMesh extends ShaderProgram {
     }
 
     public void connectTextureUnits() {
-        super.loadInt(locationAlbedoMap, 0);
-        super.loadInt(locationNormalMap, 1);
-        super.loadInt(locationMetallicMap, 2);
-        super.loadInt(locationRoughnessMap, 3);
-        super.loadInt(locationAoMap, 4);
-        super.loadInt(locationDisplacementMap, 5);
-        super.loadInt(locationEmissiveMap, 6);
+        super.loadInt(locationIrradianceMap, 0);
+        super.loadInt(locationPrefilterMap, 1);
+        super.loadInt(locationBrdfLUT, 2);
 
-        super.loadInt(locationIrradianceMap, 7);
-        super.loadInt(locationPrefilterMap, 8);
-        super.loadInt(locationBrdfLUT, 9);
+        super.loadInt(locationAlbedoMap, 3);
+        super.loadInt(locationNormalMap, 4);
+        super.loadInt(locationMetallicMap, 5);
+        super.loadInt(locationRoughnessMap, 6);
+        super.loadInt(locationAoMap, 7);
+        super.loadInt(locationDisplacementMap, 8);
+        super.loadInt(locationEmissiveMap, 9);
+
     }
 
     public void loadViewMatrix(OLMatrix4f view) {

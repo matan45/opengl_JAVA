@@ -110,4 +110,13 @@ public class OpenGLObjects {
         }
 
     }
+
+    public int loadToVAO(float[] positions, float[] textureCoords, float[] normals) {
+        int vaoID = createVAO();
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 3, normals);
+        storeDataInAttributeList(2, 2, textureCoords);
+        unbindVAO();
+        return vaoID;
+    }
 }

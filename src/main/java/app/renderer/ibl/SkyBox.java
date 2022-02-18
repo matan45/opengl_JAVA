@@ -12,16 +12,20 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 public class SkyBox {
-    private ShaderCubeMap backgroundShader;
+    private final ShaderCubeMap backgroundShader;
+    private final ShaderIrradiance equiangularToCubeShader;
+    private final ShaderIrradianceConvolution irradianceShader;
+    private final Shaderbrdf shaderbrdf;
+    private final ShaderPreFilter shaderPreFilter;
 
     private String path;
 
     private final Camera editorCamera;
     private final Textures textures;
     private final Framebuffer framebuffer;
-    private final OpenGLObjects openGLObjects;
 
     private int captureFBO;
     private int captureRBO;
@@ -54,7 +58,7 @@ public class SkyBox {
     };
 
     private int cubeVAO;
-    private static final float[] vertices = {
+    private static final float[] cubeVertices = {
             -1.0f, 1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
@@ -98,30 +102,121 @@ public class SkyBox {
             1.0f, -1.0f, 1.0f
     };
 
+    private static final float[] cubeNormals = {
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
+    };
+    private static final float[] cubeTextureCoords = {
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f
+    };
+
     public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.editorCamera = editorCamera;
         this.textures = textures;
         this.framebuffer = framebuffer;
-        this.openGLObjects = openGLObjects;
         exposure = 1.0f;
-    }
 
-    public void init(String filePath) {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
-        isActive = true;
-        cubeVAO = openGLObjects.loadToVAO(vertices);
+        equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
+        irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
+        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
+        shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
+
+        cubeVAO = openGLObjects.loadToVAO(cubeVertices, cubeTextureCoords, cubeNormals);
         quadVAO = openGLObjects.loadToVAO(quadVertices, quadTextureCoords);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
-        cubemap(filePath);
+
     }
 
-    private void cubemap(String filePath) {
-        final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
-        final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        final Shaderbrdf shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
-        final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
+    public void init(String filePath) {
+        isActive = true;
+
+        cubeMap(filePath);
+    }
+
+    private void cubeMap(String filePath) {
 
         backgroundShader.start();
         backgroundShader.connectTextureUnits();
@@ -155,8 +250,13 @@ public class SkyBox {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
                 };
 
+        // configure global opengl state
+        // -----------------------------
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
+        // set depth function to less than AND equal for skybox depth trick.
+        glDepthFunc(GL_LEQUAL);
+        // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
         envCubeMap = textures.createCubTexture(512, 512);
         convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
@@ -205,7 +305,6 @@ public class SkyBox {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
 
             renderCube();
-            glDisable(GL_TEXTURE_CUBE_MAP);
             backgroundShader.stop();
 
            /* shaderbrdf.start();
@@ -288,8 +387,14 @@ public class SkyBox {
         // render Cube
         glBindVertexArray(cubeVAO);
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         glBindVertexArray(0);
     }
 

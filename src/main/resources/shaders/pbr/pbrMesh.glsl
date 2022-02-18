@@ -116,22 +116,15 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
-    vec3 V = normalize(cameraPosition - WorldPos);
-    vec2 texCoords = ParallaxMapping(TexCoords, V);
-
-    if(hasDisplacement > 0){
-        if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-                 discard;
-     }
-     // material properties
+        // material properties
         vec3 albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-        vec3 emission = texture(emissiveMap, TexCoords).rgb;
         float metallic = texture(metallicMap, TexCoords).r;
         float roughness = texture(roughnessMap, TexCoords).r;
         float ao = texture(aoMap, TexCoords).r;
 
         // input lighting data
         vec3 N = getNormalFromMap();
+        vec3 V = normalize(cameraPosition - WorldPos);
         vec3 R = reflect(-V, N);
 
         // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
@@ -157,7 +150,7 @@ void main()
 
         vec3 ambient = (kD * diffuse + specular) * ao;
 
-        vec3 color = ambient + emission;
+        vec3 color = ambient;
 
         // HDR tonemapping
         color = color / (color + vec3(1.0));
