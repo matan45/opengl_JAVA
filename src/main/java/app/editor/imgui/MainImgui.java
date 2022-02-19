@@ -13,10 +13,10 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class MainImgui implements ImguiLayer {
     private final ImBoolean closeWindow;
-    final String title;
-    int windowFlags;
-    int width;
-    int height;
+    private final String title;
+    private int windowFlags;
+    private int width;
+    private int height;
 
     static final String DOCK_SPACE = "Dockspace";
 
@@ -30,7 +30,7 @@ public class MainImgui implements ImguiLayer {
     }
 
     @Override
-    public void render() {
+    public void render(float dt) {
         ImGui.setNextWindowPos(0, 0);
         ImGui.setNextWindowSize(width, height);
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0.0f, 0.0f);
@@ -53,11 +53,11 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                    LogInfo.println(OpenFileDialog.openFolder().get());
+                    OpenFileDialog.openFolder().ifPresent(LogInfo::println);
                 } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                    LogInfo.println(OpenFileDialog.openFile("png,jpg;pdf").get());
+                    OpenFileDialog.openFile("png,jpg;pdf").ifPresent(LogInfo::println);
                 } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                    LogInfo.println(OpenFileDialog.save("png,jpg;pdf").get());
+                    OpenFileDialog.save("png,jpg;pdf").ifPresent(LogInfo::println);
                 } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
                     closeWindow.set(false);
                 }

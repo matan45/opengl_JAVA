@@ -11,8 +11,8 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
 
 public class OpenGLObjects {
-    private List<Integer> vaos;
-    private List<Integer> vbos;
+    private final List<Integer> vaos;
+    private final List<Integer> vbos;
 
     public OpenGLObjects() {
         vaos = new ArrayList<>();
@@ -109,5 +109,14 @@ public class OpenGLObjects {
             glDeleteBuffers(vbo);
         }
 
+    }
+
+    public int loadToVAO(float[] positions, float[] textureCoords, float[] normals) {
+        int vaoID = createVAO();
+        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(1, 3, normals);
+        storeDataInAttributeList(2, 2, textureCoords);
+        unbindVAO();
+        return vaoID;
     }
 }

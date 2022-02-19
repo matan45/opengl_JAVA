@@ -33,12 +33,12 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, editorCamera);
-        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects);
+        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox);
     }
 
     public static void draw() {
         framebuffer.bind(fboID);
-        glClearColor(0f, 0f, 0f, 0.0f);
+        glClearColor(0f, 0f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         meshRenderer.renderers();
@@ -50,13 +50,11 @@ public class EditorRenderer {
 
     private static void enable() {
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glDepthFunc(GL_LEQUAL);
     }
 
     private static void disable() {
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
     }
 
 

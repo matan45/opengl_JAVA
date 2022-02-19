@@ -101,7 +101,7 @@ public class ViewPort implements ImguiLayer {
     }
 
     @Override
-    public void render() {
+    public void render(float dt) {
         if (ImGui.begin("Scene View", ImGuiWindowFlags.MenuBar)) {
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 255);
             if (ImGui.beginMenuBar()) {
@@ -137,7 +137,7 @@ public class ViewPort implements ImguiLayer {
 
             if (ImGui.isWindowFocused()) {
                 keyInputImGuizo();
-                cameraInput();
+                cameraInput(dt);
             }
 
             if (firstFrame) {
@@ -203,11 +203,11 @@ public class ViewPort implements ImguiLayer {
             snap = false;
     }
 
-    private void cameraInput() {
+    private void cameraInput(float dt) {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            cameraMovement(position, rotation);
+            cameraMovement(position, rotation,dt);
 
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;
@@ -224,10 +224,8 @@ public class ViewPort implements ImguiLayer {
                 rotation.y += xOffset * 0.1;
                 rotation.x += yOffset * 0.1;
 
-                if (rotation.y > 89.0f)
-                    rotation.y = 89.0f;
-                if (rotation.y < -89.0f)
-                    rotation.y = -89.0f;
+                if (rotation.y >= 360.0f || rotation.y <= -360.0f)
+                    rotation.y = 0;
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
 
@@ -241,31 +239,31 @@ public class ViewPort implements ImguiLayer {
         }
     }
 
-    private void cameraMovement(OLVector3f position, OLVector3f rotation) {
-        float speed = 0.2f;
+    private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt) {
+        float speed = 1.2f;
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
-            position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-            position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_A)) {
-            position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-            position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_D)) {
-            position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
-            position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed;
+            position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_S)) {
-            position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed;
-            position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed;
+            position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
-            position.y += -1 * speed;
+            position.y += -1 * speed * dt;
             isViewChange = true;
             if (position.y < -360)
                 position.y = 0;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
-            position.y += 1 * speed;
+            position.y += 1 * speed * dt;
             isViewChange = true;
             if (position.y > 360)
                 position.y = 0;

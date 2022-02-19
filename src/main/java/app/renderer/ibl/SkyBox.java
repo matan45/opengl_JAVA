@@ -12,30 +12,36 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 
 public class SkyBox {
-    ShaderCubeMap backgroundShader;
+    private final ShaderCubeMap backgroundShader;
+    private final ShaderIrradiance equiangularToCubeShader;
+    private final ShaderIrradianceConvolution irradianceShader;
+    private final Shaderbrdf shaderbrdf;
+    private final ShaderPreFilter shaderPreFilter;
 
-    String path;
+    private String path;
 
-    Camera editorCamera;
-    Textures textures;
-    Framebuffer framebuffer;
-    OpenGLObjects openGLObjects;
+    private final Camera editorCamera;
+    private final Textures textures;
+    private final Framebuffer framebuffer;
 
-    int captureFBO;
-    int captureRBO;
+    private int captureFBO;
+    private int captureRBO;
 
-    boolean isActive;
-    boolean showLightMap;
-    boolean showPreFilterMap;
+    private float exposure;
 
-    int envCubeMap;
-    int irradianceMap;
-    int prefilterMap;
-    int brdfLUTTexture;
+    private boolean isActive;
+    private boolean showLightMap;
+    private boolean showPreFilterMap;
 
-    int quadVAO;
+    private int envCubeMap;
+    private int irradianceMap;
+    private int prefilterMap;
+    private int brdfLUTTexture;
+
+    private int quadVAO;
     private static final float[] quadVertices = {
             // positions
             -1.0f, 1.0f, 0.0f,
@@ -51,8 +57,8 @@ public class SkyBox {
             1.0f, 0.0f,
     };
 
-    int cubeVAO;
-    private static final float[] vertices = {
+    private int cubeVAO;
+    private static final float[] cubeVertices = {
             -1.0f, 1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
@@ -96,33 +102,141 @@ public class SkyBox {
             1.0f, -1.0f, 1.0f
     };
 
+    private static final float[] cubeNormals = {
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+
+    };
+    private static final float[] cubeTextureCoords = {
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+
+            0.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 1.0f,
+
+            0.0f, 1.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f,
+            0.0f, 1.0f,
+            0.0f, 0.0f
+    };
+
     public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.editorCamera = editorCamera;
         this.textures = textures;
         this.framebuffer = framebuffer;
-        this.openGLObjects = openGLObjects;
-    }
+        exposure = 1.0f;
 
-    public void init(String filePath) {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
-        isActive = true;
-        cubeVAO = openGLObjects.loadToVAO(vertices);
+        equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
+        irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
+        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
+        shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
+
+        cubeVAO = openGLObjects.loadToVAO(cubeVertices, cubeTextureCoords, cubeNormals);
         quadVAO = openGLObjects.loadToVAO(quadVertices, quadTextureCoords);
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
-        cubemap(filePath);
+
     }
 
-    Shaderbrdf shaderbrdf;
+    public void init(String filePath) {
+        isActive = true;
 
-    private void cubemap(String filePath) {
-        final ShaderIrradiance equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
-        final ShaderIrradianceConvolution irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
-        final ShaderPreFilter shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
+        cubeMap(filePath);
+    }
 
+    private void cubeMap(String filePath) {
 
+        backgroundShader.start();
+        backgroundShader.connectTextureUnits();
+        backgroundShader.stop();
+
+        equiangularToCubeShader.start();
+        equiangularToCubeShader.connectTextureUnits();
+        equiangularToCubeShader.stop();
+
+        irradianceShader.start();
+        irradianceShader.connectTextureUnits();
+        irradianceShader.stop();
+
+        shaderPreFilter.start();
+        shaderPreFilter.connectTextureUnits();
+        shaderPreFilter.stop();
+
+        irradianceMap = 0;
+        prefilterMap = 0;
+        brdfLUTTexture = 0;
         int hdrTexture = textures.hdr(filePath);
         path = filePath;
 
@@ -136,8 +250,13 @@ public class SkyBox {
                         new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
                 };
 
+        // configure global opengl state
+        // -----------------------------
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
+        // set depth function to less than AND equal for skybox depth trick.
+        glDepthFunc(GL_LEQUAL);
+        // enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
         envCubeMap = textures.createCubTexture(512, 512);
         convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
@@ -149,6 +268,7 @@ public class SkyBox {
         convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
         prefilterMap(shaderPreFilter, captureViews);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         brdfLUTTexture = textures.createBrdfTexture(512, 512);
 
@@ -174,6 +294,7 @@ public class SkyBox {
             backgroundShader.connectTextureUnits();
             backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
             backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
+            backgroundShader.loadExposure(exposure);
             glActiveTexture(GL_TEXTURE0);
 
             if (showLightMap)
@@ -184,7 +305,6 @@ public class SkyBox {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
 
             renderCube();
-            glActiveTexture(0);
             backgroundShader.stop();
 
            /* shaderbrdf.start();
@@ -267,8 +387,14 @@ public class SkyBox {
         // render Cube
         glBindVertexArray(cubeVAO);
         glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         glBindVertexArray(0);
     }
 
@@ -290,6 +416,10 @@ public class SkyBox {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public void setExposure(float exposure) {
+        this.exposure = exposure;
     }
 
     public void setActive(boolean active) {

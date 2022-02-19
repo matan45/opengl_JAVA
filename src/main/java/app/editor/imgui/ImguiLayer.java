@@ -1,5 +1,5 @@
 package app.editor.imgui;
 
 public interface ImguiLayer {
-    void render();
+    void render(float dt);
 }

@@ -8,25 +8,22 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Grid {
-    List<Float> vertices;
+    private final List<Float> vertices;
 
-    ShaderGrid shaderGrid;
+    private final ShaderGrid shaderGrid;
 
-    OpenGLObjects openGLObjects;
-    Camera camera;
-    int vaoModel;
+    private final Camera camera;
+    private final int vaoModel;
 
-    boolean render;
+    private boolean render;
 
     public Grid(OpenGLObjects openGLObjects, Camera camera) {
-        this.openGLObjects = openGLObjects;
         this.camera = camera;
         vertices = new ArrayList<>();
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
@@ -63,6 +60,8 @@ public class Grid {
 
     public void render() {
         if (render) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             shaderGrid.start();
             shaderGrid.loadViewMatrix(camera.getViewMatrix());
             shaderGrid.loadProjectionMatrix(camera.getProjectionMatrix());
@@ -76,6 +75,7 @@ public class Grid {
             glBindVertexArray(0);
 
             shaderGrid.stop();
+            glDisable(GL_BLEND);
         }
     }
 

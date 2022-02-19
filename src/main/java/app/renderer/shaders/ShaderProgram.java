@@ -15,9 +15,9 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL20.*;
 
 public abstract class ShaderProgram {
-    int programID;
-    Set<Integer> shadersID;
-    static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
+    private final int programID;
+    private final Set<Integer> shadersID;
+    private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
     protected ShaderProgram(Path path) {
         shadersID = new HashSet<>();
@@ -48,7 +48,7 @@ public abstract class ShaderProgram {
         glUniform1f(location, value);
     }
 
-    protected void loadVector(int location, OLVector3f vector) {
+    protected void load3DVector(int location, OLVector3f vector) {
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
 

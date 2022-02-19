@@ -16,19 +16,17 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL.setCapabilities;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class GlfwWindow {
-    long window;
-    ImguiHandler imgui;
-    final String title;
-    int width = 800;
-    int height = 600;
-    MainImgui mainImgui;
+    private long window;
+    private ImguiHandler imgui;
+    private final String title;
+    private int width = 800;
+    private int height = 600;
+    private MainImgui mainImgui;
 
     public GlfwWindow(String title) {
         this.title = title;
@@ -137,7 +135,6 @@ public class GlfwWindow {
 
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            glClear(GL_COLOR_BUFFER_BIT);
 
             //calculate delta time
             float frame = System.nanoTime();
@@ -148,7 +145,7 @@ public class GlfwWindow {
             EditorRenderer.draw();
 
             imgui.startFrame();
-            ImguiLayerHandler.renderImGui();
+            ImguiLayerHandler.renderImGui(deltaTime);
             imgui.endFrame();
 
             glfwSwapBuffers(window);

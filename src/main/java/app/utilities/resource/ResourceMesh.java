@@ -17,7 +17,7 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public class ResourceMesh {
 
-    private static final int flags = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
+    private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
 
     protected Mesh[] readMeshFile(Path path) {
@@ -25,7 +25,7 @@ public class ResourceMesh {
     }
 
     private Mesh[] loadMeshItem(String fileName) {
-        AIScene aiScene = aiImportFile(fileName, flags);
+        AIScene aiScene = aiImportFile(fileName, FLAGS);
         if (aiScene == null) {
             System.err.println("Error loading model");
             return null;
@@ -45,17 +45,21 @@ public class ResourceMesh {
     }
 
     private Mesh processMesh(AIMesh aiMesh) {
-        List<Float> vertices = processVertices(aiMesh);
-        List<Float> textures = processNormals(aiMesh);
-        List<Float> normals = processTextCoords(aiMesh);
-        List<Integer> indices = processIndices(aiMesh);
+        List<Float> vertices = new ArrayList<>();
+        List<Float> textures = new ArrayList<>();
+        List<Float> normals = new ArrayList<>();
+        List<Integer> indices = new ArrayList<>();
+
+        processVertices(aiMesh, vertices);
+        processNormals(aiMesh, normals);
+        processTextCoords(aiMesh, textures);
+        processIndices(aiMesh, indices);
 
         return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices));
     }
 
 
-    private List<Float> processVertices(AIMesh aiMesh) {
-        List<Float> vertices = new ArrayList<>();
+    private void processVertices(AIMesh aiMesh, List<Float> vertices) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
@@ -63,11 +67,9 @@ public class ResourceMesh {
             vertices.add(aiVertex.y());
             vertices.add(aiVertex.z());
         }
-        return vertices;
     }
 
-    private List<Float> processTextCoords(AIMesh aiMesh) {
-        List<Float> textures = new ArrayList<>();
+    private void processTextCoords(AIMesh aiMesh, List<Float> textures) {
         AIVector3D.Buffer textCoords = aiMesh.mTextureCoords(0);
         int numTextCoords = textCoords != null ? textCoords.remaining() : 0;
         for (int i = 0; i < numTextCoords; i++) {
@@ -75,11 +77,9 @@ public class ResourceMesh {
             textures.add(textCoord.x());
             textures.add(1 - textCoord.y());
         }
-        return textures;
     }
 
-    private List<Float> processNormals(AIMesh aiMesh) {
-        List<Float> normals = new ArrayList<>();
+    private void processNormals(AIMesh aiMesh, List<Float> normals) {
         AIVector3D.Buffer aiNormals = aiMesh.mNormals();
         while (aiNormals != null && aiNormals.remaining() > 0) {
             AIVector3D aiNormal = aiNormals.get();
@@ -87,11 +87,9 @@ public class ResourceMesh {
             normals.add(aiNormal.y());
             normals.add(aiNormal.z());
         }
-        return normals;
     }
 
-    private List<Integer> processIndices(AIMesh aiMesh) {
-        List<Integer> indices = new ArrayList<>();
+    private void processIndices(AIMesh aiMesh, List<Integer> indices) {
         int numFaces = aiMesh.mNumFaces();
         AIFace.Buffer aiFaces = aiMesh.mFaces();
         for (int i = 0; i < numFaces; i++) {
@@ -101,6 +99,5 @@ public class ResourceMesh {
                 indices.add(buffer.get());
             }
         }
-        return indices;
     }
 }

@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inspector implements ImguiLayer {
-    Entity entity = null;
-    List<Component> removeComponent = new ArrayList<>();
-    static final ImBoolean headerClose = new ImBoolean(true);
+    private Entity entity = null;
+    private final List<Component> removeComponent = new ArrayList<>();
+    private static final ImBoolean headerClose = new ImBoolean(true);
 
     @Override
-    public void render() {
+    public void render(float dt) {
         if (ImGui.begin("Inspector") && entity != null) {
             for (Component component : entity.getComponents()) {
                 ImGui.pushID(component.getClass().getSimpleName());

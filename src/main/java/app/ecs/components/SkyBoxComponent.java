@@ -5,29 +5,26 @@ import app.renderer.draw.EditorRenderer;
 import app.renderer.ibl.SkyBox;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
-import imgui.type.ImBoolean;
 import imgui.type.ImInt;
 
 import java.io.File;
 
 public class SkyBoxComponent extends CommonComponent {
-    private  SkyBox skyBox;
-    private ImBoolean showLightMap;
-    private ImBoolean showPreFilterMap;
-    private ImInt select;
+    private final SkyBox skyBox;
+    private final ImInt select;
+    private float exposure;
 
     public SkyBoxComponent(Entity ownerEntity) {
         super(ownerEntity);
         skyBox = EditorRenderer.getSkyBox();
-        showLightMap = new ImBoolean(false);
-        showPreFilterMap = new ImBoolean(false);
         select = new ImInt(0);
+        exposure = 2.2f;
     }
 
     @Override
     public void imguiDraw() {
         if (ImGui.button("HDR")) {
-            OpenFileDialog.openFile("hdr").ifPresent(s -> skyBox.init(s));
+            OpenFileDialog.openFile("hdr").ifPresent(skyBox::init);
 
         } else if (skyBox.getPath() != null && !skyBox.getPath().isBlank()) {
             ImGui.sameLine();
@@ -48,6 +45,14 @@ public class SkyBoxComponent extends CommonComponent {
             skyBox.setShowLightMap(false);
             skyBox.setShowPreFilterMap(true);
         }
+
+        if (ImGui.button("Exposure"))
+            exposure = 2.2f;
+        ImGui.sameLine();
+        float[] yValue = {exposure};
+        ImGui.dragFloat("##Y", yValue, 0.1f);
+        exposure = yValue[0];
+        skyBox.setExposure(exposure);
 
     }
 

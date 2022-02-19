@@ -18,15 +18,14 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
     return unprojectedPoint.xyz / unprojectedPoint.w;
 }
 
-
 void main()
 {
     vec3 p = position;
-     nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
-     farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
-     fragView=view;
-     fragProj=projection;
-     gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
+    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
+    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
+    fragView = view;
+    fragProj = projection;
+    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
 }
 
 #type FRAGMENT
@@ -76,6 +75,6 @@ void main() {
     float linearDepth = computeLinearDepth(fragPos3D);
     float fading = max(0, (0.5 - linearDepth));
 
-    FragColor = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
+    FragColor = (grid(fragPos3D, 10, true) + grid(fragPos3D, 10, true))* float(t > 0); // adding multiple resolution for the grid
     FragColor.a *= fading;
 }

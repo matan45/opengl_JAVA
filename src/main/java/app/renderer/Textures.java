@@ -2,7 +2,6 @@ package app.renderer;
 
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -21,7 +20,7 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
-    List<Integer> texturesID;
+    private final List<Integer> texturesID;
 
     public Textures() {
         texturesID = new ArrayList<>();
@@ -64,18 +63,19 @@ public class Textures {
             }
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w.get(0), h.get(0), 0, GL_RGB,
                     GL_UNSIGNED_BYTE, image);
+        } else if (comp.get(0) == 1) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w.get(0), h.get(0), 0, GL_RED,
+                    GL_UNSIGNED_BYTE, image);
         } else {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w.get(0), h.get(0), 0, GL_RGBA,
                     GL_UNSIGNED_BYTE, image);
         }
         glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        float amount = Math.min(4f, glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT));
-        glTexParameterf(GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
 
         stbi_image_free(image);
         return id;

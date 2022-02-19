@@ -10,29 +10,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class ContentBrowser implements ImguiLayer {
-    Path absolutePath = Paths.get("C:\\matan\\java\\src\\main");
+    private Path absolutePath = Paths.get("C:\\matan\\java\\src\\main");
 
-    File folder;
-    File[] listOfFiles;
+    private final int folderIcon;
+    private final int fileIcon;
 
-    int folderIcon;
-    int fileIcon;
-    Textures textures;
-
-    float padding = 16.0f;
-    float thumbnailSize = 128.0f;
-    float cellSize = padding + thumbnailSize;
-
-    static final String FOLDER_SPLITTER= "\\";
+    private static final String FOLDER_SPLITTER= "\\";
 
     public ContentBrowser() {
-        textures = EditorRenderer.getTextures();
+        Textures textures = EditorRenderer.getTextures();
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
     }
 
     @Override
-    public void render() {
+    public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
             if (ImGui.button("<--") && absolutePath.getParent() != null)
                 absolutePath = absolutePath.getParent();
@@ -40,10 +32,13 @@ public class ContentBrowser implements ImguiLayer {
             ImGui.labelText("Current Path", absolutePath.toString());
             ImGui.separator();
 
-            folder = absolutePath.toFile();
-            listOfFiles = folder.listFiles();
+            File folder = absolutePath.toFile();
+            File[] listOfFiles = folder.listFiles();
 
             float panelWidth = ImGui.getContentRegionAvailX();
+            float thumbnailSize = 128.0f;
+            float padding = 16.0f;
+            float cellSize = padding + thumbnailSize;
             int columnCount = (int) (panelWidth / cellSize);
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
