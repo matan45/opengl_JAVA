@@ -129,6 +129,7 @@ void main()
 
         // material properties
         vec3 albedo =  pow(texture(albedoMap, texCoords).rgb, vec3(2.2));
+        vec3 emission = pow(texture(emissiveMap, texCoords).rgb, vec3(2.2));
         float metallic = texture(metallicMap, texCoords).r;
         float roughness = texture(roughnessMap, texCoords).r;
         float ao = texture(aoMap, texCoords).r;
@@ -157,11 +158,6 @@ void main()
         vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-        // need to test emission
-        vec3 emission = vec3(0.0);
-        if (specular.r == 0.0){
-                emission = texture(emissiveMap, texCoords).rgb;
-        }
         // if there is no ao map we dont see anything need to sec mabe defult value
         vec3 ambient = (kD * diffuse + specular + emission) * ao;
 
