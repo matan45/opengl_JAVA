@@ -131,11 +131,11 @@ void main()
         }
 
         // material properties
-        vec3 albedo =  pow(texture(albedoMap, texCoords).rgb, vec3(2.2));
-        vec3 emission = pow(texture(emissiveMap, texCoords).rgb, vec3(2.2));
-        float metallic = texture(metallicMap, texCoords).r;
-        float roughness = texture(roughnessMap, texCoords).r;
-        float ao = texture(aoMap, texCoords).r;
+        vec3 albedo =  pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+        vec3 emission = pow(texture(emissiveMap, TexCoords).rgb, vec3(2.2));
+        float metallic = texture(metallicMap, TexCoords).r;
+        float roughness = texture(roughnessMap, TexCoords).r;
+        float ao = texture(aoMap, TexCoords).r;
 
          vec3 N = getNormalFromMap(TBN,texCoords);
          vec3 R = reflect(-V, N);
