@@ -48,13 +48,14 @@ uniform vec3 cameraPosition;
 uniform float hasDisplacement;
 
 const float PI = 3.14159265359;
-const float heightScale = 0.1f;
 
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
     // number of depth layers
     const float minLayers = 8;
     const float maxLayers = 32;
+    const float heightScale = 0.1f;
+
     float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
     // calculate the size of each layer
     float layerDepth = 1.0 / numLayers;
@@ -92,19 +93,21 @@ vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
     return finalTexCoords;
 }
 
-vec3 getNormalFromMap(vec2 texCoords)
-{
-    vec3 tangentNormal = texture(normalMap, texCoords).xyz * 2.0 - 1.0;
-
+mat3 getTBN(){
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(texCoords);
-    vec2 st2 = dFdy(texCoords);
+    vec2 st1 = dFdx(TexCoords);
+    vec2 st2 = dFdy(TexCoords);
 
     vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
-    mat3 TBN = mat3(T, B, N);
+    return mat3(T, B, N);
+}
+
+vec3 getNormalFromMap(mat3 TBN,vec2 texCoords)
+{
+    vec3 tangentNormal = texture(normalMap, texCoords).xyz * 2.0 - 1.0;
 
     return normalize(TBN * tangentNormal);
 }
@@ -117,11 +120,11 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 void main()
 {
         // input lighting data
-        vec3 V = normalize(cameraPosition - WorldPos);
+        mat3 TBN = getTBN();
+        vec3 V = normalize(TBN * cameraPosition - TBN * WorldPos);
 
         vec2 texCoords = TexCoords;
         if(hasDisplacement > 0 ){
-            //need to fix the viewDir need T or B from the normal map
             texCoords = ParallaxMapping(TexCoords,  V);
             if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
                     discard;
@@ -134,7 +137,7 @@ void main()
         float roughness = texture(roughnessMap, texCoords).r;
         float ao = texture(aoMap, texCoords).r;
 
-         vec3 N = getNormalFromMap(texCoords);
+         vec3 N = getNormalFromMap(TBN,texCoords);
          vec3 R = reflect(-V, N);
 
         // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
