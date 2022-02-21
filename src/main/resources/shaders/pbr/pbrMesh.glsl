@@ -132,7 +132,7 @@ void main()
 
         // material properties
         vec3 albedo =  pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-        vec3 emission = pow(texture(emissiveMap, TexCoords).rgb, vec3(2.2));
+        vec3 emission = texture(emissiveMap, TexCoords).rgb;
         float metallic = texture(metallicMap, TexCoords).r;
         float roughness = texture(roughnessMap, TexCoords).r;
         float ao = texture(aoMap, TexCoords).r;
@@ -153,7 +153,7 @@ void main()
         kD *= 1.0 - metallic;
 
         vec3 irradiance = texture(irradianceMap, N).rgb;
-        vec3 diffuse      = irradiance * albedo;
+        vec3 diffuse    = (irradiance * albedo) + emission;
 
         // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
         const float MAX_REFLECTION_LOD = 4.0;
@@ -162,7 +162,7 @@ void main()
         vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
         // if there is no ao map we dont see anything need to sec mabe defult value
-        vec3 ambient = (kD * diffuse + specular + emission) * ao;
+        vec3 ambient = (kD * diffuse + specular) * ao;
 
         vec3 color = ambient;
 
