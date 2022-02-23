@@ -1,6 +1,7 @@
 package app.ecs.components;
 
 import app.ecs.Entity;
+import app.math.OLVector3f;
 import app.math.components.OLTransform;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Material;
@@ -15,6 +16,14 @@ public class MeshComponent extends CommonComponent {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
+
+    float tt1;
+    float tt2;
+    float tt3;
+
+    float aa1;
+    float aa2;
+    float aa3;
 
     public MeshComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -37,6 +46,29 @@ public class MeshComponent extends CommonComponent {
             File file = new File(meshRenderer.getPath());
             ImGui.textWrapped(file.getName());
         }
+
+        if (ImGui.button("tt1"))
+            tt1 = 2.2f;
+        ImGui.sameLine();
+        float[] xValue = {tt1};
+        ImGui.dragFloat("##Y", xValue, 0.1f);
+        tt1 = xValue[0];
+
+        if (ImGui.button("tt2"))
+            tt2 = 2.2f;
+        ImGui.sameLine();
+        float[] yValue = {tt2};
+        ImGui.dragFloat("##Y", yValue, 0.1f);
+        tt2 = yValue[0];
+
+        if (ImGui.button("tt3"))
+            tt3 = 2.2f;
+        ImGui.sameLine();
+        float[] zValue = {tt3};
+        ImGui.dragFloat("##Y", zValue, 0.1f);
+        tt3 = zValue[0];
+        meshRenderer.getTest().setDirection(new OLVector3f(tt1, tt2, tt3));
+
         ImGui.textWrapped("Material");
         ImGui.separator();
         ImGui.columns(3, "", true);

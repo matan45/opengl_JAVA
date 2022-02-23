@@ -2,6 +2,7 @@ package app.renderer.pbr;
 
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
+import app.renderer.lights.DirectionalLight;
 import app.renderer.shaders.ShaderProgram;
 import app.renderer.shaders.UniformsNames;
 
@@ -28,6 +29,9 @@ public class ShaderMesh extends ShaderProgram {
     private int locationPrefilterMap;
     private int locationBrdfLUT;
 
+    private int locationDirLightDirection;
+    private int locationDirLightColor;
+
     ShaderMesh(Path path) {
         super(path);
     }
@@ -40,6 +44,9 @@ public class ShaderMesh extends ShaderProgram {
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
         locationHasDisplacement = super.getUniformLocation("hasDisplacement");
+
+        locationDirLightDirection = super.getUniformLocation("dirLight.direction");
+        locationDirLightColor = super.getUniformLocation("dirLight.color");
 
         locationAlbedoMap = super.getUniformLocation("albedoMap");
         locationNormalMap = super.getUniformLocation("normalMap");
@@ -88,5 +95,10 @@ public class ShaderMesh extends ShaderProgram {
 
     public void loadHasDisplacement(boolean displacement) {
         super.loadBoolean(locationHasDisplacement, displacement);
+    }
+
+    public void loadDirLight(DirectionalLight directionalLight){
+        super.load3DVector(locationDirLightDirection,directionalLight.getDirection());
+        super.load3DVector(locationDirLightColor,directionalLight.getColor());
     }
 }

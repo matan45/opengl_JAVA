@@ -4,6 +4,7 @@ import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.ibl.SkyBox;
+import app.renderer.lights.DirectionalLight;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox);
+        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox,new DirectionalLight());
     }
 
     public void addInstant(MeshRenderer meshRenderer) {
