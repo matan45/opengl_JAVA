@@ -103,16 +103,6 @@ public class MeshComponent extends CommonComponent {
         ImGui.popID();
 
         ImGui.nextColumn();
-        material.setDisplacementMap(materialPath("Displacement"));
-        ImGui.nextColumn();
-        ImGui.textWrapped(material.getDisplacementMapPath());
-        ImGui.nextColumn();
-        ImGui.pushID("Displacement");
-        if (ImGui.button("X"))
-            material.displacementMapRemove();
-        ImGui.popID();
-
-        ImGui.nextColumn();
         material.setEmissiveMap(materialPath("Emissive"));
         ImGui.nextColumn();
         ImGui.textWrapped(material.getEmissiveMapPath());

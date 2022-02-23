@@ -15,14 +15,11 @@ public class ShaderMesh extends ShaderProgram {
     private int locationModelMatrix;
     private int locationCameraPosition;
 
-    private int locationHasDisplacement;
-
     private int locationAlbedoMap;
     private int locationNormalMap;
     private int locationMetallicMap;
     private int locationRoughnessMap;
     private int locationAoMap;
-    private int locationDisplacementMap;
     private int locationEmissiveMap;
 
     private int locationIrradianceMap;
@@ -32,7 +29,7 @@ public class ShaderMesh extends ShaderProgram {
     private int locationDirLightDirection;
     private int locationDirLightColor;
 
-    private static final OLVector3f defult = new OLVector3f();
+    private static final OLVector3f defaults = new OLVector3f();
 
     ShaderMesh(Path path) {
         super(path);
@@ -45,8 +42,6 @@ public class ShaderMesh extends ShaderProgram {
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
-        locationHasDisplacement = super.getUniformLocation("hasDisplacement");
-
         locationDirLightDirection = super.getUniformLocation("dirLight.direction");
         locationDirLightColor = super.getUniformLocation("dirLight.color");
 
@@ -55,7 +50,6 @@ public class ShaderMesh extends ShaderProgram {
         locationMetallicMap = super.getUniformLocation("metallicMap");
         locationRoughnessMap = super.getUniformLocation("roughnessMap");
         locationAoMap = super.getUniformLocation("aoMap");
-        locationDisplacementMap = super.getUniformLocation("displacementMap");
         locationEmissiveMap = super.getUniformLocation("emissiveMap");
 
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
@@ -74,8 +68,7 @@ public class ShaderMesh extends ShaderProgram {
         super.loadInt(locationMetallicMap, 5);
         super.loadInt(locationRoughnessMap, 6);
         super.loadInt(locationAoMap, 7);
-        super.loadInt(locationDisplacementMap, 8);
-        super.loadInt(locationEmissiveMap, 9);
+        super.loadInt(locationEmissiveMap, 8);
 
     }
 
@@ -95,17 +88,13 @@ public class ShaderMesh extends ShaderProgram {
         super.load3DVector(locationCameraPosition, camera);
     }
 
-    public void loadHasDisplacement(boolean displacement) {
-        super.loadBoolean(locationHasDisplacement, displacement);
-    }
-
     public void loadDirLight(DirectionalLight directionalLight) {
         if (directionalLight != null) {
             super.load3DVector(locationDirLightDirection, directionalLight.getDirection());
             super.load3DVector(locationDirLightColor, directionalLight.getColor());
         } else {
-            super.load3DVector(locationDirLightDirection, defult);
-            super.load3DVector(locationDirLightColor, defult);
+            super.load3DVector(locationDirLightDirection, defaults);
+            super.load3DVector(locationDirLightColor, defaults);
         }
     }
 }

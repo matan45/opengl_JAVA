@@ -62,8 +62,6 @@ public class MeshRenderer {
         shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
         shaderMesh.loadCameraPosition(camera.getPosition());
 
-        shaderMesh.loadHasDisplacement(material.isHasDisplacement());
-
         shaderMesh.loadDirLight(directionalLight);
 
         glBindVertexArray(vaoModel.vaoID());
@@ -111,9 +109,6 @@ public class MeshRenderer {
         glBindTexture(GL_TEXTURE_2D, material.getAoMap());
 
         glActiveTexture(GL_TEXTURE8);
-        glBindTexture(GL_TEXTURE_2D, material.getDisplacementMap());
-
-        glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, material.getEmissiveMap());
 
     }

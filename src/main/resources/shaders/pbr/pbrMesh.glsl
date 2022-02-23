@@ -36,7 +36,6 @@ uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
-uniform sampler2D displacementMap;
 uniform sampler2D emissiveMap;
 
 // IBL
@@ -45,7 +44,6 @@ uniform samplerCube prefilterMap;
 uniform sampler2D brdfLUT;
 
 uniform vec3 cameraPosition;
-uniform float hasDisplacement;
 
 struct DirLight {
     vec3 direction;
@@ -59,49 +57,6 @@ const float PI = 3.14159265359;
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
 
-vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
-{
-    // number of depth layers
-    const float minLayers = 8;
-    const float maxLayers = 32;
-    const float heightScale = 0.1f;
-
-    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
-    // calculate the size of each layer
-    float layerDepth = 1.0 / numLayers;
-    // depth of current layer
-    float currentLayerDepth = 0.0;
-    // the amount to shift the texture coordinates per layer (from vector P)
-    vec2 P = viewDir.xy / viewDir.z * heightScale;
-    vec2 deltaTexCoords = P / numLayers;
-
-    // get initial values
-    vec2  currentTexCoords     = texCoords;
-    float currentDepthMapValue = texture(displacementMap, currentTexCoords).r;
-
-    while(currentLayerDepth < currentDepthMapValue)
-    {
-        // shift texture coordinates along direction of P
-        currentTexCoords -= deltaTexCoords;
-        // get depthmap value at current texture coordinates
-        currentDepthMapValue = texture(displacementMap, currentTexCoords).r;
-        // get depth of next layer
-        currentLayerDepth += layerDepth;
-    }
-
-    // get texture coordinates before collision (reverse operations)
-    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
-
-    // get depth after and before collision for linear interpolation
-    float afterDepth  = currentDepthMapValue - currentLayerDepth;
-    float beforeDepth = texture(displacementMap, prevTexCoords).r - currentLayerDepth + layerDepth;
-
-    // interpolation of texture coordinates
-    float weight = afterDepth / (afterDepth - beforeDepth);
-    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
-
-    return finalTexCoords;
-}
 
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -172,14 +127,6 @@ void main()
         // input lighting data
         vec3 V = normalize(cameraPosition - WorldPos);
 
-        vec2 texCoords = TexCoords;
-        if(hasDisplacement > 0 ){
-        //on sphere is stuck
-            texCoords = ParallaxMapping(TexCoords,  V);
-            if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
-                    discard;
-        }
-
         // material properties
         vec3 albedo =  pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
         vec3 emission = texture(emissiveMap, TexCoords).rgb;
@@ -187,7 +134,7 @@ void main()
         float roughness = texture(roughnessMap, TexCoords).r;
         float ao = texture(aoMap, TexCoords).r;
 
-         vec3 N = getNormalFromMap(texCoords);
+         vec3 N = getNormalFromMap(TexCoords);
          vec3 R = reflect(-V, N);
 
         // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
