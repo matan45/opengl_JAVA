@@ -28,7 +28,7 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox);
+        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox, directionalLight);
     }
 
     public void addInstant(MeshRenderer meshRenderer) {

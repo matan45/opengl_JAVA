@@ -1,6 +1,5 @@
 package app.renderer.pbr;
 
-import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
@@ -8,7 +7,6 @@ import app.renderer.Textures;
 import app.renderer.VaoModel;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.DirectionalLight;
-import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -33,12 +31,13 @@ public class MeshRenderer {
 
     private DirectionalLight directionalLight;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox) {
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, DirectionalLight directionalLight) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         material = new Material(textures);
 
+        this.directionalLight = directionalLight;
         this.skyBox = skyBox;
 
         shaderMesh.start();
