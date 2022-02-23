@@ -15,6 +15,7 @@ public class MeshRendererHandler {
     private final Textures textures;
     private final OpenGLObjects openGLObjects;
     private final SkyBox skyBox;
+    private DirectionalLight directionalLight;
 
     private final List<MeshRenderer> meshRenderers;
 
@@ -27,7 +28,7 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox,new DirectionalLight());
+        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox);
     }
 
     public void addInstant(MeshRenderer meshRenderer) {
@@ -46,5 +47,10 @@ public class MeshRendererHandler {
 
     public void renderers() {
         meshRenderers.forEach(MeshRenderer::renderer);
+    }
+
+    public void setDirectionalLight(DirectionalLight directionalLight) {
+        this.directionalLight = directionalLight;
+        meshRenderers.forEach(m -> m.setDirectionalLight(directionalLight));
     }
 }

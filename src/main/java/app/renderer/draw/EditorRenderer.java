@@ -6,6 +6,7 @@ import app.renderer.Textures;
 import app.renderer.debug.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
+import app.renderer.lights.DirectionalLight;
 import app.renderer.pbr.MeshRendererHandler;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -18,6 +19,7 @@ public class EditorRenderer {
 
     private static int fboID;
 
+    private static DirectionalLight directionalLight;
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
     private static Grid grid;
@@ -33,6 +35,7 @@ public class EditorRenderer {
         fboID = framebuffer.createFrameRenderBuffer();
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, editorCamera);
+
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox);
     }
 

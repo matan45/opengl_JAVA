@@ -32,6 +32,8 @@ public class ShaderMesh extends ShaderProgram {
     private int locationDirLightDirection;
     private int locationDirLightColor;
 
+    private static final OLVector3f defult = new OLVector3f();
+
     ShaderMesh(Path path) {
         super(path);
     }
@@ -97,8 +99,13 @@ public class ShaderMesh extends ShaderProgram {
         super.loadBoolean(locationHasDisplacement, displacement);
     }
 
-    public void loadDirLight(DirectionalLight directionalLight){
-        super.load3DVector(locationDirLightDirection,directionalLight.getDirection());
-        super.load3DVector(locationDirLightColor,directionalLight.getColor());
+    public void loadDirLight(DirectionalLight directionalLight) {
+        if (directionalLight != null) {
+            super.load3DVector(locationDirLightDirection, directionalLight.getDirection());
+            super.load3DVector(locationDirLightColor, directionalLight.getColor());
+        } else {
+            super.load3DVector(locationDirLightDirection, defult);
+            super.load3DVector(locationDirLightColor, defult);
+        }
     }
 }

@@ -1,10 +1,7 @@
 package app.editor.imgui;
 
 import app.ecs.Entity;
-import app.ecs.components.Component;
-import app.ecs.components.MeshComponent;
-import app.ecs.components.SkyBoxComponent;
-import app.ecs.components.TransformComponent;
+import app.ecs.components.*;
 import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiTreeNodeFlags;
@@ -49,7 +46,7 @@ public class Inspector implements ImguiLayer {
             if (ImGui.beginPopupContextWindow("Component")) {
                 if (ImGui.beginMenu("Light")) {
                     if (ImGui.menuItem("Directional Light"))
-                        LogInfo.println("not implement");
+                        entity.addComponent(new DirectionalLightComponent(entity));
                     if (ImGui.menuItem("Point Light"))
                         LogInfo.println("not implement");
                     if (ImGui.menuItem("Spot Light"))

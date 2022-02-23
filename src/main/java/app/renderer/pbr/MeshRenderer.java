@@ -8,6 +8,7 @@ import app.renderer.Textures;
 import app.renderer.VaoModel;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.DirectionalLight;
+import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -30,17 +31,15 @@ public class MeshRenderer {
     private VaoModel vaoModel;
     private OLTransform olTransform;
 
-    private DirectionalLight test;
+    private DirectionalLight directionalLight;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox,DirectionalLight test) {
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         material = new Material(textures);
-        this.skyBox = skyBox;
 
-        test = new DirectionalLight(new OLVector3f(-0.2f, -1.0f, -0.3f), new OLVector3f(0.5f, 0.5f, 0.5f));
-        this.test = test;
+        this.skyBox = skyBox;
 
         shaderMesh.start();
         shaderMesh.connectTextureUnits();
@@ -65,7 +64,7 @@ public class MeshRenderer {
 
         shaderMesh.loadHasDisplacement(material.isHasDisplacement());
 
-        shaderMesh.loadDirLight(test);
+        shaderMesh.loadDirLight(directionalLight);
 
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
@@ -140,7 +139,7 @@ public class MeshRenderer {
         return material;
     }
 
-    public DirectionalLight getTest() {
-        return test;
+    public void setDirectionalLight(DirectionalLight directionalLight) {
+        this.directionalLight = directionalLight;
     }
 }
