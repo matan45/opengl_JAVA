@@ -125,6 +125,7 @@ void main()
 
         vec2 texCoords = TexCoords;
         if(hasDisplacement > 0 ){
+        //on sphere is stuck
             texCoords = ParallaxMapping(TexCoords,  V);
             if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
                     discard;
