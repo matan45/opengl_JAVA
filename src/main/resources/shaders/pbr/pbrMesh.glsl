@@ -196,6 +196,7 @@ void main()
         // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
         vec3 F0 = vec3(0.04);
         F0 = mix(F0, albedo, metallic);
+
         vec3 Lo = vec3(0.0);
         Lo+=CalcDirLight(dirLight, N, V, albedo, F0, metallic, roughness);
 

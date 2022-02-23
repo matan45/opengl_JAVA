@@ -47,26 +47,33 @@ public class MeshComponent extends CommonComponent {
             ImGui.textWrapped(file.getName());
         }
 
+        ImGui.pushID("tt1");
         if (ImGui.button("tt1"))
             tt1 = 2.2f;
         ImGui.sameLine();
         float[] xValue = {tt1};
         ImGui.dragFloat("##Y", xValue, 0.1f);
         tt1 = xValue[0];
+        ImGui.popID();
 
+        ImGui.pushID("tt2");
         if (ImGui.button("tt2"))
             tt2 = 2.2f;
         ImGui.sameLine();
         float[] yValue = {tt2};
         ImGui.dragFloat("##Y", yValue, 0.1f);
         tt2 = yValue[0];
+        ImGui.popID();
 
+        ImGui.pushID("tt3");
         if (ImGui.button("tt3"))
             tt3 = 2.2f;
         ImGui.sameLine();
         float[] zValue = {tt3};
         ImGui.dragFloat("##Y", zValue, 0.1f);
         tt3 = zValue[0];
+        ImGui.popID();
+
         meshRenderer.getTest().setDirection(new OLVector3f(tt1, tt2, tt3));
 
         ImGui.textWrapped("Material");
