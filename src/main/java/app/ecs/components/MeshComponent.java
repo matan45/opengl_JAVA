@@ -76,6 +76,35 @@ public class MeshComponent extends CommonComponent {
 
         meshRenderer.getTest().setDirection(new OLVector3f(tt1, tt2, tt3));
 
+        ImGui.pushID("aa1");
+        if (ImGui.button("aa1"))
+            aa1 = 2.2f;
+        ImGui.sameLine();
+        float[] x = {aa1};
+        ImGui.dragFloat("##Y", x, 0.1f);
+        aa1 = x[0];
+        ImGui.popID();
+
+        ImGui.pushID("aa2");
+        if (ImGui.button("aa2"))
+            aa2 = 2.2f;
+        ImGui.sameLine();
+        float[] y = {aa2};
+        ImGui.dragFloat("##Y", y, 0.1f);
+        aa2 = y[0];
+        ImGui.popID();
+
+        ImGui.pushID("aa3");
+        if (ImGui.button("aa3"))
+            aa3 = 2.2f;
+        ImGui.sameLine();
+        float[] z = {aa3};
+        ImGui.dragFloat("##Y", z, 0.1f);
+        aa3 = z[0];
+        ImGui.popID();
+
+        meshRenderer.getTest().setColor(new OLVector3f(aa1, aa2, aa3));
+
         ImGui.textWrapped("Material");
         ImGui.separator();
         ImGui.columns(3, "", true);

@@ -144,7 +144,11 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
-mat3 getTBN(){
+
+vec3 getNormalFromMap(vec2 texCoords)
+{
+    vec3 tangentNormal = texture(normalMap, texCoords).xyz * 2.0 - 1.0;
+
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
     vec2 st1 = dFdx(TexCoords);
@@ -153,12 +157,7 @@ mat3 getTBN(){
     vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
-    return mat3(T, B, N);
-}
-
-vec3 getNormalFromMap(mat3 TBN,vec2 texCoords)
-{
-    vec3 tangentNormal = texture(normalMap, texCoords).xyz * 2.0 - 1.0;
+    mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
 }
@@ -171,8 +170,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 void main()
 {
         // input lighting data
-        mat3 TBN = getTBN();
-        vec3 V = normalize(TBN * cameraPosition - TBN * WorldPos);
+        vec3 V = normalize(cameraPosition - WorldPos);
 
         vec2 texCoords = TexCoords;
         if(hasDisplacement > 0 ){
@@ -189,7 +187,7 @@ void main()
         float roughness = texture(roughnessMap, TexCoords).r;
         float ao = texture(aoMap, TexCoords).r;
 
-         vec3 N = getNormalFromMap(TBN,texCoords);
+         vec3 N = getNormalFromMap(texCoords);
          vec3 R = reflect(-V, N);
 
         // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
@@ -198,7 +196,7 @@ void main()
         F0 = mix(F0, albedo, metallic);
 
         vec3 Lo = vec3(0.0);
-        Lo+=CalcDirLight(dirLight, N, V, albedo, F0, metallic, roughness);
+        Lo += CalcDirLight(dirLight, N, V, albedo, F0, metallic, roughness);
 
 
         // ambient lighting (we now use IBL as the ambient term)
