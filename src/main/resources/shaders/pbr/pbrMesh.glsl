@@ -151,8 +151,8 @@ vec3 getNormalFromMap(vec2 texCoords)
 
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
-    vec2 st1 = dFdx(TexCoords);
-    vec2 st2 = dFdy(TexCoords);
+    vec2 st1 = dFdx(texCoords);
+    vec2 st2 = dFdy(texCoords);
 
     vec3 N   = normalize(Normal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
