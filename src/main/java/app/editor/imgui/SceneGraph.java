@@ -34,15 +34,12 @@ public class SceneGraph implements ImguiLayer {
             ImGui.popStyleColor();
 
             if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
-                if (ImGui.menuItem("Add Game Object")) {
+                if (ImGui.menuItem("Add Game Object"))
                     EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-                } else if (selectionNode != -1) {
-                    if (ImGui.menuItem("Remove Game Object")) {
-                        int indexRemove = 0;
-                        EntitySystem.removeEntity(indexRemove);
-                        inspector.setEntity(null);
-                        selectionNode = -1;
-                    }
+                else if (selectionNode != -1 && ImGui.menuItem("Remove Game Object")) {
+                    EntitySystem.removeEntity(selectionNode);
+                    inspector.setEntity(null);
+                    selectionNode = -1;
                 }
                 ImGui.endPopup();
             }
