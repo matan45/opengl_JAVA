@@ -61,17 +61,32 @@ struct PointLight {
 	float quadratic;
 };
 
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+	vec3 color;
+
+	float cutOff;
+	float outerCutOff;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
 uniform DirLight dirLight;
 
 uniform int pointLightSize;
 uniform PointLight pointLight[MAX_LIGHTS];
 
-const float PI = 3.14159265359;
+uniform int spotLightSize;
+uniform SpotLight spotLight[MAX_LIGHTS];
 
-// function prototypes
-vec3 CalcDirLight(DirLight light, vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
+vec3 CalcDirLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
 vec3 CalcPointLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
+vec3 CalcSpotLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
 
+const float PI = 3.14159265359;
 
 // ----------------------------------------------------------------------------
 float DistributionGGX(vec3 N, vec3 H, float roughness)
@@ -158,8 +173,9 @@ void main()
         F0 = mix(F0, albedo, metallic);
 
         vec3 Lo = vec3(0.0);
-        Lo += CalcDirLight(dirLight, N, V, albedo, F0, metallic, roughness);
+        Lo += CalcDirLight(N, V, albedo, F0, metallic, roughness);
         Lo += CalcPointLight(N, V, albedo, F0, metallic, roughness);
+        Lo += CalcSpotLight(N, V, albedo, F0, metallic, roughness);
 
         // ambient lighting (we now use IBL as the ambient term)
         vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
@@ -191,11 +207,11 @@ void main()
 }
 
 
-vec3 CalcDirLight(DirLight light, vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness){
+vec3 CalcDirLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness){
         // calculate per-light radiance
-        vec3 L = normalize(-light.direction);
+        vec3 L = normalize(-dirLight.direction);
         vec3 H = normalize(V + L);
-        vec3 radiance = light.color;
+        vec3 radiance = dirLight.color;
 
         // Cook-Torrance BRDF
         float NDF = DistributionGGX(N, H, roughness);
@@ -228,7 +244,7 @@ vec3 CalcDirLight(DirLight light, vec3 N, vec3 V, vec3 albedo, vec3 F0, float me
 vec3 CalcPointLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness){
 
         vec3 Lo = vec3(0.0);
-        for(int i = 0; i < pointLightSize; ++i) {
+        for(int i = 0; i < pointLightSize; i++) {
             // calculate per-light radiance
             vec3 L = normalize(pointLight[i].position - WorldPos);
             vec3 H = normalize(V + L);
@@ -260,6 +276,51 @@ vec3 CalcPointLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float 
             float NdotL = max(dot(N, L), 0.0);
 
             Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+
+        }
+        return  Lo;
+}
+
+
+vec3 CalcSpotLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness){
+
+        vec3 Lo = vec3(0.0);
+        for(int i = 0; i < spotLightSize; i++) {
+            // calculate per-light radiance
+            vec3 L = normalize(spotLight[i].position - WorldPos);
+            vec3 H = normalize(V + L);
+            float distance = length(spotLight[i].position - WorldPos);
+            float attenuation = 1.0 / (spotLight[i].constant + spotLight[i].linear * distance + spotLight[i].quadratic * (distance * distance));
+            vec3 radiance = spotLight[i].color * attenuation;
+
+            float theta = dot(L, normalize(-spotLight[i].direction));
+            float epsilon = spotLight[i].cutOff - spotLight[i].outerCutOff;
+            float intensity = clamp((theta - spotLight[i].outerCutOff) / epsilon, 0.0 , 1.0);
+
+             // Cook-Torrance BRDF
+            float NDF = DistributionGGX(N, H, roughness);
+            float G   = GeometrySmith(N, V, L, roughness);
+            vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+            vec3 numerator    = NDF * G * F;
+            float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+            vec3 specular = numerator / denominator;
+
+             // kS is equal to Fresnel
+             vec3 kS = F;
+            // for energy conservation, the diffuse and specular light can't
+            // be above 1.0 (unless the surface emits light); to preserve this
+            // relationship the diffuse component (kD) should equal 1.0 - kS.
+            vec3 kD = vec3(1.0) - kS;
+            // multiply kD by the inverse metalness such that only non-metals
+            // have diffuse lighting, or a linear blend if partly metal (pure metals
+            // have no diffuse light).
+            kD *= 1.0 - metallic;
+
+            // scale light by NdotL
+            float NdotL = max(dot(N, L), 0.0);
+
+            Lo += (kD * albedo / PI + specular) * intensity * radiance * NdotL;
 
         }
         return  Lo;
