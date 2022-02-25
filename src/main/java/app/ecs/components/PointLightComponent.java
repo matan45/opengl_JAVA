@@ -11,10 +11,6 @@ public class PointLightComponent extends CommonComponent {
     private final OLTransform olTransform;
     private final PointLight pointLight;
 
-    private float constant;
-    private float linear;
-    private float quadratic;
-
     private float R;
     private float G;
     private float B;
@@ -35,32 +31,29 @@ public class PointLightComponent extends CommonComponent {
     public void imguiDraw() {
         ImGui.pushID("PointLightConstant");
         if (ImGui.button("Constant"))
-            constant = 0f;
+            pointLight.setConstant(0.1f);
         ImGui.sameLine();
-        float[] constantValue = {constant};
+        float[] constantValue = {pointLight.getConstant()};
         ImGui.dragFloat("##Y", constantValue, 0.01f);
-        constant = constantValue[0];
-        pointLight.setConstant(constant);
+        pointLight.setConstant(constantValue[0]);
         ImGui.popID();
 
         ImGui.pushID("PointLightLinear");
         if (ImGui.button("Linear"))
-            linear = 0f;
+            pointLight.setLinear(0.1f);
         ImGui.sameLine();
-        float[] linearValue = {linear};
+        float[] linearValue = {pointLight.getLinear()};
         ImGui.dragFloat("##Y", linearValue, 0.01f);
-        linear = linearValue[0];
-        pointLight.setLinear(linear);
+        pointLight.setLinear(linearValue[0]);
         ImGui.popID();
 
         ImGui.pushID("PointLightQuadratic");
         if (ImGui.button("Quadratic"))
-            quadratic = 0f;
+            pointLight.setQuadratic(0.1f);
         ImGui.sameLine();
-        float[] quadraticValue = {quadratic};
+        float[] quadraticValue = {pointLight.getQuadratic()};
         ImGui.dragFloat("##Y", quadraticValue, 0.01f);
-        quadratic = quadraticValue[0];
-        pointLight.setQuadratic(quadratic);
+        pointLight.setQuadratic(quadraticValue[0]);
         ImGui.popID();
 
         float[] color = {R, G, B};

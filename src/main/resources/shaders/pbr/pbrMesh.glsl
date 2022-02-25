@@ -172,10 +172,14 @@ void main()
         vec3 F0 = vec3(0.04);
         F0 = mix(F0, albedo, metallic);
 
-        vec3 Lo = vec3(0.0);
-        Lo += CalcDirLight(N, V, albedo, F0, metallic, roughness);
-        Lo += CalcPointLight(N, V, albedo, F0, metallic, roughness);
-        Lo += CalcSpotLight(N, V, albedo, F0, metallic, roughness);
+        vec3 DirLight = vec3(0.0);
+        DirLight = CalcDirLight(N, V, albedo, F0, metallic, roughness);
+
+        vec3 PointLight = vec3(0.0);
+        PointLight += CalcPointLight(N, V, albedo, F0, metallic, roughness);
+
+        vec3 SpotLight = vec3(0.0);
+        SpotLight += CalcSpotLight(N, V, albedo, F0, metallic, roughness);
 
         // ambient lighting (we now use IBL as the ambient term)
         vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
@@ -196,7 +200,7 @@ void main()
         // if there is no ao map we dont see anything need to sec mabe defult value
         vec3 ambient = (kD * diffuse + specular) * ao;
 
-        vec3 color = ambient + Lo;
+        vec3 color = ambient + DirLight + PointLight + SpotLight;
 
         // HDR tonemapping
         color = color / (color + vec3(1.0));

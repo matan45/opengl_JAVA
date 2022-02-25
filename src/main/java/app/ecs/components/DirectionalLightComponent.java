@@ -29,6 +29,7 @@ public class DirectionalLightComponent extends CommonComponent {
 
     @Override
     public void imguiDraw() {
+        ImGui.pushID("DirectionalLight");
         float[] color = {R, G, B};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
         R = color[0];
@@ -36,6 +37,7 @@ public class DirectionalLightComponent extends CommonComponent {
         B = color[2];
 
         directionalLight.setColor(R, G, B);
+        ImGui.popID();
     }
 
     @Override

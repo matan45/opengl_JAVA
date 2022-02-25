@@ -22,6 +22,10 @@ public class SpotLight {
         position = new OLVector3f();
         direction = new OLVector3f();
         color = new OLVector3f();
+
+        constant = 0.1f;
+        linear = 0.1f;
+        quadratic = 0.1f;
     }
 
     public void setColor(float r, float g, float b) {

@@ -11,13 +11,6 @@ public class SpotLightComponent extends CommonComponent {
     private final OLTransform olTransform;
     private final SpotLight spotLight;
 
-    private float constant;
-    private float linear;
-    private float quadratic;
-
-    private float cutOff;
-    private float outerCutOff;
-
     private float R;
     private float G;
     private float B;
@@ -27,6 +20,7 @@ public class SpotLightComponent extends CommonComponent {
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         spotLight = new SpotLight();
         EditorRenderer.getLightHandler().addSpotLight(spotLight);
+
     }
 
     @Override
@@ -39,52 +33,47 @@ public class SpotLightComponent extends CommonComponent {
     public void imguiDraw() {
         ImGui.pushID("SpotLightConstant");
         if (ImGui.button("Constant"))
-            constant = 0f;
+            spotLight.setConstant(0.1f);
         ImGui.sameLine();
-        float[] constantValue = {constant};
+        float[] constantValue = {spotLight.getConstant()};
         ImGui.dragFloat("##Y", constantValue, 0.01f);
-        constant = constantValue[0];
-        spotLight.setConstant(constant);
+        spotLight.setConstant(constantValue[0]);
         ImGui.popID();
 
         ImGui.pushID("SpotLightLinear");
         if (ImGui.button("Linear"))
-            linear = 0f;
+            spotLight.setLinear(0.1f);
         ImGui.sameLine();
-        float[] linearValue = {linear};
+        float[] linearValue = {spotLight.getLinear()};
         ImGui.dragFloat("##Y", linearValue, 0.01f);
-        linear = linearValue[0];
-        spotLight.setLinear(linear);
+        spotLight.setLinear(linearValue[0]);
         ImGui.popID();
 
         ImGui.pushID("SpotLightQuadratic");
         if (ImGui.button("Quadratic"))
-            quadratic = 0f;
+            spotLight.setQuadratic(0.1f);
         ImGui.sameLine();
-        float[] quadraticValue = {quadratic};
+        float[] quadraticValue = {spotLight.getQuadratic()};
         ImGui.dragFloat("##Y", quadraticValue, 0.01f);
-        quadratic = quadraticValue[0];
-        spotLight.setQuadratic(quadratic);
+        spotLight.setQuadratic(quadraticValue[0]);
         ImGui.popID();
 
         ImGui.pushID("SpotLightCutOff");
         if (ImGui.button("CutOff"))
-            cutOff = 0f;
+            spotLight.setCutOff(0f);
         ImGui.sameLine();
-        float[] cutOffValue = {cutOff};
+        float[] cutOffValue = {spotLight.getCutOff()};
         ImGui.dragFloat("##Y", cutOffValue, 0.01f);
-        cutOff = cutOffValue[0];
-        spotLight.setCutOff(cutOff);
+        spotLight.setCutOff(cutOffValue[0]);
         ImGui.popID();
 
         ImGui.pushID("SpotLightOuterCutOff");
         if (ImGui.button("OuterCutOff"))
-            outerCutOff = 0f;
+            spotLight.setOuterCutOff(0f);
         ImGui.sameLine();
-        float[] outerCutOffValue = {outerCutOff};
+        float[] outerCutOffValue = {spotLight.getOuterCutOff()};
         ImGui.dragFloat("##Y", outerCutOffValue, 0.01f);
-        outerCutOff = outerCutOffValue[0];
-        spotLight.setOuterCutOff(outerCutOff);
+        spotLight.setOuterCutOff(outerCutOffValue[0]);
         ImGui.popID();
 
         float[] color = {R, G, B};
