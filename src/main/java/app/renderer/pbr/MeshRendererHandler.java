@@ -4,7 +4,6 @@ import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.ibl.SkyBox;
-import app.renderer.lights.DirectionalLight;
 import app.renderer.lights.LightHandler;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ public class MeshRendererHandler {
     private final OpenGLObjects openGLObjects;
     private final SkyBox skyBox;
     private final LightHandler lightHandler;
-    private DirectionalLight directionalLight;
 
     private final List<MeshRenderer> meshRenderers;
 
@@ -31,7 +29,7 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox, directionalLight, lightHandler);
+        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox, lightHandler);
     }
 
     public void addInstant(MeshRenderer meshRenderer) {
@@ -52,8 +50,4 @@ public class MeshRendererHandler {
         meshRenderers.forEach(MeshRenderer::renderer);
     }
 
-    public void setDirectionalLight(DirectionalLight directionalLight) {
-        this.directionalLight = directionalLight;
-        meshRenderers.forEach(m -> m.setDirectionalLight(directionalLight));
-    }
 }

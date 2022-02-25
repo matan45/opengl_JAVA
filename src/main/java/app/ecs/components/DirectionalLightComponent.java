@@ -19,7 +19,7 @@ public class DirectionalLightComponent extends CommonComponent {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         directionalLight = new DirectionalLight();
-        EditorRenderer.getMeshRenderer().setDirectionalLight(directionalLight);
+        EditorRenderer.getLightHandler().setDirectionalLight(directionalLight);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class DirectionalLightComponent extends CommonComponent {
 
     @Override
     public void cleanUp() {
-        EditorRenderer.getMeshRenderer().setDirectionalLight(null);
+        EditorRenderer.getLightHandler().setDirectionalLight(null);
     }
 
 }

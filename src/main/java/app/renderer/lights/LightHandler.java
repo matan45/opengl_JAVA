@@ -6,6 +6,7 @@ import java.util.List;
 public class LightHandler {
     private final List<SpotLight> spotLights;
     private final List<PointLight> pointLights;
+    private DirectionalLight directionalLight;
 
     public LightHandler() {
         spotLights = new ArrayList<>();
@@ -34,5 +35,13 @@ public class LightHandler {
 
     public List<PointLight> getPointLights() {
         return pointLights;
+    }
+
+    public DirectionalLight getDirectionalLight() {
+        return directionalLight;
+    }
+
+    public void setDirectionalLight(DirectionalLight directionalLight) {
+        this.directionalLight = directionalLight;
     }
 }
