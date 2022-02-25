@@ -49,9 +49,9 @@ public class SkyBoxComponent extends CommonComponent {
         if (ImGui.button("Exposure"))
             exposure = 2.2f;
         ImGui.sameLine();
-        float[] yValue = {exposure};
-        ImGui.dragFloat("##Y", yValue, 0.1f);
-        exposure = yValue[0];
+        float[] exposureValue = {exposure};
+        ImGui.dragFloat("##Y", exposureValue, 0.1f);
+        exposure = exposureValue[0];
         skyBox.setExposure(exposure);
 
     }

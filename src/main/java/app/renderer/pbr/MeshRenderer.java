@@ -7,6 +7,7 @@ import app.renderer.Textures;
 import app.renderer.VaoModel;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.DirectionalLight;
+import app.renderer.lights.LightHandler;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -31,7 +32,9 @@ public class MeshRenderer {
 
     private DirectionalLight directionalLight;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, DirectionalLight directionalLight) {
+    private final LightHandler lightHandler;
+
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, DirectionalLight directionalLight, LightHandler lightHandler) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
@@ -39,6 +42,7 @@ public class MeshRenderer {
 
         this.directionalLight = directionalLight;
         this.skyBox = skyBox;
+        this.lightHandler = lightHandler;
 
         shaderMesh.start();
         shaderMesh.connectTextureUnits();
@@ -62,6 +66,8 @@ public class MeshRenderer {
         shaderMesh.loadCameraPosition(camera.getPosition());
 
         shaderMesh.loadDirLight(directionalLight);
+        shaderMesh.loadPointLights(lightHandler.getPointLights());
+        shaderMesh.loadSpotLights(lightHandler.getSpotLights());
 
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);

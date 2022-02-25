@@ -48,9 +48,9 @@ public class Inspector implements ImguiLayer {
                     if (ImGui.menuItem("Directional Light"))
                         entity.addComponent(new DirectionalLightComponent(entity));
                     if (ImGui.menuItem("Point Light"))
-                        LogInfo.println("not implement");
+                        entity.addComponent(new PointLightComponent(entity));
                     if (ImGui.menuItem("Spot Light"))
-                        LogInfo.println("not implement");
+                        entity.addComponent(new SpotLightComponent(entity));
                     ImGui.endMenu();
                 }
                 if (ImGui.menuItem("Sky Box"))

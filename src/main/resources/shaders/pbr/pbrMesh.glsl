@@ -50,7 +50,7 @@ struct DirLight {
 	vec3 color;
 };
 
-#define MAX_LIGHTS 128
+#define MAX_LIGHTS 32
 
 struct PointLight {
     vec3 position;

@@ -12,19 +12,19 @@ public class LightHandler {
         pointLights = new ArrayList<>();
     }
 
-    void addSpotLight(SpotLight spotLight) {
+    public void addSpotLight(SpotLight spotLight) {
         spotLights.add(spotLight);
     }
 
-    void removeSpotLight(SpotLight spotLight) {
+    public void removeSpotLight(SpotLight spotLight) {
         spotLights.remove(spotLight);
     }
 
-    void addPointLight(PointLight pointLight) {
+    public void addPointLight(PointLight pointLight) {
         pointLights.add(pointLight);
     }
 
-    void removePointLight(PointLight pointLight) {
+    public void removePointLight(PointLight pointLight) {
         pointLights.remove(pointLight);
     }
 
