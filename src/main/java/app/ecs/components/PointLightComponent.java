@@ -9,7 +9,7 @@ import imgui.flag.ImGuiColorEditFlags;
 
 public class PointLightComponent extends CommonComponent {
     private final OLTransform olTransform;
-    private PointLight pointLight;
+    private final PointLight pointLight;
 
     private float constant;
     private float linear;
@@ -33,7 +33,7 @@ public class PointLightComponent extends CommonComponent {
 
     @Override
     public void imguiDraw() {
-        ImGui.pushID("Constant");
+        ImGui.pushID("PointLightConstant");
         if (ImGui.button("Constant"))
             constant = 0f;
         ImGui.sameLine();
@@ -43,7 +43,7 @@ public class PointLightComponent extends CommonComponent {
         pointLight.setConstant(constant);
         ImGui.popID();
 
-        ImGui.pushID("Linear");
+        ImGui.pushID("PointLightLinear");
         if (ImGui.button("Linear"))
             linear = 0f;
         ImGui.sameLine();
@@ -53,7 +53,7 @@ public class PointLightComponent extends CommonComponent {
         pointLight.setLinear(linear);
         ImGui.popID();
 
-        ImGui.pushID("Quadratic");
+        ImGui.pushID("PointLightQuadratic");
         if (ImGui.button("Quadratic"))
             quadratic = 0f;
         ImGui.sameLine();
