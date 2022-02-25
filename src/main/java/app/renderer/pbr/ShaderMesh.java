@@ -31,7 +31,7 @@ public class ShaderMesh extends ShaderProgram {
 
     private static final OLVector3f defaults = new OLVector3f();
 
-    ShaderMesh(Path path) {
+    protected ShaderMesh(Path path) {
         super(path);
     }
 

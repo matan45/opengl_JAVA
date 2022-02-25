@@ -4,12 +4,7 @@ import app.math.OLVector3f;
 
 public class DirectionalLight {
     private OLVector3f direction;
-    private OLVector3f color;
-
-    public DirectionalLight(OLVector3f direction, OLVector3f color) {
-        this.direction = direction;
-        this.color = color;
-    }
+    private final OLVector3f color;
 
     public DirectionalLight() {
         this.direction = new OLVector3f();
@@ -28,9 +23,9 @@ public class DirectionalLight {
         return color;
     }
 
-    public void setColor(float r,float g,float b) {
-        color.x=r;
-        color.y=g;
-        color.z=b;
+    public void setColor(float r, float g, float b) {
+        color.x = r;
+        color.y = g;
+        color.z = b;
     }
 }
