@@ -2,6 +2,8 @@ package app.renderer.lights;
 
 import app.math.OLVector3f;
 
+import java.util.Objects;
+
 public class PointLight {
     private OLVector3f position;
     private final OLVector3f color;
@@ -51,5 +53,22 @@ public class PointLight {
 
     public void setQuadratic(float quadratic) {
         this.quadratic = quadratic;
+    }
+
+    public OLVector3f getColor() {
+        return color;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PointLight that = (PointLight) o;
+        return Objects.equals(this, that);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this);
     }
 }

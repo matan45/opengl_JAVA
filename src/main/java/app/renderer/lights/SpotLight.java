@@ -2,6 +2,8 @@ package app.renderer.lights;
 
 import app.math.OLVector3f;
 
+import java.util.Objects;
+
 public class SpotLight {
 
     private OLVector3f position;
@@ -82,5 +84,22 @@ public class SpotLight {
 
     public void setOuterCutOff(float outerCutOff) {
         this.outerCutOff = outerCutOff;
+    }
+
+    public OLVector3f getColor() {
+        return color;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpotLight that = (SpotLight) o;
+        return Objects.equals(this, that);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this);
     }
 }

@@ -3,10 +3,13 @@ package app.renderer.pbr;
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.renderer.lights.DirectionalLight;
+import app.renderer.lights.PointLight;
+import app.renderer.lights.SpotLight;
 import app.renderer.shaders.ShaderProgram;
 import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Path;
+import java.util.List;
 
 
 public class ShaderMesh extends ShaderProgram {
@@ -95,6 +98,48 @@ public class ShaderMesh extends ShaderProgram {
         } else {
             super.load3DVector(locationDirLightDirection, defaults);
             super.load3DVector(locationDirLightColor, defaults);
+        }
+    }
+
+    public void loadPointLights(List<PointLight> pointLights) {
+        super.loadInt(super.getUniformLocation("pointLightSize"), pointLights.size());
+
+        for (int i = 0; i < pointLights.size(); i++) {
+
+            super.load3DVector(super.getUniformLocation("pointLight[" + i + "].position"),
+                    pointLights.get(i).getPosition());
+            super.load3DVector(super.getUniformLocation("pointLight[" + i + "].color"),
+                    pointLights.get(i).getColor());
+            super.loadFloat(super.getUniformLocation("pointLight[" + i + "].constant"),
+                    pointLights.get(i).getConstant());
+            super.loadFloat(super.getUniformLocation("pointLight[" + i + "].linear"),
+                    pointLights.get(i).getLinear());
+            super.loadFloat(super.getUniformLocation("pointLight[" + i + "].quadratic"),
+                    pointLights.get(i).getQuadratic());
+        }
+    }
+
+    public void loadSpotLights(List<SpotLight> spotLights) {
+        super.loadInt(super.getUniformLocation("spotLightSize"), spotLights.size());
+
+        for (int i = 0; i < spotLights.size(); i++) {
+
+            super.load3DVector(super.getUniformLocation("spotLight[" + i + "].position"),
+                    spotLights.get(i).getPosition());
+            super.load3DVector(super.getUniformLocation("spotLight[" + i + "].direction"),
+                    spotLights.get(i).getDirection());
+            super.load3DVector(super.getUniformLocation("spotLight[" + i + "].color"),
+                    spotLights.get(i).getColor());
+            super.loadFloat(super.getUniformLocation("spotLight[" + i + "].cutOff"),
+                    spotLights.get(i).getCutOff());
+            super.loadFloat(super.getUniformLocation("spotLight[" + i + "].outerCutOff"),
+                    spotLights.get(i).getOuterCutOff());
+            super.loadFloat(super.getUniformLocation("spotLight[" + i + "].constant"),
+                    spotLights.get(i).getConstant());
+            super.loadFloat(super.getUniformLocation("spotLight[" + i + "].linear"),
+                    spotLights.get(i).getLinear());
+            super.loadFloat(super.getUniformLocation("spotLight[" + i + "].quadratic"),
+                    spotLights.get(i).getQuadratic());
         }
     }
 }
