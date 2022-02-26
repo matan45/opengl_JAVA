@@ -27,8 +27,8 @@ public class SkyBox {
     private final Textures textures;
     private final Framebuffer framebuffer;
 
-    private int captureFBO;
-    private int captureRBO;
+    private final int captureFBO;
+    private final int captureRBO;
 
     private float exposure;
 
@@ -423,8 +423,12 @@ public class SkyBox {
     }
 
     public void setActive(boolean active) {
-        if (!active)
+        if (!active) {
             path = "";
+            envCubeMap = 0;
+            irradianceMap = 0;
+            prefilterMap = 0;
+        }
         isActive = active;
     }
 

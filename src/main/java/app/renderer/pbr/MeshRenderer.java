@@ -6,6 +6,7 @@ import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.VaoModel;
 import app.renderer.ibl.SkyBox;
+import app.renderer.lights.LightHandler;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -28,12 +29,16 @@ public class MeshRenderer {
     private VaoModel vaoModel;
     private OLTransform olTransform;
 
-    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox) {
+    private final LightHandler lightHandler;
+
+    public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, LightHandler lightHandler) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         material = new Material(textures);
+
         this.skyBox = skyBox;
+        this.lightHandler = lightHandler;
 
         shaderMesh.start();
         shaderMesh.connectTextureUnits();
@@ -56,7 +61,9 @@ public class MeshRenderer {
         shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
         shaderMesh.loadCameraPosition(camera.getPosition());
 
-        shaderMesh.loadHasDisplacement(material.isHasDisplacement());
+        shaderMesh.loadDirLight(lightHandler.getDirectionalLight());
+        shaderMesh.loadPointLights(lightHandler.getPointLights());
+        shaderMesh.loadSpotLights(lightHandler.getSpotLights());
 
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
@@ -103,9 +110,6 @@ public class MeshRenderer {
         glBindTexture(GL_TEXTURE_2D, material.getAoMap());
 
         glActiveTexture(GL_TEXTURE8);
-        glBindTexture(GL_TEXTURE_2D, material.getDisplacementMap());
-
-        glActiveTexture(GL_TEXTURE9);
         glBindTexture(GL_TEXTURE_2D, material.getEmissiveMap());
 
     }

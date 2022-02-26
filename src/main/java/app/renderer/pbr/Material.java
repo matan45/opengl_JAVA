@@ -12,7 +12,6 @@ public class Material {
     private int metallicMap;
     private int roughnessMap;
     private int aoMap;
-    private int displacementMap;
     private int emissiveMap;
 
     private String albedoMapPath;
@@ -20,10 +19,7 @@ public class Material {
     private String metallicMapPath;
     private String roughnessMapPath;
     private String aoMapPath;
-    private String displacementMapPath;
     private String emissiveMapPath;
-
-    private boolean hasDisplacement;
 
     public Material(Textures textures) {
         this.textures = textures;
@@ -32,9 +28,7 @@ public class Material {
         metallicMapPath = "";
         roughnessMapPath = "";
         aoMapPath = "";
-        displacementMapPath = "";
         emissiveMapPath = "";
-        hasDisplacement = false;
     }
 
     public int getAlbedoMap() {
@@ -117,28 +111,6 @@ public class Material {
         }
     }
 
-    public int getDisplacementMap() {
-        return displacementMap;
-    }
-
-    public void displacementMapRemove() {
-        displacementMapPath = "";
-        displacementMap = 0;
-        hasDisplacement = false;
-    }
-
-    public void setDisplacementMap(String displacementMapPath) {
-        if (!displacementMapPath.isEmpty()) {
-            this.displacementMapPath = new File(displacementMapPath).getName();
-            displacementMap = textures.loadTexture(displacementMapPath);
-            hasDisplacement = true;
-        }
-    }
-
-    public boolean isHasDisplacement() {
-        return hasDisplacement;
-    }
-
     public int getEmissiveMap() {
         return emissiveMap;
     }
@@ -173,10 +145,6 @@ public class Material {
 
     public String getAoMapPath() {
         return aoMapPath;
-    }
-
-    public String getDisplacementMapPath() {
-        return displacementMapPath;
     }
 
     public String getEmissiveMapPath() {
