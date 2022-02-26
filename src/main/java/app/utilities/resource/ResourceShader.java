@@ -54,6 +54,8 @@ public class ResourceShader {
             case "FRAGMENT" -> ShaderType.FRAGMENT;
             case "COMPUTE" -> ShaderType.COMPUTE;
             case "GEOMETRY" -> ShaderType.GEOMETRY;
+            case "CONTROL" -> ShaderType.TESS_CONTROL;
+            case "EVALUATION" -> ShaderType.TESS_EVALUATION;
             default -> null;
         };
     }
