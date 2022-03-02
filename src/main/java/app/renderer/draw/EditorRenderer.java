@@ -1,8 +1,10 @@
 package app.renderer.draw;
 
+import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
+import app.renderer.debug.billboards.Billboards;
 import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
@@ -23,6 +25,8 @@ public class EditorRenderer {
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
     private static Grid grid;
+    //for test
+    private static Billboards billboards;
 
     private EditorRenderer() {
     }
@@ -37,6 +41,7 @@ public class EditorRenderer {
         grid = new Grid(openGLObjects, editorCamera);
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
+        billboards = new Billboards(openGLObjects);
     }
 
     public static void draw() {
@@ -45,6 +50,7 @@ public class EditorRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         meshRenderer.renderers();
+        billboards.render(editorCamera, new OLVector3f());
         skyBox.render();
         grid.render();
         disable();
