@@ -6,6 +6,7 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform vec3 centerPosition;
 
+out vec2 TexCoords;
 
 void main() {
     vec3 CameraRight_worldspace = vec3(view[0][0], view[1][0], view[2][0]);
@@ -21,8 +22,13 @@ void main() {
 #version 460 core
 out vec4 FragColor;
 
+in vec2 TexCoords;
+
+uniform sampler2D imageIcon;
 
 void main() {
+
+    //FragColor = texture(imageIcon,TexCoords);
 
     FragColor = vec4(1.0);
 
