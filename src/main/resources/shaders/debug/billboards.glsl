@@ -7,11 +7,13 @@ uniform mat4 view;
 uniform vec3 centerPosition;
 
 
-void main()
-{
-    vec3 p = position;
+void main() {
+    vec3 CameraRight_worldspace = vec3(ViewMatrix[0][0], ViewMatrix[1][0], ViewMatrix[2][0]);
+    vec3 CameraUp_worldspace = vec3(ViewMatrix[0][1], ViewMatrix[1][1], ViewMatrix[2][1]);
 
-    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
+    vec3 p = centerPosition + CameraRight_worldspace * position.x + CameraUp_worldspace * position.y;
+
+    gl_Position = view * projection * vec4(p, 1.0); 
 }
 
 #type FRAGMENT
