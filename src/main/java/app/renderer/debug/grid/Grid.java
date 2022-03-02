@@ -1,4 +1,4 @@
-package app.renderer.debug;
+package app.renderer.debug.grid;
 
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
