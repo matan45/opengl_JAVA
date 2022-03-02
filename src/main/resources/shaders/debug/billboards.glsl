@@ -16,6 +16,8 @@ void main() {
 
     vec4 positionRelativeToCam = view * vec4(p, 1.0);
  	gl_Position = projection * positionRelativeToCam;
+
+    TexCoords = position.xy;
 }
 
 #type FRAGMENT

@@ -19,6 +19,7 @@ public class DirectionalLightComponent extends CommonComponent {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         directionalLight = new DirectionalLight();
+        directionalLight.setDirLightIntensity(1f);
         EditorRenderer.getLightHandler().setDirectionalLight(directionalLight);
     }
 
@@ -29,6 +30,15 @@ public class DirectionalLightComponent extends CommonComponent {
 
     @Override
     public void imguiDraw() {
+        ImGui.pushID("DirectionalLightIntensity");
+        if (ImGui.button("Intensity"))
+            directionalLight.setDirLightIntensity(1f);
+        ImGui.sameLine();
+        float[] constantValue = {directionalLight.getDirLightIntensity()};
+        ImGui.dragFloat("##Y", constantValue, 0.1f);
+        directionalLight.setDirLightIntensity(constantValue[0]);
+        ImGui.popID();
+
         ImGui.pushID("DirectionalLight");
         float[] color = {R, G, B};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);

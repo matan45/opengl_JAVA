@@ -27,7 +27,7 @@ public class EditorRenderer {
     private static Grid grid;
     //for test
     private static Billboards billboards;
-    private static OLVector3f test= new OLVector3f();
+    private static final OLVector3f test= new OLVector3f(1,1,1);
 
     private EditorRenderer() {
     }

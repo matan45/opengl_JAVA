@@ -31,6 +31,7 @@ public class ShaderMesh extends ShaderProgram {
 
     private int locationDirLightDirection;
     private int locationDirLightColor;
+    private int locationDirLightIntensity;
 
     private static final OLVector3f defaults = new OLVector3f();
 
@@ -47,6 +48,7 @@ public class ShaderMesh extends ShaderProgram {
 
         locationDirLightDirection = super.getUniformLocation("dirLight.direction");
         locationDirLightColor = super.getUniformLocation("dirLight.color");
+        locationDirLightIntensity = super.getUniformLocation("dirLightIntensity");
 
         locationAlbedoMap = super.getUniformLocation("albedoMap");
         locationNormalMap = super.getUniformLocation("normalMap");
@@ -95,6 +97,7 @@ public class ShaderMesh extends ShaderProgram {
         if (directionalLight != null) {
             super.load3DVector(locationDirLightDirection, directionalLight.getDirection());
             super.load3DVector(locationDirLightColor, directionalLight.getColor());
+            super.loadFloat(locationDirLightIntensity,directionalLight.getDirLightIntensity());
         } else {
             super.load3DVector(locationDirLightDirection, defaults);
             super.load3DVector(locationDirLightColor, defaults);
