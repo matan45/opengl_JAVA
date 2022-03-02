@@ -3,20 +3,19 @@ package app.renderer.debug.billboards;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
-import app.utilities.ArrayUtil;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Billboards {
 
-    private ShaderBillboards shaderBillboards;
-    private int vaoModel;
+    private final ShaderBillboards shaderBillboards;
+    private final int vaoModel;
 
     private static final float[] squareVertices = {
             -0.5f, -0.5f, 0.0f,

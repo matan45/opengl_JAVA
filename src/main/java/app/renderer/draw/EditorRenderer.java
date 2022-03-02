@@ -27,6 +27,7 @@ public class EditorRenderer {
     private static Grid grid;
     //for test
     private static Billboards billboards;
+    private static OLVector3f test= new OLVector3f();
 
     private EditorRenderer() {
     }
@@ -50,7 +51,7 @@ public class EditorRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         meshRenderer.renderers();
-        billboards.render(editorCamera, new OLVector3f());
+        billboards.render(editorCamera, test);
         skyBox.render();
         grid.render();
         disable();
