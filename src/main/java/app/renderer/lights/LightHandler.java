@@ -53,5 +53,8 @@ public class LightHandler {
 
         for (PointLight pointLight : pointLights)
             pointLight.drawBillboards(camera);
+
+        if (directionalLight != null)
+            directionalLight.drawBillboards(camera);
     }
 }

@@ -1,15 +1,25 @@
 package app.renderer.lights;
 
 import app.math.OLVector3f;
+import app.math.components.Camera;
+import app.renderer.debug.billboards.Billboards;
 
 public class DirectionalLight {
     private OLVector3f direction;
+    private final OLVector3f position;
     private final OLVector3f color;
     private float dirLightIntensity;
+    private final Billboards billboards;
 
-    public DirectionalLight() {
+    public DirectionalLight(Billboards billboards) {
         this.direction = new OLVector3f();
         this.color = new OLVector3f();
+        this.billboards = billboards;
+        position = new OLVector3f(3,3,3);
+    }
+
+    public void drawBillboards(Camera camera) {
+        billboards.render(camera, position);
     }
 
     public OLVector3f getDirection() {
