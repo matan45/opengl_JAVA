@@ -2,6 +2,7 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.math.components.OLTransform;
+import app.renderer.Textures;
 import app.renderer.debug.billboards.Billboards;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.lights.SpotLight;
@@ -19,7 +20,8 @@ public class SpotLightComponent extends CommonComponent {
     public SpotLightComponent(Entity ownerEntity) {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
-        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects());
+        Textures textures = EditorRenderer.getTextures();
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\spotLight.png"));
         spotLight = new SpotLight(billboards);
         EditorRenderer.getLightHandler().addSpotLight(spotLight);
 

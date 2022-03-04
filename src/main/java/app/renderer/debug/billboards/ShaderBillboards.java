@@ -12,6 +12,7 @@ public class ShaderBillboards extends ShaderProgram {
     int locationProjectionMatrix;
     int locationViewMatrix;
     int locationCenterPosition;
+    int locationImageIcon;
 
     protected ShaderBillboards(Path path) {
         super(path);
@@ -22,6 +23,11 @@ public class ShaderBillboards extends ShaderProgram {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationCenterPosition = super.getUniformLocation("centerPosition");
+        locationImageIcon = super.getUniformLocation("imageIcon");
+    }
+
+    public void connectTextureUnits() {
+        super.loadInt(locationImageIcon, 2);
     }
 
     public void loadViewMatrix(OLMatrix4f view) {

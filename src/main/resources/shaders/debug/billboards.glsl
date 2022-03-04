@@ -17,7 +17,7 @@ void main() {
     vec4 positionRelativeToCam = view * vec4(p, 1.0);
  	gl_Position = projection * positionRelativeToCam;
 
-    TexCoords = position.xy;
+    TexCoords = position.xy + vec2(0.5f);
 }
 
 #type FRAGMENT
@@ -30,8 +30,11 @@ uniform sampler2D imageIcon;
 
 void main() {
 
-    //FragColor = texture(imageIcon,TexCoords);
+    vec4 color = texture(imageIcon,TexCoords);
 
-    FragColor = vec4(1.0);
+    if(color == vec4(0.0))
+        discard;
+
+    FragColor = color;
 
 }
