@@ -1,6 +1,8 @@
 package app.renderer.lights;
 
 import app.math.OLVector3f;
+import app.math.components.Camera;
+import app.renderer.debug.billboards.Billboards;
 
 import java.util.Objects;
 
@@ -11,10 +13,13 @@ public class PointLight {
     private float constant;
     private float linear;
     private float quadratic;
+    private final Billboards billboards;
 
-    public PointLight() {
+    public PointLight(Billboards billboards) {
         position = new OLVector3f();
         color = new OLVector3f();
+
+        this.billboards = billboards;
 
         constant = 0.1f;
         linear = 0.1f;
@@ -61,6 +66,10 @@ public class PointLight {
 
     public OLVector3f getColor() {
         return color;
+    }
+
+    public void drawBillboards(Camera camera) {
+        billboards.render(camera, position);
     }
 
     @Override

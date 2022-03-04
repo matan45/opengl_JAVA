@@ -2,6 +2,7 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.math.components.OLTransform;
+import app.renderer.debug.billboards.Billboards;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.lights.PointLight;
 import imgui.ImGui;
@@ -18,7 +19,8 @@ public class PointLightComponent extends CommonComponent {
     public PointLightComponent(Entity ownerEntity) {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
-        pointLight = new PointLight();
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects());
+        pointLight = new PointLight(billboards);
         EditorRenderer.getLightHandler().addPointLight(pointLight);
     }
 
