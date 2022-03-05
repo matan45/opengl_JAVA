@@ -3,10 +3,9 @@ package app.renderer.draw;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
-import app.renderer.debug.Grid;
+import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
-import app.renderer.lights.DirectionalLight;
 import app.renderer.lights.LightHandler;
 import app.renderer.pbr.MeshRendererHandler;
 
@@ -46,6 +45,7 @@ public class EditorRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         meshRenderer.renderers();
+        lightHandler.drawBillboards(editorCamera);
         skyBox.render();
         grid.render();
         disable();
@@ -93,5 +93,9 @@ public class EditorRenderer {
 
     public static LightHandler getLightHandler() {
         return lightHandler;
+    }
+
+    public static OpenGLObjects getOpenGLObjects() {
+        return openGLObjects;
     }
 }

@@ -75,6 +75,7 @@ struct SpotLight {
 };
 
 uniform DirLight dirLight;
+uniform float dirLightIntensity;
 
 uniform int pointLightSize;
 uniform PointLight pointLight[MAX_LIGHTS];
@@ -242,7 +243,7 @@ vec3 CalcDirLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float ro
 
         // add to outgoing radiance Lo
        // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-        return  (kD * albedo / PI + specular) * radiance * NdotL; ;
+        return  (kD * albedo / PI + specular) * radiance * dirLightIntensity * NdotL; ;
 }
 
 vec3 CalcPointLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness){

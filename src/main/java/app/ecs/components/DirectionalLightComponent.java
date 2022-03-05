@@ -2,8 +2,11 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.math.components.OLTransform;
+import app.renderer.Textures;
+import app.renderer.debug.billboards.Billboards;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.lights.DirectionalLight;
+import app.renderer.lights.PointLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
@@ -18,7 +21,10 @@ public class DirectionalLightComponent extends CommonComponent {
     public DirectionalLightComponent(Entity ownerEntity) {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
-        directionalLight = new DirectionalLight();
+        Textures textures = EditorRenderer.getTextures();
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\directionalLight.png"));
+        directionalLight = new DirectionalLight(billboards);
+        directionalLight.setDirLightIntensity(1f);
         EditorRenderer.getLightHandler().setDirectionalLight(directionalLight);
     }
 
@@ -29,6 +35,15 @@ public class DirectionalLightComponent extends CommonComponent {
 
     @Override
     public void imguiDraw() {
+        ImGui.pushID("DirectionalLightIntensity");
+        if (ImGui.button("Intensity"))
+            directionalLight.setDirLightIntensity(1f);
+        ImGui.sameLine();
+        float[] constantValue = {directionalLight.getDirLightIntensity()};
+        ImGui.dragFloat("##Y", constantValue, 0.1f);
+        directionalLight.setDirLightIntensity(constantValue[0]);
+        ImGui.popID();
+
         ImGui.pushID("DirectionalLight");
         float[] color = {R, G, B};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
