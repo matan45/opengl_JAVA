@@ -3,6 +3,7 @@ package app.renderer.terrain;
 import app.math.MathUtil;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
+import app.renderer.HeightMapData;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.VaoModel;
@@ -28,7 +29,51 @@ public class Terrain {
     }
 
     public VaoModel generateTerrain(String heightMap) {
-        return null;
+        HeightMapData data = textures.getHeightMapData(heightMap);
+
+        int vertexCount = data.height();
+        heights = new float[vertexCount][vertexCount];
+        int count = vertexCount * vertexCount;
+
+        float[] vertices = new float[count * 3];
+        float[] normals = new float[count * 3];
+        float[] textureCoords = new float[count * 2];
+        int[] indices = new int[6 * (vertexCount - 1) * (vertexCount - 1)];
+
+        int vertexPointer = 0;
+        for (int i = 0; i < vertexCount; i++) {
+            for (int j = 0; j < vertexCount; j++) {
+                vertices[vertexPointer * 3] = (float) j / (vertexCount - 1) * SIZE;
+                float height = getHeight(j, i, data.image());
+                heights[j][i] = height;
+                vertices[vertexPointer * 3 + 1] = height;
+                vertices[vertexPointer * 3 + 2] = (float) i / (vertexCount - 1) * SIZE;
+                OLVector3f normal = calculateNormal(j, i, data.image());
+                normals[vertexPointer * 3] = normal.x;
+                normals[vertexPointer * 3 + 1] = normal.y;
+                normals[vertexPointer * 3 + 2] = normal.z;
+                textureCoords[vertexPointer * 2] = (float) j / (vertexCount - 1);
+                textureCoords[vertexPointer * 2 + 1] = (float) i / (vertexCount - 1);
+                vertexPointer++;
+            }
+        }
+        int pointer = 0;
+        for (int gz = 0; gz < vertexCount - 1; gz++) {
+            for (int gx = 0; gx < vertexCount - 1; gx++) {
+                int topLeft = (gz * vertexCount) + gx;
+                int topRight = topLeft + 1;
+                int bottomLeft = ((gz + 1) * vertexCount) + gx;
+                int bottomRight = bottomLeft + 1;
+                indices[pointer++] = topLeft;
+                indices[pointer++] = bottomLeft;
+                indices[pointer++] = topRight;
+                indices[pointer++] = topRight;
+                indices[pointer++] = bottomLeft;
+                indices[pointer++] = bottomRight;
+            }
+        }
+
+        return openGLObjects.loadToVAO(vertices, textureCoords, normals, indices);
     }
 
     //for the ray cast
