@@ -3,6 +3,9 @@ package app.renderer;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -79,6 +82,18 @@ public class Textures {
 
         stbi_image_free(image);
         return id;
+    }
+
+    public HeightMapData getHeightMapData(String path) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assert image != null;
+        return new HeightMapData(image, image.getHeight(), image.getWidth());
     }
 
 
