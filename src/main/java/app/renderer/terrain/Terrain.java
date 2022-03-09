@@ -19,7 +19,7 @@ public class Terrain {
     int z = -1 * SIZE;
 
     private static final int SIZE = 1024;
-    private static final int MAX_HEIGHT = 40;
+    private static final int MAX_HEIGHT = 40; // is between -40 to 40
     private static final int MAX_PIXEL_COLOUR = 256 * 256 * 256;
     private float[][] heights;
 
