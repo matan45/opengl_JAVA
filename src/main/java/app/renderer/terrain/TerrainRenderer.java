@@ -20,7 +20,7 @@ public class TerrainRenderer {
 
     public TerrainRenderer(Textures textures, OpenGLObjects openGLObjects) {
         terrain = new Terrain(textures, openGLObjects);
-        shaderTerrain = new ShaderTerrain(Paths.get("url here"));
+        shaderTerrain = new ShaderTerrain(Paths.get("src\\main\\resources\\shaders\\terrain\\terrain.glsl"));
     }
 
     public void init(String path) {
