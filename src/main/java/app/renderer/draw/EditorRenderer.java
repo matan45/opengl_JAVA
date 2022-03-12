@@ -40,7 +40,6 @@ public class EditorRenderer {
         grid = new Grid(openGLObjects, editorCamera);
         terrain = new TerrainRenderer(textures, openGLObjects, editorCamera);
 
-        terrain.init("C:\\matan\\test\\heightmap.png");
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
     }

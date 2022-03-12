@@ -2,7 +2,6 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.*;
-import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
@@ -57,6 +56,8 @@ public class Inspector implements ImguiLayer {
                     entity.addComponent(new SkyBoxComponent(entity));
                 if (ImGui.menuItem("Mesh"))
                     entity.addComponent(new MeshComponent(entity));
+                if (ImGui.menuItem("Terrain"))
+                    entity.addComponent(new TerrainComponent(entity));
                 ImGui.endPopup();
             }
         }

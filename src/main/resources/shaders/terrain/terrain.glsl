@@ -83,8 +83,10 @@ out vec3 normal;
 
 uniform mat4 projection;
 uniform mat4 view;
+uniform mat4 model;
 
 uniform float gDispFactor; 
+uniform sampler2D displacementMap;
 
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)                                                   
 {                                                                                               
@@ -103,10 +105,13 @@ void main(){
     normal = interpolate3D(evaluation_normal[0], evaluation_normal[1], evaluation_normal[2]);            
     normal = normalize(normal);                                                     
     position = interpolate3D(evaluation_position[0], evaluation_position[1], evaluation_position[2]);    
-                                                                                                
+
+    vec3 Normal = mat3(model) * normal;                                                                                          
     // Displace the vertex along the normal                                                                            
-    position += normal * gDispFactor;  
-    vec4 positionRelativeToCam = view * vec4(position, 1.0);
+    float displace = texture(displacementMap, texcoords.xy).x;
+    position.y += displace * gDispFactor;
+    vec4 worldPosition = model * vec4(position, 1.0);
+    vec4 positionRelativeToCam = view * worldPosition;
  	gl_Position = projection * positionRelativeToCam;                                       
 
 }

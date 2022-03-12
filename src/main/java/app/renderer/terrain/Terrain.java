@@ -1,7 +1,5 @@
 package app.renderer.terrain;
 
-import app.math.MathUtil;
-import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.renderer.HeightMapData;
 import app.renderer.OpenGLObjects;
@@ -10,30 +8,17 @@ import app.renderer.VaoModel;
 
 import java.awt.image.BufferedImage;
 
-public class Terrain {
-
-    private final Textures textures;
-    private final OpenGLObjects openGLObjects;
-
-    int x = 0;
-    int z = -1 * SIZE;
+public record Terrain(Textures textures, OpenGLObjects openGLObjects) {
 
     private static final int SIZE = 1024;
-    private static final int MAX_HEIGHT = 40; // is between -40 to 40
+    private static final float MAX_HEIGHT = 40f; // is between -40 to 40
     private static final int MAX_PIXEL_COLOUR = 256 * 256 * 256;
-    private float[][] heights;
-
-    public Terrain(Textures textures, OpenGLObjects openGLObjects) {
-        this.textures = textures;
-        this.openGLObjects = openGLObjects;
-    }
 
     public VaoModel generateTerrain(String heightMap) {
         HeightMapData data = textures.getHeightMapData(heightMap);
 
         int vertexCount = data.height();
-        heights = new float[vertexCount][vertexCount];
-        int count = vertexCount * vertexCount;
+        int count = data.height() * data.weight();
 
         float[] vertices = new float[count * 3];
         float[] normals = new float[count * 3];
@@ -41,11 +26,10 @@ public class Terrain {
         int[] indices = new int[6 * (vertexCount - 1) * (vertexCount - 1)];
 
         int vertexPointer = 0;
-        for (int i = 0; i < vertexCount; i++) {
-            for (int j = 0; j < vertexCount; j++) {
+        for (int i = 0; i < data.height(); i++) {
+            for (int j = 0; j < data.weight(); j++) {
                 vertices[vertexPointer * 3] = (float) j / (vertexCount - 1) * SIZE;
                 float height = getHeight(j, i, data.image());
-                heights[j][i] = height;
                 vertices[vertexPointer * 3 + 1] = height;
                 vertices[vertexPointer * 3 + 2] = (float) i / (vertexCount - 1) * SIZE;
                 OLVector3f normal = calculateNormal(j, i, data.image());
@@ -58,8 +42,8 @@ public class Terrain {
             }
         }
         int pointer = 0;
-        for (int gz = 0; gz < vertexCount - 1; gz++) {
-            for (int gx = 0; gx < vertexCount - 1; gx++) {
+        for (int gz = 0; gz < data.height() - 1; gz++) {
+            for (int gx = 0; gx < data.weight() - 1; gx++) {
                 int topLeft = (gz * vertexCount) + gx;
                 int topRight = topLeft + 1;
                 int bottomLeft = ((gz + 1) * vertexCount) + gx;
@@ -75,32 +59,6 @@ public class Terrain {
 
         return openGLObjects.loadToVAO(vertices, textureCoords, normals, indices);
     }
-
-    //for the ray cast
-    public float getHeightOfTerrain(float worldX, float worldZ) {
-        float terrainX = worldX - this.x;
-        float terrainZ = worldZ - this.z;
-        float gridSquareSize = SIZE / ((float) heights.length - 1);
-        int gridX = (int) Math.floor(terrainX / gridSquareSize);
-        int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
-        if (gridX >= heights.length - 1 || gridZ >= heights.length - 1 || gridX < 0 || gridZ < 0)
-            return 0;
-        float xCoord = (terrainX % gridSquareSize) / gridSquareSize;
-        float zCoord = (terrainZ % gridSquareSize) / gridSquareSize;
-        float answer;
-        if (xCoord <= (1 - zCoord)) {
-            answer = MathUtil.barryCentric(new OLVector3f(0, heights[gridX][gridZ], 0),
-                    new OLVector3f(1, heights[gridX + 1][gridZ], 0), new OLVector3f(0, heights[gridX][gridZ + 1], 1),
-                    new OLVector2f(xCoord, zCoord));
-        } else {
-            answer = MathUtil.barryCentric(new OLVector3f(1, heights[gridX + 1][gridZ], 0),
-                    new OLVector3f(1, heights[gridX + 1][gridZ + 1], 1), new OLVector3f(0, heights[gridX][gridZ + 1], 1),
-                    new OLVector2f(xCoord, zCoord));
-        }
-        return answer;
-
-    }
-
 
     private float getHeight(int x, int y, BufferedImage image) {
         if (x < 0 || x >= image.getHeight() || y < 0 || y >= image.getWidth())
