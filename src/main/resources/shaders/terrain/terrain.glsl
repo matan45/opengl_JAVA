@@ -46,15 +46,15 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 {
 	// Calculate edge mid point
 	vec4 midPoint = 0.5 * (p0 + p1);
-	// Sphere radius as distance between the control points
-	float radius = distance(p0, p1) / 2.0;
 
 	// View space
 	vec4 v0 = model * view * midPoint;
+	vec4 v1 = v0;
+	v1.x += distance(p0, p1);
 
 	// Project into clip space
-	vec4 clip0 = (projection * (v0 - vec4(radius, vec3(0.0))));
-	vec4 clip1 = (projection * (v0 + vec4(radius, vec3(0.0))));
+	vec4 clip0 = projection * v0;
+	vec4 clip1 = projection * v1;
 
 	// Get normalized device coordinates
 	clip0 /= clip0.w;
@@ -62,14 +62,14 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 
     vec2 viewPort = vec2(1280, 720);
 
-	// Convert to viewport coordinates
-	clip0.xy *= viewPort;
-	clip1.xy *= viewPort;
+	vec2 screen0 = ((clip0.xy + 1.0) / 2.0) * viewPort;
+	vec2 screen1 = ((clip1.xy + 1.0) / 2.0) * viewPort;
+	float d = distance(screen0, screen1);
 	
 	// Return the tessellation factor based on the screen size 
 	// given by the distance of the two edge control points in screen space
 	// and a reference (min.) tessellation size for the edge set by the application
-	return clamp(distance(clip0, clip1) / tessellatedEdgeSize * tessellationFactor, 1.0, 64.0);
+	return clamp(d / tessellatedEdgeSize * tessellationFactor, 1.0, 64.0);
 }
 
 void main(){
