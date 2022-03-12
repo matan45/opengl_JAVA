@@ -71,7 +71,7 @@ void main(){
 #type EVALUATION
 #version 460 core
 
-layout(triangles, even_spacing, ccw) in;
+layout(triangles, equal_spacing, ccw) in; 
 
 in vec3 evaluation_position[];
 in vec2 evaluation_texcoords[];
@@ -105,7 +105,7 @@ void main(){
     position = interpolate3D(evaluation_position[0], evaluation_position[1], evaluation_position[2]);    
                                                                                                 
     // Displace the vertex along the normal                                                                            
-    position += Normal_FS_in * gDispFactor;  
+    position += normal * gDispFactor;  
     vec4 positionRelativeToCam = view * vec4(position, 1.0);
  	gl_Position = projection * positionRelativeToCam;                                       
 
