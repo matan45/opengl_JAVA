@@ -5,6 +5,8 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texcoords;
 
+uniform mat4 model;
+
 out vec4 control_position;
 out vec2 control_texcoords;
 out vec3 control_normal;
@@ -13,7 +15,7 @@ out vec3 control_normal;
 void main(){
     control_position = vec4(position, 1.0);
     control_texcoords = texcoords;
-    control_normal = normal;
+    control_normal = mat3(model) * normal;
 }
 
 
@@ -133,8 +135,7 @@ void main(){
     normal = interpolate3D(evaluation_normal[0], evaluation_normal[1], evaluation_normal[2], evaluation_normal[2]);            
     normal = normalize(normal);                                                     
     position = interpolate(evaluation_position[0], evaluation_position[1], evaluation_position[2], evaluation_position[3]);    
-
-    vec3 Normal = mat3(model) * normal;                                                                                          
+                                                                                          
     // Displace the vertex along the normal                                                                            
     float displace = texture(displacementMap, texcoords.xy).x;
     position.y += displace * gDispFactor;
