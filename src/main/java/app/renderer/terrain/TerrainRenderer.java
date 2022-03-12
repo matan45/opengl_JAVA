@@ -23,7 +23,8 @@ public class TerrainRenderer {
     private final Camera camera;
     private boolean wireframe;
     private String path;
-    private float factor;
+    private float displacementFactor;
+    private float tessellationFactor;
     private boolean isActive;
     private int displacementMap;
     private final Textures textures;
@@ -34,7 +35,8 @@ public class TerrainRenderer {
         this.textures = textures;
         this.camera = camera;
         wireframe = false;
-        factor = 2f;
+        displacementFactor = 2f;
+        tessellationFactor = 0.75f;
         isActive = false;
         shaderTerrain = new ShaderTerrain(Paths.get("src\\main\\resources\\shaders\\terrain\\terrain.glsl"));
 
@@ -58,8 +60,8 @@ public class TerrainRenderer {
             shaderTerrain.start();
             shaderTerrain.loadProjectionMatrix(camera.getProjectionMatrix());
             shaderTerrain.loadViewMatrix(camera.getViewMatrix());
-            shaderTerrain.loadCameraPosition(camera.getPosition());
-            shaderTerrain.loadgDispFactor(factor);
+            shaderTerrain.loadTessellationFactor(tessellationFactor);
+            shaderTerrain.loadgDispFactor(displacementFactor);
             shaderTerrain.loadModelMatrix(olTransform.getModelMatrix());
 
             glActiveTexture(GL_TEXTURE0);
@@ -89,16 +91,24 @@ public class TerrainRenderer {
         this.wireframe = wireframe;
     }
 
-    public void setFactor(float factor) {
-        this.factor = factor;
+    public void setDisplacementFactor(float displacementFactor) {
+        this.displacementFactor = displacementFactor;
     }
 
-    public float getFactor() {
-        return factor;
+    public float getDisplacementFactor() {
+        return displacementFactor;
     }
 
     public String getPath() {
         return path;
+    }
+
+    public float getTessellationFactor() {
+        return tessellationFactor;
+    }
+
+    public void setTessellationFactor(float tessellationFactor) {
+        this.tessellationFactor = tessellationFactor;
     }
 
     public void setActive(boolean active) {

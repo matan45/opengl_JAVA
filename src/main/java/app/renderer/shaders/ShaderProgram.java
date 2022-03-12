@@ -94,7 +94,7 @@ public abstract class ShaderProgram {
             glCompileShader(shaderID);
             if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
                 System.out.println(glGetShaderInfoLog(shaderID, 500));
-                System.err.println("Could not compile shader");
+                System.err.println("Could not compile shader " + tempShader.type());
                 System.exit(-1);
             }
             shadersID.add(shaderID);
