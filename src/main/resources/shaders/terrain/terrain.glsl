@@ -15,7 +15,7 @@ out vec3 control_normal;
 void main(){
     control_position = vec4(position, 1.0);
     control_texcoords = texcoords;
-    control_normal = mat3(model) * normal;
+    control_normal = normal;
 }
 
 
@@ -132,8 +132,8 @@ void main(){
 
     // Interpolate the attributes of the output vertex using the barycentric coordinates        
     texcoords = interpolate2D(evaluation_texcoords[0], evaluation_texcoords[1], evaluation_texcoords[2], evaluation_texcoords[2]);    
-    normal = interpolate3D(evaluation_normal[0], evaluation_normal[1], evaluation_normal[2], evaluation_normal[2]);            
-    normal = normalize(normal);                                                     
+    vec3 Normal = interpolate3D(evaluation_normal[0], evaluation_normal[1], evaluation_normal[2], evaluation_normal[2]);            
+    normal = normalize(Normal);                                                     
     position = interpolate(evaluation_position[0], evaluation_position[1], evaluation_position[2], evaluation_position[3]);    
                                                                                           
     // Displace the vertex along the normal                                                                            
@@ -156,8 +156,10 @@ in vec3 normal;
 
 out vec4 FragColor;
 
+uniform sampler2D displacementMap;
+
 void main(){
 
-    FragColor = vec4(1.0);
+    FragColor = texture(displacementMap, texcoords);
 
 }
