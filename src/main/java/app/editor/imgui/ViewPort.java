@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
+import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.Textures;
@@ -151,6 +152,7 @@ public class ViewPort implements ImguiLayer {
                 cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 1000f).getAsArray();
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
+                editorCamera.setViewPort(new OLVector2f(preWindowWidth, preWindowHeight));
             }
 
             ImGuizmo.setOrthographic(false);
@@ -207,7 +209,7 @@ public class ViewPort implements ImguiLayer {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            cameraMovement(position, rotation,dt);
+            cameraMovement(position, rotation, dt);
 
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;

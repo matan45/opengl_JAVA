@@ -1,6 +1,7 @@
 package app.renderer.terrain;
 
 import app.math.OLMatrix4f;
+import app.math.OLVector2f;
 import app.renderer.shaders.ShaderProgram;
 import app.renderer.shaders.UniformsNames;
 
@@ -13,6 +14,7 @@ public class ShaderTerrain extends ShaderProgram {
     private int locationModelMatrix;
     private int locationgDispFactor;
     private int locationgdisplacementMap;
+    private int locationviewport;
 
     protected ShaderTerrain(Path path) {
         super(path);
@@ -26,6 +28,7 @@ public class ShaderTerrain extends ShaderProgram {
         locationTessellationFactor = super.getUniformLocation("tessellationFactor");
         locationgDispFactor = super.getUniformLocation("gDispFactor");
         locationgdisplacementMap = super.getUniformLocation("displacementMap");
+        locationviewport = super.getUniformLocation("viewPort");
     }
 
     public void connectTextureUnits() {
@@ -42,6 +45,10 @@ public class ShaderTerrain extends ShaderProgram {
 
     public void loadProjectionMatrix(OLMatrix4f projection) {
         super.loadMatrix(locationProjectionMatrix, projection);
+    }
+
+    public void loadViewPort(OLVector2f viewPort) {
+        super.load2DVector(locationviewport, viewPort);
     }
 
     public void loadModelMatrix(OLMatrix4f model) {

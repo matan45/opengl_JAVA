@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 public record Terrain(Textures textures, OpenGLObjects openGLObjects) {
 
-    private static final int SIZE = 1024;
+    private static final int SIZE = 512;
     private static final float MAX_HEIGHT = 40f; // is between -40 to 40
     private static final int MAX_PIXEL_COLOUR = 256 * 256 * 256;
 

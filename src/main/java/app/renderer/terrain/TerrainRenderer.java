@@ -63,6 +63,7 @@ public class TerrainRenderer {
             shaderTerrain.loadTessellationFactor(tessellationFactor);
             shaderTerrain.loadgDispFactor(displacementFactor);
             shaderTerrain.loadModelMatrix(olTransform.getModelMatrix());
+            shaderTerrain.loadViewPort(camera.getViewPort());
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, displacementMap);

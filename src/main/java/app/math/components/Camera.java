@@ -1,6 +1,7 @@
 package app.math.components;
 
 import app.math.OLMatrix4f;
+import app.math.OLVector2f;
 import app.math.OLVector3f;
 
 public class Camera {
@@ -9,6 +10,7 @@ public class Camera {
     private final OLVector3f negativeCameraPosition;
     private final OLMatrix4f viewMatrix;
     private final OLMatrix4f projectionMatrix;
+    private OLVector2f viewPort;
 
     public Camera() {
         position = new OLVector3f(0.0f, 2f, 5f);
@@ -16,6 +18,7 @@ public class Camera {
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
         negativeCameraPosition = new OLVector3f();
+        viewPort = new OLVector2f();
     }
 
     public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
@@ -61,5 +64,13 @@ public class Camera {
 
     public OLMatrix4f getProjectionMatrix() {
         return projectionMatrix;
+    }
+
+    public OLVector2f getViewPort() {
+        return viewPort;
+    }
+
+    public void setViewPort(OLVector2f viewPort) {
+        this.viewPort = viewPort;
     }
 }
