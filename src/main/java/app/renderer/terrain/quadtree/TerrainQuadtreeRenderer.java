@@ -55,6 +55,11 @@ public class TerrainQuadtreeRenderer {
     boolean wireframe;
     boolean isActive;
 
+    float gDispFactor;
+
+    private static final int Width = 500;
+    private static final int Length = 500;
+
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
 
         this.textures = textures;
@@ -64,6 +69,7 @@ public class TerrainQuadtreeRenderer {
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
         wireframe = false;
+        gDispFactor = 2f;
 
         this.camera = camera;
     }
@@ -75,10 +81,9 @@ public class TerrainQuadtreeRenderer {
 
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
-        shaderTerrainQuadtree.loadTerrainHeightOffset(100f);
-        shaderTerrainQuadtree.loadTerrainWidth(5000f);
-        shaderTerrainQuadtree.loadTerrainLength(5000f);
-        OLVector3f origin = new OLVector3f(5000 / 2.0f, 0.0f, 5000 / 2.0f);
+        shaderTerrainQuadtree.loadTerrainWidth(Width);
+        shaderTerrainQuadtree.loadTerrainLength(Length);
+        OLVector3f origin = new OLVector3f(Width / 2.0f, 0.0f, Length / 2.0f);
         shaderTerrainQuadtree.loadTerrainOrigin(origin);
         shaderTerrainQuadtree.stop();
 
@@ -89,6 +94,7 @@ public class TerrainQuadtreeRenderer {
             shaderTerrainQuadtree.start();
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
+            shaderTerrainQuadtree.loadTerrainHeightOffset(gDispFactor);
 
             glPatchParameteri(GL_PATCH_VERTICES, 4);
 
@@ -98,8 +104,10 @@ public class TerrainQuadtreeRenderer {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            terrainQuadtree.terrainCreateTree(0, 0, 0, 5000, 5000);
+            terrainQuadtree.terrainCreateTree(0, 0, 0, Width, Length);
             terrainQuadtree.terrainRender();
+
+            LogInfo.println(terrainQuadtree.getRenderDepth() + "");
 
             glDisableVertexAttribArray(0);
             glBindVertexArray(0);
@@ -109,8 +117,12 @@ public class TerrainQuadtreeRenderer {
 
     }
 
-    public boolean isWireframe() {
-        return wireframe;
+    public float getgDispFactor() {
+        return gDispFactor;
+    }
+
+    public void setgDispFactor(float gDispFactor) {
+        this.gDispFactor = gDispFactor;
     }
 
     public void setWireframe(boolean wireframe) {

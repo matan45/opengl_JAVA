@@ -34,15 +34,15 @@ public class TerrainComponent extends CommonComponent {
             terrain.setActive(true);
         }
 
-        /*ImGui.pushID("Displacement");
+        ImGui.pushID("Displacement");
         if (ImGui.button("Displacement"))
-            terrain.setDisplacementFactor(2f);
+            terrain.setgDispFactor(2f);
         ImGui.sameLine();
-        float[] displacementValue = {terrain.getDisplacementFactor()};
+        float[] displacementValue = {terrain.getgDispFactor()};
         ImGui.dragFloat("##Y", displacementValue, 0.1f);
-        terrain.setDisplacementFactor(displacementValue[0]);
+        terrain.setgDispFactor(displacementValue[0]);
         ImGui.popID();
-
+/*
         ImGui.pushID("Tessellation");
         if (ImGui.button("Tessellation"))
             terrain.setTessellationFactor(0.75f);
@@ -50,8 +50,8 @@ public class TerrainComponent extends CommonComponent {
         float[] tessellationValue = {terrain.getTessellationFactor()};
         ImGui.dragFloat("##Y", tessellationValue, 0.01f, 0.0f, 5f);
         terrain.setTessellationFactor(tessellationValue[0]);
-        ImGui.popID();*/
-
+        ImGui.popID();
+*/
         ImGui.checkbox("Wireframe", wireframe);
         terrain.setWireframe(wireframe.get());
 
