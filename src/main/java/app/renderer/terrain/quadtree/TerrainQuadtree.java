@@ -4,7 +4,6 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TerrainQuadtree {
@@ -21,13 +20,13 @@ public class TerrainQuadtree {
     public TerrainQuadtree(Camera camera) {
         this.camera = camera;
         terrainTreeTail = new ArrayList<>(MAX_TERRAIN_NODES);
-        terrain_clearTree();
+        terrainClearTree();
     }
 
     /**
      * Allocates a new node in the terrain quadtree with the specified parameters.
      */
-    public TerrainNode createNode(TerrainNode parent, OLVector3f origin, int type, float width, float height) {
+    private TerrainNode createNode(TerrainNode parent, OLVector3f origin, int type, float width, float height) {
         if (numTerrainNodes >= MAX_TERRAIN_NODES)
             return null;
         numTerrainNodes++;
@@ -55,7 +54,7 @@ public class TerrainQuadtree {
     /**
      * Resets the terrain quadtree.
      */
-    private void terrain_clearTree() {
+    private void terrainClearTree() {
         terrainTreeTail.clear();
         numTerrainNodes = 0;
     }
@@ -83,7 +82,7 @@ public class TerrainQuadtree {
     /**
      * Returns true if node is sub-divided. False otherwise.
      */
-    private void terrain_divideNode(TerrainNode node) {
+    private void terrainDivideNode(TerrainNode node) {
         // Subdivide
         float w_new = 0.5f * node.getWidth();
         float h_new = 0.5f * node.getHeight();
@@ -117,20 +116,20 @@ public class TerrainQuadtree {
         div4 = checkDivide(node.getC4());
 
         if (div1)
-            terrain_divideNode(node.getC1());
+            terrainDivideNode(node.getC1());
         if (div2)
-            terrain_divideNode(node.getC2());
+            terrainDivideNode(node.getC2());
         if (div3)
-            terrain_divideNode(node.getC3());
+            terrainDivideNode(node.getC3());
         if (div4)
-            terrain_divideNode(node.getC4());
+            terrainDivideNode(node.getC4());
     }
 
     /**
      * Builds a terrain quadtree based on specified parameters and current camera position.
      */
-    void terrain_createTree(OLVector3f origin, float width, float height) {
-        terrain_clearTree();
+    public void terrainCreateTree(OLVector3f origin, float width, float height) {
+        terrainClearTree();
 
         terrainTree = new TerrainNode();
         terrainTree.setType(0);
@@ -150,7 +149,7 @@ public class TerrainQuadtree {
         terrainTreeTail.set(0, terrainTree);
 
         // Recursively subdivide the terrain
-        terrain_divideNode(terrainTree);
+        terrainDivideNode(terrainTree);
     }
 
     /**
@@ -158,7 +157,7 @@ public class TerrainQuadtree {
      * x, z == the point we are searching for (trying to find the node with an origin closest to that point)
      * n = the current node we are testing
      */
-    TerrainNode find(TerrainNode n, float x, float z) {
+    private TerrainNode find(TerrainNode n, float x, float z) {
         if (n.getOrigin().x == x && n.getOrigin().z == z)
             return n;
 
@@ -180,7 +179,7 @@ public class TerrainQuadtree {
     /**
      * Calculate the tessellation scale factor for a node depending on the neighboring patches.
      */
-    void calcTessScale(TerrainNode node) {
+    private void calcTessScale(TerrainNode node) {
         TerrainNode t;
 
         // Positive Z (north)
@@ -202,6 +201,92 @@ public class TerrainQuadtree {
         t = find(terrainTree, node.getOrigin().x - 1 - node.getWidth() / 2.0f, node.getOrigin().z);
         if (t.getWidth() > node.getWidth())
             node.setTscaleNegx(2.0f);
+    }
+
+
+    /**
+     * Pushes a node (patch) to the GPU to be drawn.
+     * note: height parameter is here but not used. currently only dealing with square terrains (width is used only)
+     */
+    void terrainRenderNode(TerrainNode node) {
+        // Calculate the tess scale factor
+        calcTessScale(node);
+
+        // Setup matrices
+        /*glusMatrix4x4Identityf(g_mvMatrix);
+        glusMatrix4x4Identityf(g_mMatrix);
+        glusMatrix4x4Translatef(g_mMatrix, node->origin[0], node->origin[1], node->origin[2]);
+        glusMatrix4x4Multiplyf(g_mvMatrix, g_vMatrix, g_mMatrix);
+
+        GLuint matrix = glGetUniformLocation(g_program.program, "mMatrix");
+        glUniformMatrix4fv(matrix, 1, GL_FALSE, g_mMatrix);
+        matrix = glGetUniformLocation(g_program.program, "mvMatrix");
+        glUniformMatrix4fv(matrix, 1, GL_FALSE, g_mvMatrix);
+
+        // Calc normal matrix
+        glusMatrix4x4ExtractMatrix3x3f(g_nMatrix, g_mvMatrix);
+        glusMatrix3x3Transposef(g_nMatrix);
+        glusMatrix3x3Inversef(g_nMatrix);
+
+        matrix = glGetUniformLocation(g_program.program, "nMatrix");
+        glUniformMatrix3fv(matrix, 1, GL_FALSE, g_nMatrix);
+
+        // Send the size of the patch to the GPU
+        GLuint temp = glGetUniformLocation(g_program.program, "tileScale");
+        glUniform1f(temp, 0.5 * node->width);
+
+        // Send patch neighbor edge tess scale factors
+        temp = glGetUniformLocation(g_program.program, "tscale_negx");
+        glUniform1f(temp, node->tscale_negx);
+        temp = glGetUniformLocation(g_program.program, "tscale_negz");
+        glUniform1f(temp, node->tscale_negz);
+        temp = glGetUniformLocation(g_program.program, "tscale_posx");
+        glUniform1f(temp, node->tscale_posx);
+        temp = glGetUniformLocation(g_program.program, "tscale_posz");
+        glUniform1f(temp, node->tscale_posz);
+
+        // Do it
+        glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);*/
+    }
+
+    int maxRenderDepth = 1;
+    int renderDepth = 0;
+
+    /**
+     * Traverses the terrain quadtree to draw nodes with no children.
+     */
+    void terrainRenderRecursive(TerrainNode node) {
+        //if (renderDepth >= maxRenderDepth)
+        //	return;
+
+        // If all children are null, render this node
+        if (node.getC1() == null && node.getC2() == null && node.getC3() == null && node.getC4() == null) {
+            terrainRenderNode(node);
+            renderDepth++;
+            return;
+        }
+
+        // Otherwise, recruse to the children.
+        // Note: we're checking if the child exists. Theoretically, with our algorithm,
+        // either all the children are null or all the children are not null.
+        // There shouldn't be any other cases, but we check here for safety.
+        if (node.getC1() != null)
+            terrainRenderRecursive(node.getC1());
+        if (node.getC2() != null)
+            terrainRenderRecursive(node.getC2());
+        if (node.getC3() != null)
+            terrainRenderRecursive(node.getC3());
+        if (node.getC4() != null)
+            terrainRenderRecursive(node.getC4());
+    }
+
+    /**
+     * Draw the terrrain.
+     */
+    public void terrain_render() {
+        renderDepth = 0;
+
+        terrainRenderRecursive(terrainTree);
     }
 
 
