@@ -15,6 +15,9 @@ public class TerrainQuadtree {
     List<TerrainNode> terrainTreeTail;
     int numTerrainNodes = 0;
 
+    int maxRenderDepth = 1;
+    int renderDepth = 0;
+
     Camera camera;
 
     public TerrainQuadtree(Camera camera) {
@@ -248,9 +251,6 @@ public class TerrainQuadtree {
         // Do it
         glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);*/
     }
-
-    int maxRenderDepth = 1;
-    int renderDepth = 0;
 
     /**
      * Traverses the terrain quadtree to draw nodes with no children.
