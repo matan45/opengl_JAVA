@@ -182,6 +182,7 @@ public class TerrainNode {
     }
 
     public OLTransform getOlTransform() {
+        olTransform.setPosition(origin);
         return olTransform;
     }
 }

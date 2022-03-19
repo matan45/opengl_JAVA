@@ -11,17 +11,19 @@ public class TerrainQuadtree {
     private static final int VMB_TERRAIN_REC_CUTOFF = 100;
     private static final int MAX_TERRAIN_NODES = 500;
 
-    TerrainNode terrainTree;
-    List<TerrainNode> terrainTreeTail;
-    int numTerrainNodes = 0;
+    private TerrainNode terrainTree;
+    private final List<TerrainNode> terrainTreeTail;
+    private int numTerrainNodes = 0;
 
-    int maxRenderDepth = 1;
-    int renderDepth = 0;
+    private int maxRenderDepth = 1;
+    private int renderDepth = 0;
 
-    Camera camera;
+    private final Camera camera;
+    private final ShaderTerrainQuadtree shaderTerrainQuadtree;
 
-    public TerrainQuadtree(Camera camera) {
+    public TerrainQuadtree(Camera camera, ShaderTerrainQuadtree shaderTerrainQuadtree) {
         this.camera = camera;
+        this.shaderTerrainQuadtree = shaderTerrainQuadtree;
         terrainTreeTail = new ArrayList<>(MAX_TERRAIN_NODES);
         terrainClearTree();
     }
@@ -211,7 +213,7 @@ public class TerrainQuadtree {
      * Pushes a node (patch) to the GPU to be drawn.
      * note: height parameter is here but not used. currently only dealing with square terrains (width is used only)
      */
-    void terrainRenderNode(TerrainNode node) {
+    private void terrainRenderNode(TerrainNode node) {
         // Calculate the tess scale factor
         calcTessScale(node);
 
@@ -255,7 +257,7 @@ public class TerrainQuadtree {
     /**
      * Traverses the terrain quadtree to draw nodes with no children.
      */
-    void terrainRenderRecursive(TerrainNode node) {
+    private void terrainRenderRecursive(TerrainNode node) {
         //if (renderDepth >= maxRenderDepth)
         //	return;
 
