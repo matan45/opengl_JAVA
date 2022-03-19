@@ -2,6 +2,7 @@ package app.renderer.terrain.quadtree;
 
 import app.math.OLVector3f;
 import app.math.components.Camera;
+import app.renderer.HeightMapTextureData;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 
@@ -41,7 +42,7 @@ public class TerrainQuadtreeRenderer {
     int[] quadPatchInd = {0, 1, 2, 3};
 
     int vao;
-    int texture;
+    HeightMapTextureData texture;
 
     Camera camera;
 
@@ -60,7 +61,12 @@ public class TerrainQuadtreeRenderer {
         texture = textures.heightMap(path, 3);
 
         shaderTerrainQuadtree.start();
-        shaderTerrainQuadtree.loadTexHighMap(texture);
+        shaderTerrainQuadtree.loadTexHighMap(texture.image());
+        shaderTerrainQuadtree.loadTerrainHeightOffset(40f);
+        shaderTerrainQuadtree.loadTerrainWidth(texture.width());
+        shaderTerrainQuadtree.loadTerrainLength(texture.height());
+        OLVector3f origin = new OLVector3f(texture.width() / 2.0f, 0.0f, texture.height() / 2.0f);
+        shaderTerrainQuadtree.loadTerrainOrigin(origin);
         shaderTerrainQuadtree.stop();
     }
 
@@ -75,9 +81,9 @@ public class TerrainQuadtreeRenderer {
         glEnableVertexAttribArray(0);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, texture.image());
 
-        terrainQuadtree.terrainCreateTree(new OLVector3f(), 2000f, 2000f);
+        terrainQuadtree.terrainCreateTree(new OLVector3f(), texture.width(), texture.height());
         terrainQuadtree.terrainRender();
 
         glDisableVertexAttribArray(0);

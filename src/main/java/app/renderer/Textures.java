@@ -85,7 +85,7 @@ public class Textures {
         return id;
     }
 
-    public int heightMap(String fileName,int mipLevels){
+    public HeightMapTextureData heightMap(String fileName, int mipLevels) {
         ByteBuffer imageBuffer;
         ByteBuffer image;
         try {
@@ -134,9 +134,11 @@ public class Textures {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
+        int weight = w.get(0);
+        int height = h.get(0);
 
         stbi_image_free(image);
-        return id;
+        return new HeightMapTextureData(id, height, weight);
     }
 
     public HeightMapData getHeightMapData(String path) {

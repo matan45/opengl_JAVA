@@ -90,8 +90,8 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         super.loadFloat(locationTerrainHeightOffset, TerrainHeightOffset);
     }
 
-    public void loadTerrainOrigin(OLVector3f scale) {
-        super.load3DVector(locationTerrainOrigin, scale);
+    public void loadTerrainOrigin(OLVector3f origin) {
+        super.load3DVector(locationTerrainOrigin, origin);
     }
 
 
