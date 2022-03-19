@@ -3,6 +3,7 @@ package app.renderer.terrain.quadtree;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class TerrainQuadtree {
 
     public TerrainQuadtree(Camera camera) {
         this.camera = camera;
-        terrainTree = new TerrainNode();
-        terrainTreeTail = new LinkedList<>();
+        terrainTreeTail = new ArrayList<>(MAX_TERRAIN_NODES);
+        terrain_clearTree();
     }
 
     /**
@@ -77,6 +78,130 @@ public class TerrainQuadtree {
         }
 
         return true;
+    }
+
+    /**
+     * Returns true if node is sub-divided. False otherwise.
+     */
+    private void terrain_divideNode(TerrainNode node) {
+        // Subdivide
+        float w_new = 0.5f * node.getWidth();
+        float h_new = 0.5f * node.getHeight();
+
+        // Create the child nodes
+        node.setC1(createNode(node, new OLVector3f(node.getOrigin().x - 0.5f * w_new, node.getOrigin().y, node.getOrigin().z - 0.5f * h_new), 1, w_new, h_new));
+        node.setC2(createNode(node, new OLVector3f(node.getOrigin().x + 0.5f * w_new, node.getOrigin().y, node.getOrigin().z - 0.5f * h_new), 2, w_new, h_new));
+        node.setC3(createNode(node, new OLVector3f(node.getOrigin().x + 0.5f * w_new, node.getOrigin().y, node.getOrigin().z + 0.5f * h_new), 3, w_new, h_new));
+        node.setC4(createNode(node, new OLVector3f(node.getOrigin().x - 0.5f * w_new, node.getOrigin().y, node.getOrigin().z + 0.5f * h_new), 4, w_new, h_new));
+
+        // Assign neighbors
+        if (node.getType() == 1) {
+            node.setE(node.getP().getC2());
+            node.setN(node.getP().getC4());
+        } else if (node.getType() == 2) {
+            node.setW(node.getP().getC1());
+            node.setN(node.getP().getC3());
+        } else if (node.getType() == 3) {
+            node.setS(node.getP().getC2());
+            node.setW(node.getP().getC4());
+        } else if (node.getType() == 4) {
+            node.setS(node.getP().getC1());
+            node.setE(node.getP().getC3());
+        }
+
+        // Check if each of these four child nodes will be subdivided.
+        boolean div1, div2, div3, div4;
+        div1 = checkDivide(node.getC1());
+        div2 = checkDivide(node.getC2());
+        div3 = checkDivide(node.getC3());
+        div4 = checkDivide(node.getC4());
+
+        if (div1)
+            terrain_divideNode(node.getC1());
+        if (div2)
+            terrain_divideNode(node.getC2());
+        if (div3)
+            terrain_divideNode(node.getC3());
+        if (div4)
+            terrain_divideNode(node.getC4());
+    }
+
+    /**
+     * Builds a terrain quadtree based on specified parameters and current camera position.
+     */
+    void terrain_createTree(OLVector3f origin, float width, float height) {
+        terrain_clearTree();
+
+        terrainTree = new TerrainNode();
+        terrainTree.setType(0);
+        terrainTree.setOrigin(origin);
+        terrainTree.setHeight(height);
+        terrainTree.setWidth(width);
+        terrainTree.setTscaleNegx(1.0f);
+        terrainTree.setTscaleNegz(1.0f);
+        terrainTree.setTscalePosx(1.0f);
+        terrainTree.setTscalePosz(1.0f);
+        terrainTree.setP(null);
+        terrainTree.setN(null);
+        terrainTree.setS(null);
+        terrainTree.setE(null);
+        terrainTree.setW(null);
+
+        terrainTreeTail.set(0, terrainTree);
+
+        // Recursively subdivide the terrain
+        terrain_divideNode(terrainTree);
+    }
+
+    /**
+     * Search for a node in the tree.
+     * x, z == the point we are searching for (trying to find the node with an origin closest to that point)
+     * n = the current node we are testing
+     */
+    TerrainNode find(TerrainNode n, float x, float z) {
+        if (n.getOrigin().x == x && n.getOrigin().z == z)
+            return n;
+
+        if (n.getC1() == null && n.getC2() == null && n.getC3() == null && n.getC4() == null)
+            return n;
+
+        if (n.getOrigin().x >= x && n.getOrigin().z >= z && n.getC1() != null)
+            return find(n.getC1(), x, z);
+        else if (n.getOrigin().x <= x && n.getOrigin().z >= z && n.getC2() != null)
+            return find(n.getC2(), x, z);
+        else if (n.getOrigin().x <= x && n.getOrigin().z <= z && n.getC3() != null)
+            return find(n.getC3(), x, z);
+        else if (n.getOrigin().x >= x && n.getOrigin().z <= z && n.getC4() != null)
+            return find(n.getC4(), x, z);
+
+        return n;
+    }
+
+    /**
+     * Calculate the tessellation scale factor for a node depending on the neighboring patches.
+     */
+    void calcTessScale(TerrainNode node) {
+        TerrainNode t;
+
+        // Positive Z (north)
+        t = find(terrainTree, node.getOrigin().x, node.getOrigin().z + 1 + node.getWidth() / 2.0f);
+        if (t.getWidth() > node.getWidth())
+            node.setTscaleNegz(2.0f);
+
+        // Positive X (east)
+        t = find(terrainTree, node.getOrigin().x + 1 + node.getWidth() / 2.0f, node.getOrigin().z);
+        if (t.getWidth() > node.getWidth())
+            node.setTscalePosx(2.0f);
+
+        // Negative Z (south)
+        t = find(terrainTree, node.getOrigin().x, node.getOrigin().z - 1 - node.getWidth() / 2.0f);
+        if (t.getWidth() > node.getWidth())
+            node.setTscaleNegz(2.0f);
+
+        // Negative X (west)
+        t = find(terrainTree, node.getOrigin().x - 1 - node.getWidth() / 2.0f, node.getOrigin().z);
+        if (t.getWidth() > node.getWidth())
+            node.setTscaleNegx(2.0f);
     }
 
 
