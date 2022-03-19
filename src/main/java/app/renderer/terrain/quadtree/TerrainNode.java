@@ -149,16 +149,8 @@ public class TerrainNode {
         this.c4 = c4;
     }
 
-    public TerrainNode getN() {
-        return n;
-    }
-
     public void setN(TerrainNode n) {
         this.n = n;
-    }
-
-    public TerrainNode getS() {
-        return s;
     }
 
     public void setS(TerrainNode s) {
@@ -171,10 +163,6 @@ public class TerrainNode {
 
     public void setE(TerrainNode e) {
         this.e = e;
-    }
-
-    public TerrainNode getW() {
-        return w;
     }
 
     public void setW(TerrainNode w) {

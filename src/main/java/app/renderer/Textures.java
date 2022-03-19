@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
@@ -78,6 +79,60 @@ public class Textures {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+        stbi_image_free(image);
+        return id;
+    }
+
+    public int heightMap(String fileName,int mipLevels){
+        ByteBuffer imageBuffer;
+        ByteBuffer image;
+        try {
+            imageBuffer = ResourceManager.readToByte(Paths.get(fileName));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        IntBuffer w = BufferUtils.createIntBuffer(1);
+        IntBuffer h = BufferUtils.createIntBuffer(1);
+        IntBuffer comp = BufferUtils.createIntBuffer(1);
+
+        // Use info to read image metadata without decoding the entire image.
+        // We don't need this for this demo, just testing the API.
+        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+            throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
+        }
+
+        // Decode the image
+        image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
+        if (image == null) {
+            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+        }
+
+        int id = glGenTextures();
+        texturesID.add(id);
+
+        glBindTexture(GL_TEXTURE_2D, id);
+
+
+        if (comp.get(0) == 3) {
+            if ((w.get(0) & 3) != 0) {
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w.get(0) & 1));
+            }
+            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RGB, w.get(0), h.get(0));
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RGB, GL_UNSIGNED_BYTE, image);
+        } else if (comp.get(0) == 1) {
+            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RED, w.get(0), h.get(0));
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RED, GL_UNSIGNED_BYTE, image);
+        } else {
+            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RGBA, w.get(0), h.get(0));
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RGBA, GL_UNSIGNED_BYTE, image);
+        }
+
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 
         stbi_image_free(image);

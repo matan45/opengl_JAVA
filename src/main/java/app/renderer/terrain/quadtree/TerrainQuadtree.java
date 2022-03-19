@@ -6,6 +6,10 @@ import app.math.components.Camera;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL40.GL_PATCHES;
+
 public class TerrainQuadtree {
 
     private static final int VMB_TERRAIN_REC_CUTOFF = 100;
@@ -114,7 +118,11 @@ public class TerrainQuadtree {
         }
 
         // Check if each of these four child nodes will be subdivided.
-        boolean div1, div2, div3, div4;
+        boolean div1;
+        boolean div2;
+        boolean div3;
+        boolean div4;
+
         div1 = checkDivide(node.getC1());
         div2 = checkDivide(node.getC2());
         div3 = checkDivide(node.getC3());
@@ -218,40 +226,16 @@ public class TerrainQuadtree {
         calcTessScale(node);
 
         // Setup matrices
-        /*glusMatrix4x4Identityf(g_mvMatrix);
-        glusMatrix4x4Identityf(g_mMatrix);
-        glusMatrix4x4Translatef(g_mMatrix, node->origin[0], node->origin[1], node->origin[2]);
-        glusMatrix4x4Multiplyf(g_mvMatrix, g_vMatrix, g_mMatrix);
+        shaderTerrainQuadtree.loadModelMatrix(node.getOlTransform().getModelMatrix());
 
-        GLuint matrix = glGetUniformLocation(g_program.program, "mMatrix");
-        glUniformMatrix4fv(matrix, 1, GL_FALSE, g_mMatrix);
-        matrix = glGetUniformLocation(g_program.program, "mvMatrix");
-        glUniformMatrix4fv(matrix, 1, GL_FALSE, g_mvMatrix);
-
-        // Calc normal matrix
-        glusMatrix4x4ExtractMatrix3x3f(g_nMatrix, g_mvMatrix);
-        glusMatrix3x3Transposef(g_nMatrix);
-        glusMatrix3x3Inversef(g_nMatrix);
-
-        matrix = glGetUniformLocation(g_program.program, "nMatrix");
-        glUniformMatrix3fv(matrix, 1, GL_FALSE, g_nMatrix);
-
-        // Send the size of the patch to the GPU
-        GLuint temp = glGetUniformLocation(g_program.program, "tileScale");
-        glUniform1f(temp, 0.5 * node->width);
-
-        // Send patch neighbor edge tess scale factors
-        temp = glGetUniformLocation(g_program.program, "tscale_negx");
-        glUniform1f(temp, node->tscale_negx);
-        temp = glGetUniformLocation(g_program.program, "tscale_negz");
-        glUniform1f(temp, node->tscale_negz);
-        temp = glGetUniformLocation(g_program.program, "tscale_posx");
-        glUniform1f(temp, node->tscale_posx);
-        temp = glGetUniformLocation(g_program.program, "tscale_posz");
-        glUniform1f(temp, node->tscale_posz);
+        shaderTerrainQuadtree.loadtileScale(node.getWidth());
+        shaderTerrainQuadtree.loadtscale_negx(node.getTscaleNegx());
+        shaderTerrainQuadtree.loadtscale_negz(node.getTscaleNegz());
+        shaderTerrainQuadtree.loadtscale_posx(node.getTscalePosx());
+        shaderTerrainQuadtree.loadtscale_posz(node.getTscalePosz());
 
         // Do it
-        glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);*/
+        glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);
     }
 
     /**
@@ -285,7 +269,7 @@ public class TerrainQuadtree {
     /**
      * Draw the terrrain.
      */
-    public void terrain_render() {
+    public void terrainRender() {
         renderDepth = 0;
 
         terrainRenderRecursive(terrainTree);
