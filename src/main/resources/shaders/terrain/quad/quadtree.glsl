@@ -5,6 +5,8 @@ layout (location = 0) in vec4 position;
 
 uniform mat4 model;
 
+uniform float TerrainLength;
+uniform float TerrainWidth;
 uniform vec3 TerrainOrigin;
 uniform float tileScale;
 
@@ -44,6 +46,11 @@ uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
 uniform float TerrainHeightOffset;
+
+uniform float tscale_negx;
+uniform float tscale_negz;
+uniform float tscale_posx;
+uniform float tscale_posz;
 
 /**
 * Dynamic level of detail using camera distance algorithm.
@@ -194,6 +201,9 @@ in float tes_tessLevel[];
 out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
+
+uniform vec2 Viewport;
+uniform float ToggleWireframe;
 
 vec4 wireframeColor()
 {

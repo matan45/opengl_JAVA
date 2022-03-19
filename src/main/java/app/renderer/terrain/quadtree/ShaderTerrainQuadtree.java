@@ -1,6 +1,7 @@
 package app.renderer.terrain.quadtree;
 
 import app.math.OLMatrix4f;
+import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.renderer.shaders.ShaderProgram;
 import app.renderer.shaders.UniformsNames;
@@ -23,6 +24,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationToggleWireframe;
     private int locationTerrainOrigin;
     private int locationTerrainHeightOffset;
+    private int locationviewport;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -36,6 +38,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationtileScale = super.getUniformLocation("tileScale");
         locationToggleWireframe = super.getUniformLocation("ToggleWireframe");
+        locationviewport = super.getUniformLocation("Viewport");
 
         locationtscale_negx = super.getUniformLocation("tscale_negx");
         locationtscale_negz = super.getUniformLocation("tscale_negz");
@@ -59,8 +62,12 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         super.loadBoolean(locationToggleWireframe, wire);
     }
 
-    public void loadTexHighMap(int location) {
-        super.loadInt(locationTexTerrainHeight, location);
+    public void loadTexHighMap() {
+        super.loadInt(locationTexTerrainHeight, 0);
+    }
+
+    public void loadViewPort(OLVector2f viewPort) {
+        super.load2DVector(locationviewport, viewPort);
     }
 
     public void loadtileScale(float scale) {

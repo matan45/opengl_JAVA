@@ -16,7 +16,7 @@ public class TerrainQuadtree {
     private static final int MAX_TERRAIN_NODES = 500;
 
     private TerrainNode terrainTree;
-    private final List<TerrainNode> terrainTreeTail;
+    private TerrainNode terrainTreeTail;
     private int numTerrainNodes = 0;
 
     private int maxRenderDepth = 1;
@@ -28,7 +28,6 @@ public class TerrainQuadtree {
     public TerrainQuadtree(Camera camera, ShaderTerrainQuadtree shaderTerrainQuadtree) {
         this.camera = camera;
         this.shaderTerrainQuadtree = shaderTerrainQuadtree;
-        terrainTreeTail = new ArrayList<>(MAX_TERRAIN_NODES);
         terrainClearTree();
     }
 
@@ -55,7 +54,6 @@ public class TerrainQuadtree {
         terrainNodeTail.setE(null);
         terrainNodeTail.setW(null);
 
-        terrainTreeTail.add(terrainNodeTail);
         return terrainNodeTail;
 
     }
@@ -64,7 +62,7 @@ public class TerrainQuadtree {
      * Resets the terrain quadtree.
      */
     private void terrainClearTree() {
-        terrainTreeTail.clear();
+        terrainTreeTail = terrainTree;
         numTerrainNodes = 0;
     }
 
@@ -158,8 +156,6 @@ public class TerrainQuadtree {
         terrainTree.setS(null);
         terrainTree.setE(null);
         terrainTree.setW(null);
-
-        terrainTreeTail.set(0, terrainTree);
 
         // Recursively subdivide the terrain
         terrainDivideNode(terrainTree);
@@ -275,5 +271,7 @@ public class TerrainQuadtree {
         terrainRenderRecursive(terrainTree);
     }
 
-
+    public int getRenderDepth() {
+        return renderDepth;
+    }
 }

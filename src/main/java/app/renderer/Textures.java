@@ -1,6 +1,5 @@
 package app.renderer;
 
-import app.renderer.terrain.quadtree.HeightMapTextureData;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
@@ -21,7 +20,6 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
@@ -86,7 +84,7 @@ public class Textures {
         return id;
     }
 
-    public HeightMapTextureData heightMap(String fileName, int mipLevels) {
+    public int heightMap(String fileName) {
         ByteBuffer imageBuffer;
         ByteBuffer image;
         try {
@@ -121,25 +119,22 @@ public class Textures {
             if ((w.get(0) & 3) != 0) {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w.get(0) & 1));
             }
-            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RGB, w.get(0), h.get(0));
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RGB, GL_UNSIGNED_BYTE, image);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w.get(0), h.get(0), 0, GL_RGB,
+                    GL_UNSIGNED_BYTE, image);
         } else if (comp.get(0) == 1) {
-            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RED, w.get(0), h.get(0));
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RED, GL_UNSIGNED_BYTE, image);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w.get(0), h.get(0), 0, GL_RED,
+                    GL_UNSIGNED_BYTE, image);
         } else {
-            glTexStorage2D(GL_TEXTURE_2D, mipLevels, GL_RGBA, w.get(0), h.get(0));
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w.get(0), h.get(0), GL_RGBA, GL_UNSIGNED_BYTE, image);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w.get(0), h.get(0), 0, GL_RGBA,
+                    GL_UNSIGNED_BYTE, image);
         }
 
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-        int weight = w.get(0);
-        int height = h.get(0);
-
         stbi_image_free(image);
-        return new HeightMapTextureData(id, height, weight);
+        return id;
     }
 
     public HeightMapData getHeightMapData(String path) {

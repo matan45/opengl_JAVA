@@ -9,7 +9,7 @@ public class TerrainNode {
     private float height;
     private int type; // 1, 2, 3, 4 -- the child # relative to its parent. (0 == root)
 
-    private final OLTransform olTransform;
+    private final OLTransform olTransform = new OLTransform();
 
     // Tessellation scale
     private float tscaleNegx; // negative x edge
@@ -28,22 +28,6 @@ public class TerrainNode {
     private TerrainNode e; // Neighbor to east
     private TerrainNode w; // Neighbor to west
 
-    public TerrainNode() {
-        origin = new OLVector3f();
-
-        olTransform = new OLTransform();
-
-        p = new TerrainNode();
-        c1 = new TerrainNode();
-        c2 = new TerrainNode();
-        c3 = new TerrainNode();
-        c4 = new TerrainNode();
-
-        n = new TerrainNode();
-        s = new TerrainNode();
-        e = new TerrainNode();
-        w = new TerrainNode();
-    }
 
     public OLVector3f getOrigin() {
         return origin;

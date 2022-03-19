@@ -34,7 +34,7 @@ public class OpenGLObjects {
     public int loadToVAO(float[] positions,int[] indices) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
-        storeDataInAttributeList(0, 3, positions);
+        storeDataInAttributeList(0, 4, positions);
         unbindVAO();
         return vaoID;
     }
