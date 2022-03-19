@@ -5,6 +5,7 @@ layout (location = 0) in vec4 position;
 
 uniform mat4 model;
 
+
 uniform float TerrainLength;
 uniform float TerrainWidth;
 uniform vec3 TerrainOrigin;
@@ -181,7 +182,8 @@ void main(){
 	gl_Position.y = samp[0] * TerrainHeightOffset;
 
 	// Project the vertex to clip space and send it along
-	gl_Position = projection * model * view * gl_Position;
+	vec4 worldPosition = model * gl_Position;
+ 	gl_Position = projection * view * worldPosition ; 
 
 	tes_terrainTexCoord = terrainTexCoord;
 	tes_tessLevel = tcs_tessLevel[0];

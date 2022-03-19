@@ -69,16 +69,16 @@ public class TerrainQuadtreeRenderer {
     }
 
     public void init(String path) {
-        texture = textures.heightMap(path);
+        texture = textures.loadTexture(path);
 
         this.path = path;
 
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
-        shaderTerrainQuadtree.loadTerrainHeightOffset(1000f);
-        shaderTerrainQuadtree.loadTerrainWidth(10000f);
-        shaderTerrainQuadtree.loadTerrainLength(10000f);
-        OLVector3f origin = new OLVector3f(10000 / 2.0f, 0.0f, 10000 / 2.0f);
+        shaderTerrainQuadtree.loadTerrainHeightOffset(100f);
+        shaderTerrainQuadtree.loadTerrainWidth(5000f);
+        shaderTerrainQuadtree.loadTerrainLength(5000f);
+        OLVector3f origin = new OLVector3f(5000 / 2.0f, 0.0f, 5000 / 2.0f);
         shaderTerrainQuadtree.loadTerrainOrigin(origin);
         shaderTerrainQuadtree.stop();
 
@@ -87,8 +87,6 @@ public class TerrainQuadtreeRenderer {
     public void render() {
         if (isActive) {
             shaderTerrainQuadtree.start();
-            shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
-            shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
 
@@ -100,7 +98,7 @@ public class TerrainQuadtreeRenderer {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            terrainQuadtree.terrainCreateTree(new OLVector3f(), 10000, 10000);
+            terrainQuadtree.terrainCreateTree(0, 0, 0, 5000, 5000);
             terrainQuadtree.terrainRender();
 
             glDisableVertexAttribArray(0);
