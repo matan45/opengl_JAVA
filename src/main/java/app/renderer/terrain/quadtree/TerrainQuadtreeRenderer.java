@@ -57,8 +57,8 @@ public class TerrainQuadtreeRenderer {
 
     float gDispFactor;
 
-    private static final int Width = 500;
-    private static final int Length = 500;
+    private static final int Width = 4096;
+    private static final int Length = 4096;
 
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
 
@@ -107,8 +107,6 @@ public class TerrainQuadtreeRenderer {
             terrainQuadtree.terrainCreateTree(0, 0, 0, Width, Length);
             terrainQuadtree.terrainRender();
 
-            LogInfo.println(terrainQuadtree.getRenderDepth() + "");
-
             glDisableVertexAttribArray(0);
             glBindVertexArray(0);
 
@@ -127,6 +125,10 @@ public class TerrainQuadtreeRenderer {
 
     public void setWireframe(boolean wireframe) {
         this.wireframe = wireframe;
+    }
+
+    public float getRenderDepth() {
+        return terrainQuadtree.getRenderDepth();
     }
 
     public void setActive(boolean active) {

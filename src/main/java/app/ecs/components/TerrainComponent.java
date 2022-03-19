@@ -42,6 +42,8 @@ public class TerrainComponent extends CommonComponent {
         ImGui.dragFloat("##Y", displacementValue, 0.1f);
         terrain.setgDispFactor(displacementValue[0]);
         ImGui.popID();
+
+        ImGui.textWrapped("RenderDepth: " + terrain.getRenderDepth());
 /*
         ImGui.pushID("Tessellation");
         if (ImGui.button("Tessellation"))
