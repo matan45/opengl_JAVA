@@ -1,12 +1,15 @@
 package app.renderer.terrain.quadtree;
 
 import app.math.OLVector3f;
+import app.math.components.OLTransform;
 
 public class TerrainNode {
     private OLVector3f origin;
     private float width;
     private float height;
     private int type; // 1, 2, 3, 4 -- the child # relative to its parent. (0 == root)
+
+    private final OLTransform olTransform;
 
     // Tessellation scale
     private float tscaleNegx; // negative x edge
@@ -27,6 +30,8 @@ public class TerrainNode {
 
     public TerrainNode() {
         origin = new OLVector3f();
+
+        olTransform = new OLTransform();
 
         p = new TerrainNode();
         c1 = new TerrainNode();
@@ -174,5 +179,9 @@ public class TerrainNode {
 
     public void setW(TerrainNode w) {
         this.w = w;
+    }
+
+    public OLTransform getOlTransform() {
+        return olTransform;
     }
 }
