@@ -18,9 +18,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationtscale_posz;
     private int locationtileScale;
     private int locationTerrainLength;
-    private int locationTerrainHeight;
     private int locationTerrainWidth;
     private int locationTexTerrainHeight;
+    private int locationToggleWireframe;
     private int locationTerrainOrigin;
     private int locationTerrainHeightOffset;
 
@@ -35,6 +35,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
 
         locationtileScale = super.getUniformLocation("tileScale");
+        locationToggleWireframe = super.getUniformLocation("ToggleWireframe");
 
         locationtscale_negx = super.getUniformLocation("tscale_negx");
         locationtscale_negz = super.getUniformLocation("tscale_negz");
@@ -52,6 +53,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadViewMatrix(OLMatrix4f view) {
         super.loadMatrix(locationViewMatrix, view);
+    }
+
+    public void loadToggleWireframe(boolean wire) {
+        super.loadBoolean(locationToggleWireframe, wire);
     }
 
     public void loadTexHighMap(int location) {

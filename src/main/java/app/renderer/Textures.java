@@ -1,5 +1,6 @@
 package app.renderer;
 
+import app.renderer.terrain.quadtree.HeightMapTextureData;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 

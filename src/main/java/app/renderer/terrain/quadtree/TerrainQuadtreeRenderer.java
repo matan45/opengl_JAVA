@@ -2,7 +2,6 @@ package app.renderer.terrain.quadtree;
 
 import app.math.OLVector3f;
 import app.math.components.Camera;
-import app.renderer.HeightMapTextureData;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 
@@ -46,6 +45,8 @@ public class TerrainQuadtreeRenderer {
 
     Camera camera;
 
+    boolean wireframe;
+
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
 
         this.textures = textures;
@@ -53,6 +54,8 @@ public class TerrainQuadtreeRenderer {
 
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
+
+        wireframe = false;
 
         this.camera = camera;
     }
@@ -68,12 +71,15 @@ public class TerrainQuadtreeRenderer {
         OLVector3f origin = new OLVector3f(texture.width() / 2.0f, 0.0f, texture.height() / 2.0f);
         shaderTerrainQuadtree.loadTerrainOrigin(origin);
         shaderTerrainQuadtree.stop();
+
+        terrainQuadtree.terrainCreateTree(new OLVector3f(), texture.width(), texture.height());
     }
 
     public void render() {
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
         shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
+        shaderTerrainQuadtree.loadToggleWireframe(wireframe);
 
         glPatchParameteri(GL_PATCH_VERTICES, 4);
 
@@ -83,7 +89,6 @@ public class TerrainQuadtreeRenderer {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.image());
 
-        terrainQuadtree.terrainCreateTree(new OLVector3f(), texture.width(), texture.height());
         terrainQuadtree.terrainRender();
 
         glDisableVertexAttribArray(0);
@@ -91,6 +96,13 @@ public class TerrainQuadtreeRenderer {
 
         shaderTerrainQuadtree.stop();
 
+    }
 
+    public boolean isWireframe() {
+        return wireframe;
+    }
+
+    public void setWireframe(boolean wireframe) {
+        this.wireframe = wireframe;
     }
 }
