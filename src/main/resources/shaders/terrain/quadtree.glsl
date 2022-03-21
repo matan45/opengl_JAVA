@@ -183,7 +183,7 @@ void main(){
 
 	// Project the vertex to clip space and send it along
 	vec4 worldPosition = model * gl_Position;
- 	gl_Position = projection * view * worldPosition ; 
+ 	gl_Position = projection * view * worldPosition;
 
 	tes_terrainTexCoord = terrainTexCoord;
 	tes_tessLevel = tcs_tessLevel[0];
