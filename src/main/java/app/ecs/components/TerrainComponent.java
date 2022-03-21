@@ -2,7 +2,7 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.renderer.draw.EditorRenderer;
-import app.renderer.terrain.quadtree.TerrainQuadtreeRenderer;
+import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 import imgui.type.ImBoolean;

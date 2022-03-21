@@ -8,9 +8,7 @@ import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.pbr.MeshRendererHandler;
-import app.renderer.terrain.TerrainRenderer;
-import app.renderer.terrain.quadtree.TerrainQuadtree;
-import app.renderer.terrain.quadtree.TerrainQuadtreeRenderer;
+import app.renderer.terrain.TerrainQuadtreeRenderer;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -26,7 +24,6 @@ public class EditorRenderer {
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
     private static Grid grid;
-    private static TerrainRenderer terrain;
 
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
 
@@ -42,7 +39,6 @@ public class EditorRenderer {
 
         skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, editorCamera);
-        terrain = new TerrainRenderer(textures, openGLObjects, editorCamera);
 
         terrainQuadtreeRenderer = new TerrainQuadtreeRenderer(openGLObjects, textures, editorCamera);
 
@@ -56,7 +52,6 @@ public class EditorRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         meshRenderer.renderers();
-        terrain.render();
         terrainQuadtreeRenderer.render();
         lightHandler.drawBillboards(editorCamera);
         skyBox.render();
@@ -110,10 +105,6 @@ public class EditorRenderer {
 
     public static OpenGLObjects getOpenGLObjects() {
         return openGLObjects;
-    }
-
-    public static TerrainRenderer getTerrain() {
-        return terrain;
     }
 
     public static TerrainQuadtreeRenderer getTerrainQuadtreeRenderer() {

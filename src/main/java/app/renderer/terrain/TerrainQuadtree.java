@@ -1,4 +1,4 @@
-package app.renderer.terrain.quadtree;
+package app.renderer.terrain;
 
 import app.math.components.Camera;
 

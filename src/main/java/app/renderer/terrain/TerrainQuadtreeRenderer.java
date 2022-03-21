@@ -1,4 +1,4 @@
-package app.renderer.terrain.quadtree;
+package app.renderer.terrain;
 
 import app.math.OLVector3f;
 import app.math.components.Camera;
@@ -53,7 +53,7 @@ public class TerrainQuadtreeRenderer {
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
 
         this.textures = textures;
-        shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quad\\quadtree.glsl"));
+        shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quadtree.glsl"));
 
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
