@@ -287,6 +287,12 @@ out vec4 FragColor;
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
 
+void colorMapping(float high);
+
+vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
+vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
+vec3 biomeColor (float h);
+
 void main(){
 
 	vec4 color = texture(TexTerrainHeight, gs_terrainTexCoord);
@@ -301,6 +307,67 @@ void main(){
 	if (ToggleWireframe == 1.0)
 		FragColor = mix(gs_wireColor, color, mixVal);
 	else
-		FragColor = color;
+		colorMapping(color.r);
 
 }
+
+void colorMapping(float high){
+	FragColor = vec4(biomeColor(high), 1.0);
+}
+
+//return a color from a to b when h goes from m to n (and divide the color by 255)
+vec3 colormix (vec3 a, vec3 b, float h, float m, float n) {
+    return mix(a/255.0, b/255.0, (h-m)/(n-m));
+}
+               
+//return a color from a to b to c when h goes from m to n (and divide the color by 255)
+vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n) {
+	float t = (h-m)/(n-m);
+    if (t<0.5) {
+    	return mix(a/255.0, b/255.0,t*2.0);
+    }
+    else {
+    	return mix(b/255.0, c/255.0,(t-0.5)*2.0);
+    }
+}
+
+vec3 biomeColor (float h) {
+
+    float oceanh = 0.2;
+    vec3 ocean1 = vec3(8.0 ,42.0 ,79.0);
+    vec3 ocean2 = vec3(23.0 ,79.0 ,114.0);
+    float seah = 0.32;
+    vec3 sea1 = vec3(6.0 ,104.0 ,133.0);
+    vec3 sea2 = vec3(56.0 ,104.0 ,133.0);
+    float bayh = 0.4;
+    vec3 bay1 = vec3(79.0 ,176.0 ,159.0);
+    vec3 bay2 = vec3(93.0 ,204.0 ,167.0);
+    float shoreh = 0.45;
+    vec3 shore1 = vec3(131.0 ,246.0 ,191);
+    vec3 shore2 = vec3(234.0 ,246.0 ,191);
+    float beachh = 0.5;
+    vec3 beach1 = vec3(210.0 ,173.0 ,128.0);
+    vec3 beach2 = vec3(255.0 ,236.0 ,181.0);
+    float fieldh = 0.74;
+    vec3 field1 = vec3(31.0 ,122.0 ,4.0);
+    vec3 field2 = vec3(140.0 ,191.0 ,28.0);
+    float dirth = 0.92;
+    vec3 dirt1 = vec3(154.0 ,148.0 ,9.0);
+    vec3 dirt2 = vec3(204.0 ,170.0 ,31.0);
+    float rockh = 0.97;
+    vec3 rock1 = vec3(133.0 ,140.0 ,112.0);
+    vec3 rock2 = vec3(72.0 ,114.0 ,104.0);
+    vec3 snow1 = vec3(197.0 ,219.0 ,211.0);
+    vec3 snow2 = vec3(224.0 ,255.0 ,255.0);
+
+    if (h<oceanh)    	return colormix(ocean1, ocean2,h,0.0,oceanh);
+    if (h<seah)     	return tricolormix(ocean2,sea1,sea2,h,oceanh,seah);
+    if (h<bayh)         return tricolormix(sea2, bay1, bay2,h,seah,bayh);
+    if (h<shoreh)       return tricolormix(bay2, shore1, shore2,h,bayh,shoreh);
+    if (h<beachh)       return colormix(beach1, beach2,h,shoreh,beachh);
+    if (h<fieldh)       return colormix(field1,field2,h,beachh,fieldh);
+    if (h<dirth)        return tricolormix(field2, dirt1, dirt2,h,fieldh,dirth);
+    if (h<rockh)        return tricolormix(dirt2, rock1, rock2,h,dirth,rockh);
+	else/*snow*/		return tricolormix(rock2,snow1, snow2,h,rockh,1.0);	
+}
+
