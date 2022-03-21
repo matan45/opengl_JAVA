@@ -136,7 +136,7 @@
         <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>Libbulletjme</artifactId>
-            <version>14.0.0</version>
+            <version>14.1.0</version>
         </dependency>
     </dependencies>
 
