@@ -231,8 +231,6 @@ public class TerrainQuadtree {
      * Traverses the terrain quadtree to draw nodes with no children.
      */
     private void terrainRenderRecursive(TerrainNode node) {
-        //if (renderDepth >= maxRenderDepth)
-        //	return;
 
         // If all children are null, render this node
         if (node.c1 == null && node.c2 == null && node.c3 == null && node.c4 == null) {
