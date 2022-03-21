@@ -12,10 +12,8 @@ public class TerrainQuadtree {
     private static final int MAX_TERRAIN_NODES = 500;
 
     private TerrainNode terrainTree;
-    private TerrainNode terrainTreeTail;
     private int numTerrainNodes = 0;
 
-    private int maxRenderDepth = 1;
     private int renderDepth = 0;
 
     private final Camera camera;
@@ -52,8 +50,6 @@ public class TerrainQuadtree {
         terrainNodeTail.e = null;
         terrainNodeTail.w = null;
 
-        terrainTreeTail = terrainNodeTail;
-
         return terrainNodeTail;
 
     }
@@ -62,7 +58,6 @@ public class TerrainQuadtree {
      * Resets the terrain quadtree.
      */
     private void terrainClearTree() {
-        terrainTreeTail = terrainTree;
         numTerrainNodes = 0;
     }
 
@@ -79,11 +74,7 @@ public class TerrainQuadtree {
         // from current origin to corner of current square.
         // OR
         // Max recursion level has been hit
-        if (d > 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0)) || node.width < VMB_TERRAIN_REC_CUTOFF) {
-            return false;
-        }
-
-        return true;
+        return (d <= 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0))) && (node.width >= VMB_TERRAIN_REC_CUTOFF);
     }
 
     /**
@@ -91,14 +82,14 @@ public class TerrainQuadtree {
      */
     private void terrainDivideNode(TerrainNode node) {
         // Subdivide
-        float w_new = 0.5f * node.width;
-        float h_new = 0.5f * node.height;
+        float widthNew = 0.5f * node.width;
+        float heightNew = 0.5f * node.height;
 
         // Create the child nodes
-        node.c1 = createNode(node, node.originX - 0.5f * w_new, node.originY, node.originZ - 0.5f * h_new, 1, w_new, h_new);
-        node.c2 = createNode(node, node.originX + 0.5f * w_new, node.originY, node.originZ - 0.5f * h_new, 2, w_new, h_new);
-        node.c3 = createNode(node, node.originX + 0.5f * w_new, node.originY, node.originZ + 0.5f * h_new, 3, w_new, h_new);
-        node.c4 = createNode(node, node.originX - 0.5f * w_new, node.originY, node.originZ + 0.5f * h_new, 4, w_new, h_new);
+        node.c1 = createNode(node, node.originX - 0.5f * widthNew, node.originY, node.originZ - 0.5f * heightNew, 1, widthNew, heightNew);
+        node.c2 = createNode(node, node.originX + 0.5f * widthNew, node.originY, node.originZ - 0.5f * heightNew, 2, widthNew, heightNew);
+        node.c3 = createNode(node, node.originX + 0.5f * widthNew, node.originY, node.originZ + 0.5f * heightNew, 3, widthNew, heightNew);
+        node.c4 = createNode(node, node.originX - 0.5f * widthNew, node.originY, node.originZ + 0.5f * heightNew, 4, widthNew, heightNew);
 
         // Assign neighbors
         if (node.type == 1) {

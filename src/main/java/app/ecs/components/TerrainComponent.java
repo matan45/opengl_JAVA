@@ -1,9 +1,7 @@
 package app.ecs.components;
 
 import app.ecs.Entity;
-import app.math.components.OLTransform;
 import app.renderer.draw.EditorRenderer;
-import app.renderer.terrain.TerrainRenderer;
 import app.renderer.terrain.quadtree.TerrainQuadtreeRenderer;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
@@ -36,11 +34,11 @@ public class TerrainComponent extends CommonComponent {
 
         ImGui.pushID("Displacement");
         if (ImGui.button("Displacement"))
-            terrain.setgDispFactor(40f);
+            terrain.setDisplacementFactor(40f);
         ImGui.sameLine();
-        float[] displacementValue = {terrain.getgDispFactor()};
+        float[] displacementValue = {terrain.getDisplacementFactor()};
         ImGui.dragFloat("##Y", displacementValue, 0.1f);
-        terrain.setgDispFactor(displacementValue[0]);
+        terrain.setDisplacementFactor(displacementValue[0]);
         ImGui.popID();
 
         ImGui.textWrapped("RenderDepth: " + terrain.getRenderDepth());
