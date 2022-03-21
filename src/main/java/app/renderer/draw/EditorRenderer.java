@@ -9,6 +9,8 @@ import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainRenderer;
+import app.renderer.terrain.quadtree.TerrainQuadtree;
+import app.renderer.terrain.quadtree.TerrainQuadtreeRenderer;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -26,6 +28,8 @@ public class EditorRenderer {
     private static Grid grid;
     private static TerrainRenderer terrain;
 
+    private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
+
     private EditorRenderer() {
     }
 
@@ -40,6 +44,8 @@ public class EditorRenderer {
         grid = new Grid(openGLObjects, editorCamera);
         terrain = new TerrainRenderer(textures, openGLObjects, editorCamera);
 
+        terrainQuadtreeRenderer = new TerrainQuadtreeRenderer(openGLObjects, textures, editorCamera);
+
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
     }
@@ -51,6 +57,7 @@ public class EditorRenderer {
         enable();
         meshRenderer.renderers();
         terrain.render();
+        terrainQuadtreeRenderer.render();
         lightHandler.drawBillboards(editorCamera);
         skyBox.render();
         grid.render();
@@ -107,5 +114,9 @@ public class EditorRenderer {
 
     public static TerrainRenderer getTerrain() {
         return terrain;
+    }
+
+    public static TerrainQuadtreeRenderer getTerrainQuadtreeRenderer() {
+        return terrainQuadtreeRenderer;
     }
 }

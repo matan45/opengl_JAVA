@@ -242,7 +242,7 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt) {
-        float speed = 1.2f;
+        float speed = 50f;
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;

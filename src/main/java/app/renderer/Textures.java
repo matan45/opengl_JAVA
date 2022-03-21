@@ -20,6 +20,7 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
