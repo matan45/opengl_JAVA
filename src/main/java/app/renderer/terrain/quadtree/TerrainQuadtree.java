@@ -226,9 +226,6 @@ public class TerrainQuadtree {
         // Setup matrices
         shaderTerrainQuadtree.loadModelMatrix(node.getOlTransform());
 
-        shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
-        shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
-
         shaderTerrainQuadtree.loadtileScale(node.width);
         shaderTerrainQuadtree.loadtscale_negx(node.tscaleNegx);
         shaderTerrainQuadtree.loadtscale_negz(node.tscaleNegz);

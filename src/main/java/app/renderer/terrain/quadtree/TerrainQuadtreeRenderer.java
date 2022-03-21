@@ -69,7 +69,7 @@ public class TerrainQuadtreeRenderer {
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
         wireframe = false;
-        gDispFactor = 2f;
+        gDispFactor = 40f;
 
         this.camera = camera;
     }
@@ -95,6 +95,8 @@ public class TerrainQuadtreeRenderer {
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
             shaderTerrainQuadtree.loadTerrainHeightOffset(gDispFactor);
+            shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
+            shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
 
             glPatchParameteri(GL_PATCH_VERTICES, 4);
 
