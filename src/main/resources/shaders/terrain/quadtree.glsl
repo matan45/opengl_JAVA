@@ -195,7 +195,7 @@ void main(){
 
 layout(triangles) in;
 
-layout(triangle_strip, max_vertices = 4) out;
+layout(triangle_strip, max_vertices = 3) out;
 
 in vec2 tes_terrainTexCoord[];
 in float tes_tessLevel[];
@@ -204,6 +204,7 @@ out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
 out vec3 worldPosition;
+out vec3 normal;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -222,10 +223,33 @@ vec4 wireframeColor()
 		return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
-void main(void)
+
+vec3 calcTangent()
+{	
+	vec3 v0 = gl_in[0].gl_Position.xyz;
+	vec3 v1 = gl_in[1].gl_Position.xyz;
+	vec3 v2 = gl_in[2].gl_Position.xyz;
+
+	// edges of the face/triangle
+    vec3 e1 = v1 - v0;
+    vec3 e2 = v2 - v0;
+	
+	vec2 uv0 = tes_terrainTexCoord[0];
+	vec2 uv1 = tes_terrainTexCoord[1];
+	vec2 uv2 = tes_terrainTexCoord[2];
+
+    vec2 deltaUV1 = uv1 - uv0;
+	vec2 deltaUV2 = uv2 - uv0;
+	
+	float r = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+	
+	return normalize((e1 * deltaUV2.y - e2 * deltaUV1.y)*r);
+}
+
+void main()
 {
 	vec4 wireColor = wireframeColor();
-	worldPosition = gl_in[0].gl_Position.xyz * 0.5 + gl_in[1].gl_Position.xyz * 0.5 + gl_in[2].gl_Position.xyz * 0.5;
+	vec3 tangent = calcTangent();
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -254,7 +278,9 @@ void main(void)
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gs_terrainTexCoord = tes_terrainTexCoord[i];
+		worldPosition = gl_in[i].gl_Position.xyz;
 		gs_wireColor = wireColor;
+		normal = tangent;
 
 		if (i == 0)
 			gs_edgeDist = vec3(ha, 0, 0);
@@ -266,12 +292,9 @@ void main(void)
 		EmitVertex();
 	}
 
-	// This closes the the triangle
-	gl_Position = gl_in[0].gl_Position;
-	gs_edgeDist = vec3(ha, 0, 0);
-	gs_terrainTexCoord = tes_terrainTexCoord[0];
+	
 	gs_wireColor = wireColor;
-	EmitVertex();
+	
 	
 	EndPrimitive();
 }
@@ -284,6 +307,7 @@ in vec4 gs_wireColor;
 noperspective in vec3 gs_edgeDist;
 in vec2 gs_terrainTexCoord;
 in vec3 worldPosition;
+in vec3 normal;
 
 out vec4 FragColor;
 
@@ -302,7 +326,6 @@ void colorMapping(float high);
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
-vec3 getNormalFromMap();
 
 void main(){
 
@@ -324,9 +347,7 @@ void main(){
 
 void colorMapping(float high){
 	vec3 albedo = pow(biomeColor(high), vec3(2.2));
-	vec3 normal = getNormalFromMap();
-
-	vec3 Normal = mat3(model) * normal;
+	
 	vec4 worldPos = model * vec4(worldPosition * tileScale, 1.0);
 
 	// HDR tonemapping
@@ -334,22 +355,7 @@ void colorMapping(float high){
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
- 	
-    FragColor = vec4(Normal, 1.0);
-}
-
-vec3 getNormalFromMap(){
-	const vec2 size = vec2(2.0,0.0);
-	const ivec3 off = ivec3(-1,0,1);
-
-	float s01 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.xy).r;
-    float s21 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.zy).r;
-    float s10 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.yx).r;
-    float s12 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.yz).r;
-    vec3 va = normalize(vec3(size.xy,s21-s01));
-    vec3 vb = normalize(vec3(size.yx,s12-s10));
-    vec3 bump = vec3( cross(va,vb));
-	return vec3(abs(bump.x - TerrainOrigin.x) / TerrainWidth, bump.y, abs(bump.z - TerrainOrigin.z) / TerrainLength);
+    FragColor = vec4(normal, 1.0);
 }
 
 
