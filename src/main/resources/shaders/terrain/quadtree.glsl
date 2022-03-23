@@ -248,8 +248,8 @@ vec3 calcTangent()
 
 void main()
 {
-	vec4 wireColor = wireframeColor();
-	vec3 tangent = calcTangent();
+	gs_wireColor = wireframeColor();
+	normal = calcTangent();
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -279,8 +279,6 @@ void main()
 		gl_Position = gl_in[i].gl_Position;
 		gs_terrainTexCoord = tes_terrainTexCoord[i];
 		worldPosition = gl_in[i].gl_Position.xyz;
-		gs_wireColor = wireColor;
-		normal = tangent;
 
 		if (i == 0)
 			gs_edgeDist = vec3(ha, 0, 0);
@@ -291,9 +289,6 @@ void main()
 
 		EmitVertex();
 	}
-
-	
-	gs_wireColor = wireColor;
 	
 	
 	EndPrimitive();
@@ -305,21 +300,15 @@ void main()
 
 in vec4 gs_wireColor;
 noperspective in vec3 gs_edgeDist;
+
 in vec2 gs_terrainTexCoord;
 in vec3 worldPosition;
 in vec3 normal;
 
 out vec4 FragColor;
 
-uniform mat4 model;
-uniform float tileScale;
-
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
-
-uniform float TerrainLength;
-uniform float TerrainWidth;
-uniform vec3 TerrainOrigin;
 
 void colorMapping(float high);
 
@@ -347,15 +336,13 @@ void main(){
 
 void colorMapping(float high){
 	vec3 albedo = pow(biomeColor(high), vec3(2.2));
-	
-	vec4 worldPos = model * vec4(worldPosition * tileScale, 1.0);
 
 	// HDR tonemapping
     vec3 color = albedo / (albedo + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-    FragColor = vec4(normal, 1.0);
+    FragColor = vec4(color, 1.0);
 }
 
 
