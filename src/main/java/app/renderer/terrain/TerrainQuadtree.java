@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL40.GL_PATCHES;
 
 public class TerrainQuadtree {
 
-    private static final int VMB_TERRAIN_REC_CUTOFF = 100;
+    private static final int MAX_RECURSION = 100;
     private static final int MAX_TERRAIN_NODES = 500;
 
     private TerrainNode terrainTree;
@@ -74,7 +74,7 @@ public class TerrainQuadtree {
         // from current origin to corner of current square.
         // OR
         // Max recursion level has been hit
-        return (d <= 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0))) && (node.width >= VMB_TERRAIN_REC_CUTOFF);
+        return (d <= 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0))) && (node.width >= MAX_RECURSION);
     }
 
     /**
@@ -217,11 +217,11 @@ public class TerrainQuadtree {
         // Setup matrices
         shaderTerrainQuadtree.loadModelMatrix(node.getOlTransform());
 
-        shaderTerrainQuadtree.loadtileScale(node.width);
-        shaderTerrainQuadtree.loadtscale_negx(node.tscaleNegx);
-        shaderTerrainQuadtree.loadtscale_negz(node.tscaleNegz);
-        shaderTerrainQuadtree.loadtscale_posx(node.tscalePosx);
-        shaderTerrainQuadtree.loadtscale_posz(node.tscalePosz);
+        shaderTerrainQuadtree.loadTileScale(node.width);
+        shaderTerrainQuadtree.loadScaleNegx(node.tscaleNegx);
+        shaderTerrainQuadtree.loadScaleNegz(node.tscaleNegz);
+        shaderTerrainQuadtree.loadScalePosx(node.tscalePosx);
+        shaderTerrainQuadtree.loadScalePosz(node.tscalePosz);
 
         // Do it
         glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);
@@ -264,5 +264,9 @@ public class TerrainQuadtree {
 
     public int getRenderDepth() {
         return renderDepth;
+    }
+
+    public int getNumTerrainNodes() {
+        return numTerrainNodes;
     }
 }

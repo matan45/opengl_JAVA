@@ -42,6 +42,7 @@ public class TerrainComponent extends CommonComponent {
         ImGui.popID();
 
         ImGui.textWrapped("RenderDepth: " + terrain.getRenderDepth());
+        ImGui.textWrapped("Number of Terrain Nodes: " + terrain.getNumTerrainNodes());
 
         ImGui.checkbox("Wireframe", wireframe);
         terrain.setWireframe(wireframe.get());

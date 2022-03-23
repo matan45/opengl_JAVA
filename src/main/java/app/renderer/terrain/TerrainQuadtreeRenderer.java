@@ -123,6 +123,11 @@ public class TerrainQuadtreeRenderer {
         return terrainQuadtree.getRenderDepth();
     }
 
+    public float getNumTerrainNodes() {
+        return terrainQuadtree.getNumTerrainNodes();
+    }
+
+
     public void setActive(boolean active) {
         isActive = active;
     }

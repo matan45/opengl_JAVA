@@ -70,23 +70,23 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         super.load2DVector(locationviewport, viewPort);
     }
 
-    public void loadtileScale(float scale) {
+    public void loadTileScale(float scale) {
         super.loadFloat(locationtileScale, 0.5f * scale);
     }
 
-    public void loadtscale_negx(float scale) {
+    public void loadScaleNegx(float scale) {
         super.loadFloat(locationtscale_negx, scale);
     }
 
-    public void loadtscale_negz(float scale) {
+    public void loadScaleNegz(float scale) {
         super.loadFloat(locationtscale_negz, scale);
     }
 
-    public void loadtscale_posx(float scale) {
+    public void loadScalePosx(float scale) {
         super.loadFloat(locationtscale_posx, scale);
     }
 
-    public void loadtscale_posz(float scale) {
+    public void loadScalePosz(float scale) {
         super.loadFloat(locationtscale_posz, scale);
     }
 
