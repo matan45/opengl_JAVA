@@ -155,8 +155,9 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 
 void main()
 {
+    FragColor = texture(irradianceMap, Normal);
         // input lighting data
-        vec3 V = normalize(cameraPosition - WorldPos);
+       /* vec3 V = normalize(cameraPosition - WorldPos);
 
         // material properties
         vec3 albedo =  pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
@@ -208,7 +209,7 @@ void main()
         // gamma correct
         color = pow(color, vec3(1.0/2.2));
 
-        FragColor = vec4(color , 1.0);
+        FragColor = vec4(color , 1.0);*/
 }
 
 

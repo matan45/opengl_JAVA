@@ -262,13 +262,9 @@ public class ViewPort implements ImguiLayer {
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed * dt;
             isViewChange = true;
-            if (position.y < -360)
-                position.y = 0;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
             position.y += 1 * speed * dt;
             isViewChange = true;
-            if (position.y > 360)
-                position.y = 0;
         }
     }
 

@@ -86,7 +86,7 @@ public class MeshRenderer {
     private void bind() {
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getEnvCubeMap());
 
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getPrefilterMap());
