@@ -297,7 +297,7 @@ void colorMapping(float high);
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
-vec4 getNormalFromMap(float high);
+vec3 getNormalFromMap();
 
 void main(){
 
@@ -319,7 +319,9 @@ void main(){
 
 void colorMapping(float high){
 	vec3 albedo = pow(biomeColor(high), vec3(2.2));
-	vec4 normal = getNormalFromMap(high);
+	vec3 normal = getNormalFromMap();
+
+	vec3 N = mat3(model) * normal;
 
 	// HDR tonemapping
     vec3 color = albedo / (albedo + vec3(1.0));
@@ -330,7 +332,7 @@ void colorMapping(float high){
     FragColor = vec4(color, 1.0);
 }
 
-vec4 getNormalFromMap(float high){
+vec3 getNormalFromMap(){
 	const vec2 size = vec2(2.0,0.0);
 	const ivec3 off = ivec3(-1,0,1);
 
@@ -340,7 +342,7 @@ vec4 getNormalFromMap(float high){
     float s12 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.yz).r;
     vec3 va = normalize(vec3(size.xy,s21-s01));
     vec3 vb = normalize(vec3(size.yx,s12-s10));
-    vec4 bump = vec4( cross(va,vb), high );
+    vec3 bump = vec3( cross(va,vb));
 	return bump;
 }
 
