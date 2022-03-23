@@ -203,6 +203,7 @@ in float tes_tessLevel[];
 out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
+out vec3 worldPosition;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -224,6 +225,7 @@ vec4 wireframeColor()
 void main(void)
 {
 	vec4 wireColor = wireframeColor();
+	worldPosition = gl_in[0].gl_Position.xyz;
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -281,8 +283,11 @@ void main(void)
 in vec4 gs_wireColor;
 noperspective in vec3 gs_edgeDist;
 in vec2 gs_terrainTexCoord;
+in vec3 worldPosition;
 
 out vec4 FragColor;
+
+uniform mat4 model;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
@@ -292,6 +297,7 @@ void colorMapping(float high);
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
+vec4 getNormalFromMap(float high);
 
 void main(){
 
@@ -312,7 +318,30 @@ void main(){
 }
 
 void colorMapping(float high){
-	FragColor = vec4(biomeColor(high), 1.0);
+	vec3 albedo = pow(biomeColor(high), vec3(2.2));
+	vec4 normal = getNormalFromMap(high);
+
+	// HDR tonemapping
+    vec3 color = albedo / (albedo + vec3(1.0));
+    // gamma correct
+    color = pow(color, vec3(1.0/2.2));
+
+ 	vec4 worldPos = model * vec4(worldPosition, 1.0);
+    FragColor = color;
+}
+
+vec4 getNormalFromMap(float high){
+	const vec2 size = vec2(2.0,0.0);
+	const ivec3 off = ivec3(-1,0,1);
+
+	float s01 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.xy).r;
+    float s21 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.zy).r;
+    float s10 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.yx).r;
+    float s12 = textureOffset(TexTerrainHeight, gs_terrainTexCoord, off.yz).r;
+    vec3 va = normalize(vec3(size.xy,s21-s01));
+    vec3 vb = normalize(vec3(size.yx,s12-s10));
+    vec4 bump = vec4( cross(va,vb), high );
+	return bump;
 }
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
