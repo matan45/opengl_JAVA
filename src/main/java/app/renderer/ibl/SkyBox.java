@@ -297,11 +297,11 @@ public class SkyBox {
             backgroundShader.loadExposure(exposure);
             glActiveTexture(GL_TEXTURE0);
 
-           /* if (showLightMap)
+            if (showLightMap)
                 glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
             else if (showPreFilterMap)
                 glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap); // display prefilter map
-            else*/
+            else
                 glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
 
             renderCube();
@@ -400,10 +400,6 @@ public class SkyBox {
 
     public int getIrradianceMap() {
         return irradianceMap;
-    }
-
-    public int getEnvCubeMap() {
-        return envCubeMap;
     }
 
     public int getPrefilterMap() {
