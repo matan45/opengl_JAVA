@@ -321,14 +321,15 @@ void colorMapping(float high){
 	vec3 albedo = pow(biomeColor(high), vec3(2.2));
 	vec3 normal = getNormalFromMap();
 
-	vec3 N = mat3(model) * normal;
+	vec3 Normal = mat3(model) * normal;
+	vec4 worldPos = model * vec4(worldPosition, 1.0);
 
 	// HDR tonemapping
     vec3 color = albedo / (albedo + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
- 	vec4 worldPos = model * vec4(worldPosition, 1.0);
+ 	
     FragColor = vec4(color, 1.0);
 }
 
