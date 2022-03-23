@@ -327,7 +327,7 @@ void colorMapping(float high){
     color = pow(color, vec3(1.0/2.2));
 
  	vec4 worldPos = model * vec4(worldPosition, 1.0);
-    FragColor = color;
+    FragColor = vec4(color, 1.0);
 }
 
 vec4 getNormalFromMap(float high){
