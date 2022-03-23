@@ -225,7 +225,7 @@ vec4 wireframeColor()
 void main(void)
 {
 	vec4 wireColor = wireframeColor();
-	worldPosition = gl_in[0].gl_Position.xyz;
+	worldPosition = gl_in[0].gl_Position.xyz * 0.5 + gl_in[1].gl_Position.xyz * 0.5 + gl_in[2].gl_Position.xyz * 0.5;
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -288,9 +288,14 @@ in vec3 worldPosition;
 out vec4 FragColor;
 
 uniform mat4 model;
+uniform float tileScale;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
+
+uniform float TerrainLength;
+uniform float TerrainWidth;
+uniform vec3 TerrainOrigin;
 
 void colorMapping(float high);
 
@@ -322,7 +327,7 @@ void colorMapping(float high){
 	vec3 normal = getNormalFromMap();
 
 	vec3 Normal = mat3(model) * normal;
-	vec4 worldPos = model * vec4(worldPosition, 1.0);
+	vec4 worldPos = model * vec4(worldPosition * tileScale, 1.0);
 
 	// HDR tonemapping
     vec3 color = albedo / (albedo + vec3(1.0));
@@ -330,7 +335,7 @@ void colorMapping(float high){
     color = pow(color, vec3(1.0/2.2));
 
  	
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(Normal, 1.0);
 }
 
 vec3 getNormalFromMap(){
@@ -344,8 +349,9 @@ vec3 getNormalFromMap(){
     vec3 va = normalize(vec3(size.xy,s21-s01));
     vec3 vb = normalize(vec3(size.yx,s12-s10));
     vec3 bump = vec3( cross(va,vb));
-	return bump;
+	return vec3(abs(bump.x - TerrainOrigin.x) / TerrainWidth, bump.y, abs(bump.z - TerrainOrigin.z) / TerrainLength);
 }
+
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n) {
