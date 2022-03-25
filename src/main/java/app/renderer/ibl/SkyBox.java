@@ -41,7 +41,7 @@ public class SkyBox {
     private int prefilterMap;
     private int brdfLUTTexture;
 
-    private int quadVAO;
+    private final int quadVAO;
     private static final float[] quadVertices = {
             // positions
             -1.0f, 1.0f, 0.0f,
@@ -57,7 +57,7 @@ public class SkyBox {
             1.0f, 0.0f,
     };
 
-    private int cubeVAO;
+    private final int cubeVAO;
     private static final float[] cubeVertices = {
             -1.0f, 1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
@@ -414,12 +414,12 @@ public class SkyBox {
         return path;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
     public void setExposure(float exposure) {
         this.exposure = exposure;
+    }
+
+    public float getExposure() {
+        return exposure;
     }
 
     public void setActive(boolean active) {

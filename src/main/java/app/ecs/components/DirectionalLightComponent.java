@@ -6,7 +6,6 @@ import app.renderer.Textures;
 import app.renderer.debug.billboards.Billboards;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.lights.DirectionalLight;
-import app.renderer.lights.PointLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 

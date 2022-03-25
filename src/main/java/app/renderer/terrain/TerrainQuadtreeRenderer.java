@@ -1,0 +1,162 @@
+package app.renderer.terrain;
+
+import app.math.OLVector3f;
+import app.math.components.Camera;
+import app.renderer.OpenGLObjects;
+import app.renderer.Textures;
+
+import java.nio.file.Paths;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL40.GL_PATCH_VERTICES;
+import static org.lwjgl.opengl.GL40.glPatchParameteri;
+
+public class TerrainQuadtreeRenderer {
+
+    private final TerrainQuadtree terrainQuadtree;
+    private final ShaderTerrainQuadtree shaderTerrainQuadtree;
+    private final Textures textures;
+    private final Camera camera;
+
+    private static final float[] quadData = {
+            // Vert 1
+            -1.0f, 0.0f, -1.0f, 1.0f,    // Position
+            // Vert 2
+            1.0f, 0.0f, -1.0f, 1.0f,        // Position
+            // Vert 3
+            1.0f, 0.0f, 1.0f, 1.0f,        // Position
+            // Vert 4
+            -1.0f, 0.0f, 1.0f, 1.0f,        // Position
+    };
+
+    private static final int[] quadPatchInd = {0, 1, 2, 3};
+
+    private final int vao;
+    private int texture;
+
+    private String path;
+
+    private boolean wireframe;
+    private boolean isActive;
+
+    private float displacementFactor;
+    private float sightRange;
+    private OLVector3f fogColor;
+
+    private static final int WIDTH = 4096;
+    private static final int LENGTH = 4096;
+
+    public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
+
+        this.textures = textures;
+        shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quadtree.glsl"));
+
+        terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
+        vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
+
+        wireframe = false;
+        displacementFactor = 40f;
+        fogColor = new OLVector3f(0.5f, 0.5f, 0.5f);
+        sightRange = 0.1f;
+
+        this.camera = camera;
+    }
+
+    public void init(String path) {
+        texture = textures.loadTexture(path);
+
+        this.path = path;
+
+        shaderTerrainQuadtree.start();
+        shaderTerrainQuadtree.loadTexHighMap();
+        shaderTerrainQuadtree.loadTerrainWidth(WIDTH);
+        shaderTerrainQuadtree.loadTerrainLength(LENGTH);
+        OLVector3f origin = new OLVector3f(WIDTH / 2.0f, 0.0f, LENGTH / 2.0f);
+        shaderTerrainQuadtree.loadTerrainOrigin(origin);
+        shaderTerrainQuadtree.stop();
+
+    }
+
+    public void render() {
+        if (isActive) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+            shaderTerrainQuadtree.start();
+            shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
+            shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
+            shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
+            shaderTerrainQuadtree.loadCameraPosition(camera.getPosition());
+
+            shaderTerrainQuadtree.loadToggleWireframe(wireframe);
+            shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
+            shaderTerrainQuadtree.loadFogColor(fogColor);
+            shaderTerrainQuadtree.loadSightRange(sightRange);
+
+            glPatchParameteri(GL_PATCH_VERTICES, 4);
+
+            glBindVertexArray(vao);
+            glEnableVertexAttribArray(0);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+
+            terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
+            terrainQuadtree.terrainRender();
+
+            glDisableVertexAttribArray(0);
+            glBindVertexArray(0);
+
+            shaderTerrainQuadtree.stop();
+            glDisable(GL_CULL_FACE);
+        }
+
+    }
+
+    public float getDisplacementFactor() {
+        return displacementFactor;
+    }
+
+    public void setDisplacementFactor(float displacementFactor) {
+        this.displacementFactor = displacementFactor;
+    }
+
+    public void setWireframe(boolean wireframe) {
+        this.wireframe = wireframe;
+    }
+
+    public float getRenderDepth() {
+        return terrainQuadtree.getRenderDepth();
+    }
+
+    public float getNumTerrainNodes() {
+        return terrainQuadtree.getNumTerrainNodes();
+    }
+
+    public float getSightRange() {
+        return sightRange;
+    }
+
+    public void setSightRange(float sightRange) {
+        this.sightRange = sightRange;
+    }
+
+    public void setFogColor(float r, float g, float b) {
+        this.fogColor.x = r;
+        this.fogColor.y = g;
+        this.fogColor.z = b;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getPath() {
+        return path;
+    }
+}

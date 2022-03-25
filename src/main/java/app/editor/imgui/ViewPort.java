@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.components.TransformComponent;
+import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.Textures;
@@ -151,6 +152,7 @@ public class ViewPort implements ImguiLayer {
                 cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 1000f).getAsArray();
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
+                editorCamera.setViewPort(new OLVector2f(preWindowWidth, preWindowHeight));
             }
 
             ImGuizmo.setOrthographic(false);
@@ -207,7 +209,7 @@ public class ViewPort implements ImguiLayer {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            cameraMovement(position, rotation,dt);
+            cameraMovement(position, rotation, dt);
 
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;
@@ -240,7 +242,7 @@ public class ViewPort implements ImguiLayer {
     }
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt) {
-        float speed = 1.2f;
+        float speed = 50f;
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
@@ -260,13 +262,9 @@ public class ViewPort implements ImguiLayer {
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed * dt;
             isViewChange = true;
-            if (position.y < -360)
-                position.y = 0;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
             position.y += 1 * speed * dt;
             isViewChange = true;
-            if (position.y > 360)
-                position.y = 0;
         }
     }
 

@@ -23,10 +23,10 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <lwjgl.version>3.3.0</lwjgl.version>
+        <lwjgl.version>3.3.1</lwjgl.version>
         <lwjgl.natives>natives-windows</lwjgl.natives>
-        <imgui.java.version>1.86.2</imgui.java.version>
-        <com.google.code.gson>2.8.9</com.google.code.gson>
+        <imgui.java.version>1.86.4</imgui.java.version>
+        <com.google.code.gson>2.9.0</com.google.code.gson>
     </properties>
 
 
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>Libbulletjme</artifactId>
-            <version>12.7.1</version>
+            <version>14.1.0</version>
         </dependency>
     </dependencies>
 

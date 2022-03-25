@@ -12,13 +12,11 @@ import java.io.File;
 public class SkyBoxComponent extends CommonComponent {
     private final SkyBox skyBox;
     private final ImInt select;
-    private float exposure;
 
     public SkyBoxComponent(Entity ownerEntity) {
         super(ownerEntity);
         skyBox = EditorRenderer.getSkyBox();
         select = new ImInt(0);
-        exposure = 2.2f;
     }
 
     @Override
@@ -47,12 +45,11 @@ public class SkyBoxComponent extends CommonComponent {
         }
 
         if (ImGui.button("Exposure"))
-            exposure = 2.2f;
+            skyBox.setExposure(2.2f);
         ImGui.sameLine();
-        float[] exposureValue = {exposure};
+        float[] exposureValue = {skyBox.getExposure()};
         ImGui.dragFloat("##Y", exposureValue, 0.1f);
-        exposure = exposureValue[0];
-        skyBox.setExposure(exposure);
+        skyBox.setExposure(exposureValue[0]);
 
     }
 

@@ -31,6 +31,14 @@ public class OpenGLObjects {
         return new VaoModel(vaoID, indices.length);
     }
 
+    public int loadToVAO(float[] positions,int[] indices) {
+        int vaoID = createVAO();
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, 4, positions);
+        unbindVAO();
+        return vaoID;
+    }
+
     public int loadToVAO(float[] positions, float[] textureCoords) {
         int vaoID = createVAO();
         storeDataInAttributeList(0, 3, positions);
