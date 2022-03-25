@@ -4,6 +4,7 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
+import app.renderer.fog.Fog;
 
 import java.nio.file.Paths;
 
@@ -46,8 +47,8 @@ public class TerrainQuadtreeRenderer {
     private boolean isActive;
 
     private float displacementFactor;
-    private float sightRange;
-    private OLVector3f fogColor;
+
+    private Fog fog;
 
     private static final int WIDTH = 4096;
     private static final int LENGTH = 4096;
@@ -62,8 +63,6 @@ public class TerrainQuadtreeRenderer {
 
         wireframe = false;
         displacementFactor = 40f;
-        fogColor = new OLVector3f(0.5f, 0.5f, 0.5f);
-        sightRange = 0.1f;
 
         this.camera = camera;
     }
@@ -95,8 +94,13 @@ public class TerrainQuadtreeRenderer {
 
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
-            shaderTerrainQuadtree.loadFogColor(fogColor);
-            shaderTerrainQuadtree.loadSightRange(sightRange);
+
+            if (fog != null) {
+                shaderTerrainQuadtree.loadIsFog(true);
+                shaderTerrainQuadtree.loadFogColor(fog.getFogColor());
+                shaderTerrainQuadtree.loadSightRange(fog.getSightRange());
+            } else
+                shaderTerrainQuadtree.loadIsFog(false);
 
             glPatchParameteri(GL_PATCH_VERTICES, 4);
 
@@ -138,18 +142,8 @@ public class TerrainQuadtreeRenderer {
         return terrainQuadtree.getNumTerrainNodes();
     }
 
-    public float getSightRange() {
-        return sightRange;
-    }
-
-    public void setSightRange(float sightRange) {
-        this.sightRange = sightRange;
-    }
-
-    public void setFogColor(float r, float g, float b) {
-        this.fogColor.x = r;
-        this.fogColor.y = g;
-        this.fogColor.z = b;
+    public void setFog(Fog fog) {
+        this.fog = fog;
     }
 
     public void setActive(boolean active) {
