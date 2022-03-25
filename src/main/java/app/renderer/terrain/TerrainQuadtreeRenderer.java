@@ -7,8 +7,8 @@ import app.renderer.Textures;
 
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -42,10 +42,12 @@ public class TerrainQuadtreeRenderer {
 
     private String path;
 
-    boolean wireframe;
-    boolean isActive;
+    private boolean wireframe;
+    private boolean isActive;
 
-    float displacementFactor;
+    private float displacementFactor;
+    private float sightRange;
+    private OLVector3f fogColor;
 
     private static final int WIDTH = 4096;
     private static final int LENGTH = 4096;
@@ -60,6 +62,8 @@ public class TerrainQuadtreeRenderer {
 
         wireframe = false;
         displacementFactor = 40f;
+        fogColor = new OLVector3f(0.5f, 0.5f, 0.5f);
+        sightRange = 0.1f;
 
         this.camera = camera;
     }
@@ -81,12 +85,18 @@ public class TerrainQuadtreeRenderer {
 
     public void render() {
         if (isActive) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
             shaderTerrainQuadtree.start();
-            shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
-            shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
             shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
             shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
+            shaderTerrainQuadtree.loadCameraPosition(camera.getPosition());
+
+            shaderTerrainQuadtree.loadToggleWireframe(wireframe);
+            shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
+            shaderTerrainQuadtree.loadFogColor(fogColor);
+            shaderTerrainQuadtree.loadSightRange(sightRange);
 
             glPatchParameteri(GL_PATCH_VERTICES, 4);
 
@@ -103,6 +113,7 @@ public class TerrainQuadtreeRenderer {
             glBindVertexArray(0);
 
             shaderTerrainQuadtree.stop();
+            glDisable(GL_CULL_FACE);
         }
 
     }
@@ -127,6 +138,19 @@ public class TerrainQuadtreeRenderer {
         return terrainQuadtree.getNumTerrainNodes();
     }
 
+    public float getSightRange() {
+        return sightRange;
+    }
+
+    public void setSightRange(float sightRange) {
+        this.sightRange = sightRange;
+    }
+
+    public void setFogColor(float r, float g, float b) {
+        this.fogColor.x = r;
+        this.fogColor.y = g;
+        this.fogColor.z = b;
+    }
 
     public void setActive(boolean active) {
         isActive = active;

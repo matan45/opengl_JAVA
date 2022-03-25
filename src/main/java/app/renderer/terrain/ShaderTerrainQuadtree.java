@@ -24,7 +24,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationToggleWireframe;
     private int locationTerrainOrigin;
     private int locationTerrainHeightOffset;
-    private int locationviewport;
+    private int locationViewport;
+    private int locationCameraPosition;
+    private int locationSightRange;
+    private int locationFogColor;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -35,10 +38,14 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
+        locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
         locationtileScale = super.getUniformLocation("tileScale");
         locationToggleWireframe = super.getUniformLocation("ToggleWireframe");
-        locationviewport = super.getUniformLocation("Viewport");
+        locationViewport = super.getUniformLocation("Viewport");
+
+        locationSightRange = super.getUniformLocation("sightRange");
+        locationFogColor = super.getUniformLocation("fogColor");
 
         locationtscale_negx = super.getUniformLocation("tscale_negx");
         locationtscale_negz = super.getUniformLocation("tscale_negz");
@@ -54,6 +61,18 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     }
 
+    public void loadCameraPosition(OLVector3f camera) {
+        super.load3DVector(locationCameraPosition, camera);
+    }
+
+    public void loadSightRange(float sightRange) {
+        super.loadFloat(locationSightRange, sightRange);
+    }
+
+    public void loadFogColor(OLVector3f fogColor) {
+        super.load3DVector(locationFogColor, fogColor);
+    }
+
     public void loadViewMatrix(OLMatrix4f view) {
         super.loadMatrix(locationViewMatrix, view);
     }
@@ -67,7 +86,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     }
 
     public void loadViewPort(OLVector2f viewPort) {
-        super.load2DVector(locationviewport, viewPort);
+        super.load2DVector(locationViewport, viewPort);
     }
 
     public void loadTileScale(float scale) {

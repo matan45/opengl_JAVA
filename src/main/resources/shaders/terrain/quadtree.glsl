@@ -273,12 +273,13 @@ void main()
 		ha = hb = hc = 0.0;
 	}
 
+	vec3 position;
 	// Output verts
 	for(int i = 0; i < gl_in.length(); ++i)
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gs_terrainTexCoord = tes_terrainTexCoord[i];
-		worldPosition = gl_in[i].gl_Position.xyz;
+		position += gl_in[i].gl_Position.xyz;
 
 		if (i == 0)
 			gs_edgeDist = vec3(ha, 0, 0);
@@ -290,6 +291,7 @@ void main()
 		EmitVertex();
 	}
 	
+	worldPosition = position * 0.5;
 	
 	EndPrimitive();
 }
@@ -309,12 +311,23 @@ out vec4 FragColor;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
+uniform vec3 cameraPosition;
+
+uniform mat4 model;
 
 void colorMapping(float high);
 
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
+
+const float zfar = 1000;
+uniform vec3 fogColor;
+uniform float sightRange;
+float getFogFactor(float dist)
+{
+	return -0.0002 / sightRange * ( dist - (zfar) / 10 * sightRange) + 1;
+}
 
 void main(){
 
@@ -342,7 +355,13 @@ void colorMapping(float high){
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-    FragColor = vec4(color, 1.0);
+	vec3 localPosition = vec4(model * vec4(worldPosition, 1.0)).xyz;
+
+	float dist = length(cameraPosition -  localPosition);
+	float fogFactor = getFogFactor(dist);
+	vec3 fragColor = mix(fogColor, color, clamp(fogFactor, 0, 1));
+
+    FragColor = vec4(fragColor, 1.0);
 }
 
 
