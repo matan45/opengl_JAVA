@@ -13,10 +13,6 @@ public class SpotLightComponent extends CommonComponent {
     private final OLTransform olTransform;
     private final SpotLight spotLight;
 
-    private float R;
-    private float G;
-    private float B;
-
     public SpotLightComponent(Entity ownerEntity) {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
@@ -80,13 +76,10 @@ public class SpotLightComponent extends CommonComponent {
         spotLight.setOuterCutOff(outerCutOffValue[0]);
         ImGui.popID();
 
-        float[] color = {R, G, B};
+        float[] color = {spotLight.getColor().x, spotLight.getColor().y, spotLight.getColor().z};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
-        R = color[0];
-        G = color[1];
-        B = color[2];
 
-        spotLight.setColor(R, G, B);
+        spotLight.setColor(color[0], color[1], color[2]);
     }
 
     @Override

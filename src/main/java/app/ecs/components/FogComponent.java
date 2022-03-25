@@ -9,14 +9,11 @@ import imgui.flag.ImGuiColorEditFlags;
 public class FogComponent extends CommonComponent {
     private final Fog fog;
 
-    private float R;
-    private float G;
-    private float B;
-
     public FogComponent(Entity ownerEntity) {
         super(ownerEntity);
         fog = new Fog();
         EditorRenderer.getTerrainQuadtreeRenderer().setFog(fog);
+        EditorRenderer.getMeshRenderer().setFog(fog);
     }
 
     @Override
@@ -33,16 +30,14 @@ public class FogComponent extends CommonComponent {
         ImGui.pushID("DirectionalLight");
         float[] color = {fog.getFogColor().x, fog.getFogColor().y, fog.getFogColor().z};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
-        R = color[0];
-        G = color[1];
-        B = color[2];
 
-        fog.setFogColor(R, G, B);
+        fog.setFogColor(color[0], color[1], color[2]);
         ImGui.popID();
     }
 
     @Override
     public void cleanUp() {
         EditorRenderer.getTerrainQuadtreeRenderer().setFog(null);
+        EditorRenderer.getMeshRenderer().setFog(null);
     }
 }

@@ -4,7 +4,7 @@ import app.math.OLVector3f;
 
 public class Fog {
     private float sightRange;
-    private OLVector3f fogColor;
+    private final OLVector3f fogColor;
 
     public Fog() {
         fogColor = new OLVector3f(0.5f, 0.5f, 0.5f);

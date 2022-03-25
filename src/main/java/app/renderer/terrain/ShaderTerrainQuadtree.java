@@ -47,7 +47,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationSightRange = super.getUniformLocation("sightRange");
         locationFogColor = super.getUniformLocation("fogColor");
-
         locationIsFog = super.getUniformLocation("isFog");
 
         locationScaleNegx = super.getUniformLocation("tscale_negx");
@@ -116,16 +115,16 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         super.loadFloat(locationScalePosz, scale);
     }
 
-    public void loadTerrainLength(float TerrainLength) {
-        super.loadFloat(locationTerrainLength, TerrainLength);
+    public void loadTerrainLength(float terrainLength) {
+        super.loadFloat(locationTerrainLength, terrainLength);
     }
 
-    public void loadTerrainWidth(float TerrainWidth) {
-        super.loadFloat(locationTerrainWidth, TerrainWidth);
+    public void loadTerrainWidth(float terrainWidth) {
+        super.loadFloat(locationTerrainWidth, terrainWidth);
     }
 
-    public void loadTerrainHeightOffset(float TerrainHeightOffset) {
-        super.loadFloat(locationTerrainHeightOffset, TerrainHeightOffset);
+    public void loadTerrainHeightOffset(float terrainHeightOffset) {
+        super.loadFloat(locationTerrainHeightOffset, terrainHeightOffset);
     }
 
     public void loadTerrainOrigin(OLVector3f origin) {

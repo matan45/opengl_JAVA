@@ -3,6 +3,7 @@ package app.renderer.pbr;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
+import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 
@@ -36,15 +37,17 @@ public class MeshRendererHandler {
         meshRenderers.add(meshRenderer);
     }
 
-
     public void removeInstant(MeshRenderer meshRenderer) {
         meshRenderers.remove(meshRenderer);
+    }
+
+    public void setFog(Fog fog) {
+        meshRenderers.forEach(m -> m.setFog(fog));
     }
 
     public boolean isContains(MeshRenderer meshRenderer) {
         return meshRenderers.contains(meshRenderer);
     }
-
 
     public void renderers() {
         meshRenderers.forEach(MeshRenderer::renderer);

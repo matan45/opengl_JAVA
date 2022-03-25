@@ -33,6 +33,10 @@ public class ShaderMesh extends ShaderProgram {
     private int locationDirLightColor;
     private int locationDirLightIntensity;
 
+    private int locationSightRange;
+    private int locationFogColor;
+    private int locationIsFog;
+
     private static final OLVector3f defaults = new OLVector3f();
 
     protected ShaderMesh(Path path) {
@@ -45,6 +49,10 @@ public class ShaderMesh extends ShaderProgram {
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
+
+        locationSightRange = super.getUniformLocation("sightRange");
+        locationFogColor = super.getUniformLocation("fogColor");
+        locationIsFog = super.getUniformLocation("isFog");
 
         locationDirLightDirection = super.getUniformLocation("dirLight.direction");
         locationDirLightColor = super.getUniformLocation("dirLight.color");
@@ -75,6 +83,18 @@ public class ShaderMesh extends ShaderProgram {
         super.loadInt(locationAoMap, 7);
         super.loadInt(locationEmissiveMap, 8);
 
+    }
+
+    public void loadIsFog(boolean fog) {
+        super.loadBoolean(locationIsFog, fog);
+    }
+
+    public void loadSightRange(float sightRange) {
+        super.loadFloat(locationSightRange, sightRange);
+    }
+
+    public void loadFogColor(OLVector3f fogColor) {
+        super.load3DVector(locationFogColor, fogColor);
     }
 
     public void loadViewMatrix(OLMatrix4f view) {

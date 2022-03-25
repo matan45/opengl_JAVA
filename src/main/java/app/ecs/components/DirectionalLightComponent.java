@@ -13,9 +13,6 @@ public class DirectionalLightComponent extends CommonComponent {
     private final DirectionalLight directionalLight;
     private final OLTransform olTransform;
 
-    private float R;
-    private float G;
-    private float B;
 
     public DirectionalLightComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -44,13 +41,10 @@ public class DirectionalLightComponent extends CommonComponent {
         ImGui.popID();
 
         ImGui.pushID("DirectionalLight");
-        float[] color = {R, G, B};
+        float[] color = {directionalLight.getColor().x, directionalLight.getColor().y, directionalLight.getColor().z};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
-        R = color[0];
-        G = color[1];
-        B = color[2];
 
-        directionalLight.setColor(R, G, B);
+        directionalLight.setColor(color[0], color[1], color[2]);
         ImGui.popID();
     }
 
