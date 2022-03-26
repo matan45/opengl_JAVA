@@ -5,13 +5,12 @@ import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.fog.Fog;
+import app.renderer.ibl.SkyBox;
 
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -49,11 +48,12 @@ public class TerrainQuadtreeRenderer {
     private float displacementFactor;
 
     private Fog fog;
+    private final SkyBox skyBox;
 
     private static final int WIDTH = 4096;
     private static final int LENGTH = 4096;
 
-    public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera) {
+    public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera, SkyBox skyBox) {
 
         this.textures = textures;
         shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quadtree.glsl"));
@@ -65,6 +65,7 @@ public class TerrainQuadtreeRenderer {
         displacementFactor = 40f;
 
         this.camera = camera;
+        this.skyBox = skyBox;
     }
 
     public void init(String path) {
@@ -109,6 +110,9 @@ public class TerrainQuadtreeRenderer {
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
+
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
             terrainQuadtree.terrainRender();

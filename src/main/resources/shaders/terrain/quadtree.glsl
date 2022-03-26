@@ -204,7 +204,7 @@ out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
 out vec3 worldPosition;
-out vec3 normal;
+out vec3 tangentNormal;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -249,7 +249,7 @@ vec3 calcTangent()
 void main()
 {
 	gs_wireColor = wireframeColor();
-	normal = calcTangent();
+	tangentNormal = calcTangent();
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -305,7 +305,7 @@ noperspective in vec3 gs_edgeDist;
 
 in vec2 gs_terrainTexCoord;
 in vec3 worldPosition;
-in vec3 normal;
+in vec3 tangentNormal;
 
 out vec4 FragColor;
 
@@ -315,12 +315,18 @@ uniform vec3 cameraPosition;
 
 uniform mat4 model;
 
-void colorMapping(float high);
+uniform samplerCube irradianceMap;
+
+uniform float TerrainLength;
+uniform float TerrainWidth;
+
+void colorMapping(vec4 high);
 
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
 vec3 getFogColor(vec3 albedo);
+vec3 getNormal(vec4 high);
 
 const float zfar = 1000;
 uniform vec3 fogColor;
@@ -345,22 +351,27 @@ void main(){
 	if (ToggleWireframe == 1.0)
 		FragColor = mix(gs_wireColor, color, mixVal);
 	else
-		colorMapping(color.r);
+		colorMapping(color);
 
 }
 
-void colorMapping(float high){
-	vec3 albedo = pow(biomeColor(high), vec3(2.2));
+void colorMapping(vec4 high){
+	vec3 albedo = pow(biomeColor(high.r), vec3(2.2));
 
 	// HDR tonemapping
     vec3 color = albedo / (albedo + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
+	vec3 normal = getNormal(high);
+
+	vec3 irradiance = texture(irradianceMap, normal).rgb;
+    vec3 diffuse    = irradiance * color;
+
 	if(isFog == 1.0){
-		FragColor = vec4(getFogColor(color), 1.0);
+		FragColor = vec4(getFogColor(diffuse), 1.0);
 	} else
-		FragColor = vec4(color, 1.0);
+		FragColor = vec4(diffuse, 1.0);
 }
 
 vec3 getFogColor(vec3 albedo){
@@ -370,6 +381,33 @@ vec3 getFogColor(vec3 albedo){
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
 }
 
+const vec2 size = vec2(2.0, 0.0);
+const vec3 off = vec3(-1.0, 0.0, 1.0);
+vec3 getNormal(vec4 high)
+{ 
+    vec2 offxy = vec2(off.x/TerrainWidth , off.y/TerrainLength);
+    vec2 offzy = vec2(off.z/TerrainWidth , off.y/TerrainLength);
+    vec2 offyx = vec2(off.y/TerrainWidth , off.x/TerrainLength);
+    vec2 offyz = vec2(off.y/TerrainWidth , off.z/TerrainLength);
+
+    float s01 = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).x;
+	float s21 = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).x;
+	float s10 = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).x;
+	float s12 = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).x;
+    
+    vec3 va = vec3(size.x, size.y, s21-s01);
+    vec3 vb = vec3(size.y, size.x, s12-s10);
+    va = normalize(va);
+    vb = normalize(vb);
+	vec3 bump = vec3((cross(va,vb)) / 2 + 0.5);
+
+	/*vec3 bitangent = normalize(cross(tangentNormal, bump));
+	mat3 TBN = mat3(tangentNormal, bump, bitangent);
+
+    return normalize(TBN * bump); */
+
+	return bump;
+}
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n) {

@@ -29,6 +29,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationSightRange;
     private int locationFogColor;
     private int locationIsFog;
+    private int locationIrradianceMap;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -60,6 +61,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationTerrainHeightOffset = super.getUniformLocation("TerrainHeightOffset");
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
+        locationIrradianceMap = super.getUniformLocation("irradianceMap");
 
     }
 
@@ -88,7 +90,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     }
 
     public void loadTexHighMap() {
+
         super.loadInt(locationTexTerrainHeight, 0);
+        super.loadInt(locationIrradianceMap, 1);
     }
 
     public void loadViewPort(OLVector2f viewPort) {
