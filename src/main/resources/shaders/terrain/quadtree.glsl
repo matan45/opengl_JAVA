@@ -242,8 +242,13 @@ vec3 calcTangent()
 	vec2 deltaUV2 = uv2 - uv0;
 	
 	float r = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+	vec3 tangent = vec3(0.0);
+	tangent.x = r * (deltaUV2.y * e1.x - deltaUV1.y * e2.x);
+	tangent.y = r * (deltaUV2.y * e1.y - deltaUV1.y * e2.y);
+	tangent.z = r * (deltaUV2.y * e1.z - deltaUV1.y * e2.z);
 	
-	return normalize((e1 * deltaUV2.y - e2 * deltaUV1.y)*r);
+	return tangent;
 }
 
 void main()
@@ -401,12 +406,12 @@ vec3 getNormal(vec4 high)
     vb = normalize(vb);
 	vec3 bump = vec3((cross(va,vb)) / 2 + 0.5);
 
-	/*vec3 bitangent = normalize(cross(tangentNormal, bump));
+	vec3 bitangent = normalize(cross(tangentNormal, bump));
 	mat3 TBN = mat3(tangentNormal, bump, bitangent);
 
-    return normalize(TBN * bump); */
+    return normalize(TBN * bump); 
 
-	return bump;
+	//return bump;
 }
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
