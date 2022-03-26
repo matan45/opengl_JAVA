@@ -24,8 +24,8 @@ public class Fog {
     }
 
     public void setFogColor(float r, float g, float b) {
-        this.fogColor.x = r;
-        this.fogColor.y = g;
-        this.fogColor.z = b;
+        fogColor.x = r;
+        fogColor.y = g;
+        fogColor.z = b;
     }
 }

@@ -50,8 +50,8 @@ public class TerrainQuadtreeRenderer {
     private Fog fog;
     private final SkyBox skyBox;
 
-    private static final int WIDTH = 4096;
-    private static final int LENGTH = 4096;
+    private static final int WIDTH = 8192;
+    private static final int LENGTH = 8192;
 
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera, SkyBox skyBox) {
 

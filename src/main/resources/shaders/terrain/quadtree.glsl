@@ -361,7 +361,7 @@ void main(){
 }
 
 void colorMapping(vec4 high){
-	vec3 albedo = biomeColor(high.r);
+	vec3 albedo = pow(biomeColor(high.r), vec3(2.2));
 
 	vec3 normal = getNormal(high);
 
