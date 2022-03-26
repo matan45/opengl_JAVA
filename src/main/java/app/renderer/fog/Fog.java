@@ -8,7 +8,7 @@ public class Fog {
 
     public Fog() {
         fogColor = new OLVector3f(0.5f, 0.5f, 0.5f);
-        sightRange = 0.1f;
+        sightRange = 0.3f;
     }
 
     public float getSightRange() {

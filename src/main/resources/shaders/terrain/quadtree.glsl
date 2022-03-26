@@ -136,7 +136,7 @@ void main()
 #type EVALUATION
 #version 460 core
 
-layout(quads, fractional_even_spacing) in;
+layout(quads, fractional_even_spacing, cw) in;
 
 patch in float gl_TessLevelOuter[4];
 patch in float gl_TessLevelInner[2];
@@ -361,22 +361,27 @@ void main(){
 }
 
 void colorMapping(vec4 high){
-	vec3 albedo = pow(biomeColor(high.r), vec3(2.2));
-
-	// HDR tonemapping
-    vec3 color = albedo / (albedo + vec3(1.0));
-    // gamma correct
-    color = pow(color, vec3(1.0/2.2));
+	vec3 albedo = biomeColor(high.r);
 
 	vec3 normal = getNormal(high);
 
-	vec3 irradiance = texture(irradianceMap, normal).rgb;
-    vec3 diffuse    = irradiance * color;
-
+	vec3 irradiance = texture(irradianceMap, -normal).rgb;
+    vec3 diffuse    = irradiance * albedo;
+	
+	vec3 color;
 	if(isFog == 1.0){
-		FragColor = vec4(getFogColor(diffuse), 1.0);
-	} else
-		FragColor = vec4(diffuse, 1.0);
+		color = getFogColor(diffuse);
+	} else {
+		color = diffuse;
+	}
+
+	// HDR tonemapping
+    color = color / (color + vec3(1.0));
+    // gamma correct
+    color = pow(color, vec3(1.0/2.2));
+
+	FragColor = vec4(color, 1.0);
+	
 }
 
 vec3 getFogColor(vec3 albedo){
@@ -404,7 +409,7 @@ vec3 getNormal(vec4 high)
     vec3 vb = vec3(size.y, size.x, s12-s10);
     va = normalize(va);
     vb = normalize(vb);
-	vec3 bump = vec3((cross(va,vb)) / 2 + 0.5);
+	vec3 bump = vec3((cross(va,vb)) / 2 );
 
 	vec3 bitangent = normalize(cross(tangentNormal, bump));
 	mat3 TBN = mat3(tangentNormal, bump, bitangent);

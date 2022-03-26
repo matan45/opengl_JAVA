@@ -62,7 +62,7 @@ public class TerrainQuadtreeRenderer {
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
         wireframe = false;
-        displacementFactor = 40f;
+        displacementFactor = 200f;
 
         this.camera = camera;
         this.skyBox = skyBox;
@@ -86,7 +86,7 @@ public class TerrainQuadtreeRenderer {
     public void render() {
         if (isActive) {
             glEnable(GL_CULL_FACE);
-            glCullFace(GL_FRONT);
+            glCullFace(GL_BACK);
             shaderTerrainQuadtree.start();
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
             shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
