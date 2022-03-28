@@ -391,32 +391,26 @@ vec3 getFogColor(vec3 albedo){
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
 }
 
-const vec2 size = vec2(2.0, 0.0);
-const vec3 off = vec3(-1.0, 0.0, 1.0);
+
 vec3 getNormal(vec4 high)
 { 
-    vec2 offxy = vec2(off.x/TerrainWidth , off.y/TerrainLength);
-    vec2 offzy = vec2(off.z/TerrainWidth , off.y/TerrainLength);
-    vec2 offyx = vec2(off.y/TerrainWidth , off.x/TerrainLength);
-    vec2 offyz = vec2(off.y/TerrainWidth , off.z/TerrainLength);
+    vec2 offxy = vec2(-1, 0);
+    vec2 offzy = vec2(1, 0);
+    vec2 offyx = vec2(0, -1);
+    vec2 offyz = vec2(0, 1);
 
-    float s01 = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).x;
-	float s21 = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).x;
-	float s10 = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).x;
-	float s12 = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).x;
+    float L = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).x;
+	float R = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).x;
+	float D = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).x;
+	float U = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).x;
     
-    vec3 va = vec3(size.x, size.y, s21-s01);
-    vec3 vb = vec3(size.y, size.x, s12-s10);
-    va = normalize(va);
-    vb = normalize(vb);
-	vec3 bump = vec3((cross(va,vb)) / 2 );
+	vec3 bump =  vec3(L - R, 2, D - U);
 
 	vec3 bitangent = normalize(cross(tangentNormal, bump));
 	mat3 TBN = mat3(tangentNormal, bump, bitangent);
 
-    return normalize(TBN * bump); 
+    return normalize(TBN * bump * 2 - 1); 
 
-	//return bump;
 }
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
