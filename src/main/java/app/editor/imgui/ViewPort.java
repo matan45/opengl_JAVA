@@ -149,7 +149,7 @@ public class ViewPort implements ImguiLayer {
 
             if (preWindowHeight != ImGui.getWindowHeight() || preWindowWidth != ImGui.getWindowWidth()) {
                 aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-                cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 1000f).getAsArray();
+                cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 2048f).getAsArray();
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
                 editorCamera.setViewPort(new OLVector2f(preWindowWidth, preWindowHeight));

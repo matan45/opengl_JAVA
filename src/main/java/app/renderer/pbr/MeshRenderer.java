@@ -5,6 +5,7 @@ import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.VaoModel;
+import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.utilities.resource.ResourceManager;
@@ -30,6 +31,8 @@ public class MeshRenderer {
     private OLTransform olTransform;
 
     private final LightHandler lightHandler;
+
+    private Fog fog;
 
     public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, LightHandler lightHandler) {
         this.camera = camera;
@@ -64,6 +67,13 @@ public class MeshRenderer {
         shaderMesh.loadDirLight(lightHandler.getDirectionalLight());
         shaderMesh.loadPointLights(lightHandler.getPointLights());
         shaderMesh.loadSpotLights(lightHandler.getSpotLights());
+
+        if (fog != null) {
+            shaderMesh.loadIsFog(true);
+            shaderMesh.loadFogColor(fog.getFogColor());
+            shaderMesh.loadSightRange(fog.getSightRange());
+        } else
+            shaderMesh.loadIsFog(false);
 
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
@@ -133,5 +143,9 @@ public class MeshRenderer {
 
     public Material getMaterial() {
         return material;
+    }
+
+    public void setFog(Fog fog) {
+        this.fog = fog;
     }
 }

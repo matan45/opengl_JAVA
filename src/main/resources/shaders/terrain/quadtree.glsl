@@ -136,7 +136,7 @@ void main()
 #type EVALUATION
 #version 460 core
 
-layout(quads, fractional_even_spacing) in;
+layout(quads, fractional_even_spacing, cw) in;
 
 patch in float gl_TessLevelOuter[4];
 patch in float gl_TessLevelInner[2];
@@ -204,7 +204,7 @@ out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
 out vec3 worldPosition;
-out vec3 normal;
+out vec3 tangentNormal;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -242,14 +242,19 @@ vec3 calcTangent()
 	vec2 deltaUV2 = uv2 - uv0;
 	
 	float r = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+	vec3 tangent = vec3(0.0);
+	tangent.x = r * (deltaUV2.y * e1.x - deltaUV1.y * e2.x);
+	tangent.y = r * (deltaUV2.y * e1.y - deltaUV1.y * e2.y);
+	tangent.z = r * (deltaUV2.y * e1.z - deltaUV1.y * e2.z);
 	
-	return normalize((e1 * deltaUV2.y - e2 * deltaUV1.y)*r);
+	return tangent;
 }
 
 void main()
 {
 	gs_wireColor = wireframeColor();
-	normal = calcTangent();
+	tangentNormal = calcTangent();
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -305,7 +310,7 @@ noperspective in vec3 gs_edgeDist;
 
 in vec2 gs_terrainTexCoord;
 in vec3 worldPosition;
-in vec3 normal;
+in vec3 tangentNormal;
 
 out vec4 FragColor;
 
@@ -315,15 +320,23 @@ uniform vec3 cameraPosition;
 
 uniform mat4 model;
 
-void colorMapping(float high);
+uniform samplerCube irradianceMap;
+
+uniform float TerrainLength;
+uniform float TerrainWidth;
+
+void colorMapping(vec4 high);
 
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
+vec3 getFogColor(vec3 albedo);
+vec3 getNormal(vec4 high);
 
 const float zfar = 1000;
 uniform vec3 fogColor;
 uniform float sightRange;
+uniform float isFog;
 float getFogFactor(float dist)
 {
 	return -0.0002 / sightRange * ( dist - (zfar) / 10 * sightRange) + 1;
@@ -343,27 +356,62 @@ void main(){
 	if (ToggleWireframe == 1.0)
 		FragColor = mix(gs_wireColor, color, mixVal);
 	else
-		colorMapping(color.r);
+		colorMapping(color);
 
 }
 
-void colorMapping(float high){
-	vec3 albedo = pow(biomeColor(high), vec3(2.2));
+void colorMapping(vec4 high){
+	vec3 albedo = pow(biomeColor(high.r), vec3(2.2));
+
+	vec3 normal = getNormal(high);
+
+	vec3 irradiance = texture(irradianceMap, -normal).rgb;
+    vec3 diffuse    = irradiance * albedo;
+	
+	vec3 color;
+	if(isFog == 1.0){
+		color = getFogColor(diffuse);
+	} else {
+		color = diffuse;
+	}
 
 	// HDR tonemapping
-    vec3 color = albedo / (albedo + vec3(1.0));
+    color = color / (color + vec3(1.0));
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-	vec3 localPosition = vec4(model * vec4(worldPosition, 1.0)).xyz;
-
-	float dist = length(cameraPosition -  localPosition);
-	float fogFactor = getFogFactor(dist);
-	vec3 fragColor = mix(fogColor, color, clamp(fogFactor, 0, 1));
-
-    FragColor = vec4(fragColor, 1.0);
+	FragColor = vec4(color, 1.0);
+	
 }
 
+vec3 getFogColor(vec3 albedo){
+	vec3 localPosition = vec4(model * vec4(worldPosition, 1.0)).xyz;
+	float dist = length(cameraPosition -  localPosition);
+	float fogFactor = getFogFactor(dist);
+	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
+}
+
+
+vec3 getNormal(vec4 high)
+{ 
+    vec2 offxy = vec2(-1, 0);
+    vec2 offzy = vec2(1, 0);
+    vec2 offyx = vec2(0, -1);
+    vec2 offyz = vec2(0, 1);
+
+    float L = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).x;
+	float R = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).x;
+	float D = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).x;
+	float U = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).x;
+    
+	vec3 bump =  vec3(L - R, 2, D - U);
+
+	vec3 bitangent = normalize(cross(tangentNormal, bump));
+	mat3 TBN = mat3(tangentNormal, bump, bitangent);
+
+    return normalize(TBN * bump * 2 - 1); 
+
+}
 
 //return a color from a to b when h goes from m to n (and divide the color by 255)
 vec3 colormix (vec3 a, vec3 b, float h, float m, float n) {

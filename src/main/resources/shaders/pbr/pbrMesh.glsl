@@ -87,6 +87,15 @@ vec3 CalcDirLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float ro
 vec3 CalcPointLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
 vec3 CalcSpotLight(vec3 N, vec3 V, vec3 albedo, vec3 F0, float metallic, float roughness);
 
+const float zfar = 1000;
+uniform vec3 fogColor;
+uniform float sightRange;
+uniform float isFog;
+float getFogFactor(float dist)
+{
+	return -0.0002 / sightRange * ( dist - (zfar) / 10 * sightRange) + 1;
+}
+
 const float PI = 3.14159265359;
 
 // ----------------------------------------------------------------------------
@@ -207,6 +216,13 @@ void main()
         color = color / (color + vec3(1.0));
         // gamma correct
         color = pow(color, vec3(1.0/2.2));
+
+        //fog
+        if(isFog == 1.0){
+            float dist = length(cameraPosition - WorldPos);
+	        float fogFactor = getFogFactor(dist);
+	        color = mix(fogColor, color, clamp(fogFactor, 0, 1));
+        }
 
         FragColor = vec4(color , 1.0);
 }

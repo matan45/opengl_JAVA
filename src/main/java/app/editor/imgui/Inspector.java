@@ -58,6 +58,8 @@ public class Inspector implements ImguiLayer {
                     entity.addComponent(new MeshComponent(entity));
                 if (ImGui.menuItem("Terrain"))
                     entity.addComponent(new TerrainComponent(entity));
+                if (ImGui.menuItem("Fog"))
+                    entity.addComponent(new FogComponent(entity));
                 ImGui.endPopup();
             }
         }

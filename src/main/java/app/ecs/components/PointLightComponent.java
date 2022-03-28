@@ -13,10 +13,6 @@ public class PointLightComponent extends CommonComponent {
     private final OLTransform olTransform;
     private final PointLight pointLight;
 
-    private float R;
-    private float G;
-    private float B;
-
     public PointLightComponent(Entity ownerEntity) {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
@@ -60,13 +56,10 @@ public class PointLightComponent extends CommonComponent {
         pointLight.setQuadratic(quadraticValue[0]);
         ImGui.popID();
 
-        float[] color = {R, G, B};
+        float[] color = {pointLight.getColor().x, pointLight.getColor().y, pointLight.getColor().z};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
-        R = color[0];
-        G = color[1];
-        B = color[2];
 
-        pointLight.setColor(R, G, B);
+        pointLight.setColor(color[0], color[1], color[2]);
     }
 
     @Override

@@ -13,11 +13,11 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationProjectionMatrix;
     private int locationViewMatrix;
     private int locationModelMatrix;
-    private int locationtscale_negx;
-    private int locationtscale_negz;
-    private int locationtscale_posx;
-    private int locationtscale_posz;
-    private int locationtileScale;
+    private int locationScaleNegx;
+    private int locationScaleNegz;
+    private int locationScalePosx;
+    private int locationScalePosz;
+    private int locationTileScale;
     private int locationTerrainLength;
     private int locationTerrainWidth;
     private int locationTexTerrainHeight;
@@ -28,6 +28,8 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationCameraPosition;
     private int locationSightRange;
     private int locationFogColor;
+    private int locationIsFog;
+    private int locationIrradianceMap;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -40,17 +42,18 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
-        locationtileScale = super.getUniformLocation("tileScale");
+        locationTileScale = super.getUniformLocation("tileScale");
         locationToggleWireframe = super.getUniformLocation("ToggleWireframe");
         locationViewport = super.getUniformLocation("Viewport");
 
         locationSightRange = super.getUniformLocation("sightRange");
         locationFogColor = super.getUniformLocation("fogColor");
+        locationIsFog = super.getUniformLocation("isFog");
 
-        locationtscale_negx = super.getUniformLocation("tscale_negx");
-        locationtscale_negz = super.getUniformLocation("tscale_negz");
-        locationtscale_posx = super.getUniformLocation("tscale_posx");
-        locationtscale_posz = super.getUniformLocation("tscale_posz");
+        locationScaleNegx = super.getUniformLocation("tscale_negx");
+        locationScaleNegz = super.getUniformLocation("tscale_negz");
+        locationScalePosx = super.getUniformLocation("tscale_posx");
+        locationScalePosz = super.getUniformLocation("tscale_posz");
 
         locationTerrainLength = super.getUniformLocation("TerrainLength");
         locationTerrainWidth = super.getUniformLocation("TerrainWidth");
@@ -58,11 +61,16 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationTerrainHeightOffset = super.getUniformLocation("TerrainHeightOffset");
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
+        locationIrradianceMap = super.getUniformLocation("irradianceMap");
 
     }
 
     public void loadCameraPosition(OLVector3f camera) {
         super.load3DVector(locationCameraPosition, camera);
+    }
+
+    public void loadIsFog(boolean fog) {
+        super.loadBoolean(locationIsFog, fog);
     }
 
     public void loadSightRange(float sightRange) {
@@ -82,7 +90,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     }
 
     public void loadTexHighMap() {
+
         super.loadInt(locationTexTerrainHeight, 0);
+        super.loadInt(locationIrradianceMap, 1);
     }
 
     public void loadViewPort(OLVector2f viewPort) {
@@ -90,35 +100,35 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     }
 
     public void loadTileScale(float scale) {
-        super.loadFloat(locationtileScale, 0.5f * scale);
+        super.loadFloat(locationTileScale, 0.5f * scale);
     }
 
     public void loadScaleNegx(float scale) {
-        super.loadFloat(locationtscale_negx, scale);
+        super.loadFloat(locationScaleNegx, scale);
     }
 
     public void loadScaleNegz(float scale) {
-        super.loadFloat(locationtscale_negz, scale);
+        super.loadFloat(locationScaleNegz, scale);
     }
 
     public void loadScalePosx(float scale) {
-        super.loadFloat(locationtscale_posx, scale);
+        super.loadFloat(locationScalePosx, scale);
     }
 
     public void loadScalePosz(float scale) {
-        super.loadFloat(locationtscale_posz, scale);
+        super.loadFloat(locationScalePosz, scale);
     }
 
-    public void loadTerrainLength(float TerrainLength) {
-        super.loadFloat(locationTerrainLength, TerrainLength);
+    public void loadTerrainLength(float terrainLength) {
+        super.loadFloat(locationTerrainLength, terrainLength);
     }
 
-    public void loadTerrainWidth(float TerrainWidth) {
-        super.loadFloat(locationTerrainWidth, TerrainWidth);
+    public void loadTerrainWidth(float terrainWidth) {
+        super.loadFloat(locationTerrainWidth, terrainWidth);
     }
 
-    public void loadTerrainHeightOffset(float TerrainHeightOffset) {
-        super.loadFloat(locationTerrainHeightOffset, TerrainHeightOffset);
+    public void loadTerrainHeightOffset(float terrainHeightOffset) {
+        super.loadFloat(locationTerrainHeightOffset, terrainHeightOffset);
     }
 
     public void loadTerrainOrigin(OLVector3f origin) {
