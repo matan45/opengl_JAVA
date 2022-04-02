@@ -1,5 +1,6 @@
 package app.audio;
 
+import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALCCapabilities;
@@ -44,13 +45,13 @@ public class Audio {
         List<String> devices = getStringList(NULL, ALC_ALL_DEVICES_SPECIFIER);
 
         for (int i = 0; i < Objects.requireNonNull(devices).size(); i++) {
-            System.out.println(i + ": " + devices.get(i));
+            LogInfo.println(i + ": " + devices.get(i));
         }
 
         String defaultDeviceSpecifier = Objects.requireNonNull(alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER));
-        System.out.println("Default device: " + defaultDeviceSpecifier);
+        LogInfo.println("Default device: " + defaultDeviceSpecifier);
 
-        System.out.println("ALC device specifier: " + alcGetString(device, ALC_DEVICE_SPECIFIER));
+        LogInfo.println("ALC device specifier: " + alcGetString(device, ALC_DEVICE_SPECIFIER));
 
         context = alcCreateContext(device, (IntBuffer) null);
         checkALCError(device);

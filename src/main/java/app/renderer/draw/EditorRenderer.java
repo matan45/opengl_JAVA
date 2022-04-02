@@ -9,8 +9,12 @@ import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
+import app.utilities.logger.LogInfo;
+
+import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 
 public class EditorRenderer {
     private static Framebuffer framebuffer;
@@ -31,6 +35,9 @@ public class EditorRenderer {
     }
 
     public static void init() {
+        LogInfo.println("OPENGL VERSION " + Objects.requireNonNull(glGetString(GL_VERSION)));
+        LogInfo.println("GLSL VERSION " + Objects.requireNonNull(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+
         textures = new Textures();
         editorCamera = new Camera();
         openGLObjects = new OpenGLObjects();

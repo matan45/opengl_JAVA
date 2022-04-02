@@ -119,9 +119,8 @@ public class GlfwWindow {
     public void run() {
         //create opengl context
         createCapabilities();
-        EditorRenderer.init();
-        Audio.init();
         Logger.init();
+        EditorRenderer.init();
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
@@ -132,6 +131,8 @@ public class GlfwWindow {
         ImguiLayerHandler.addLayer(new LogWindow());
         ImguiLayerHandler.addLayer(new ContentBrowser());
         ImguiLayerHandler.addLayer(new ViewPort());
+
+        Audio.init();
 
         float deltaTime;
         float dt = System.nanoTime();
