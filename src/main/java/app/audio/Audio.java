@@ -16,10 +16,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.AL11.AL_EXPONENT_DISTANCE;
 import static org.lwjgl.openal.ALC.createCapabilities;
 import static org.lwjgl.openal.ALC10.*;
-import static org.lwjgl.openal.ALC11.ALC_ALL_DEVICES_SPECIFIER;
-import static org.lwjgl.openal.ALUtil.getStringList;
 import static org.lwjgl.openal.EXTThreadLocalContext.alcSetThreadContext;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -42,12 +41,6 @@ public class Audio {
 
         ALCCapabilities deviceCaps = createCapabilities(device);
 
-        List<String> devices = getStringList(NULL, ALC_ALL_DEVICES_SPECIFIER);
-
-        for (int i = 0; i < Objects.requireNonNull(devices).size(); i++) {
-            LogInfo.println(i + ": " + devices.get(i));
-        }
-
         String defaultDeviceSpecifier = Objects.requireNonNull(alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER));
         LogInfo.println("Default device: " + defaultDeviceSpecifier);
 
@@ -57,15 +50,15 @@ public class Audio {
         checkALCError(device);
 
         boolean useTLC = deviceCaps.ALC_EXT_thread_local_context && alcSetThreadContext(context);
-        if (!useTLC) {
-            if (!alcMakeContextCurrent(context)) {
-                throw new IllegalStateException();
-            }
+
+        if (!useTLC && !alcMakeContextCurrent(context)) {
+            throw new IllegalStateException();
         }
         checkALCError(device);
 
         AL.createCapabilities(deviceCaps, MemoryUtil::memCallocPointer);
 
+        alDistanceModel(AL_EXPONENT_DISTANCE);
     }
 
     private static void checkALCError(long device) {
