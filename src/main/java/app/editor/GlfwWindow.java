@@ -1,5 +1,6 @@
 package app.editor;
 
+import app.audio.Audio;
 import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.renderer.draw.EditorRenderer;
@@ -106,6 +107,7 @@ public class GlfwWindow {
     private void close() {
         EditorRenderer.cleanUp();
         imgui.disposeImGui();
+        Audio.cleanUp();
 
         setCapabilities(null);
         glfwFreeCallbacks(window);
@@ -118,6 +120,8 @@ public class GlfwWindow {
         //create opengl context
         createCapabilities();
         EditorRenderer.init();
+        Audio.init();
+        Logger.init();
 
         imgui = new ImguiHandler("#version 460", window);
         //TODO: more generic to add imgui window
@@ -129,7 +133,6 @@ public class GlfwWindow {
         ImguiLayerHandler.addLayer(new ContentBrowser());
         ImguiLayerHandler.addLayer(new ViewPort());
 
-        Logger.init();
         float deltaTime;
         float dt = System.nanoTime();
 

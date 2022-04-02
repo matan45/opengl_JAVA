@@ -14,8 +14,8 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
 
-public class ResourceUtilies {
-    private ResourceUtilies() {
+class ResourceUtilises {
+    private ResourceUtilises() {
     }
 
     protected static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
@@ -28,7 +28,7 @@ public class ResourceUtilies {
                 while (fc.read(buffer) != -1) ;
             }
         } else {
-            try (InputStream source = ResourceUtilies.class.getClassLoader().getResourceAsStream(resource);
+            try (InputStream source = ResourceUtilises.class.getClassLoader().getResourceAsStream(resource);
                  ReadableByteChannel rbc = Channels.newChannel(source)) {
                 buffer = createByteBuffer(bufferSize);
 

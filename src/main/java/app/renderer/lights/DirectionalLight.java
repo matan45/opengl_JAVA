@@ -13,7 +13,7 @@ public class DirectionalLight {
 
     public DirectionalLight(Billboards billboards) {
         this.direction = new OLVector3f();
-        this.color = new OLVector3f(254f, 254f, 254f);
+        this.color = new OLVector3f(1f, 1f, 1f);
         this.billboards = billboards;
         position = new OLVector3f(3, 3, 3);
     }
