@@ -34,7 +34,7 @@ public class TerrainComponent extends CommonComponent {
 
         ImGui.pushID("Displacement");
         if (ImGui.button("Displacement"))
-            terrain.setDisplacementFactor(40f);
+            terrain.setDisplacementFactor(200f);
         ImGui.sameLine();
         float[] displacementValue = {terrain.getDisplacementFactor()};
         ImGui.dragFloat("##Y", displacementValue, 0.1f);

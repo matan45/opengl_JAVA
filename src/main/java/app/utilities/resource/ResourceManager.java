@@ -10,10 +10,11 @@ import java.util.List;
 
 public class ResourceManager {
     //TODO Resource pooling map path and object Map<path,object>
-    static ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
-    static ResourceShader resourceShader = new ResourceShader();
-    static ResourceImgui resourceImgui = new ResourceImgui();
-    static ResourceMesh resourceMesh = new ResourceMesh();
+    private static final ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
+    private static final ResourceShader resourceShader = new ResourceShader();
+    private static final ResourceImgui resourceImgui = new ResourceImgui();
+    private static final ResourceMesh resourceMesh = new ResourceMesh();
+    private static final ResourceAduio resourceAduio = new ResourceAduio();
 
     private ResourceManager() {
     }
