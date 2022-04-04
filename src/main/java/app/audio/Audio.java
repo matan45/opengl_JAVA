@@ -11,9 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.AL11.AL_EXPONENT_DISTANCE;
@@ -28,12 +26,22 @@ public class Audio {
     private static List<Integer> buffers;
     private static long device;
     private static long context;
+    private static Set<SoundEffect> soundEffectSet;
 
     private Audio() {
     }
 
+    public static void add(SoundEffect soundEffect) {
+        soundEffectSet.add(soundEffect);
+    }
+
+    public static void remove(SoundEffect soundEffect) {
+        soundEffectSet.remove(soundEffect);
+    }
+
     public static void init() {
         buffers = new ArrayList<>();
+        soundEffectSet = new HashSet<>();
         device = alcOpenDevice((ByteBuffer) null);
         if (device == NULL) {
             throw new IllegalStateException("Failed to open the default device.");

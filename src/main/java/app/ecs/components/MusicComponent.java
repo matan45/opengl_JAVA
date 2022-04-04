@@ -62,19 +62,19 @@ public class MusicComponent extends CommonComponent {
         ImGui.columns(3, "", false);
 
         ImGui.pushID("play");
-        if (ImGui.imageButton(playIcon, 30, 20))
+        if (ImGui.imageButton(playIcon, 32, 32))
             music.play();
         ImGui.popID();
         ImGui.nextColumn();
 
         ImGui.pushID("pause");
-        if (ImGui.imageButton(pauseIcon, 30, 20))
+        if (ImGui.imageButton(pauseIcon, 32, 32))
             music.pause();
         ImGui.popID();
         ImGui.nextColumn();
 
         ImGui.pushID("stop");
-        if (ImGui.imageButton(stopIcon, 30, 20))
+        if (ImGui.imageButton(stopIcon, 32, 32))
             music.stop();
         ImGui.popID();
 

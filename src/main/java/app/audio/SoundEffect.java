@@ -1,6 +1,8 @@
 package app.audio;
 
 import app.math.OLVector3f;
+import app.math.components.Camera;
+import app.renderer.debug.billboards.Billboards;
 
 import java.nio.file.Path;
 
@@ -10,9 +12,10 @@ import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 
 public class SoundEffect {
     private final int sourceID;
-    private int buffer;
+    private final Billboards billboards;
+    private OLVector3f position;
 
-    public SoundEffect() {
+    public SoundEffect(Billboards billboards) {
         sourceID = alGenSources();
         // the distance from the source will be 1
         alSourcef(sourceID, AL_ROLLOFF_FACTOR, 0);
@@ -20,21 +23,24 @@ public class SoundEffect {
         alSourcef(sourceID, AL_REFERENCE_DISTANCE, 0);
         // the max distance for the sound to stop
         alSourcef(sourceID, AL_MAX_DISTANCE, 0);
+
+        this.billboards = billboards;
+        Audio.add(this);
     }
 
     public void loadSound(Path path) {
-        buffer = Audio.loadSource(path);
+        int buffer = Audio.loadSource(path);
+        alSourcei(sourceID, AL_BUFFER, buffer);
     }
 
     public void play() {
-        stop();
-        alSourcei(sourceID, AL_BUFFER, buffer);
         alSourcePlay(sourceID);
     }
 
     public void delete() {
         stop();
         alDeleteSources(sourceID);
+        Audio.remove(this);
     }
 
     public void setVelocity(OLVector3f velocity) {
@@ -42,7 +48,7 @@ public class SoundEffect {
     }
 
     public int getFrame() {
-        return (int) alGetSourcef(sourceID, AL_SAMPLE_OFFSET);
+        return (int) alGetSourcef(sourceID, AL_SAMPLE_OFFSET) / 100000;
     }
 
     public int getTotalFrame() {
@@ -51,10 +57,6 @@ public class SoundEffect {
 
     public void pause() {
         alSourcePause(sourceID);
-    }
-
-    public void continuePlaying() {
-        alSourcePlay(sourceID);
     }
 
     public void stop() {
@@ -73,8 +75,17 @@ public class SoundEffect {
         alSourcef(sourceID, AL_GAIN, volume);
     }
 
+    public float getVolume() {
+        return alGetSourcef(sourceID, AL_GAIN);
+    }
+
     public void setPosition(OLVector3f position) {
+        this.position = position;
         alSource3f(sourceID, AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public void renderBillboards(Camera camera) {
+        billboards.render(camera, position);
     }
 
 }
