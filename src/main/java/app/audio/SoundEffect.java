@@ -5,6 +5,8 @@ import app.math.OLVector3f;
 import java.nio.file.Path;
 
 import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.openal.AL11.AL_SAMPLE_OFFSET;
+import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 
 public class SoundEffect {
     private final int sourceID;
@@ -37,6 +39,14 @@ public class SoundEffect {
 
     public void setVelocity(OLVector3f velocity) {
         alSource3f(sourceID, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+    }
+
+    public int getFrame() {
+        return (int) alGetSourcef(sourceID, AL_SAMPLE_OFFSET);
+    }
+
+    public int getTotalFrame() {
+        return (int) alGetSourcef(sourceID, AL_SEC_OFFSET);
     }
 
     public void pause() {
