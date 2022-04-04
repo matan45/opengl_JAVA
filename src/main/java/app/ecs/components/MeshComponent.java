@@ -1,14 +1,12 @@
 package app.ecs.components;
 
 import app.ecs.Entity;
-import app.math.OLVector3f;
 import app.math.components.OLTransform;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Material;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
-import imgui.flag.ImGuiColorEditFlags;
 
 import java.io.File;
 import java.util.Optional;
@@ -17,14 +15,6 @@ public class MeshComponent extends CommonComponent {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
-
-    float tt1;
-    float tt2;
-    float tt3;
-
-    float aa1;
-    float aa2;
-    float aa3;
 
     public MeshComponent(Entity ownerEntity) {
         super(ownerEntity);

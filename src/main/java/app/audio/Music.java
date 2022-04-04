@@ -10,6 +10,7 @@ public class Music {
     private Clip clip;
     private int lastFrame;
     private FloatControl control;
+    private String path;
 
     public void loadMusic(Path path) {
         try {
@@ -17,6 +18,7 @@ public class Music {
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            this.path = path.toAbsolutePath().toString();
 
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
             e.printStackTrace();
@@ -63,5 +65,9 @@ public class Music {
 
     public void stop() {
         clip.stop();
+    }
+
+    public String getPath() {
+        return path;
     }
 }
