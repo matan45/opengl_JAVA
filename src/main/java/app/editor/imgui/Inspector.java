@@ -21,9 +21,11 @@ public class Inspector implements ImguiLayer {
                 ImGui.pushID(component.getClass().getSimpleName());
 
                 boolean nodeHeader;
-                if (component instanceof TransformComponent)
+                if (component instanceof TransformComponent) {
+                    ImGui.pushID(component.hashCode());
                     nodeHeader = ImGui.collapsingHeader(component.getClass().getSimpleName() + "\t", ImGuiTreeNodeFlags.AllowItemOverlap | ImGuiTreeNodeFlags.FramePadding);
-                else
+                    ImGui.popID();
+                } else
                     nodeHeader = ImGui.collapsingHeader(component.getClass().getSimpleName() + "\t", headerClose, ImGuiTreeNodeFlags.AllowItemOverlap | ImGuiTreeNodeFlags.FramePadding);
 
                 if (!headerClose.get()) {
@@ -50,6 +52,13 @@ public class Inspector implements ImguiLayer {
                         entity.addComponent(new PointLightComponent(entity));
                     if (ImGui.menuItem("Spot Light"))
                         entity.addComponent(new SpotLightComponent(entity));
+                    ImGui.endMenu();
+                }
+                if (ImGui.beginMenu("Audio")) {
+                    if (ImGui.menuItem("Sound Effect"))
+                        entity.addComponent(new SoundEffectComponent(entity));
+                    if (ImGui.menuItem("Music"))
+                        entity.addComponent(new MusicComponent(entity));
                     ImGui.endMenu();
                 }
                 if (ImGui.menuItem("Sky Box"))
