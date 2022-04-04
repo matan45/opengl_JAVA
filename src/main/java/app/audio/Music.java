@@ -55,6 +55,18 @@ public class Music {
             control.setValue(volume);
     }
 
+    public float getMaxVolume(){
+        if (control != null)
+            return control.getMaximum();
+        return 0;
+    }
+
+    public float getMinVolume(){
+        if (control != null)
+            return control.getMinimum();
+        return 0;
+    }
+
     public float getVolume() {
         if (control != null)
             return control.getValue();
