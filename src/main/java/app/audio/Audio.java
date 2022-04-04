@@ -1,5 +1,6 @@
 package app.audio;
 
+import app.math.components.Camera;
 import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.openal.AL;
@@ -87,6 +88,10 @@ public class Audio {
         }
         return buffer;
 
+    }
+
+    public static void billboards(Camera camera) {
+        soundEffectSet.forEach(s -> s.renderBillboards(camera));
     }
 
     public static void cleanUp() {

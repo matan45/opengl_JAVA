@@ -85,7 +85,7 @@ public class MusicComponent extends CommonComponent {
             music.setVolume(0f);
         ImGui.sameLine();
         float[] volumeValue = {music.getVolume()};
-        ImGui.dragFloat("##Y", volumeValue, 0.01f, minV, maxV);
+        ImGui.dragFloat("##Y", volumeValue, 0.1f, minV, maxV);
         music.setVolume(volumeValue[0]);
         ImGui.popID();
 

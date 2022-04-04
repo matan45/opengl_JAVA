@@ -1,5 +1,6 @@
 package app.renderer.draw;
 
+import app.audio.Audio;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
@@ -58,6 +59,7 @@ public class EditorRenderer {
         glClearColor(0f, 0f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
+        Audio.billboards(editorCamera);
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
         lightHandler.drawBillboards(editorCamera);

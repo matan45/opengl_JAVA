@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Billboards {
-
+    //TODO batch render
     private final ShaderBillboards shaderBillboards;
     private final int vaoModel;
     private final int imageIcon;

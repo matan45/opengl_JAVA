@@ -88,7 +88,7 @@ public class SoundEffectComponent extends CommonComponent {
             soundEffect.setVolume(0f);
         ImGui.sameLine();
         float[] volumeValue = {soundEffect.getVolume()};
-        ImGui.dragFloat("##Y", volumeValue, 0.1f);
+        ImGui.dragFloat("##Y", volumeValue, 0.1f, 0f, 100f);
         soundEffect.setVolume(volumeValue[0]);
         ImGui.popID();
 
