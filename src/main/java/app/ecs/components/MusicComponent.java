@@ -15,6 +15,8 @@ public class MusicComponent extends CommonComponent {
 
     private final Music music;
 
+    private int totalLength = 0;
+
 
     public MusicComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -31,6 +33,7 @@ public class MusicComponent extends CommonComponent {
             prePath = path;
             file = new File(path);
             music.loadMusic(Paths.get(path));
+            totalLength = music.getTotalFrame();
         }
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
@@ -55,14 +58,14 @@ public class MusicComponent extends CommonComponent {
             music.setVolume(0.5f);
         ImGui.sameLine();
         float[] volumeValue = {music.getVolume()};
-        ImGui.dragFloat("##Y", volumeValue, 0.1f, 0.0f, 6f);
+        ImGui.dragFloat("##Y", volumeValue, 0.01f, 0.0f, 6f);
         music.setVolume(volumeValue[0]);
         ImGui.popID();
 
 
         ImGui.pushID("frame");
         int[] frameValue = {music.getFrame()};
-        ImGui.dragInt("##Y", frameValue);
+        ImGui.sliderInt("##Y", frameValue, 0, totalLength, "%d%%");
         ImGui.popID();
 
     }

@@ -77,6 +77,20 @@ public class Music {
         return 0;
     }
 
+    public int getTotalFrame() {
+        if (clip != null)
+            return clip.getFrameLength() / 10000;
+        return 0;
+    }
+
+    public void setFramePosition(int frame) {
+        if (clip != null) {
+            clip.setFramePosition(frame);
+            lastFrame = frame;
+        }
+
+    }
+
 
     public void stop() {
         clip.stop();
