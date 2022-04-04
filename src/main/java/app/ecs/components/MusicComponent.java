@@ -2,7 +2,6 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.utilities.OpenFileDialog;
-import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 
 import java.io.File;
@@ -26,7 +25,6 @@ public class MusicComponent extends CommonComponent {
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
             file = new File(path);
-            LogInfo.println(file.getName());
         }
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
