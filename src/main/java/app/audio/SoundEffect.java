@@ -9,7 +9,6 @@ import static org.lwjgl.openal.AL10.*;
 public class SoundEffect {
     private final int sourceID;
     private int buffer;
-    private String path;
 
     public SoundEffect() {
         sourceID = alGenSources();
@@ -22,9 +21,7 @@ public class SoundEffect {
     }
 
     public void loadSound(Path path) {
-
         buffer = Audio.loadSource(path);
-        this.path = path.toAbsolutePath().toString();
     }
 
     public void play() {
@@ -70,7 +67,4 @@ public class SoundEffect {
         alSource3f(sourceID, AL_POSITION, position.x, position.y, position.z);
     }
 
-    public String getPath() {
-        return path;
-    }
 }

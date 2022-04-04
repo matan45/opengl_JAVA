@@ -10,7 +10,6 @@ public class Music {
     private Clip clip;
     private int lastFrame;
     private FloatControl control;
-    private String path;
 
     public void loadMusic(Path path) {
         try {
@@ -18,7 +17,6 @@ public class Music {
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            this.path = path.toAbsolutePath().toString();
 
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
             e.printStackTrace();
@@ -28,7 +26,7 @@ public class Music {
 
     public void play() {
         if (clip != null) {
-            stop();
+            clip.setFramePosition(lastFrame);
             clip.start();
         }
     }
@@ -53,21 +51,37 @@ public class Music {
     }
 
     public void setVolume(float volume) {
-        control.setValue(volume);
+        if (control != null)
+            control.setValue(volume);
+    }
+
+    public float getVolume() {
+        if (control != null)
+            return control.getValue();
+        return 0;
     }
 
     public void setLooping(boolean loop) {
-        if (loop)
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        else
-            clip.loop(0);
+        if (clip != null) {
+            if (loop)
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            else
+                clip.loop(-1);
+        }
     }
+
+
+    public int getFrame() {
+        if (clip != null)
+            return (int) (clip.getMicrosecondPosition() / 1000000);
+        return 0;
+    }
+
 
     public void stop() {
         clip.stop();
+        clip.setFramePosition(0);
+        lastFrame = 0;
     }
 
-    public String getPath() {
-        return path;
-    }
 }
