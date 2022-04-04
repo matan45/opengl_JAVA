@@ -1,5 +1,7 @@
 package app.ecs;
 
+import app.ecs.components.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,5 +30,9 @@ public class EntitySystem {
 
     public static void updateEntities(float dt) {
         entitiesArray.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+    }
+
+    public static void closeEntities() {
+        entitiesArray.forEach(e -> e.getComponents().forEach(Component::cleanUp));
     }
 }

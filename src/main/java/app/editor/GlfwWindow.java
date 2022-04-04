@@ -105,6 +105,7 @@ public class GlfwWindow {
     }
 
     private void close() {
+        EntitySystem.closeEntities();
         EditorRenderer.cleanUp();
         imgui.disposeImGui();
         Audio.cleanUp();
