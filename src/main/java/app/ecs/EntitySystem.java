@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntitySystem {
-    private static final List<Entity> entitiesArray = new ArrayList<>();
+    private static final List<Entity> entitiesFather = new ArrayList<>();
 
     private EntitySystem() {
     }
 
-    public static List<Entity> getEntitiesArray() {
-        return entitiesArray;
+    public static List<Entity> getEntitiesFather() {
+        return entitiesFather;
     }
 
     public static void addEntity(Entity entity) {
-        entitiesArray.add(entity);
+        entitiesFather.add(entity);
     }
 
     public static void addEntityChildren(Entity father, Entity son) {
@@ -27,7 +27,7 @@ public class EntitySystem {
     public static void removeEntity(Entity entity) {
         if (entity.getFather() == null) {
             entity.cleanUp();
-            entitiesArray.remove(entity);
+            entitiesFather.remove(entity);
         } else {
             entity.getFather().removeChildren(entity);
         }
@@ -35,14 +35,14 @@ public class EntitySystem {
 
     public static List<Entity> getEntitiesByName(String name) {
         //TODO check Children entites
-        return entitiesArray.stream().filter(e -> e.getName().equals(name)).toList();
+        return entitiesFather.stream().filter(e -> e.getName().equals(name)).toList();
     }
 
     public static void updateEntities(float dt) {
-        entitiesArray.forEach(e -> e.updateComponent(dt));
+        entitiesFather.forEach(e -> e.updateComponent(dt));
     }
 
     public static void closeEntities() {
-        entitiesArray.forEach(e -> e.getComponents().forEach(Component::cleanUp));
+        entitiesFather.forEach(e -> e.getComponents().forEach(Component::cleanUp));
     }
 }

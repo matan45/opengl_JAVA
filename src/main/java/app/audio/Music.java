@@ -46,8 +46,10 @@ public class Music {
     }
 
     public void close() {
-        stop();
-        clip.close();
+        if (clip != null) {
+            stop();
+            clip.close();
+        }
     }
 
     public void setVolume(float volume) {

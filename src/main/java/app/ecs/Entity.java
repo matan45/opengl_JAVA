@@ -64,7 +64,7 @@ public class Entity {
 
     public void updateComponent(float dt) {
         if (hasChildren())
-            children.values().forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+            children.values().forEach(e -> e.updateComponent(dt));
         components.forEach(c -> c.update(dt));
     }
 
@@ -128,18 +128,5 @@ public class Entity {
 
     public List<Entity> getChildren() {
         return children.values().stream().toList();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Entity that = (Entity) o;
-        return Objects.equals(this.uuid, that.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.uuid);
     }
 }

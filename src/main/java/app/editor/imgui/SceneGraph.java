@@ -26,9 +26,8 @@ public class SceneGraph implements ImguiLayer {
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
 
-            List<Entity> entitiesArray = EntitySystem.getEntitiesArray();
+            List<Entity> entitiesArray = EntitySystem.getEntitiesFather();
             for (Entity entity : entitiesArray) {
-                entity.updateComponent(dt);
                 boolean treeNodeOpen = doTreeNode(entity, ImGuiTreeNodeFlags.OpenOnArrow);
                 if (treeNodeOpen) {
                     if (entity.hasChildren())
