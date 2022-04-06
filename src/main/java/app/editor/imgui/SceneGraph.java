@@ -3,7 +3,6 @@ package app.editor.imgui;
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.math.components.OLTransform;
-import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiPopupFlags;
