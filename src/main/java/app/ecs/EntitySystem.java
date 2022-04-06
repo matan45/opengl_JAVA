@@ -24,6 +24,7 @@ public class EntitySystem {
     }
 
     public static void addEntityChildren(Entity father, Entity son) {
+        son.setFather(father);
         father.addChildren(son);
     }
 
