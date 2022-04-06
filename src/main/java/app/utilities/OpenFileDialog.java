@@ -47,16 +47,17 @@ public class OpenFileDialog {
     }
 
     private static Optional<String> checkResult(int result, PointerBuffer path) {
-        String pathResult;
+        StringBuilder pathResult;
         switch (result) {
             case NFD_OKAY -> {
-                pathResult = path.getStringUTF8(0);
+                pathResult = new StringBuilder(path.getStringUTF8(0));
                 nNFD_Free(path.get(0));
-                return Optional.of(pathResult);
+                return Optional.of(pathResult.toString());
             }
             case NFD_CANCEL -> {
                 return Optional.empty();
             }
+
             default -> {
                 // NFD_ERROR
                 LogError.println("Error: " + NFD_GetError());

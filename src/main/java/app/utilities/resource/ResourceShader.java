@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResourceShader {
+class ResourceShader {
     StringBuilder shaderSource = new StringBuilder();
     static final String TYPE = "#type ";
     List<ShaderModel> shaderModelList = new ArrayList<>();

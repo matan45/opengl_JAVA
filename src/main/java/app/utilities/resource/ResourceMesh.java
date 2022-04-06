@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.lwjgl.assimp.Assimp.*;
 
-public class ResourceMesh {
+class ResourceMesh {
 
     private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals;

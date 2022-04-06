@@ -3,6 +3,9 @@ package app.utilities;
 import java.util.List;
 
 public class ArrayUtil {
+
+    private ArrayUtil(){}
+    
     public static int[] listIntToArray(List<Integer> list) {
         return list.stream().mapToInt((Integer v) -> v).toArray();
     }

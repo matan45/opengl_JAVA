@@ -13,22 +13,29 @@ public class SkyBoxComponent extends CommonComponent {
     private final SkyBox skyBox;
     private final ImInt select;
 
+    private String path = "";
+    private String prePath = "";
+    private File file;
+
     public SkyBoxComponent(Entity ownerEntity) {
         super(ownerEntity);
         skyBox = EditorRenderer.getSkyBox();
         select = new ImInt(0);
+        file = new File("");
     }
 
     @Override
     public void imguiDraw() {
-        if (ImGui.button("HDR")) {
-            OpenFileDialog.openFile("hdr").ifPresent(skyBox::init);
+        if (ImGui.button("HDR"))
+            path = OpenFileDialog.openFile("hdr").orElse(prePath);
 
-        } else if (skyBox.getPath() != null && !skyBox.getPath().isBlank()) {
-            ImGui.sameLine();
-            File file = new File(skyBox.getPath());
-            ImGui.textWrapped(file.getName());
+        if (!path.isEmpty() && !prePath.equals(path)) {
+            prePath = path;
+            skyBox.init(path);
+            file = new File(path);
         }
+        ImGui.sameLine();
+        ImGui.textWrapped(file.getName());
 
         if (ImGui.radioButton("Cube Map", select, 0)) {
             select.set(0);

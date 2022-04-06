@@ -13,28 +13,35 @@ public class TerrainComponent extends CommonComponent {
     private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
 
+    private String path = "";
+    private String prePath = "";
+    private File file;
+
     public TerrainComponent(Entity ownerEntity) {
         super(ownerEntity);
         terrain = EditorRenderer.getTerrainQuadtreeRenderer();
         wireframe = new ImBoolean();
+        file = new File("");
     }
 
 
     @Override
     public void imguiDraw() {
-        if (ImGui.button("Height Map")) {
-            OpenFileDialog.openFile("png,jpg").ifPresent(terrain::init);
+        if (ImGui.button("Height Map"))
+            path = OpenFileDialog.openFile("png,jpg").orElse(prePath);
 
-        } else if (terrain.getPath() != null && !terrain.getPath().isBlank()) {
-            ImGui.sameLine();
-            File file = new File(terrain.getPath());
-            ImGui.textWrapped(file.getName());
+        if (!path.isEmpty() && !prePath.equals(path)) {
+            prePath = path;
+            file = new File(path);
+            terrain.init(path);
             terrain.setActive(true);
         }
+        ImGui.sameLine();
+        ImGui.textWrapped(file.getName());
 
         ImGui.pushID("Displacement");
         if (ImGui.button("Displacement"))
-            terrain.setDisplacementFactor(40f);
+            terrain.setDisplacementFactor(200f);
         ImGui.sameLine();
         float[] displacementValue = {terrain.getDisplacementFactor()};
         ImGui.dragFloat("##Y", displacementValue, 0.1f);

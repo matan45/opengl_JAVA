@@ -3,9 +3,6 @@ package app.renderer;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -20,7 +17,6 @@ import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL42.glTexStorage2D;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
@@ -83,18 +79,6 @@ public class Textures {
 
         stbi_image_free(image);
         return id;
-    }
-
-    public HeightMapData getHeightMapData(String path) {
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(new File(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        assert image != null;
-        return new HeightMapData(image, image.getHeight(), image.getWidth());
     }
 
 

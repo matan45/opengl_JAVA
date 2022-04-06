@@ -21,8 +21,6 @@ public class SkyBox {
     private final Shaderbrdf shaderbrdf;
     private final ShaderPreFilter shaderPreFilter;
 
-    private String path;
-
     private final Camera editorCamera;
     private final Textures textures;
     private final Framebuffer framebuffer;
@@ -194,7 +192,7 @@ public class SkyBox {
         this.editorCamera = editorCamera;
         this.textures = textures;
         this.framebuffer = framebuffer;
-        exposure = 1.0f;
+        exposure = 2.2f;
 
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
@@ -238,7 +236,6 @@ public class SkyBox {
         prefilterMap = 0;
         brdfLUTTexture = 0;
         int hdrTexture = textures.hdr(filePath);
-        path = filePath;
 
         final OLMatrix4f[] captureViews =
                 {
@@ -410,10 +407,6 @@ public class SkyBox {
         return brdfLUTTexture;
     }
 
-    public String getPath() {
-        return path;
-    }
-
     public void setExposure(float exposure) {
         this.exposure = exposure;
     }
@@ -424,7 +417,6 @@ public class SkyBox {
 
     public void setActive(boolean active) {
         if (!active) {
-            path = "";
             envCubeMap = 0;
             irradianceMap = 0;
             prefilterMap = 0;

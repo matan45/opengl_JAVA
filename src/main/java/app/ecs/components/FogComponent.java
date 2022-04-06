@@ -20,7 +20,7 @@ public class FogComponent extends CommonComponent {
     public void imguiDraw() {
         ImGui.pushID("SightRange");
         if (ImGui.button("SightRange"))
-            fog.setSightRange(0.06f);
+            fog.setSightRange(0.3f);
         ImGui.sameLine();
         float[] sightRangeValue = {fog.getSightRange()};
         ImGui.dragFloat("##Y", sightRangeValue, 0.01f);

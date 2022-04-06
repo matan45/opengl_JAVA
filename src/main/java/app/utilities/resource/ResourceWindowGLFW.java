@@ -12,7 +12,7 @@ import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import static org.lwjgl.system.MemoryUtil.memAllocInt;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
-public class ResourceWindowGLFW {
+class ResourceWindowGLFW {
 
     protected void setIcon(Path path, long window) {
         IntBuffer w = memAllocInt(1);
@@ -24,8 +24,8 @@ public class ResourceWindowGLFW {
             ByteBuffer icon16;
             ByteBuffer icon32;
             try {
-                icon16 = ResourceUtilies.ioResourceToByteBuffer(path.toAbsolutePath().toString());
-                icon32 = ResourceUtilies.ioResourceToByteBuffer(path.toAbsolutePath().toString());
+                icon16 = ResourceUtilises.ioResourceToByteBuffer(path.toAbsolutePath().toString());
+                icon32 = ResourceUtilises.ioResourceToByteBuffer(path.toAbsolutePath().toString());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

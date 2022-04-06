@@ -40,8 +40,6 @@ public class TerrainQuadtreeRenderer {
     private final int vao;
     private int texture;
 
-    private String path;
-
     private boolean wireframe;
     private boolean isActive;
 
@@ -70,8 +68,6 @@ public class TerrainQuadtreeRenderer {
 
     public void init(String path) {
         texture = textures.loadTexture(path);
-
-        this.path = path;
 
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
@@ -154,7 +150,4 @@ public class TerrainQuadtreeRenderer {
         isActive = active;
     }
 
-    public String getPath() {
-        return path;
-    }
 }
