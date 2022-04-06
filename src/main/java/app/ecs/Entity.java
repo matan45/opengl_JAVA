@@ -80,6 +80,9 @@ public class Entity {
         for (Component c : components)
             c.cleanUp();
         components.clear();
+
+        if (hasChildren())
+            children.forEach(Entity::cleanUp);
     }
 
     public boolean isActive() {
@@ -88,6 +91,18 @@ public class Entity {
 
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
+    public void addChildren(Entity entity) {
+        children.add(entity);
+    }
+
+    public void removeChildren(Entity entity) {
+        children.remove(entity);
     }
 
     @Override
