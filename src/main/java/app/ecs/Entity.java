@@ -7,12 +7,11 @@ import app.math.components.OLTransform;
 import java.util.*;
 
 public class Entity {
-    //TODO need uuid for ech entity
     private final UUID uuid;
     private String name;
     private final Set<Component> components;
     private boolean isActive;
-    private final List<Entity> children;
+    private final Map<String, Entity> children;
     private Entity father;
     //case remove children
 
@@ -20,12 +19,12 @@ public class Entity {
         this.name = name;
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
-        children = new ArrayList<>();
+        children = new HashMap<>();
         uuid = UUID.randomUUID();
     }
 
     public Entity() {
-        children = new ArrayList<>();
+        children = new HashMap<>();
         components = new HashSet<>();
         uuid = UUID.randomUUID();
     }
@@ -65,7 +64,7 @@ public class Entity {
 
     public void updateComponent(float dt) {
         if (hasChildren())
-            children.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+            children.values().forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
         components.forEach(c -> c.update(dt));
     }
 
@@ -85,8 +84,8 @@ public class Entity {
         return components;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public String getUuid() {
+        return uuid.toString();
     }
 
     public Entity getFather() {
@@ -103,7 +102,7 @@ public class Entity {
         components.clear();
 
         if (hasChildren())
-            children.forEach(Entity::cleanUp);
+            children.values().forEach(Entity::cleanUp);
     }
 
     public boolean isActive() {
@@ -119,15 +118,16 @@ public class Entity {
     }
 
     public void addChildren(Entity entity) {
-        children.add(entity);
+        children.put(entity.getUuid(), entity);
     }
 
     public void removeChildren(Entity entity) {
-        children.remove(entity);
+        entity.cleanUp();
+        children.remove(entity.getUuid());
     }
 
     public List<Entity> getChildren() {
-        return children;
+        return children.values().stream().toList();
     }
 
     @Override

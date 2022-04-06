@@ -19,19 +19,18 @@ public class EntitySystem {
         entitiesArray.add(entity);
     }
 
-    public static void addEntityChildren(int father, Entity son) {
-        entitiesArray.get(father).addChildren(son);
-    }
-
     public static void addEntityChildren(Entity father, Entity son) {
         son.setFather(father);
         father.addChildren(son);
     }
 
-    public static void removeEntity(int index) {
-        //TODO check Children entites
-        entitiesArray.get(index).cleanUp();
-        entitiesArray.remove(index);
+    public static void removeEntity(Entity entity) {
+        if (entity.getFather() == null) {
+            entity.cleanUp();
+            entitiesArray.remove(entity);
+        } else {
+            entity.getFather().removeChildren(entity);
+        }
     }
 
     public static List<Entity> getEntitiesByName(String name) {

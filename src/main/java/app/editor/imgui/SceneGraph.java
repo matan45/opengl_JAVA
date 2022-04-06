@@ -9,11 +9,10 @@ import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 import java.util.List;
-import java.util.Objects;
 
 public class SceneGraph implements ImguiLayer {
     private final Inspector inspector;
-    private int selectionNode = -1;
+    private Entity selectionNode;
 
     public SceneGraph() {
         this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
@@ -28,9 +27,9 @@ public class SceneGraph implements ImguiLayer {
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
 
             List<Entity> entitiesArray = EntitySystem.getEntitiesArray();
-            for (int index = 0; index < entitiesArray.size(); index++) {
-                Entity entity = entitiesArray.get(index);
-                boolean treeNodeOpen = doTreeNode(entity, index);
+            for (Entity entity : entitiesArray) {
+                entity.updateComponent(dt);
+                boolean treeNodeOpen = doTreeNode(entity, ImGuiTreeNodeFlags.OpenOnArrow);
                 if (treeNodeOpen) {
                     if (entity.hasChildren()) {
                         doTreeNodeChildren(entity);
@@ -44,12 +43,12 @@ public class SceneGraph implements ImguiLayer {
             if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
                 if (ImGui.menuItem("Add Game Object"))
                     EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-                else if (selectionNode != -1 && ImGui.menuItem("Add Children")) {
+                else if (selectionNode != null && ImGui.menuItem("Add Children") && selectionNode.getFather() == null) {
                     EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
-                } else if (selectionNode != -1 && ImGui.menuItem("Remove Game Object")) {
+                } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
                     EntitySystem.removeEntity(selectionNode);
                     inspector.setEntity(null);
-                    selectionNode = -1;
+                    selectionNode = null;
                 }
                 ImGui.endPopup();
             }
@@ -58,32 +57,24 @@ public class SceneGraph implements ImguiLayer {
 
     }
 
-    private boolean doTreeNode(Entity entity, int index) {
+    private boolean doTreeNode(Entity entity, int flag) {
         boolean treeNodeOpen;
-        if (index == selectionNode)
-            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.Selected, entity.getName());
+        if (entity == selectionNode)
+            treeNodeOpen = ImGui.treeNodeEx(entity.getUuid(), flag | ImGuiTreeNodeFlags.Selected, entity.getName());
         else
-            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow, entity.getName());
+            treeNodeOpen = ImGui.treeNodeEx(entity.getUuid(), flag, entity.getName());
 
         if (ImGui.isItemActive()) {
             inspector.setEntity(entity);
-            selectionNode = index;
+            selectionNode = entity;
         }
 
         return treeNodeOpen;
     }
 
     private void doTreeNodeChildren(Entity entity) {
-        for (int i = 0; i < entity.getChildren().size(); i++) {
-            Entity entitySon = entity.getChildren().get(i);
-            ImGui.treeNodeEx(Objects.hashCode(entitySon), ImGuiTreeNodeFlags.Leaf, entitySon.getName());
-            if (ImGui.isItemActive()) {
-                inspector.setEntity(entitySon);
-                //selectionNode = index;
-            }
-        }
-
-
+        for (Entity entitySon : entity.getChildren())
+            doTreeNode(entitySon, ImGuiTreeNodeFlags.Leaf);
     }
 
 }
