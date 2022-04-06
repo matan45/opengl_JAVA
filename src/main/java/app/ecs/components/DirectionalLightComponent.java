@@ -20,7 +20,6 @@ public class DirectionalLightComponent extends CommonComponent {
         Textures textures = EditorRenderer.getTextures();
         Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\directionalLight.png"));
         directionalLight = new DirectionalLight(billboards);
-        directionalLight.setDirLightIntensity(1f);
         EditorRenderer.getLightHandler().setDirectionalLight(directionalLight);
     }
 

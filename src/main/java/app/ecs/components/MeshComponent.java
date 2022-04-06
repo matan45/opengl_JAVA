@@ -16,27 +16,31 @@ public class MeshComponent extends CommonComponent {
     private final OLTransform olTransform;
     private final Material material;
 
+    private String path = "";
+    private String prePath = "";
+    private File file;
+
     public MeshComponent(Entity ownerEntity) {
         super(ownerEntity);
         meshRenderer = EditorRenderer.getMeshRenderer().createNewInstant();
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         material = meshRenderer.getMaterial();
+        file = new File("");
     }
 
     @Override
     public void imguiDraw() {
-        if (ImGui.button("Mesh")) {
-            OpenFileDialog.openFile("obj,fbx,stl,dae,gltf").ifPresent(s -> {
-                if (!EditorRenderer.getMeshRenderer().isContains(meshRenderer))
-                    EditorRenderer.getMeshRenderer().addInstant(meshRenderer);
-                meshRenderer.init(s, olTransform);
-            });
+        if (ImGui.button("Mesh"))
+            path = OpenFileDialog.openFile("obj,fbx,dae,gltf").orElse(prePath);
 
-        } else if (meshRenderer.getPath() != null && !meshRenderer.getPath().isBlank()) {
-            ImGui.sameLine();
-            File file = new File(meshRenderer.getPath());
-            ImGui.textWrapped(file.getName());
+        if (!path.isEmpty() && !prePath.equals(path)) {
+            prePath = path;
+            file = new File(path);
+            meshRenderer.init(path, olTransform);
         }
+
+        ImGui.sameLine();
+        ImGui.textWrapped(file.getName());
 
         ImGui.textWrapped("Material");
         ImGui.separator();
@@ -107,9 +111,9 @@ public class MeshComponent extends CommonComponent {
 
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
-            Optional<String> path = OpenFileDialog.openFile("png,tga,jpg");
-            if (path.isPresent())
-                return path.get();
+            Optional<String> materialPath = OpenFileDialog.openFile("png,tga,jpg");
+            if (materialPath.isPresent())
+                return materialPath.get();
         }
         return "";
     }

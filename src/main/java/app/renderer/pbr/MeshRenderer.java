@@ -26,7 +26,6 @@ public class MeshRenderer {
     private final Material material;
     private final SkyBox skyBox;
 
-    private String path;
     private VaoModel vaoModel;
     private OLTransform olTransform;
 
@@ -52,45 +51,46 @@ public class MeshRenderer {
         Mesh[] meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
         vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
         this.olTransform = olTransform;
-        path = filePath;
     }
 
     public void renderer() {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        shaderMesh.start();
-        shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
-        shaderMesh.loadViewMatrix(camera.getViewMatrix());
-        shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
-        shaderMesh.loadCameraPosition(camera.getPosition());
+        if (olTransform != null) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            shaderMesh.start();
+            shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
+            shaderMesh.loadViewMatrix(camera.getViewMatrix());
+            shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
+            shaderMesh.loadCameraPosition(camera.getPosition());
 
-        shaderMesh.loadDirLight(lightHandler.getDirectionalLight());
-        shaderMesh.loadPointLights(lightHandler.getPointLights());
-        shaderMesh.loadSpotLights(lightHandler.getSpotLights());
+            shaderMesh.loadDirLight(lightHandler.getDirectionalLight());
+            shaderMesh.loadPointLights(lightHandler.getPointLights());
+            shaderMesh.loadSpotLights(lightHandler.getSpotLights());
 
-        if (fog != null) {
-            shaderMesh.loadIsFog(true);
-            shaderMesh.loadFogColor(fog.getFogColor());
-            shaderMesh.loadSightRange(fog.getSightRange());
-        } else
-            shaderMesh.loadIsFog(false);
+            if (fog != null) {
+                shaderMesh.loadIsFog(true);
+                shaderMesh.loadFogColor(fog.getFogColor());
+                shaderMesh.loadSightRange(fog.getSightRange());
+            } else
+                shaderMesh.loadIsFog(false);
 
-        glBindVertexArray(vaoModel.vaoID());
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+            glBindVertexArray(vaoModel.vaoID());
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
 
-        bind();
+            bind();
 
-        glDrawElements(GL_TRIANGLES, vaoModel.VertexCount(), GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, vaoModel.VertexCount(), GL_UNSIGNED_INT, 0);
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-        glBindVertexArray(0);
+            glDisableVertexAttribArray(0);
+            glDisableVertexAttribArray(1);
+            glDisableVertexAttribArray(2);
+            glBindVertexArray(0);
 
-        shaderMesh.stop();
-        glDisable(GL_CULL_FACE);
+            shaderMesh.stop();
+            glDisable(GL_CULL_FACE);
+        }
     }
 
     private void bind() {
@@ -124,21 +124,17 @@ public class MeshRenderer {
 
     }
 
-    public String getPath() {
-        return path;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MeshRenderer that = (MeshRenderer) o;
-        return Objects.equals(path, that.path);
+        return Objects.equals(this, that);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(path);
+        return Objects.hash(this);
     }
 
     public Material getMaterial() {

@@ -30,11 +30,9 @@ public class MeshRendererHandler {
     }
 
     public MeshRenderer createNewInstant() {
-        return new MeshRenderer(editorCamera, openGLObjects, textures, skyBox, lightHandler);
-    }
-
-    public void addInstant(MeshRenderer meshRenderer) {
+        MeshRenderer meshRenderer = new MeshRenderer(editorCamera, openGLObjects, textures, skyBox, lightHandler);
         meshRenderers.add(meshRenderer);
+        return meshRenderer;
     }
 
     public void removeInstant(MeshRenderer meshRenderer) {
@@ -43,10 +41,6 @@ public class MeshRendererHandler {
 
     public void setFog(Fog fog) {
         meshRenderers.forEach(m -> m.setFog(fog));
-    }
-
-    public boolean isContains(MeshRenderer meshRenderer) {
-        return meshRenderers.contains(meshRenderer);
     }
 
     public void renderers() {
