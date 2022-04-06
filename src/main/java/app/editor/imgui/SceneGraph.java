@@ -31,10 +31,8 @@ public class SceneGraph implements ImguiLayer {
                 entity.updateComponent(dt);
                 boolean treeNodeOpen = doTreeNode(entity, ImGuiTreeNodeFlags.OpenOnArrow);
                 if (treeNodeOpen) {
-                    if (entity.hasChildren()) {
+                    if (entity.hasChildren())
                         doTreeNodeChildren(entity);
-                        ImGui.treePop();
-                    }
                     ImGui.treePop();
                 }
             }
@@ -74,7 +72,8 @@ public class SceneGraph implements ImguiLayer {
 
     private void doTreeNodeChildren(Entity entity) {
         for (Entity entitySon : entity.getChildren())
-            doTreeNode(entitySon, ImGuiTreeNodeFlags.Leaf);
+            if (doTreeNode(entitySon, ImGuiTreeNodeFlags.Leaf))
+                ImGui.treePop();
     }
 
 }
