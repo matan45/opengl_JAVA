@@ -33,7 +33,10 @@ public class SceneGraph implements ImguiLayer {
                 Entity entity = entitiesArray.get(index);
                 boolean treeNodeOpen = doTreeNode(entity, index);
                 if (treeNodeOpen) {
-                    doTreeNodeChildren(entity);
+                    if (entity.hasChildren()) {
+                        doTreeNodeChildren(entity);
+                        ImGui.treePop();
+                    }
                     ImGui.treePop();
                 }
             }
@@ -72,15 +75,17 @@ public class SceneGraph implements ImguiLayer {
     }
 
     private void doTreeNodeChildren(Entity entity) {
-        if (entity.hasChildren()) {
-            for (int i = 0; i < entity.getChildren().size(); i++) {
-                ImGui.treeNodeEx(Objects.hashCode(entity.getChildren().get(i)), ImGuiTreeNodeFlags.Leaf, entity.getName());
-                if (ImGui.isItemActive()) {
-                    inspector.setEntity(entity);
-                    //selectionNode = index;
-                }
+
+        for (int i = 0; i < entity.getChildren().size(); i++) {
+            Entity entitySon = entity.getChildren().get(i);
+            //ImGui.treeNodeEx(Objects.hashCode(entitySon), ImGuiTreeNodeFlags.Leaf, entitySon.getName());
+            ImGui.treeNodeEx(Objects.hashCode(entitySon), ImGuiTreeNodeFlags.Leaf, entitySon.getName());
+            if (ImGui.isItemActive()) {
+                inspector.setEntity(entitySon);
+                //selectionNode = index;
             }
         }
+
 
     }
 
