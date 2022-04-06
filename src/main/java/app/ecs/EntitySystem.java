@@ -27,16 +27,14 @@ public class EntitySystem {
         father.addChildren(son);
     }
 
-    public static Entity getEntityByIndex(int index) {
-        return entitiesArray.get(index);
-    }
-
     public static void removeEntity(int index) {
+        //TODO check Children entites
         entitiesArray.get(index).cleanUp();
         entitiesArray.remove(index);
     }
 
     public static List<Entity> getEntitiesByName(String name) {
+        //TODO check Children entites
         return entitiesArray.stream().filter(e -> e.getName().equals(name)).toList();
     }
 
