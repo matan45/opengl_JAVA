@@ -7,6 +7,7 @@ import app.math.components.OLTransform;
 import java.util.*;
 
 public class Entity {
+    //TODO need uuid for ech entity
     private String name;
     private final Set<Component> components;
     private boolean isActive;
