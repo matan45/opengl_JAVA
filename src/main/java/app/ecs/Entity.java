@@ -12,17 +12,18 @@ public class Entity {
     private String name;
     private final Set<Component> components;
     private boolean isActive;
-    private final Set<Entity> childrens;
+    private final Set<Entity> children;
+    //case remove children
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
-        childrens = new HashSet<>();
+        children = new HashSet<>();
     }
 
     public Entity() {
-        childrens = new HashSet<>();
+        children = new HashSet<>();
         components = new HashSet<>();
     }
 
