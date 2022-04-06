@@ -4,26 +4,24 @@ import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class Entity {
     private String name;
     private final Set<Component> components;
     private boolean isActive;
-    private final Set<Entity> children;
+    private final List<Entity> children;
     //case remove children
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
-        children = new HashSet<>();
+        children = new ArrayList<>();
     }
 
     public Entity() {
-        children = new HashSet<>();
+        children = new ArrayList<>();
         components = new HashSet<>();
     }
 
@@ -105,16 +103,15 @@ public class Entity {
         children.remove(entity);
     }
 
+    public List<Entity> getChildren() {
+        return children;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Entity that = (Entity) o;
         return Objects.equals(this, that);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this);
     }
 }

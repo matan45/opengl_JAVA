@@ -19,9 +19,16 @@ public class EntitySystem {
         entitiesArray.add(entity);
     }
 
+    public static void addEntityChildren(int father, Entity son) {
+        entitiesArray.get(father).addChildren(son);
+    }
+
     public static void addEntityChildren(Entity father, Entity son) {
         father.addChildren(son);
-        entitiesArray.add(father);
+    }
+
+    public static Entity getEntityByIndex(int index) {
+        return entitiesArray.get(index);
     }
 
     public static void removeEntity(int index) {
