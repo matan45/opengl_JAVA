@@ -75,10 +75,8 @@ public class SceneGraph implements ImguiLayer {
     }
 
     private void doTreeNodeChildren(Entity entity) {
-
         for (int i = 0; i < entity.getChildren().size(); i++) {
             Entity entitySon = entity.getChildren().get(i);
-            //ImGui.treeNodeEx(Objects.hashCode(entitySon), ImGuiTreeNodeFlags.Leaf, entitySon.getName());
             ImGui.treeNodeEx(Objects.hashCode(entitySon), ImGuiTreeNodeFlags.Leaf, entitySon.getName());
             if (ImGui.isItemActive()) {
                 inspector.setEntity(entitySon);

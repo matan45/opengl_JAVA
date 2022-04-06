@@ -41,7 +41,7 @@ public class EntitySystem {
     }
 
     public static void updateEntities(float dt) {
-        entitiesArray.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+        entitiesArray.forEach(e -> e.updateComponent(dt));
     }
 
     public static void closeEntities() {

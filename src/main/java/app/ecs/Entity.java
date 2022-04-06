@@ -58,6 +58,12 @@ public class Entity {
         return false;
     }
 
+    public void updateComponent(float dt) {
+        if (hasChildren())
+            children.forEach(e -> e.getComponents().forEach(c -> c.update(dt)));
+        components.forEach(c -> c.update(dt));
+    }
+
     public void addComponent(Component c) {
         this.components.add(c);
     }
