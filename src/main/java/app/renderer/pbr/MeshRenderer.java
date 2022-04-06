@@ -134,7 +134,7 @@ public class MeshRenderer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this);
+        return System.identityHashCode(this);
     }
 
     public Material getMaterial() {

@@ -38,21 +38,26 @@ public class SceneGraph implements ImguiLayer {
             }
             ImGui.popStyleColor();
 
-            if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
-                if (ImGui.menuItem("Add Game Object"))
-                    EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-                else if (selectionNode != null && ImGui.menuItem("Add Children") && selectionNode.getFather() == null) {
-                    EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
-                } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
-                    EntitySystem.removeEntity(selectionNode);
-                    inspector.setEntity(null);
-                    selectionNode = null;
-                }
-                ImGui.endPopup();
-            }
+            menuPopUp();
+
         }
         ImGui.end();
 
+    }
+
+    private void menuPopUp() {
+        if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
+            if (ImGui.menuItem("Add Game Object"))
+                EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
+            else if (selectionNode != null && ImGui.menuItem("Add Children") && selectionNode.getFather() == null) {
+                EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
+            } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
+                EntitySystem.removeEntity(selectionNode);
+                inspector.setEntity(null);
+                selectionNode = null;
+            }
+            ImGui.endPopup();
+        }
     }
 
     private boolean doTreeNode(Entity entity, int flag) {

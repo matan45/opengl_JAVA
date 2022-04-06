@@ -7,8 +7,8 @@ import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MeshRendererHandler {
 
@@ -18,7 +18,7 @@ public class MeshRendererHandler {
     private final SkyBox skyBox;
     private final LightHandler lightHandler;
 
-    private final List<MeshRenderer> meshRenderers;
+    private final Set<MeshRenderer> meshRenderers;
 
     public MeshRendererHandler(Camera editorCamera, Textures textures, OpenGLObjects openGLObjects, SkyBox skyBox, LightHandler lightHandler) {
         this.editorCamera = editorCamera;
@@ -26,7 +26,7 @@ public class MeshRendererHandler {
         this.openGLObjects = openGLObjects;
         this.skyBox = skyBox;
         this.lightHandler = lightHandler;
-        meshRenderers = new ArrayList<>();
+        meshRenderers = new HashSet<>();
     }
 
     public MeshRenderer createNewInstant() {
