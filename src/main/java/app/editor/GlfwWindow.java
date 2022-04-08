@@ -144,8 +144,9 @@ public class GlfwWindow {
             //calculate delta time
             float frame = System.nanoTime();
             deltaTime = ((frame - dt) / 1000000000.0f);
-            EntitySystem.updateEntities(deltaTime);
             dt = frame;
+
+            EntitySystem.updateEntities(deltaTime);
 
             EditorRenderer.draw();
 

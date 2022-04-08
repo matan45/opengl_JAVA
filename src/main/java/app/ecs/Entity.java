@@ -4,22 +4,29 @@ import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Entity {
+    private final UUID uuid;
     private String name;
     private final Set<Component> components;
     private boolean isActive;
+    private final Map<String, Entity> children;
+    private Entity father;
+    //case remove children
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
+        children = new HashMap<>();
+        uuid = UUID.randomUUID();
     }
 
     public Entity() {
+        children = new HashMap<>();
         components = new HashSet<>();
+        uuid = UUID.randomUUID();
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -55,6 +62,12 @@ public class Entity {
         return false;
     }
 
+    public void updateComponent(float dt) {
+        if (hasChildren())
+            children.values().forEach(e -> e.updateComponent(dt));
+        components.forEach(c -> c.update(dt));
+    }
+
     public void addComponent(Component c) {
         this.components.add(c);
     }
@@ -71,10 +84,25 @@ public class Entity {
         return components;
     }
 
+    public String getUuid() {
+        return uuid.toString();
+    }
+
+    public Entity getFather() {
+        return father;
+    }
+
+    public void setFather(Entity father) {
+        this.father = father;
+    }
+
     public void cleanUp() {
         for (Component c : components)
             c.cleanUp();
         components.clear();
+
+        if (hasChildren())
+            children.values().forEach(Entity::cleanUp);
     }
 
     public boolean isActive() {
@@ -85,4 +113,20 @@ public class Entity {
         this.isActive = isActive;
     }
 
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+
+    public void addChildren(Entity entity) {
+        children.put(entity.getUuid(), entity);
+    }
+
+    public void removeChildren(Entity entity) {
+        entity.cleanUp();
+        children.remove(entity.getUuid());
+    }
+
+    public List<Entity> getChildren() {
+        return children.values().stream().toList();
+    }
 }

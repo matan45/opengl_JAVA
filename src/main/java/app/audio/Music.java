@@ -46,8 +46,10 @@ public class Music {
     }
 
     public void close() {
-        stop();
-        clip.close();
+        if (clip != null) {
+            stop();
+            clip.close();
+        }
     }
 
     public void setVolume(float volume) {
@@ -55,13 +57,13 @@ public class Music {
             control.setValue(volume);
     }
 
-    public float getMaxVolume(){
+    public float getMaxVolume() {
         if (control != null)
             return control.getMaximum();
         return 0;
     }
 
-    public float getMinVolume(){
+    public float getMinVolume() {
         if (control != null)
             return control.getMinimum();
         return 0;
@@ -105,9 +107,11 @@ public class Music {
 
 
     public void stop() {
-        clip.stop();
-        clip.setFramePosition(0);
-        lastFrame = 0;
+        if (clip != null) {
+            clip.stop();
+            clip.setFramePosition(0);
+            lastFrame = 0;
+        }
     }
 
 }

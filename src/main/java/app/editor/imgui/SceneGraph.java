@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SceneGraph implements ImguiLayer {
     private final Inspector inspector;
-    private int selectionNode = -1;
+    private Entity selectionNode;
 
     public SceneGraph() {
         this.inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
@@ -25,42 +25,59 @@ public class SceneGraph implements ImguiLayer {
             ImGui.text("Scene Name " + "todo scene class");
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
-            List<Entity> componentList = EntitySystem.getEntitiesArray();
-            for (int index = 0; index < componentList.size(); index++) {
-                boolean treeNodeOpen = doTreeNode(componentList.get(index), index);
-                if (treeNodeOpen)
+
+            List<Entity> entitiesArray = EntitySystem.getEntitiesFather();
+            for (Entity entity : entitiesArray) {
+                boolean treeNodeOpen = doTreeNode(entity, ImGuiTreeNodeFlags.OpenOnArrow);
+                if (treeNodeOpen) {
+                    if (entity.hasChildren())
+                        doTreeNodeChildren(entity);
                     ImGui.treePop();
+                }
             }
             ImGui.popStyleColor();
 
-            if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
-                if (ImGui.menuItem("Add Game Object"))
-                    EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-                else if (selectionNode != -1 && ImGui.menuItem("Remove Game Object")) {
-                    EntitySystem.removeEntity(selectionNode);
-                    inspector.setEntity(null);
-                    selectionNode = -1;
-                }
-                ImGui.endPopup();
-            }
+            menuPopUp();
+
         }
         ImGui.end();
 
     }
 
-    private boolean doTreeNode(Entity entity, int index) {
+    private void menuPopUp() {
+        if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
+            if (ImGui.menuItem("Add Game Object"))
+                EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
+            else if (selectionNode != null && ImGui.menuItem("Add Children") && selectionNode.getFather() == null) {
+                EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
+            } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
+                EntitySystem.removeEntity(selectionNode);
+                inspector.setEntity(null);
+                selectionNode = null;
+            }
+            ImGui.endPopup();
+        }
+    }
+
+    private boolean doTreeNode(Entity entity, int flag) {
         boolean treeNodeOpen;
-        if (index == selectionNode)
-            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.Selected, entity.getName());
+        if (entity == selectionNode)
+            treeNodeOpen = ImGui.treeNodeEx(entity.getUuid(), flag | ImGuiTreeNodeFlags.Selected, entity.getName());
         else
-            treeNodeOpen = ImGui.treeNodeEx(index, ImGuiTreeNodeFlags.OpenOnArrow, entity.getName());
+            treeNodeOpen = ImGui.treeNodeEx(entity.getUuid(), flag, entity.getName());
 
         if (ImGui.isItemActive()) {
             inspector.setEntity(entity);
-            selectionNode = index;
+            selectionNode = entity;
         }
 
         return treeNodeOpen;
+    }
+
+    private void doTreeNodeChildren(Entity entity) {
+        for (Entity entitySon : entity.getChildren())
+            if (doTreeNode(entitySon, ImGuiTreeNodeFlags.Leaf))
+                ImGui.treePop();
     }
 
 }
