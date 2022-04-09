@@ -9,13 +9,14 @@ import java.io.*;
 public class Serializable {
     private static final Gson gson = new Gson();
     private static File file;
+    private static final String PREFAB_EXTENSION = ".prefab";
 
     private Serializable() {
     }
 
     public static boolean saveEntity(Entity entity, String folderPath) {
         try {
-            file = new File(folderPath, entity.getName());
+            file = new File(folderPath, entity.getName() + PREFAB_EXTENSION);
             String json = gson.toJson(entity);
 
             if (!file.exists() && !file.createNewFile()) {

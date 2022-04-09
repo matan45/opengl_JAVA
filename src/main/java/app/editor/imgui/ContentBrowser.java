@@ -1,7 +1,9 @@
 package app.editor.imgui;
 
+import app.ecs.Entity;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
+import app.utilities.logger.LogInfo;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 
@@ -15,7 +17,7 @@ public class ContentBrowser implements ImguiLayer {
     private final int folderIcon;
     private final int fileIcon;
 
-    private static final String FOLDER_SPLITTER= "\\";
+    private static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
@@ -32,6 +34,7 @@ public class ContentBrowser implements ImguiLayer {
             ImGui.labelText("Current Path", absolutePath.toString());
             ImGui.separator();
 
+            dragAndDrop();
             File folder = absolutePath.toFile();
             File[] listOfFiles = folder.listFiles();
 
@@ -61,6 +64,18 @@ public class ContentBrowser implements ImguiLayer {
         }
         ImGui.columns(1);
         ImGui.end();
+    }
+
+    private void dragAndDrop() {
+        if (ImGui.beginDragDropTarget()) {
+            Object payload = ImGui.getDragDropPayload(DragAndDrop.ENTITY.getType());
+            LogInfo.println(DragAndDrop.ENTITY.getType());
+            if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
+                Entity entity = (Entity) payload;
+                LogInfo.println(entity.getName());
+            }
+            ImGui.endDragDropTarget();
+        }
     }
 
 }
