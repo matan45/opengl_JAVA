@@ -14,6 +14,7 @@ public class Entity implements Serializable {
     private boolean isActive;
     private final Map<Integer, Entity> children;
     private Entity father;
+    private String path;
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
@@ -21,6 +22,7 @@ public class Entity implements Serializable {
         components.add(new TransformComponent(this, olTransform));
         children = new HashMap<>();
         uuid = System.identityHashCode(this);
+        path = "";
     }
 
     public Entity() {
@@ -124,5 +126,14 @@ public class Entity implements Serializable {
 
     public List<Entity> getChildren() {
         return children.values().stream().toList();
+    }
+
+    //case is a prefab
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
