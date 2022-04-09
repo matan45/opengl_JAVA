@@ -39,6 +39,11 @@ public final class TransformComponent extends Component {
     }
 
     @Override
+    public void cleanUp() {
+
+    }
+
+    @Override
     public int getComponentType() {
         return 0;
     }
