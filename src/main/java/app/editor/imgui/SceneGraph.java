@@ -5,6 +5,7 @@ import app.ecs.EntitySystem;
 import app.math.components.OLTransform;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
@@ -45,7 +46,7 @@ public class SceneGraph implements ImguiLayer {
 
     private void dragAndDrop() {
         if (selectionNode != null && ImGui.beginDragDropSource()) {
-            ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), selectionNode);
+            ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), selectionNode, ImGuiCond.Once);
             ImGui.text(selectionNode.getName());
             ImGui.endDragDropSource();
         }

@@ -17,12 +17,9 @@ public class ContentBrowser implements ImguiLayer {
     private final int folderIcon;
     private final int fileIcon;
 
-    private Entity prePayload;
-
     private static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
-        prePayload = new Entity();
         Textures textures = EditorRenderer.getTextures();
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
@@ -74,11 +71,7 @@ public class ContentBrowser implements ImguiLayer {
             Object payload = ImGui.acceptDragDropPayload(DragAndDrop.ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
                 Entity entity = (Entity) payload;
-                //TODO timer
-                if (entity.getUuid() != prePayload.getUuid()) {
-                    prePayload = entity;
-                    Serializable.saveEntity(entity, absolutePath.toString());
-                }
+                Serializable.saveEntity(entity, absolutePath.toString());
             }
             ImGui.endDragDropTarget();
         }
