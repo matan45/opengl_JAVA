@@ -97,6 +97,7 @@ public class Entity {
 
         if (hasChildren())
             children.values().forEach(Entity::cleanUp);
+        children.clear();
     }
 
     public boolean isActive() {
