@@ -4,16 +4,17 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class PointLight {
+public class PointLight implements Serializable {
     private OLVector3f position;
     private final OLVector3f color;
 
     private float constant;
     private float linear;
     private float quadratic;
-    private final Billboards billboards;
+    private final transient Billboards billboards;
 
     public PointLight(Billboards billboards) {
         position = new OLVector3f();

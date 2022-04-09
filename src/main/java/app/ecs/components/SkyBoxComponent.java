@@ -10,7 +10,7 @@ import imgui.type.ImInt;
 import java.io.File;
 
 public class SkyBoxComponent extends CommonComponent {
-    private final SkyBox skyBox;
+    private final transient SkyBox skyBox;
     private final ImInt select;
 
     private String path = "";

@@ -1,6 +1,8 @@
 package app.ecs.components;
 
-public interface Component {
+import java.io.Serializable;
+
+public interface Component extends Serializable {
     void init();
 
     void update(float dt);

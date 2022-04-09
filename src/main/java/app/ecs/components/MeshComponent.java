@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.Optional;
 
 public class MeshComponent extends CommonComponent {
-    private final MeshRenderer meshRenderer;
+    private final transient MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
 

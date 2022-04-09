@@ -36,7 +36,7 @@ public class CommonComponent implements Component {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CommonComponent that = (CommonComponent) o;
-        return Objects.equals(ownerEntity, that.ownerEntity);
+        return Objects.equals(ownerEntity.getUuid(), that.ownerEntity.getUuid());
     }
 
     @Override

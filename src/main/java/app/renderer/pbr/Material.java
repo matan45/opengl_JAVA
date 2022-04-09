@@ -3,9 +3,10 @@ package app.renderer.pbr;
 import app.renderer.Textures;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class Material {
-    private final Textures textures;
+public class Material implements Serializable {
+    private final transient Textures textures;
 
     private int albedoMap;
     private int normalMap;

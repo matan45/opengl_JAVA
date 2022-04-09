@@ -4,9 +4,10 @@ import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Entity {
+public class Entity implements Serializable {
     private final int uuid;
     private String name;
     private final Set<Component> components;

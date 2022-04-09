@@ -4,15 +4,16 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.AL11.AL_SAMPLE_OFFSET;
 import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 
-public class SoundEffect {
+public class SoundEffect implements Serializable {
     private final int sourceID;
-    private final Billboards billboards;
+    private final transient Billboards billboards;
     private OLVector3f position;
 
     public SoundEffect(Billboards billboards) {

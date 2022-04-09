@@ -15,7 +15,7 @@ public class MusicComponent extends CommonComponent {
     private String prePath = "";
     private File file;
 
-    private final Music music;
+    private final transient Music music;
 
     private int totalLength = 0;
     private float maxV = 0;
