@@ -28,13 +28,13 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
+            dragAndDrop();
             if (ImGui.button("<--") && absolutePath.getParent() != null)
                 absolutePath = absolutePath.getParent();
             ImGui.sameLine();
             ImGui.labelText("Current Path", absolutePath.toString());
             ImGui.separator();
 
-            dragAndDrop();
             File folder = absolutePath.toFile();
             File[] listOfFiles = folder.listFiles();
 
@@ -69,7 +69,6 @@ public class ContentBrowser implements ImguiLayer {
     private void dragAndDrop() {
         if (ImGui.beginDragDropTarget()) {
             Object payload = ImGui.getDragDropPayload(DragAndDrop.ENTITY.getType());
-            LogInfo.println(DragAndDrop.ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
                 Entity entity = (Entity) payload;
                 LogInfo.println(entity.getName());
