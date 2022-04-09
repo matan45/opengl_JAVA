@@ -4,6 +4,8 @@ import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Entity {
@@ -64,8 +66,15 @@ public class Entity {
         components.forEach(c -> c.update(dt));
     }
 
-    public void addComponent(Component c) {
-        this.components.add(c);
+    public <T extends Component> void addComponent(Class<T> componentClass) {
+        try {
+            Constructor<T> ctr = componentClass.getDeclaredConstructor(Entity.class);
+            Component c = ctr.newInstance(this);
+            components.add(c);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public String getName() {

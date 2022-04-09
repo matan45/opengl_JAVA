@@ -11,7 +11,7 @@ import imgui.ImGui;
 import java.io.File;
 import java.util.Optional;
 
-public class MeshComponent extends CommonComponent {
+public class MeshComponent extends Component {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
@@ -121,5 +121,10 @@ public class MeshComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         EditorRenderer.getMeshRenderer().removeInstant(meshRenderer);
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 }

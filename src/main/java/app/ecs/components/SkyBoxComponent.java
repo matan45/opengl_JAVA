@@ -9,7 +9,7 @@ import imgui.type.ImInt;
 
 import java.io.File;
 
-public class SkyBoxComponent extends CommonComponent {
+public class SkyBoxComponent extends Component {
     private final SkyBox skyBox;
     private final ImInt select;
 
@@ -63,5 +63,10 @@ public class SkyBoxComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         skyBox.setActive(false);
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 }

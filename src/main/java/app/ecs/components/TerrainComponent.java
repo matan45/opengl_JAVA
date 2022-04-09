@@ -9,7 +9,7 @@ import imgui.type.ImBoolean;
 
 import java.io.File;
 
-public class TerrainComponent extends CommonComponent {
+public class TerrainComponent extends Component {
     private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
 
@@ -23,7 +23,6 @@ public class TerrainComponent extends CommonComponent {
         wireframe = new ImBoolean();
         file = new File("");
     }
-
 
     @Override
     public void imguiDraw() {
@@ -59,5 +58,10 @@ public class TerrainComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         terrain.setActive(false);
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 }

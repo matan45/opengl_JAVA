@@ -9,7 +9,7 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 
-public final class TransformComponent extends CommonComponent {
+public final class TransformComponent extends Component {
     private final OLTransform olTransform;
     private final OLVector2f buttonSize;
     private final ImString entityName;
@@ -21,7 +21,6 @@ public final class TransformComponent extends CommonComponent {
         buttonSize = new OLVector2f();
         entityName = new ImString(ownerEntity.getName(), 256);
     }
-
 
     public OLTransform getOlTransform() {
         return olTransform;
@@ -37,6 +36,11 @@ public final class TransformComponent extends CommonComponent {
         drawVector3("Rotation", olTransform.getRotation(), 0.0f);
         drawVector3("Scale", olTransform.getScale(), 1.0f);
 
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 
     private void drawVector3(String title, OLVector3f olVector3f, float resetValue) {

@@ -10,12 +10,12 @@ import imgui.ImGui;
 import java.io.File;
 import java.nio.file.Paths;
 
-public class MusicComponent extends CommonComponent {
+public class MusicComponent extends Component {
     private String path = "";
     private String prePath = "";
     private File file;
 
-    private final transient Music music;
+    private final Music music;
 
     private int totalLength = 0;
     private float maxV = 0;
@@ -94,6 +94,11 @@ public class MusicComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         music.close();
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 
 

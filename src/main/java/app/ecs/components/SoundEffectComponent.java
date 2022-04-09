@@ -12,7 +12,7 @@ import imgui.ImGui;
 import java.io.File;
 import java.nio.file.Paths;
 
-public class SoundEffectComponent extends CommonComponent {
+public class SoundEffectComponent extends Component {
     private String path = "";
     private String prePath = "";
     private File file;
@@ -97,6 +97,11 @@ public class SoundEffectComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         soundEffect.delete();
+    }
+
+    @Override
+    public int getComponentType() {
+        return 0;
     }
 
 }
