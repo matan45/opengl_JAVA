@@ -3,6 +3,7 @@ package app.ecs;
 import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
+import app.utilities.logger.LogError;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -73,6 +74,7 @@ public class Entity {
             components.add(c);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
+            LogError.println("fail to create component");
         }
 
     }

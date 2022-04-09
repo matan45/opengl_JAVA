@@ -13,7 +13,6 @@ public abstract class Component {
 
 
     public void update(float dt) {
-
     }
 
 

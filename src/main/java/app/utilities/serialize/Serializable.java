@@ -42,6 +42,7 @@ public class Serializable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            LogError.println("fail to save the entity");
         }
     }
 
@@ -54,6 +55,7 @@ public class Serializable {
                 return gson.fromJson(json, Entity.class);
             } catch (IOException e) {
                 e.printStackTrace();
+                LogError.println("fail to load a file");
                 return null;
             }
         }
