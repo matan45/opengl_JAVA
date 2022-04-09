@@ -10,7 +10,7 @@ import imgui.type.ImBoolean;
 import java.io.File;
 
 public class TerrainComponent extends CommonComponent {
-    private final transient TerrainQuadtreeRenderer terrain;
+    private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
 
     private String path = "";
