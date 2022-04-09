@@ -13,7 +13,6 @@ public class Entity {
     private boolean isActive;
     private final Map<Integer, Entity> children;
     private Entity father;
-    //case remove children
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
@@ -54,12 +53,7 @@ public class Entity {
     }
 
     public <T extends Component> boolean hasComponent(Class<T> componentClass) {
-        for (Component c : components) {
-            if (componentClass.isAssignableFrom(c.getClass())) {
-                return true;
-            }
-        }
-        return false;
+        return components.stream().anyMatch(c -> componentClass.isAssignableFrom(c.getClass()));
     }
 
     public void updateComponent(float dt) {
