@@ -7,11 +7,11 @@ import app.math.components.OLTransform;
 import java.util.*;
 
 public class Entity {
-    private final UUID uuid;
+    private final int uuid;
     private String name;
     private final Set<Component> components;
     private boolean isActive;
-    private final Map<String, Entity> children;
+    private final Map<Integer, Entity> children;
     private Entity father;
     //case remove children
 
@@ -20,13 +20,13 @@ public class Entity {
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
         children = new HashMap<>();
-        uuid = UUID.randomUUID();
+        uuid = System.identityHashCode(this);
     }
 
     public Entity() {
         children = new HashMap<>();
         components = new HashSet<>();
-        uuid = UUID.randomUUID();
+        uuid = System.identityHashCode(this);
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -84,8 +84,8 @@ public class Entity {
         return components;
     }
 
-    public String getUuid() {
-        return uuid.toString();
+    public int getUuid() {
+        return uuid;
     }
 
     public Entity getFather() {
