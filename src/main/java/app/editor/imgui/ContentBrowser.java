@@ -3,7 +3,7 @@ package app.editor.imgui;
 import app.ecs.Entity;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
-import app.utilities.logger.LogInfo;
+import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 
@@ -17,9 +17,12 @@ public class ContentBrowser implements ImguiLayer {
     private final int folderIcon;
     private final int fileIcon;
 
+    private Entity prePayload;
+
     private static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
+        prePayload = new Entity();
         Textures textures = EditorRenderer.getTextures();
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
@@ -68,10 +71,14 @@ public class ContentBrowser implements ImguiLayer {
 
     private void dragAndDrop() {
         if (ImGui.beginDragDropTarget()) {
-            Object payload = ImGui.getDragDropPayload(DragAndDrop.ENTITY.getType());
+            Object payload = ImGui.acceptDragDropPayload(DragAndDrop.ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
                 Entity entity = (Entity) payload;
-                LogInfo.println(entity.getName());
+                //TODO timer
+                if (entity.getUuid() != prePayload.getUuid()) {
+                    prePayload = entity;
+                    Serializable.saveEntity(entity, absolutePath.toString());
+                }
             }
             ImGui.endDragDropTarget();
         }
