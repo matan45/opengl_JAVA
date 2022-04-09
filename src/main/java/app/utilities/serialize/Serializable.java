@@ -1,12 +1,13 @@
 package app.utilities.serialize;
 
 import app.ecs.Entity;
-import app.utilities.logger.LogInfo;
+import app.utilities.logger.LogError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class Serializable {
     private static File file;
@@ -19,15 +20,20 @@ public class Serializable {
         try {
             Gson gson = new Gson();
             file = new File(folderPath, entity.getName() + PREFAB_EXTENSION);
+
+            if (file.exists())
+                Files.delete(file.toPath());
+
+
+            if (!file.createNewFile()) {
+                LogError.println("fail to create new file");
+                return;
+            }
+
             //TODO custom entity becuse entity inside entity
             JsonObject jsonObject = new JsonObject();
             JsonArray jsonArray = new JsonArray();
             String json = gson.toJson(jsonObject);
-
-            if (!file.exists() && !file.createNewFile()) {
-                LogInfo.println("fail to create new file");
-                return;
-            }
 
             try (FileOutputStream writer = new FileOutputStream(file.getAbsolutePath())) {
                 writer.write(json.getBytes());
@@ -64,4 +70,5 @@ public class Serializable {
         }
         return resultStringBuilder.toString();
     }
+
 }
