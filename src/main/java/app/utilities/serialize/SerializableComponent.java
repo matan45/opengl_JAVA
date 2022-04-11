@@ -66,6 +66,11 @@ class SerializableComponent {
             case MusicComponent music -> {
                 serializable.addProperty("Path", music.getPath());
             }
+            case SoundEffectComponent soundEffect -> {
+                serializable.addProperty("Path", soundEffect.getPath());
+                serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));
+                serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;

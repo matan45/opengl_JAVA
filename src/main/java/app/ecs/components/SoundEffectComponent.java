@@ -99,4 +99,11 @@ public class SoundEffectComponent extends Component {
         soundEffect.delete();
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public SoundEffect getSoundEffect() {
+        return soundEffect;
+    }
 }
