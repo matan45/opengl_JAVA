@@ -3,6 +3,7 @@ package app.utilities.serialize;
 import app.ecs.Entity;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -47,8 +48,10 @@ public class Serializable {
         file = new File(path);
         if (file.exists()) {
             try (InputStream inputStream = new FileInputStream(file)) {
-                String json = readFromInputStream(inputStream);
-                return gson.fromJson(json, Entity.class);
+                String file = readFromInputStream(inputStream);
+                JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
+
+                return null;
             } catch (IOException e) {
                 e.printStackTrace();
                 LogError.println("fail to load a file");

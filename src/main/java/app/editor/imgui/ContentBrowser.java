@@ -6,6 +6,7 @@ import app.renderer.draw.EditorRenderer;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiCond;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,7 +29,7 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
-            dragAndDrop();
+            dragAndDropTargetEntity();
             if (ImGui.button("<--") && absolutePath.getParent() != null)
                 absolutePath = absolutePath.getParent();
             ImGui.sameLine();
@@ -48,8 +49,12 @@ public class ContentBrowser implements ImguiLayer {
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
             for (File listOfFile : listOfFiles) {
                 if (listOfFile.isFile()) {
+                    ImGui.pushID(listOfFile.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
+                    if(ImGui.isMouseDown(0))
+                        dragAndDropSourceEntity(listOfFile.toPath().toAbsolutePath().toString());
                     ImGui.textWrapped(listOfFile.getName());
+                    ImGui.popID();
                     ImGui.nextColumn();
                 } else if (listOfFile.isDirectory()) {
                     ImGui.pushID(listOfFile.getName());
@@ -66,7 +71,7 @@ public class ContentBrowser implements ImguiLayer {
         ImGui.end();
     }
 
-    private void dragAndDrop() {
+    private void dragAndDropTargetEntity() {
         if (ImGui.beginDragDropTarget()) {
             Object payload = ImGui.acceptDragDropPayload(DragAndDrop.ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
@@ -74,6 +79,14 @@ public class ContentBrowser implements ImguiLayer {
                 Serializable.saveEntity(entity, absolutePath.toString());
             }
             ImGui.endDragDropTarget();
+        }
+    }
+
+    private void dragAndDropSourceEntity(String path) {
+        if (!path.isEmpty() && ImGui.beginDragDropSource()) {
+            ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), path, ImGuiCond.Once);
+            ImGui.text(path);
+            ImGui.endDragDropSource();
         }
     }
 

@@ -44,7 +44,7 @@ public class SceneGraph implements ImguiLayer {
         ImGui.end();
     }
 
-    private void dragAndDrop() {
+    private void dragAndDropEntity() {
         if (selectionNode != null && ImGui.beginDragDropSource()) {
             ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), selectionNode, ImGuiCond.Once);
             ImGui.text(selectionNode.getName());
@@ -79,7 +79,7 @@ public class SceneGraph implements ImguiLayer {
             selectionNode = entity;
         }
 
-        dragAndDrop();
+        dragAndDropEntity();
 
         return treeNodeOpen;
     }
