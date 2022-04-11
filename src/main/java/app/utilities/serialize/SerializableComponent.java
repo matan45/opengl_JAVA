@@ -33,20 +33,20 @@ class SerializableComponent {
                 serializable.add("Scale", olVector3f(transform.getOlTransform().getScale()));
             }
             case DirectionalLightComponent directionalLight -> {
-                serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));
+                serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));//check if needed optional
                 serializable.add("Color", olVector3f(directionalLight.getDirectionalLight().getColor()));
                 serializable.addProperty("LightIntensity", directionalLight.getDirectionalLight().getDirLightIntensity());
             }
             case PointLightComponent pointLight -> {
-                serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));
+                serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));//check if needed optional
                 serializable.add("Color", olVector3f(pointLight.getPointLight().getColor()));
                 serializable.addProperty("Quadratic", pointLight.getPointLight().getQuadratic());
                 serializable.addProperty("Linear", pointLight.getPointLight().getLinear());
                 serializable.addProperty("Constant", pointLight.getPointLight().getConstant());
             }
             case SpotLightComponent SpotLight -> {
-                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));
-                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));
+                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));//check if needed optional
+                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));//check if needed optional
                 serializable.add("Color", olVector3f(SpotLight.getSpotLight().getColor()));
                 serializable.addProperty("Quadratic", SpotLight.getSpotLight().getQuadratic());
                 serializable.addProperty("Linear", SpotLight.getSpotLight().getLinear());
@@ -68,8 +68,8 @@ class SerializableComponent {
             }
             case SoundEffectComponent soundEffect -> {
                 serializable.addProperty("Path", soundEffect.getPath());
-                serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));
-                serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));
+                serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));//check if needed optional
+                serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));//check if needed optional
             }
             case SkyBoxComponent skyBox -> {
                 serializable.addProperty("Path", skyBox.getPath());
