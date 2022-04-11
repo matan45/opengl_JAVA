@@ -96,10 +96,5 @@ public class MusicComponent extends Component {
         music.close();
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
-
 
 }

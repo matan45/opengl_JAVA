@@ -122,9 +122,4 @@ public class MeshComponent extends Component {
     public void cleanUp() {
         EditorRenderer.getMeshRenderer().removeInstant(meshRenderer);
     }
-
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
 }

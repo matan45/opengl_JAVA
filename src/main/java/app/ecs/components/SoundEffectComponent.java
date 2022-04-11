@@ -99,9 +99,4 @@ public class SoundEffectComponent extends Component {
         soundEffect.delete();
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
-
 }

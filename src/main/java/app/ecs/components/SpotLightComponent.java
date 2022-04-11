@@ -87,8 +87,4 @@ public class SpotLightComponent extends Component {
         EditorRenderer.getLightHandler().removeSpotLight(spotLight);
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
 }

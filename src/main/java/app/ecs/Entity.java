@@ -13,7 +13,6 @@ public class Entity {
     private final int uuid;
     private String name;
     private final Set<Component> components;
-    private boolean isActive;
     private final Map<Integer, Entity> children;
     private Entity father;
     private String path;
@@ -111,14 +110,6 @@ public class Entity {
         if (hasChildren())
             children.values().forEach(Entity::cleanUp);
         children.clear();
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
     }
 
     public boolean hasChildren() {

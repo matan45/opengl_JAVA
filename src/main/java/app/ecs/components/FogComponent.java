@@ -41,9 +41,4 @@ public class FogComponent extends Component {
         EditorRenderer.getTerrainQuadtreeRenderer().setFog(null);
         EditorRenderer.getMeshRenderer().setFog(null);
     }
-
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
 }

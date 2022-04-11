@@ -43,11 +43,6 @@ public final class TransformComponent extends Component {
 
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
-
     private void drawVector3(String title, OLVector3f olVector3f, float resetValue) {
         ImGui.pushID(title);
         ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 1.0f, 1.0f, 1.0f);

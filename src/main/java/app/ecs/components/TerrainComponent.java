@@ -60,8 +60,4 @@ public class TerrainComponent extends Component {
         terrain.setActive(false);
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
 }

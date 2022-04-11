@@ -65,8 +65,4 @@ public class SkyBoxComponent extends Component {
         skyBox.setActive(false);
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
 }

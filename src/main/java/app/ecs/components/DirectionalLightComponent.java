@@ -52,9 +52,4 @@ public class DirectionalLightComponent extends Component {
         EditorRenderer.getLightHandler().setDirectionalLight(null);
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
-
 }

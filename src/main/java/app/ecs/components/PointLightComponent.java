@@ -67,9 +67,4 @@ public class PointLightComponent extends Component {
         EditorRenderer.getLightHandler().removePointLight(pointLight);
     }
 
-    @Override
-    public int getComponentType() {
-        return 0;
-    }
-
 }

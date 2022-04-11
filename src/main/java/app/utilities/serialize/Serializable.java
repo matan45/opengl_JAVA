@@ -3,8 +3,6 @@ package app.utilities.serialize;
 import app.ecs.Entity;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,6 +10,7 @@ import java.nio.file.Files;
 public class Serializable {
     private static File file;
     private static final String PREFAB_EXTENSION = ".prefab";
+    private static final SerializableEntity serializableEntity = new SerializableEntity();
 
     private Serializable() {
     }
@@ -30,10 +29,7 @@ public class Serializable {
                 return;
             }
 
-            //TODO custom entity becuse entity inside entity
-            JsonObject jsonObject = new JsonObject();
-            JsonArray jsonArray = new JsonArray();
-            String json = gson.toJson(jsonObject);
+            String json = gson.toJson(serializableEntity.serializableEntity(entity));
 
             try (FileOutputStream writer = new FileOutputStream(file.getAbsolutePath())) {
                 writer.write(json.getBytes());

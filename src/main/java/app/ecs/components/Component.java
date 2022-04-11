@@ -22,9 +22,6 @@ public abstract class Component {
     public abstract void cleanUp();
 
 
-    public abstract int getComponentType();
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
