@@ -15,12 +15,16 @@ class SerializableEntity {
         JsonObject result = new JsonObject();
         //case the entity is single
         result.addProperty("EntityName", entity.getName());
+        result.addProperty("TotalComponentCount", entity.getComponents().size());
         result.add("Components", serializableComponent.serializableComponent(entity.getComponents()));
 
         //case the entity is a son
         if (entity.getFather() != null) {
-            result.addProperty("FatherEntityName", entity.getFather().getName());
-            result.add("FatherEntityComponents", serializableComponent.serializableComponent(entity.getFather().getComponents()));
+            JsonObject fatherJson = new JsonObject();
+            fatherJson.addProperty("FatherEntityName", entity.getFather().getName());
+            fatherJson.addProperty("TotalComponentCount", entity.getFather().getComponents().size());
+            fatherJson.add("FatherEntityComponents", serializableComponent.serializableComponent(entity.getFather().getComponents()));
+            result.add("FatherEntity", fatherJson);
         }
         //case the entity is father
         else if (entity.hasChildren()) {
@@ -29,6 +33,7 @@ class SerializableEntity {
             for (Entity children : entity.getChildren()) {
                 JsonObject childrenJson = new JsonObject();
                 childrenJson.addProperty("ChildrenEntityName", children.getName());
+                childrenJson.addProperty("TotalComponentCount", children.getComponents().size());
                 childrenJson.add("ChildrenEntityComponents", serializableComponent.serializableComponent(children.getComponents()));
                 jsonArray.add(childrenJson);
             }
@@ -37,5 +42,9 @@ class SerializableEntity {
 
 
         return result;
+    }
+
+    protected Entity unserializeEntity(JsonObject entityJson) {
+        return null;
     }
 }

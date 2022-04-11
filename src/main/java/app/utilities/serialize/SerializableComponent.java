@@ -14,9 +14,6 @@ class SerializableComponent {
 
     protected JsonArray serializableComponent(final Set<Component> components) {
         JsonArray componentsArray = new JsonArray();
-        JsonObject totalComponent = new JsonObject();
-        totalComponent.addProperty("TotalComponentCount", components.size());
-        componentsArray.add(totalComponent);
         for (Component component : components) {
             componentsArray.add(component.getClass().getSimpleName());
             componentsArray.add(saveComponentFactory(component));
