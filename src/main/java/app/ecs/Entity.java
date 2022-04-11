@@ -66,7 +66,7 @@ public class Entity {
         components.forEach(c -> c.update(dt));
     }
 
-    public <T extends Component> void addComponent(Component c) {
+    public void addComponent(Component c) {
         components.add(c);
     }
 

@@ -96,5 +96,7 @@ public class MusicComponent extends Component {
         music.close();
     }
 
-
+    public String getPath() {
+        return path;
+    }
 }

@@ -63,6 +63,9 @@ class SerializableComponent {
                 serializable.addProperty("Wireframe", terrain.getWireframe().get());
                 serializable.addProperty("Displacement", terrain.getTerrain().getDisplacementFactor());
             }
+            case MusicComponent music -> {
+                serializable.addProperty("Path", music.getPath());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;
