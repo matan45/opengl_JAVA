@@ -10,7 +10,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 
 public final class TransformComponent extends Component {
-    private final OLTransform olTransform;
+    private OLTransform olTransform;
     private final OLVector2f buttonSize;
     private final ImString entityName;
 
@@ -20,10 +20,6 @@ public final class TransformComponent extends Component {
         this.olTransform = olTransform;
         buttonSize = new OLVector2f();
         entityName = new ImString(ownerEntity.getName(), 256);
-    }
-
-    public OLTransform getOlTransform() {
-        return olTransform;
     }
 
     @Override
@@ -99,4 +95,11 @@ public final class TransformComponent extends Component {
         ImGui.popID();
     }
 
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
+
+    public void setOlTransform(OLTransform olTransform) {
+        this.olTransform = olTransform;
+    }
 }
