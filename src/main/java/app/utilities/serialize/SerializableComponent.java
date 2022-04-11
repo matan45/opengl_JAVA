@@ -1,8 +1,6 @@
 package app.utilities.serialize;
 
-import app.ecs.components.Component;
-import app.ecs.components.DirectionalLightComponent;
-import app.ecs.components.TransformComponent;
+import app.ecs.components.*;
 import app.math.OLVector3f;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -38,6 +36,23 @@ class SerializableComponent {
                 serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));
                 serializable.add("Color", olVector3f(directionalLight.getDirectionalLight().getColor()));
                 serializable.addProperty("LightIntensity", directionalLight.getDirectionalLight().getDirLightIntensity());
+            }
+            case PointLightComponent pointLight -> {
+                serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));
+                serializable.add("Color", olVector3f(pointLight.getPointLight().getColor()));
+                serializable.addProperty("Quadratic", pointLight.getPointLight().getQuadratic());
+                serializable.addProperty("Linear", pointLight.getPointLight().getLinear());
+                serializable.addProperty("Constant", pointLight.getPointLight().getConstant());
+            }
+            case SpotLightComponent SpotLight -> {
+                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));
+                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));
+                serializable.add("Color", olVector3f(SpotLight.getSpotLight().getColor()));
+                serializable.addProperty("Quadratic", SpotLight.getSpotLight().getQuadratic());
+                serializable.addProperty("Linear", SpotLight.getSpotLight().getLinear());
+                serializable.addProperty("Constant", SpotLight.getSpotLight().getConstant());
+                serializable.addProperty("CutOff", SpotLight.getSpotLight().getCutOff());
+                serializable.addProperty("OuterCutOff", SpotLight.getSpotLight().getOuterCutOff());
             }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
