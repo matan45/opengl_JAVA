@@ -1,6 +1,7 @@
 package app.editor.imgui;
 
 import app.ecs.Entity;
+import app.ecs.EntitySystem;
 import app.ecs.components.TransformComponent;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
@@ -8,6 +9,7 @@ import app.math.components.Camera;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
+import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
@@ -132,6 +134,7 @@ public class ViewPort implements ImguiLayer {
 
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+            dragAndDropTargetEntity();
             //Gizmos
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
@@ -203,6 +206,17 @@ public class ViewPort implements ImguiLayer {
             snap = true;
         else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
             snap = false;
+    }
+
+    private void dragAndDropTargetEntity() {
+        if (ImGui.beginDragDropTarget()) {
+            String payload = ImGui.acceptDragDropPayload(DragAndDrop.LOAD_ENTITY.getType());
+            if (payload != null) {
+                Entity entity = Serializable.loadEntity(payload);
+                EntitySystem.addEntity(entity);
+            }
+            ImGui.endDragDropTarget();
+        }
     }
 
     private void cameraInput(float dt) {
