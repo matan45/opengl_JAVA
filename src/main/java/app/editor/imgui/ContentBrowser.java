@@ -11,6 +11,7 @@ import imgui.flag.ImGuiCond;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
@@ -21,6 +22,7 @@ public class ContentBrowser implements ImguiLayer {
     private final int fileIcon;
 
     private static final String FOLDER_SPLITTER = "\\";
+    private static final String ENTITY_EXTENSION = "prefab";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
@@ -53,7 +55,7 @@ public class ContentBrowser implements ImguiLayer {
                 if (listOfFile.isFile()) {
                     ImGui.pushID(listOfFile.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
-                    if(ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
+                    if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
                         dragAndDropSourceEntity(listOfFile.toPath().toAbsolutePath().toString());
                     ImGui.textWrapped(listOfFile.getName());
                     ImGui.popID();
@@ -85,11 +87,15 @@ public class ContentBrowser implements ImguiLayer {
     }
 
     private void dragAndDropSourceEntity(String path) {
-        if (!path.isEmpty() && ImGui.beginDragDropSource()) {
-            ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
-            ImGui.text(path);
-            ImGui.endDragDropSource();
-        }
+        Optional.ofNullable(path)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(path.lastIndexOf(".") + 1)).ifPresent(extension -> {
+                    if (extension.equals(ENTITY_EXTENSION) && ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
+                        ImGui.text(path);
+                        ImGui.endDragDropSource();
+                    }
+                });
     }
 
 }
