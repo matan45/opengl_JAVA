@@ -73,7 +73,7 @@ public class ContentBrowser implements ImguiLayer {
 
     private void dragAndDropTargetEntity() {
         if (ImGui.beginDragDropTarget()) {
-            Object payload = ImGui.acceptDragDropPayload(DragAndDrop.ENTITY.getType());
+            Object payload = ImGui.acceptDragDropPayload(DragAndDrop.SAVE_ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
                 Entity entity = (Entity) payload;
                 Serializable.saveEntity(entity, absolutePath.toString());
@@ -84,7 +84,7 @@ public class ContentBrowser implements ImguiLayer {
 
     private void dragAndDropSourceEntity(String path) {
         if (!path.isEmpty() && ImGui.beginDragDropSource()) {
-            ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), path, ImGuiCond.Once);
+            ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
             ImGui.text(path);
             ImGui.endDragDropSource();
         }

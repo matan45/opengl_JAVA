@@ -46,7 +46,7 @@ public class SceneGraph implements ImguiLayer {
 
     private void dragAndDropEntity() {
         if (selectionNode != null && ImGui.beginDragDropSource()) {
-            ImGui.setDragDropPayload(DragAndDrop.ENTITY.getType(), selectionNode, ImGuiCond.Once);
+            ImGui.setDragDropPayload(DragAndDrop.SAVE_ENTITY.getType(), selectionNode, ImGuiCond.Once);
             ImGui.text(selectionNode.getName());
             ImGui.endDragDropSource();
         }

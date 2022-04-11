@@ -1,7 +1,8 @@
 package app.editor.imgui;
 
 public enum DragAndDrop {
-    ENTITY("entity");
+    SAVE_ENTITY("saveEntity"),
+    LOAD_ENTITY("loadEntity");
 
     private final String type;
 
