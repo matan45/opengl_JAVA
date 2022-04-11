@@ -65,4 +65,11 @@ public class SkyBoxComponent extends Component {
         skyBox.setActive(false);
     }
 
+    public SkyBox getSkyBox() {
+        return skyBox;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

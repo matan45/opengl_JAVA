@@ -71,6 +71,19 @@ class SerializableComponent {
                 serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));
                 serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));
             }
+            case SkyBoxComponent skyBox -> {
+                serializable.addProperty("Path", skyBox.getPath());
+                serializable.addProperty("Exposure", skyBox.getSkyBox().getExposure());
+            }
+            case MeshComponent mesh -> {
+                serializable.addProperty("MeshPath", mesh.getPath());
+                serializable.addProperty("AlbedoPath", mesh.getMaterial().getAlbedoMapPath());
+                serializable.addProperty("NormalPath", mesh.getMaterial().getNormalMapPath());
+                serializable.addProperty("MetallicPath",mesh.getMaterial().getMetallicMapPath());
+                serializable.addProperty("Roughness", mesh.getMaterial().getRoughnessMapPath());
+                serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
+                serializable.addProperty("AoPath", mesh.getMaterial().getAoMapPath());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;

@@ -122,4 +122,12 @@ public class MeshComponent extends Component {
     public void cleanUp() {
         EditorRenderer.getMeshRenderer().removeInstant(meshRenderer);
     }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }
