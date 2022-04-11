@@ -48,7 +48,7 @@ public class MeshComponent extends Component {
 
         material.setAlbedoMap(materialPath("Albedo"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getAlbedoMapPath());
+        ImGui.textWrapped(getNamePath(material.getAlbedoMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Albedo");
         if (ImGui.button("X"))
@@ -58,7 +58,7 @@ public class MeshComponent extends Component {
         ImGui.nextColumn();
         material.setNormalMap(materialPath("Normal"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getNormalMapPath());
+        ImGui.textWrapped(getNamePath(material.getNormalMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Normal");
         if (ImGui.button("X"))
@@ -68,7 +68,7 @@ public class MeshComponent extends Component {
         ImGui.nextColumn();
         material.setRoughnessMap(materialPath("Roughness"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getRoughnessMapPath());
+        ImGui.textWrapped(getNamePath(material.getRoughnessMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Roughness");
         if (ImGui.button("X"))
@@ -79,7 +79,7 @@ public class MeshComponent extends Component {
         ImGui.nextColumn();
         material.setMetallicMap(materialPath("Metallic"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getMetallicMapPath());
+        ImGui.textWrapped(getNamePath(material.getMetallicMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Metallic");
         if (ImGui.button("X"))
@@ -89,7 +89,7 @@ public class MeshComponent extends Component {
         ImGui.nextColumn();
         material.setAoMap(materialPath("Ambient Occlusion"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getAoMapPath());
+        ImGui.textWrapped(getNamePath(material.getAoMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Ambient Occlusion");
         if (ImGui.button("X"))
@@ -99,7 +99,7 @@ public class MeshComponent extends Component {
         ImGui.nextColumn();
         material.setEmissiveMap(materialPath("Emissive"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getEmissiveMapPath());
+        ImGui.textWrapped(getNamePath(material.getEmissiveMapPath()));
         ImGui.nextColumn();
         ImGui.pushID("Emissive");
         if (ImGui.button("X"))
@@ -116,6 +116,10 @@ public class MeshComponent extends Component {
                 return materialPath.get();
         }
         return "";
+    }
+
+    private String getNamePath(String path){
+        return new File(path).getName();
     }
 
     @Override
