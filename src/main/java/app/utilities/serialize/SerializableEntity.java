@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 class SerializableEntity {
     private final SerializableComponent serializableComponent;
+    private static final String TOTAL_COMPONENT_COUNT = "TotalComponentCount";
 
     protected SerializableEntity() {
         serializableComponent = new SerializableComponent();
@@ -15,14 +16,14 @@ class SerializableEntity {
         JsonObject result = new JsonObject();
         //case the entity is single
         result.addProperty("EntityName", entity.getName());
-        result.addProperty("TotalComponentCount", entity.getComponents().size());
+        result.addProperty(TOTAL_COMPONENT_COUNT, entity.getComponents().size());
         result.add("Components", serializableComponent.serializableComponent(entity.getComponents()));
 
         //case the entity is a son
         if (entity.getFather() != null) {
             JsonObject fatherJson = new JsonObject();
             fatherJson.addProperty("FatherEntityName", entity.getFather().getName());
-            fatherJson.addProperty("TotalComponentCount", entity.getFather().getComponents().size());
+            fatherJson.addProperty(TOTAL_COMPONENT_COUNT, entity.getFather().getComponents().size());
             fatherJson.add("FatherEntityComponents", serializableComponent.serializableComponent(entity.getFather().getComponents()));
             result.add("FatherEntity", fatherJson);
         }
@@ -33,7 +34,7 @@ class SerializableEntity {
             for (Entity children : entity.getChildren()) {
                 JsonObject childrenJson = new JsonObject();
                 childrenJson.addProperty("ChildrenEntityName", children.getName());
-                childrenJson.addProperty("TotalComponentCount", children.getComponents().size());
+                childrenJson.addProperty(TOTAL_COMPONENT_COUNT, children.getComponents().size());
                 childrenJson.add("ChildrenEntityComponents", serializableComponent.serializableComponent(children.getComponents()));
                 jsonArray.add(childrenJson);
             }
