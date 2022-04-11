@@ -51,7 +51,7 @@ public class ContentBrowser implements ImguiLayer {
                 if (listOfFile.isFile()) {
                     ImGui.pushID(listOfFile.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
-                    if(ImGui.isMouseDown(0))
+                    if(ImGui.isMouseDragging(0))
                         dragAndDropSourceEntity(listOfFile.toPath().toAbsolutePath().toString());
                     ImGui.textWrapped(listOfFile.getName());
                     ImGui.popID();
