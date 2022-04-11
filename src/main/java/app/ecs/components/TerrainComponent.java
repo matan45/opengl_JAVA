@@ -60,4 +60,15 @@ public class TerrainComponent extends Component {
         terrain.setActive(false);
     }
 
+    public ImBoolean getWireframe() {
+        return wireframe;
+    }
+
+    public TerrainQuadtreeRenderer getTerrain() {
+        return terrain;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

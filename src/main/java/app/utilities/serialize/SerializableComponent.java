@@ -58,6 +58,11 @@ class SerializableComponent {
                 serializable.add("Color", olVector3f(fog.getFog().getFogColor()));
                 serializable.addProperty("SightRange", fog.getFog().getSightRange());
             }
+            case TerrainComponent terrain -> {
+                serializable.addProperty("Path", terrain.getPath());
+                serializable.addProperty("Wireframe", terrain.getWireframe().get());
+                serializable.addProperty("Displacement", terrain.getTerrain().getDisplacementFactor());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;
