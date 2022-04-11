@@ -1,6 +1,7 @@
 package app.utilities.serialize;
 
 import app.ecs.Entity;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 class SerializableEntity {
@@ -24,11 +25,14 @@ class SerializableEntity {
         //case the entity is father
         else if (entity.hasChildren()) {
             result.addProperty("TotalEntitiesChildrenCount", entity.getChildren().size());
-            for (int i = 0; i < entity.getChildren().size(); i++) {
-                Entity children = entity.getChildren().get(i);
-                result.addProperty("ChildrenEntityName " + i, children.getName());
-                result.add("ChildrenEntityComponents " + i, serializableComponent.serializableComponent(children.getComponents()));
+            JsonArray jsonArray = new JsonArray();
+            for (Entity children : entity.getChildren()) {
+                JsonObject childrenJson = new JsonObject();
+                childrenJson.addProperty("ChildrenEntityName", children.getName());
+                childrenJson.add("ChildrenEntityComponents", serializableComponent.serializableComponent(children.getComponents()));
+                jsonArray.add(childrenJson);
             }
+            result.add("ChildrenEntities", jsonArray);
         }
 
 
