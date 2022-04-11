@@ -12,6 +12,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
+
 public class ContentBrowser implements ImguiLayer {
     private Path absolutePath = Paths.get("C:\\matan\\java\\src\\main");
 
@@ -51,7 +53,7 @@ public class ContentBrowser implements ImguiLayer {
                 if (listOfFile.isFile()) {
                     ImGui.pushID(listOfFile.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
-                    if(ImGui.isMouseDragging(0))
+                    if(ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
                         dragAndDropSourceEntity(listOfFile.toPath().toAbsolutePath().toString());
                     ImGui.textWrapped(listOfFile.getName());
                     ImGui.popID();
