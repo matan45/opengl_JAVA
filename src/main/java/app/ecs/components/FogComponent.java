@@ -7,7 +7,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
 public class FogComponent extends Component {
-    private final Fog fog;
+    private Fog fog;
 
     public FogComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -40,5 +40,13 @@ public class FogComponent extends Component {
     public void cleanUp() {
         EditorRenderer.getTerrainQuadtreeRenderer().setFog(null);
         EditorRenderer.getMeshRenderer().setFog(null);
+    }
+
+    public Fog getFog() {
+        return fog;
+    }
+
+    public void setFog(Fog fog) {
+        this.fog = fog;
     }
 }

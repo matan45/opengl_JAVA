@@ -54,6 +54,10 @@ class SerializableComponent {
                 serializable.addProperty("CutOff", SpotLight.getSpotLight().getCutOff());
                 serializable.addProperty("OuterCutOff", SpotLight.getSpotLight().getOuterCutOff());
             }
+            case FogComponent fog -> {
+                serializable.add("Color", olVector3f(fog.getFog().getFogColor()));
+                serializable.addProperty("SightRange", fog.getFog().getSightRange());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;
