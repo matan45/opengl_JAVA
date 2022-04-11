@@ -47,28 +47,28 @@ public class Inspector implements ImguiLayer {
             if (ImGui.beginPopupContextWindow("Component")) {
                 if (ImGui.beginMenu("Light")) {
                     if (ImGui.menuItem("Directional Light"))
-                        entity.addComponent(DirectionalLightComponent.class);
+                        entity.addComponent(new DirectionalLightComponent(entity));
                     if (ImGui.menuItem("Point Light"))
-                        entity.addComponent(PointLightComponent.class);
+                        entity.addComponent(new PointLightComponent(entity));
                     if (ImGui.menuItem("Spot Light"))
-                        entity.addComponent(SpotLightComponent.class);
+                        entity.addComponent(new SpotLightComponent(entity));
                     ImGui.endMenu();
                 }
                 if (ImGui.beginMenu("Audio")) {
                     if (ImGui.menuItem("Sound Effect"))
-                        entity.addComponent(SoundEffectComponent.class);
+                        entity.addComponent(new SoundEffectComponent(entity));
                     if (ImGui.menuItem("Music"))
-                        entity.addComponent(MusicComponent.class);
+                        entity.addComponent(new MusicComponent(entity));
                     ImGui.endMenu();
                 }
                 if (ImGui.menuItem("Sky Box"))
-                    entity.addComponent(SkyBoxComponent.class);
+                    entity.addComponent(new SkyBoxComponent(entity));
                 if (ImGui.menuItem("Mesh"))
-                    entity.addComponent(MeshComponent.class);
+                    entity.addComponent(new MeshComponent(entity));
                 if (ImGui.menuItem("Terrain"))
-                    entity.addComponent(TerrainComponent.class);
+                    entity.addComponent(new TerrainComponent(entity));
                 if (ImGui.menuItem("Fog"))
-                    entity.addComponent(FogComponent.class);
+                    entity.addComponent(new FogComponent(entity));
                 ImGui.endPopup();
             }
         }

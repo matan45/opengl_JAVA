@@ -66,16 +66,8 @@ public class Entity {
         components.forEach(c -> c.update(dt));
     }
 
-    public <T extends Component> void addComponent(Class<T> componentClass) {
-        try {
-            Constructor<T> ctr = componentClass.getDeclaredConstructor(Entity.class);
-            Component c = ctr.newInstance(this);
-            components.add(c);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-            LogError.println("fail to create component");
-        }
-
+    public <T extends Component> void addComponent(Component c) {
+        components.add(c);
     }
 
     public String getName() {
