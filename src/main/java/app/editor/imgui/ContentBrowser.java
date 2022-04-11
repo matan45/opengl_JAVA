@@ -51,20 +51,20 @@ public class ContentBrowser implements ImguiLayer {
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
-            for (File listOfFile : listOfFiles) {
-                if (listOfFile.isFile()) {
-                    ImGui.pushID(listOfFile.getName());
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    ImGui.pushID(file.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
                     if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
-                        dragAndDropSourceEntity(listOfFile.toPath().toAbsolutePath().toString());
-                    ImGui.textWrapped(listOfFile.getName());
+                        dragAndDropSourceEntity(file.toPath().toAbsolutePath().toString());
+                    ImGui.textWrapped(file.getName());
                     ImGui.popID();
                     ImGui.nextColumn();
-                } else if (listOfFile.isDirectory()) {
-                    ImGui.pushID(listOfFile.getName());
+                } else if (file.isDirectory()) {
+                    ImGui.pushID(file.getName());
                     if (ImGui.imageButton(folderIcon, thumbnailSize, thumbnailSize))
-                        absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + listOfFile.getName());
-                    ImGui.textWrapped(listOfFile.getName());
+                        absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
+                    ImGui.textWrapped(file.getName());
                     ImGui.popID();
                     ImGui.nextColumn();
                 }
