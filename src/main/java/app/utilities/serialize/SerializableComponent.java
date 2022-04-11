@@ -34,6 +34,11 @@ class SerializableComponent {
                 serializable.add("Rotation", olVector3f(transform.getOlTransform().getRotation()));
                 serializable.add("Scale", olVector3f(transform.getOlTransform().getScale()));
             }
+            case DirectionalLightComponent directionalLight -> {
+                serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));
+                serializable.add("Color", olVector3f(directionalLight.getDirectionalLight().getColor()));
+                serializable.addProperty("LightIntensity", directionalLight.getDirectionalLight().getDirLightIntensity());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
         return serializable;

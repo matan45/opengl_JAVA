@@ -10,7 +10,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
 public class DirectionalLightComponent extends Component {
-    private final DirectionalLight directionalLight;
+    private DirectionalLight directionalLight;
     private final OLTransform olTransform;
 
 
@@ -52,4 +52,11 @@ public class DirectionalLightComponent extends Component {
         EditorRenderer.getLightHandler().setDirectionalLight(null);
     }
 
+    public DirectionalLight getDirectionalLight() {
+        return directionalLight;
+    }
+
+    public void setDirectionalLight(DirectionalLight directionalLight) {
+        this.directionalLight = directionalLight;
+    }
 }

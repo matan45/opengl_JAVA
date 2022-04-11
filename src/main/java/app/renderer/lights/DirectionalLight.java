@@ -12,8 +12,8 @@ public class DirectionalLight {
     private final Billboards billboards;
 
     public DirectionalLight(Billboards billboards) {
-        this.direction = new OLVector3f();
-        this.color = new OLVector3f(1f, 1f, 1f);
+        direction = new OLVector3f();
+        color = new OLVector3f(1f, 1f, 1f);
         this.billboards = billboards;
         dirLightIntensity = 1f;
         position = new OLVector3f(3, 3, 3);
