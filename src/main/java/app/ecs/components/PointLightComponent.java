@@ -11,7 +11,7 @@ import imgui.flag.ImGuiColorEditFlags;
 
 public class PointLightComponent extends Component {
     private final OLTransform olTransform;
-    private PointLight pointLight;
+    private final PointLight pointLight;
 
     public PointLightComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -71,7 +71,4 @@ public class PointLightComponent extends Component {
         return pointLight;
     }
 
-    public void setPointLight(PointLight pointLight) {
-        this.pointLight = pointLight;
-    }
 }

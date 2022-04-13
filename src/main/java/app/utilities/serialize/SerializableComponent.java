@@ -35,13 +35,13 @@ class SerializableComponent {
             }
             case DirectionalLightComponent directionalLight -> {
                 serializable.addProperty(COMPONENT_NAME, DirectionalLightComponent.class.getSimpleName());
-                serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));//check if needed optional
+                serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));
                 serializable.add("Color", olVector3f(directionalLight.getDirectionalLight().getColor()));
                 serializable.addProperty("LightIntensity", directionalLight.getDirectionalLight().getDirLightIntensity());
             }
             case PointLightComponent pointLight -> {
                 serializable.addProperty(COMPONENT_NAME, PointLightComponent.class.getSimpleName());
-                serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));//check if needed optional
+                serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));
                 serializable.add("Color", olVector3f(pointLight.getPointLight().getColor()));
                 serializable.addProperty("Quadratic", pointLight.getPointLight().getQuadratic());
                 serializable.addProperty("Linear", pointLight.getPointLight().getLinear());
@@ -49,8 +49,8 @@ class SerializableComponent {
             }
             case SpotLightComponent SpotLight -> {
                 serializable.addProperty(COMPONENT_NAME, SpotLightComponent.class.getSimpleName());
-                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));//check if needed optional
-                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));//check if needed optional
+                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));
+                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));
                 serializable.add("Color", olVector3f(SpotLight.getSpotLight().getColor()));
                 serializable.addProperty("Quadratic", SpotLight.getSpotLight().getQuadratic());
                 serializable.addProperty("Linear", SpotLight.getSpotLight().getLinear());
@@ -76,8 +76,8 @@ class SerializableComponent {
             case SoundEffectComponent soundEffect -> {
                 serializable.addProperty(COMPONENT_NAME, SoundEffectComponent.class.getSimpleName());
                 serializable.addProperty("Path", soundEffect.getPath());
-                serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));//check if needed optional
-                serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));//check if needed optional
+                serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));
+                serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));
             }
             case SkyBoxComponent skyBox -> {
                 serializable.addProperty(COMPONENT_NAME, SkyBoxComponent.class.getSimpleName());
@@ -107,31 +107,41 @@ class SerializableComponent {
         return vector3f;
     }
 
-    public void deserializeComponent(JsonArray componentJson, Entity entity) {
-        for (int i = 0; i < componentJson.size(); i++) {
-            JsonObject component = componentJson.get(i).getAsJsonObject();
+    public void deserializeComponent(JsonArray componentArray, final Entity entity) {
+        for (int i = 0; i < componentArray.size(); i++) {
+            JsonObject component = componentArray.get(i).getAsJsonObject();
             fillComponent(component, entity);
         }
     }
 
-    private void fillComponent(JsonObject component, Entity entity) {
+    private void fillComponent(JsonObject component, final Entity entity) {
         String componentName = component.get(COMPONENT_NAME).getAsString();
         switch (componentName) {
-            case "TransformComponent": {
+            case "TransformComponent" -> {
                 OLTransform olTransform = new OLTransform();
                 olTransform.setPosition(deOlVector3f(component.getAsJsonArray("Position")));
                 olTransform.setRotation(deOlVector3f(component.getAsJsonArray("Rotation")));
                 olTransform.setScale(deOlVector3f(component.getAsJsonArray("Scale")));
                 TransformComponent transform = new TransformComponent(entity, olTransform);
                 entity.addComponent(transform);
-                break;
             }
-            case "DirectionalLightComponent": {
+            case "DirectionalLightComponent" -> {
                 DirectionalLightComponent directionalLight = new DirectionalLightComponent(entity);
                 directionalLight.getDirectionalLight().setDirection(deOlVector3f(component.getAsJsonArray("Direction")));
-                directionalLight.getDirectionalLight().setColor(deOlVector3f(component.getAsJsonArray("Direction")));
+                JsonArray floatArray = component.getAsJsonArray("Color");
+                directionalLight.getDirectionalLight().setColor(floatArray.get(0).getAsFloat(), floatArray.get(1).getAsFloat(), floatArray.get(2).getAsFloat());
                 directionalLight.getDirectionalLight().setDirLightIntensity(component.get("LightIntensity").getAsFloat());
                 entity.addComponent(directionalLight);
+            }
+            case "PointLightComponent" -> {
+                PointLightComponent pointLight = new PointLightComponent(entity);
+                pointLight.getPointLight().setPosition(deOlVector3f(component.getAsJsonArray("Position")));
+                JsonArray floatArray = component.getAsJsonArray("Color");
+                pointLight.getPointLight().setColor(floatArray.get(0).getAsFloat(), floatArray.get(1).getAsFloat(), floatArray.get(2).getAsFloat());
+                pointLight.getPointLight().setLinear(component.get("Linear").getAsFloat());
+                pointLight.getPointLight().setQuadratic(component.get("Quadratic").getAsFloat());
+                pointLight.getPointLight().setConstant(component.get("Constant").getAsFloat());
+                entity.addComponent(pointLight);
             }
         }
     }
