@@ -10,7 +10,7 @@ import imgui.ImGui;
 import java.io.File;
 import java.nio.file.Paths;
 
-public class MusicComponent extends CommonComponent {
+public class MusicComponent extends Component {
     private String path = "";
     private String prePath = "";
     private File file;
@@ -96,5 +96,11 @@ public class MusicComponent extends CommonComponent {
         music.close();
     }
 
+    public String getPath() {
+        return path;
+    }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
 }

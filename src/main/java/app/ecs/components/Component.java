@@ -1,11 +1,37 @@
 package app.ecs.components;
 
-public interface Component {
-    void init();
+import app.ecs.Entity;
 
-    void update(float dt);
+import java.util.Objects;
 
-    void imguiDraw();
+public abstract class Component {
+    protected Entity ownerEntity;
 
-    void cleanUp();
+    protected Component(Entity ownerEntity) {
+        this.ownerEntity = ownerEntity;
+    }
+
+
+    public void update(float dt) {
+    }
+
+
+    public abstract void imguiDraw();
+
+
+    public abstract void cleanUp();
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Component that = (Component) o;
+        return Objects.equals(ownerEntity.getUuid(), that.ownerEntity.getUuid());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ownerEntity);
+    }
 }

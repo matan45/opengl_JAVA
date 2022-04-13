@@ -3,7 +3,9 @@ package app.math.components;
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 
-public class OLTransform {
+import java.io.Serializable;
+
+public class OLTransform implements Serializable {
     private OLVector3f position;
     private OLVector3f scale;
     private OLVector3f rotation;

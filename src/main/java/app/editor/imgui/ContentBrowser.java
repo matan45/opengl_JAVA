@@ -1,13 +1,19 @@
 package app.editor.imgui;
 
+import app.ecs.Entity;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
+import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiCond;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
 public class ContentBrowser implements ImguiLayer {
     private Path absolutePath = Paths.get("C:\\matan\\java\\src\\main");
@@ -15,7 +21,8 @@ public class ContentBrowser implements ImguiLayer {
     private final int folderIcon;
     private final int fileIcon;
 
-    private static final String FOLDER_SPLITTER= "\\";
+    private static final String FOLDER_SPLITTER = "\\";
+    private static final String ENTITY_EXTENSION = "prefab";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
@@ -26,6 +33,7 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
+            dragAndDropTargetEntity();
             if (ImGui.button("<--") && absolutePath.getParent() != null)
                 absolutePath = absolutePath.getParent();
             ImGui.sameLine();
@@ -43,16 +51,20 @@ public class ContentBrowser implements ImguiLayer {
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
-            for (File listOfFile : listOfFiles) {
-                if (listOfFile.isFile()) {
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    ImGui.pushID(file.getName());
                     ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
-                    ImGui.textWrapped(listOfFile.getName());
+                    if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
+                        dragAndDropSourceEntity(file.toPath().toAbsolutePath().toString());
+                    ImGui.textWrapped(file.getName());
+                    ImGui.popID();
                     ImGui.nextColumn();
-                } else if (listOfFile.isDirectory()) {
-                    ImGui.pushID(listOfFile.getName());
+                } else if (file.isDirectory()) {
+                    ImGui.pushID(file.getName());
                     if (ImGui.imageButton(folderIcon, thumbnailSize, thumbnailSize))
-                        absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + listOfFile.getName());
-                    ImGui.textWrapped(listOfFile.getName());
+                        absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
+                    ImGui.textWrapped(file.getName());
                     ImGui.popID();
                     ImGui.nextColumn();
                 }
@@ -61,6 +73,29 @@ public class ContentBrowser implements ImguiLayer {
         }
         ImGui.columns(1);
         ImGui.end();
+    }
+
+    private void dragAndDropTargetEntity() {
+        if (ImGui.beginDragDropTarget()) {
+            Object payload = ImGui.acceptDragDropPayload(DragAndDrop.SAVE_ENTITY.getType());
+            if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
+                Entity entity = (Entity) payload;
+                Serializable.saveEntity(entity, absolutePath.toString());
+            }
+            ImGui.endDragDropTarget();
+        }
+    }
+
+    private void dragAndDropSourceEntity(String path) {
+        Optional.ofNullable(path)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(path.lastIndexOf(".") + 1)).ifPresent(extension -> {
+                    if (extension.equals(ENTITY_EXTENSION) && ImGui.beginDragDropSource()) {
+                        ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
+                        ImGui.text(path);
+                        ImGui.endDragDropSource();
+                    }
+                });
     }
 
 }

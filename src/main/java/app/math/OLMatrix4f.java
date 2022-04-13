@@ -1,8 +1,9 @@
 package app.math;
 
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 
-public class OLMatrix4f {
+public class OLMatrix4f implements Serializable {
 
     public float m00, m01, m02, m03;
     public float m10, m11, m12, m13;

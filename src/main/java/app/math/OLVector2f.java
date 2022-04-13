@@ -1,6 +1,8 @@
 package app.math;
 
-public class OLVector2f {
+import java.io.Serializable;
+
+public class OLVector2f implements Serializable {
     public float x;
     public float y;
 

@@ -5,6 +5,7 @@ import app.ecs.EntitySystem;
 import app.math.components.OLTransform;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 
@@ -41,7 +42,14 @@ public class SceneGraph implements ImguiLayer {
 
         }
         ImGui.end();
+    }
 
+    private void dragAndDropEntity() {
+        if (selectionNode != null && ImGui.beginDragDropSource()) {
+            ImGui.setDragDropPayload(DragAndDrop.SAVE_ENTITY.getType(), selectionNode, ImGuiCond.Once);
+            ImGui.text(selectionNode.getName());
+            ImGui.endDragDropSource();
+        }
     }
 
     private void menuPopUp() {
@@ -70,6 +78,8 @@ public class SceneGraph implements ImguiLayer {
             inspector.setEntity(entity);
             selectionNode = entity;
         }
+
+        dragAndDropEntity();
 
         return treeNodeOpen;
     }

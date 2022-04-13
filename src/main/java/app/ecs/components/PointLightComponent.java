@@ -9,7 +9,7 @@ import app.renderer.lights.PointLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
-public class PointLightComponent extends CommonComponent {
+public class PointLightComponent extends Component {
     private final OLTransform olTransform;
     private final PointLight pointLight;
 
@@ -65,6 +65,10 @@ public class PointLightComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         EditorRenderer.getLightHandler().removePointLight(pointLight);
+    }
+
+    public PointLight getPointLight() {
+        return pointLight;
     }
 
 }

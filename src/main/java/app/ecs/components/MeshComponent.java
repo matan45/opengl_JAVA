@@ -11,7 +11,7 @@ import imgui.ImGui;
 import java.io.File;
 import java.util.Optional;
 
-public class MeshComponent extends CommonComponent {
+public class MeshComponent extends Component {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
@@ -48,7 +48,7 @@ public class MeshComponent extends CommonComponent {
 
         material.setAlbedoMap(materialPath("Albedo"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getAlbedoMapPath());
+        ImGui.textWrapped(material.getAlbedoFileName());
         ImGui.nextColumn();
         ImGui.pushID("Albedo");
         if (ImGui.button("X"))
@@ -58,7 +58,7 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         material.setNormalMap(materialPath("Normal"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getNormalMapPath());
+        ImGui.textWrapped(material.getNormalFileName());
         ImGui.nextColumn();
         ImGui.pushID("Normal");
         if (ImGui.button("X"))
@@ -68,7 +68,7 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         material.setRoughnessMap(materialPath("Roughness"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getRoughnessMapPath());
+        ImGui.textWrapped(material.getRoughnessFileName());
         ImGui.nextColumn();
         ImGui.pushID("Roughness");
         if (ImGui.button("X"))
@@ -79,7 +79,7 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         material.setMetallicMap(materialPath("Metallic"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getMetallicMapPath());
+        ImGui.textWrapped(material.getMetallicFileName());
         ImGui.nextColumn();
         ImGui.pushID("Metallic");
         if (ImGui.button("X"))
@@ -89,7 +89,7 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         material.setAoMap(materialPath("Ambient Occlusion"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getAoMapPath());
+        ImGui.textWrapped(material.getAoFileName());
         ImGui.nextColumn();
         ImGui.pushID("Ambient Occlusion");
         if (ImGui.button("X"))
@@ -99,7 +99,7 @@ public class MeshComponent extends CommonComponent {
         ImGui.nextColumn();
         material.setEmissiveMap(materialPath("Emissive"));
         ImGui.nextColumn();
-        ImGui.textWrapped(material.getEmissiveMapPath());
+        ImGui.textWrapped(material.getEmissiveFileName());
         ImGui.nextColumn();
         ImGui.pushID("Emissive");
         if (ImGui.button("X"))
@@ -121,5 +121,25 @@ public class MeshComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         EditorRenderer.getMeshRenderer().removeInstant(meshRenderer);
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
+
+    public MeshRenderer getMeshRenderer() {
+        return meshRenderer;
     }
 }

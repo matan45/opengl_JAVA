@@ -3,30 +3,33 @@ package app.ecs;
 import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
+import app.utilities.logger.LogError;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Entity {
-    private final UUID uuid;
+    private final int uuid;
     private String name;
     private final Set<Component> components;
-    private boolean isActive;
-    private final Map<String, Entity> children;
+    private final Map<Integer, Entity> children;
     private Entity father;
-    //case remove children
+    private String path;
 
     public Entity(String name, OLTransform olTransform) {
         this.name = name;
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
         children = new HashMap<>();
-        uuid = UUID.randomUUID();
+        uuid = System.identityHashCode(this);
+        path = "";
     }
 
     public Entity() {
         children = new HashMap<>();
         components = new HashSet<>();
-        uuid = UUID.randomUUID();
+        uuid = System.identityHashCode(this);
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
@@ -54,12 +57,7 @@ public class Entity {
     }
 
     public <T extends Component> boolean hasComponent(Class<T> componentClass) {
-        for (Component c : components) {
-            if (componentClass.isAssignableFrom(c.getClass())) {
-                return true;
-            }
-        }
-        return false;
+        return components.stream().anyMatch(c -> componentClass.isAssignableFrom(c.getClass()));
     }
 
     public void updateComponent(float dt) {
@@ -69,7 +67,7 @@ public class Entity {
     }
 
     public void addComponent(Component c) {
-        this.components.add(c);
+        components.add(c);
     }
 
     public String getName() {
@@ -84,8 +82,8 @@ public class Entity {
         return components;
     }
 
-    public String getUuid() {
-        return uuid.toString();
+    public int getUuid() {
+        return uuid;
     }
 
     public Entity getFather() {
@@ -103,14 +101,7 @@ public class Entity {
 
         if (hasChildren())
             children.values().forEach(Entity::cleanUp);
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
+        children.clear();
     }
 
     public boolean hasChildren() {
@@ -128,5 +119,14 @@ public class Entity {
 
     public List<Entity> getChildren() {
         return children.values().stream().toList();
+    }
+
+    //case is a prefab
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

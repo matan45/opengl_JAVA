@@ -4,9 +4,10 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class SpotLight {
+public class SpotLight implements Serializable {
 
     private OLVector3f position;
     private OLVector3f direction;
@@ -19,7 +20,7 @@ public class SpotLight {
     private float cutOff;
     private float outerCutOff;
 
-    private final Billboards billboards;
+    private final transient Billboards billboards;
 
 
     public SpotLight(Billboards billboards) {

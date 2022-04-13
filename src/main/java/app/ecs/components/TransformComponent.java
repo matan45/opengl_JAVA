@@ -9,7 +9,7 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiStyleVar;
 import imgui.type.ImString;
 
-public final class TransformComponent extends CommonComponent {
+public final class TransformComponent extends Component {
     private final OLTransform olTransform;
     private final OLVector2f buttonSize;
     private final ImString entityName;
@@ -22,11 +22,6 @@ public final class TransformComponent extends CommonComponent {
         entityName = new ImString(ownerEntity.getName(), 256);
     }
 
-
-    public OLTransform getOlTransform() {
-        return olTransform;
-    }
-
     @Override
     public void imguiDraw() {
         ImGui.text("Entity Name");
@@ -36,6 +31,11 @@ public final class TransformComponent extends CommonComponent {
         drawVector3("Position", olTransform.getPosition(), 0.0f);
         drawVector3("Rotation", olTransform.getRotation(), 0.0f);
         drawVector3("Scale", olTransform.getScale(), 1.0f);
+
+    }
+
+    @Override
+    public void cleanUp() {
 
     }
 
@@ -95,4 +95,7 @@ public final class TransformComponent extends CommonComponent {
         ImGui.popID();
     }
 
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
 }

@@ -9,7 +9,7 @@ import app.renderer.lights.SpotLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
-public class SpotLightComponent extends CommonComponent {
+public class SpotLightComponent extends Component {
     private final OLTransform olTransform;
     private final SpotLight spotLight;
 
@@ -85,5 +85,9 @@ public class SpotLightComponent extends CommonComponent {
     @Override
     public void cleanUp() {
         EditorRenderer.getLightHandler().removeSpotLight(spotLight);
+    }
+
+    public SpotLight getSpotLight() {
+        return spotLight;
     }
 }

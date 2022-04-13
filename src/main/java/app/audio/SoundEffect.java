@@ -4,16 +4,18 @@ import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.AL11.AL_SAMPLE_OFFSET;
 import static org.lwjgl.openal.AL11.AL_SEC_OFFSET;
 
-public class SoundEffect {
+public class SoundEffect implements Serializable {
     private final int sourceID;
-    private final Billboards billboards;
+    private final transient Billboards billboards;
     private OLVector3f position;
+    private OLVector3f velocity;
 
     public SoundEffect(Billboards billboards) {
         sourceID = alGenSources();
@@ -44,6 +46,7 @@ public class SoundEffect {
     }
 
     public void setVelocity(OLVector3f velocity) {
+        this.velocity = velocity;
         alSource3f(sourceID, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
     }
 
@@ -82,6 +85,14 @@ public class SoundEffect {
     public void setPosition(OLVector3f position) {
         this.position = position;
         alSource3f(sourceID, AL_POSITION, position.x, position.y, position.z);
+    }
+
+    public OLVector3f getPosition() {
+        return position;
+    }
+
+    public OLVector3f getVelocity() {
+        return velocity;
     }
 
     public void renderBillboards(Camera camera) {

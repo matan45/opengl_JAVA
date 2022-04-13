@@ -1,12 +1,11 @@
 package app.ecs;
 
-import app.ecs.components.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntitySystem {
     private static final List<Entity> entitiesFather = new ArrayList<>();
+    private static final List<Entity> entitiesByName = new ArrayList<>();
 
     private EntitySystem() {
     }
@@ -34,8 +33,15 @@ public class EntitySystem {
     }
 
     public static List<Entity> getEntitiesByName(String name) {
-        //TODO check Children entites
-        return entitiesFather.stream().filter(e -> e.getName().equals(name)).toList();
+        entitiesByName.clear();
+        for (Entity entity : entitiesFather) {
+            if (entity.hasChildren())
+                entity.getChildren().stream().filter(e -> e.getName().equals(name)).forEach(entitiesByName::add);
+            if (entity.getName().equals(name))
+                entitiesByName.add(entity);
+        }
+
+        return entitiesByName;
     }
 
     public static void updateEntities(float dt) {
@@ -43,6 +49,6 @@ public class EntitySystem {
     }
 
     public static void closeEntities() {
-        entitiesFather.forEach(e -> e.getComponents().forEach(Component::cleanUp));
+        entitiesFather.forEach(Entity::cleanUp);
     }
 }
