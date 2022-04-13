@@ -7,7 +7,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
 public class FogComponent extends Component {
-    private Fog fog;
+    private final Fog fog;
 
     public FogComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -28,7 +28,7 @@ public class FogComponent extends Component {
         fog.setSightRange(sightRangeValue[0]);
         ImGui.popID();
 
-        ImGui.pushID("DirectionalLight");
+        ImGui.pushID("FogColor");
         float[] color = {fog.getFogColor().x, fog.getFogColor().y, fog.getFogColor().z};
         ImGui.colorEdit3("color", color, ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.NoDragDrop);
 
@@ -44,9 +44,5 @@ public class FogComponent extends Component {
 
     public Fog getFog() {
         return fog;
-    }
-
-    public void setFog(Fog fog) {
-        this.fog = fog;
     }
 }

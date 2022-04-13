@@ -90,7 +90,7 @@ class SerializableComponent {
                 serializable.addProperty("AlbedoPath", mesh.getMaterial().getAlbedoMapPath());
                 serializable.addProperty("NormalPath", mesh.getMaterial().getNormalMapPath());
                 serializable.addProperty("MetallicPath", mesh.getMaterial().getMetallicMapPath());
-                serializable.addProperty("Roughness", mesh.getMaterial().getRoughnessMapPath());
+                serializable.addProperty("RoughnessPath", mesh.getMaterial().getRoughnessMapPath());
                 serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
                 serializable.addProperty("AoPath", mesh.getMaterial().getAoMapPath());
             }
@@ -142,6 +142,62 @@ class SerializableComponent {
                 pointLight.getPointLight().setQuadratic(component.get("Quadratic").getAsFloat());
                 pointLight.getPointLight().setConstant(component.get("Constant").getAsFloat());
                 entity.addComponent(pointLight);
+            }
+            case "SpotLightComponent" -> {
+                SpotLightComponent spotLight = new SpotLightComponent(entity);
+                spotLight.getSpotLight().setPosition(deOlVector3f(component.getAsJsonArray("Position")));
+                spotLight.getSpotLight().setDirection(deOlVector3f(component.getAsJsonArray("Direction")));
+                JsonArray floatArray = component.getAsJsonArray("Color");
+                spotLight.getSpotLight().setColor(floatArray.get(0).getAsFloat(), floatArray.get(1).getAsFloat(), floatArray.get(2).getAsFloat());
+                spotLight.getSpotLight().setLinear(component.get("Linear").getAsFloat());
+                spotLight.getSpotLight().setQuadratic(component.get("Quadratic").getAsFloat());
+                spotLight.getSpotLight().setConstant(component.get("Constant").getAsFloat());
+                spotLight.getSpotLight().setCutOff(component.get("CutOff").getAsFloat());
+                spotLight.getSpotLight().setOuterCutOff(component.get("OuterCutOff").getAsFloat());
+                entity.addComponent(spotLight);
+            }
+            case "FogComponent" -> {
+                FogComponent fog = new FogComponent(entity);
+                JsonArray floatArray = component.getAsJsonArray("Color");
+                fog.getFog().setFogColor(floatArray.get(0).getAsFloat(), floatArray.get(1).getAsFloat(), floatArray.get(2).getAsFloat());
+                fog.getFog().setSightRange(component.get("SightRange").getAsFloat());
+                entity.addComponent(fog);
+            }
+            case "TerrainComponent" -> {
+                TerrainComponent terrain = new TerrainComponent(entity);
+                terrain.setPath(component.get("Path").getAsString());
+                terrain.getWireframe().set(component.get("Wireframe").getAsBoolean());
+                terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
+                entity.addComponent(terrain);
+            }
+            case "MusicComponent" -> {
+                MusicComponent music = new MusicComponent(entity);
+                music.setPath(component.get("Path").getAsString());
+                entity.addComponent(music);
+            }
+            case "SoundEffectComponent" -> {
+                SoundEffectComponent soundEffect = new SoundEffectComponent(entity);
+                soundEffect.setPath(component.get("Path").getAsString());
+                soundEffect.getSoundEffect().setPosition(deOlVector3f(component.getAsJsonArray("Position")));
+                soundEffect.getSoundEffect().setVelocity(deOlVector3f(component.getAsJsonArray("Velocity")));
+                entity.addComponent(soundEffect);
+            }
+            case "SkyBoxComponent" -> {
+                SkyBoxComponent skyBox = new SkyBoxComponent(entity);
+                skyBox.setPath(component.get("Path").getAsString());
+                skyBox.getSkyBox().setExposure(component.get("Exposure").getAsFloat());
+                entity.addComponent(skyBox);
+            }
+            case "MeshComponent" -> {
+                MeshComponent mesh = new MeshComponent(entity);
+                mesh.setPath(component.get("MeshPath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("AlbedoPath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("NormalPath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("MetallicPath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("RoughnessPath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("EmissivePath").getAsString());
+                mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
+                entity.addComponent(mesh);
             }
         }
     }

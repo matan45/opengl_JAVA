@@ -11,7 +11,7 @@ import imgui.flag.ImGuiColorEditFlags;
 
 public class SpotLightComponent extends Component {
     private final OLTransform olTransform;
-    private SpotLight spotLight;
+    private final SpotLight spotLight;
 
     public SpotLightComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -89,9 +89,5 @@ public class SpotLightComponent extends Component {
 
     public SpotLight getSpotLight() {
         return spotLight;
-    }
-
-    public void setSpotLight(SpotLight spotLight) {
-        this.spotLight = spotLight;
     }
 }

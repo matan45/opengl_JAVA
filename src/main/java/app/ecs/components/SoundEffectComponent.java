@@ -103,6 +103,10 @@ public class SoundEffectComponent extends Component {
         return path;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public SoundEffect getSoundEffect() {
         return soundEffect;
     }
