@@ -4,6 +4,7 @@ import app.ecs.Entity;
 import app.ecs.components.*;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
+import app.utilities.logger.LogError;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -199,6 +200,7 @@ class SerializableComponent {
                 mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
                 entity.addComponent(mesh);
             }
+            default -> LogError.println("cant find this component " + componentName);
         }
     }
 
