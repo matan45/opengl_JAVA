@@ -48,4 +48,10 @@ public class DirectionalLight {
         color.y = g;
         color.z = b;
     }
+
+    public void setColor(OLVector3f color) {
+        this.color.x = color.x;
+        this.color.y = color.y;
+        this.color.z = color.z;
+    }
 }

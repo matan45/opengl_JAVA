@@ -55,8 +55,4 @@ public class DirectionalLightComponent extends Component {
     public DirectionalLight getDirectionalLight() {
         return directionalLight;
     }
-
-    public void setDirectionalLight(DirectionalLight directionalLight) {
-        this.directionalLight = directionalLight;
-    }
 }

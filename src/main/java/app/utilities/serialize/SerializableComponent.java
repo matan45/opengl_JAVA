@@ -126,6 +126,13 @@ class SerializableComponent {
                 entity.addComponent(transform);
                 break;
             }
+            case "DirectionalLightComponent": {
+                DirectionalLightComponent directionalLight = new DirectionalLightComponent(entity);
+                directionalLight.getDirectionalLight().setDirection(deOlVector3f(component.getAsJsonArray("Direction")));
+                directionalLight.getDirectionalLight().setColor(deOlVector3f(component.getAsJsonArray("Direction")));
+                directionalLight.getDirectionalLight().setDirLightIntensity(component.get("LightIntensity").getAsFloat());
+                entity.addComponent(directionalLight);
+            }
         }
     }
 
