@@ -52,13 +52,13 @@ public class MainImgui implements ImguiLayer {
     private void menuBar() {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
+                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New Scene", "CTRL+N", false)) {
                     OpenFileDialog.openFolder().ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open Scene", "CTRL+O", false)) {
                     OpenFileDialog.openFile("png,jpg;pdf").ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save Scene", "CTRL+S", false)) {
                     OpenFileDialog.save("png,jpg;pdf").ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", "EXIT", false)) {
                     closeWindow.set(false);
                 }
                 ImGui.endMenu();
