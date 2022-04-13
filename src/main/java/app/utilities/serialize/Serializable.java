@@ -51,7 +51,7 @@ public class Serializable {
                 String file = readFromInputStream(inputStream);
                 JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
                 Entity entity = serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
-                entity.setName(entity.getName()+" (prefab)");
+                entity.setName(entity.getName() + " (prefab)");
                 entity.setPath(path);
                 return entity;
             } catch (IOException e) {
