@@ -50,7 +50,9 @@ public class Serializable {
             try (InputStream inputStream = new FileInputStream(file)) {
                 String file = readFromInputStream(inputStream);
                 JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
-                return serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
+                Entity entity = serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
+                entity.setPath(path);
+                return entity;
             } catch (IOException e) {
                 e.printStackTrace();
                 LogError.println("fail to load a file");
