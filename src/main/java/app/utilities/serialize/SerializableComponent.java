@@ -10,13 +10,14 @@ import java.util.Set;
 
 class SerializableComponent {
 
+    private static final String COMPONENT_NAME = "ComponentName";
+
     protected SerializableComponent() {
     }
 
     protected JsonArray serializableComponent(final Set<Component> components) {
         JsonArray componentsArray = new JsonArray();
         for (Component component : components) {
-            componentsArray.add(component.getClass().getSimpleName());
             componentsArray.add(saveComponentFactory(component));
         }
         return componentsArray;
@@ -26,16 +27,19 @@ class SerializableComponent {
         JsonObject serializable = new JsonObject();
         switch (component) {
             case TransformComponent transform -> {
+                serializable.addProperty(COMPONENT_NAME, TransformComponent.class.getSimpleName());
                 serializable.add("Position", olVector3f(transform.getOlTransform().getPosition()));
                 serializable.add("Rotation", olVector3f(transform.getOlTransform().getRotation()));
                 serializable.add("Scale", olVector3f(transform.getOlTransform().getScale()));
             }
             case DirectionalLightComponent directionalLight -> {
+                serializable.addProperty(COMPONENT_NAME, DirectionalLightComponent.class.getSimpleName());
                 serializable.add("Direction", olVector3f(directionalLight.getDirectionalLight().getDirection()));//check if needed optional
                 serializable.add("Color", olVector3f(directionalLight.getDirectionalLight().getColor()));
                 serializable.addProperty("LightIntensity", directionalLight.getDirectionalLight().getDirLightIntensity());
             }
             case PointLightComponent pointLight -> {
+                serializable.addProperty(COMPONENT_NAME, PointLightComponent.class.getSimpleName());
                 serializable.add("Position", olVector3f(pointLight.getPointLight().getPosition()));//check if needed optional
                 serializable.add("Color", olVector3f(pointLight.getPointLight().getColor()));
                 serializable.addProperty("Quadratic", pointLight.getPointLight().getQuadratic());
@@ -43,6 +47,7 @@ class SerializableComponent {
                 serializable.addProperty("Constant", pointLight.getPointLight().getConstant());
             }
             case SpotLightComponent SpotLight -> {
+                serializable.addProperty(COMPONENT_NAME, SpotLightComponent.class.getSimpleName());
                 serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));//check if needed optional
                 serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));//check if needed optional
                 serializable.add("Color", olVector3f(SpotLight.getSpotLight().getColor()));
@@ -53,31 +58,37 @@ class SerializableComponent {
                 serializable.addProperty("OuterCutOff", SpotLight.getSpotLight().getOuterCutOff());
             }
             case FogComponent fog -> {
+                serializable.addProperty(COMPONENT_NAME, FogComponent.class.getSimpleName());
                 serializable.add("Color", olVector3f(fog.getFog().getFogColor()));
                 serializable.addProperty("SightRange", fog.getFog().getSightRange());
             }
             case TerrainComponent terrain -> {
+                serializable.addProperty(COMPONENT_NAME, TerrainComponent.class.getSimpleName());
                 serializable.addProperty("Path", terrain.getPath());
                 serializable.addProperty("Wireframe", terrain.getWireframe().get());
                 serializable.addProperty("Displacement", terrain.getTerrain().getDisplacementFactor());
             }
             case MusicComponent music -> {
+                serializable.addProperty(COMPONENT_NAME, MusicComponent.class.getSimpleName());
                 serializable.addProperty("Path", music.getPath());
             }
             case SoundEffectComponent soundEffect -> {
+                serializable.addProperty(COMPONENT_NAME, SoundEffectComponent.class.getSimpleName());
                 serializable.addProperty("Path", soundEffect.getPath());
                 serializable.add("Position", olVector3f(soundEffect.getSoundEffect().getPosition()));//check if needed optional
                 serializable.add("Velocity", olVector3f(soundEffect.getSoundEffect().getVelocity()));//check if needed optional
             }
             case SkyBoxComponent skyBox -> {
+                serializable.addProperty(COMPONENT_NAME, SkyBoxComponent.class.getSimpleName());
                 serializable.addProperty("Path", skyBox.getPath());
                 serializable.addProperty("Exposure", skyBox.getSkyBox().getExposure());
             }
             case MeshComponent mesh -> {
+                serializable.addProperty(COMPONENT_NAME, MeshComponent.class.getSimpleName());
                 serializable.addProperty("MeshPath", mesh.getPath());
                 serializable.addProperty("AlbedoPath", mesh.getMaterial().getAlbedoMapPath());
                 serializable.addProperty("NormalPath", mesh.getMaterial().getNormalMapPath());
-                serializable.addProperty("MetallicPath",mesh.getMaterial().getMetallicMapPath());
+                serializable.addProperty("MetallicPath", mesh.getMaterial().getMetallicMapPath());
                 serializable.addProperty("Roughness", mesh.getMaterial().getRoughnessMapPath());
                 serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
                 serializable.addProperty("AoPath", mesh.getMaterial().getAoMapPath());
@@ -96,6 +107,11 @@ class SerializableComponent {
     }
 
     public void deserializeComponent(JsonArray componentJson, Entity entity) {
-        componentJson.size();
+        for (int i = 0; i < componentJson.size(); i++) {
+            JsonObject compnent = componentJson.get(i).getAsJsonObject();
+        }
+    }
+
+    private void fillComponent(JsonObject compnent, Entity entity) {
     }
 }
