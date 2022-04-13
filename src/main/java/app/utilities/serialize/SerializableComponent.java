@@ -3,6 +3,7 @@ package app.utilities.serialize;
 import app.ecs.Entity;
 import app.ecs.components.*;
 import app.math.OLVector3f;
+import app.math.components.OLTransform;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -108,10 +109,22 @@ class SerializableComponent {
 
     public void deserializeComponent(JsonArray componentJson, Entity entity) {
         for (int i = 0; i < componentJson.size(); i++) {
-            JsonObject compnent = componentJson.get(i).getAsJsonObject();
+            JsonObject component = componentJson.get(i).getAsJsonObject();
+            fillComponent(component, entity);
         }
     }
 
-    private void fillComponent(JsonObject compnent, Entity entity) {
+    private void fillComponent(JsonObject component, Entity entity) {
+        String componentName = component.get(COMPONENT_NAME).getAsString();
+        switch (componentName) {
+            case "TransformComponent": {
+                OLTransform olTransform = new OLTransform();
+                TransformComponent transform = new TransformComponent(entity, olTransform);
+                entity.addComponent(transform);
+                break;
+            }
+
+
+        }
     }
 }
