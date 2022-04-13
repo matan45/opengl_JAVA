@@ -213,7 +213,12 @@ public class ViewPort implements ImguiLayer {
             String payload = ImGui.acceptDragDropPayload(DragAndDrop.LOAD_ENTITY.getType());
             if (payload != null) {
                 Entity entity = Serializable.loadEntity(payload);
-                EntitySystem.addEntity(entity);
+                assert entity != null;
+                if (entity.getFather() != null) {
+                    EntitySystem.addEntity(entity.getFather());
+                    EntitySystem.addEntityChildren(entity.getFather(), entity);
+                } else
+                    EntitySystem.addEntity(entity);
             }
             ImGui.endDragDropTarget();
         }

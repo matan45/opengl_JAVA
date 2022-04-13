@@ -1,5 +1,6 @@
 package app.utilities.serialize;
 
+import app.ecs.Entity;
 import app.ecs.components.*;
 import app.math.OLVector3f;
 import com.google.gson.JsonArray;
@@ -92,5 +93,9 @@ class SerializableComponent {
         vector3f.add(olVector3f.y);
         vector3f.add(olVector3f.z);
         return vector3f;
+    }
+
+    public void deserializeComponent(JsonArray componentJson, Entity entity) {
+        componentJson.size();
     }
 }
