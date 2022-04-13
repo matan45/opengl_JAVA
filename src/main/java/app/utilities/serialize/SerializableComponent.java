@@ -119,12 +119,17 @@ class SerializableComponent {
         switch (componentName) {
             case "TransformComponent": {
                 OLTransform olTransform = new OLTransform();
+                olTransform.setPosition(deOlVector3f(component.getAsJsonArray("Position")));
+                olTransform.setRotation(deOlVector3f(component.getAsJsonArray("Rotation")));
+                olTransform.setScale(deOlVector3f(component.getAsJsonArray("Scale")));
                 TransformComponent transform = new TransformComponent(entity, olTransform);
                 entity.addComponent(transform);
                 break;
             }
-
-
         }
+    }
+
+    private OLVector3f deOlVector3f(JsonArray vector3f) {
+        return new OLVector3f(vector3f.get(0).getAsFloat(), vector3f.get(1).getAsFloat(), vector3f.get(2).getAsFloat());
     }
 }
