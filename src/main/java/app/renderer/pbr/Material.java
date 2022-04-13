@@ -94,7 +94,7 @@ public class Material implements Serializable {
 
     public void setMetallicMap(String metallicMapPath) {
         if (!metallicMapPath.isEmpty()) {
-            this.metallicMapPath = new File(metallicMapPath).getName();
+            this.metallicMapPath = metallicMapPath;
             metallicFileName = new File(metallicMapPath).getName();
             metallicMap = textures.loadTexture(metallicMapPath);
         }

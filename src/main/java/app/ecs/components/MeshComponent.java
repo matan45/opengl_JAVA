@@ -134,4 +134,12 @@ public class MeshComponent extends Component {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public OLTransform getOlTransform() {
+        return olTransform;
+    }
+
+    public MeshRenderer getMeshRenderer() {
+        return meshRenderer;
+    }
 }

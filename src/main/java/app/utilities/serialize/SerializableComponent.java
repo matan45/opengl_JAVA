@@ -169,6 +169,8 @@ class SerializableComponent {
                 terrain.setPath(component.get("Path").getAsString());
                 terrain.getWireframe().set(component.get("Wireframe").getAsBoolean());
                 terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
+                terrain.getTerrain().init(terrain.getPath());
+                terrain.getTerrain().setActive(true);
                 entity.addComponent(terrain);
             }
             case "MusicComponent" -> {
@@ -187,17 +189,19 @@ class SerializableComponent {
                 SkyBoxComponent skyBox = new SkyBoxComponent(entity);
                 skyBox.setPath(component.get("Path").getAsString());
                 skyBox.getSkyBox().setExposure(component.get("Exposure").getAsFloat());
+                skyBox.getSkyBox().init(skyBox.getPath());
                 entity.addComponent(skyBox);
             }
             case "MeshComponent" -> {
                 MeshComponent mesh = new MeshComponent(entity);
                 mesh.setPath(component.get("MeshPath").getAsString());
-                mesh.getMaterial().setAoMap(component.get("AlbedoPath").getAsString());
-                mesh.getMaterial().setAoMap(component.get("NormalPath").getAsString());
-                mesh.getMaterial().setAoMap(component.get("MetallicPath").getAsString());
-                mesh.getMaterial().setAoMap(component.get("RoughnessPath").getAsString());
-                mesh.getMaterial().setAoMap(component.get("EmissivePath").getAsString());
+                mesh.getMaterial().setAlbedoMap(component.get("AlbedoPath").getAsString());
+                mesh.getMaterial().setNormalMap(component.get("NormalPath").getAsString());
+                mesh.getMaterial().setMetallicMap(component.get("MetallicPath").getAsString());
+                mesh.getMaterial().setRoughnessMap(component.get("RoughnessPath").getAsString());
+                mesh.getMaterial().setEmissiveMap(component.get("EmissivePath").getAsString());
                 mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
+                mesh.getMeshRenderer().init(mesh.getPath(), mesh.getOlTransform());
                 entity.addComponent(mesh);
             }
             default -> LogError.println("cant find this component " + componentName);
