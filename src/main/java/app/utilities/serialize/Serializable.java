@@ -13,7 +13,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-
+//TODO refactor
 public class Serializable {
     private static File file;
     private static final SerializableEntity serializableEntity = new SerializableEntity();
