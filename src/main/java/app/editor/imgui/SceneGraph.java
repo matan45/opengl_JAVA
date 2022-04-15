@@ -22,7 +22,6 @@ public class SceneGraph implements ImguiLayer {
 
     @Override
     public void render(float dt) {
-        ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Scene Hierarchy")) {
             ImGui.text("Scene Name: " + SceneHandler.getActiveScene().getName());
             ImGui.separator();

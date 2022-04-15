@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
+import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
@@ -56,9 +57,9 @@ public class MainImgui implements ImguiLayer {
                 if (ImGui.menuItem(FontAwesomeIcons.Plus + " New Scene", "CTRL+N", false)) {
                     OpenFileDialog.openFolder().ifPresent(Serializable::saveEmptyScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open Scene", "CTRL+O", false)) {
-                    OpenFileDialog.openFile("png,jpg;pdf").ifPresent(LogInfo::println);
+                    OpenFileDialog.openFile(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::loadScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save Scene", "CTRL+S", false)) {
-                    OpenFileDialog.save("png,jpg;pdf").ifPresent(LogInfo::println);
+                    OpenFileDialog.save(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::saveScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", "EXIT", false)) {
                     closeWindow.set(false);
                 }

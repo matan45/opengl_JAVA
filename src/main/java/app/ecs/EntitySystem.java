@@ -50,5 +50,6 @@ public class EntitySystem {
 
     public static void closeEntities() {
         entitiesFather.forEach(Entity::cleanUp);
+        entitiesFather.clear();
     }
 }
