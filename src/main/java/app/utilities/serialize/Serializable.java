@@ -38,7 +38,31 @@ public class Serializable {
                 LogError.println("fail to create new " + FileExtension.PREFAB_EXTENSION.getFileName());
                 return;
             }
+            String json = gson.toJson(serializableEntity.serializableEntity(entity));
 
+            try (FileOutputStream writer = new FileOutputStream(file.getAbsolutePath())) {
+                writer.write(json.getBytes());
+                writer.flush();
+            }
+
+        } catch (IOException e) {
+            LogError.println(FAIL + FileExtension.PREFAB_EXTENSION.getFileName());
+        }
+    }
+
+    public static void saveEntity(Entity entity) {
+        try {
+            Gson gson = new Gson();
+            file = new File(entity.getPath());
+
+            if (file.exists())
+                Files.delete(file.toPath());
+
+
+            if (!file.createNewFile()) {
+                LogError.println("fail to create new " + FileExtension.PREFAB_EXTENSION.getFileName());
+                return;
+            }
             String json = gson.toJson(serializableEntity.serializableEntity(entity));
 
             try (FileOutputStream writer = new FileOutputStream(file.getAbsolutePath())) {
@@ -59,7 +83,8 @@ public class Serializable {
                 String file = readFromInputStream(inputStream);
                 JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
                 Entity entity = serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
-                entity.setName(entity.getName() + " (prefab)");
+                if (!entity.getName().contains(" (prefab)"))
+                    entity.setName(entity.getName() + " (prefab)");
                 entity.setPath(path);
                 return entity;
             } catch (IOException e) {

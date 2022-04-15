@@ -4,6 +4,7 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.SceneHandler;
 import app.math.components.OLTransform;
+import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiCond;
@@ -56,12 +57,14 @@ public class SceneGraph implements ImguiLayer {
         if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
             if (ImGui.menuItem("Add Game Object"))
                 EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-            else if (selectionNode != null && ImGui.menuItem("Add Children") && selectionNode.getFather() == null) {
+            else if (selectionNode != null && selectionNode.getFather() == null && ImGui.menuItem("Add Children")) {
                 EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
             } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
                 EntitySystem.removeEntity(selectionNode);
                 inspector.setEntity(null);
                 selectionNode = null;
+            } else if (selectionNode != null && !selectionNode.getPath().isEmpty() && ImGui.menuItem("Update prefab")) {
+                Serializable.saveEntity(selectionNode);
             }
             ImGui.endPopup();
         }

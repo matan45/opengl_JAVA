@@ -30,6 +30,7 @@ public class Entity {
         children = new HashMap<>();
         components = new HashSet<>();
         uuid = System.identityHashCode(this);
+        path="";
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {
