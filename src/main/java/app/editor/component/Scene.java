@@ -1,23 +1,15 @@
 package app.editor.component;
 
+import java.nio.file.Path;
+
 public class Scene {
 
-    private static Scene scene = new Scene();
-
     private String name;
-    private String path;
+    private Path path;
 
-    private Scene() {
+    public Scene() {
         name = "default scene";
-        path = "";
-    }
-
-    public static Scene getScene() {
-        return scene;
-    }
-
-    public static void setScene(Scene scene) {
-        Scene.scene = scene;
+        path = Path.of("C:\\matan\\java\\src\\main");
     }
 
     public String getName() {
@@ -28,11 +20,13 @@ public class Scene {
         this.name = name;
     }
 
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(Path path) {
         this.path = path;
     }
+
+
 }

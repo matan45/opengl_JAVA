@@ -1,8 +1,10 @@
 package app.editor.imgui;
 
 import app.ecs.Entity;
+import app.editor.component.SceneHandler;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
+import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -16,18 +18,18 @@ import java.util.Optional;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
 public class ContentBrowser implements ImguiLayer {
-    private Path absolutePath = Paths.get("C:\\matan\\java\\src\\main");
+    private Path absolutePath;
 
     private final int folderIcon;
     private final int fileIcon;
 
     private static final String FOLDER_SPLITTER = "\\";
-    private static final String ENTITY_EXTENSION = "prefab";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
+        absolutePath = SceneHandler.getActiveScene().getPath();
     }
 
     @Override
@@ -90,7 +92,7 @@ public class ContentBrowser implements ImguiLayer {
         Optional.ofNullable(path)
                 .filter(f -> f.contains("."))
                 .map(f -> f.substring(path.lastIndexOf(".") + 1)).ifPresent(extension -> {
-                    if (extension.equals(ENTITY_EXTENSION) && ImGui.beginDragDropSource()) {
+                    if (extension.equals(FileExtension.PREFAB_EXTENSION.getFileName()) && ImGui.beginDragDropSource()) {
                         ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
                         ImGui.text(path);
                         ImGui.endDragDropSource();

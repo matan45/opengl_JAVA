@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
+import app.editor.component.SceneHandler;
 import app.math.components.OLTransform;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -23,7 +24,7 @@ public class SceneGraph implements ImguiLayer {
     public void render(float dt) {
         ImGui.setNextWindowSize(200, 200);
         if (ImGui.begin("Scene Hierarchy")) {
-            ImGui.text("Scene Name " + "todo scene class");
+            ImGui.text("Scene Name: " + SceneHandler.getActiveScene().getName());
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.Header, 255, 255, 159, 100);
 
