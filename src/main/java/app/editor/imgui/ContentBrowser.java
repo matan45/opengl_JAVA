@@ -100,4 +100,11 @@ public class ContentBrowser implements ImguiLayer {
                 });
     }
 
+    public void setAbsolutePath(Path absolutePath) {
+        this.absolutePath = absolutePath;
+    }
+
+    public Path getAbsolutePath() {
+        return absolutePath;
+    }
 }

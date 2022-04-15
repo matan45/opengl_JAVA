@@ -4,6 +4,8 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.Scene;
 import app.editor.component.SceneHandler;
+import app.editor.imgui.ContentBrowser;
+import app.editor.imgui.ImguiLayerHandler;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -94,7 +96,7 @@ public class Serializable {
 
             JsonObject jsonScene = new JsonObject();
             jsonScene.addProperty("SceneName", scene.getName());
-            jsonScene.addProperty("ScenePath", file.getAbsolutePath());
+            jsonScene.addProperty("ScenePath", scene.getPath().toAbsolutePath().toString());
 
             String json = gson.toJson(jsonScene);
 
@@ -124,7 +126,7 @@ public class Serializable {
 
             JsonObject jsonScene = new JsonObject();
             jsonScene.addProperty("SceneName", SceneHandler.getActiveScene().getName());
-            jsonScene.addProperty("ScenePath", file.getAbsolutePath());
+            jsonScene.addProperty("ScenePath", ImguiLayerHandler.getImguiLayer(ContentBrowser.class).getAbsolutePath().toAbsolutePath().toString());
             List<Entity> entities = EntitySystem.getEntitiesFather();
 
             JsonArray jsonEntities = new JsonArray();
