@@ -4,8 +4,6 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.Scene;
 import app.editor.component.SceneHandler;
-import app.editor.imgui.ContentBrowser;
-import app.editor.imgui.ImguiLayerHandler;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -19,6 +17,10 @@ import java.util.List;
 public class Serializable {
     private static File file;
     private static final SerializableEntity serializableEntity = new SerializableEntity();
+
+    private static final String FAIL = "fail to save ";
+    private static final String SCENE_NAME = "SceneName";
+    private static final String SCENE_PATH = "ScenePath";
 
     private Serializable() {
     }
@@ -45,7 +47,7 @@ public class Serializable {
             }
 
         } catch (IOException e) {
-            LogError.println("fail to save the " + FileExtension.PREFAB_EXTENSION.getFileName());
+            LogError.println(FAIL + FileExtension.PREFAB_EXTENSION.getFileName());
         }
     }
 
@@ -95,8 +97,8 @@ public class Serializable {
             }
 
             JsonObject jsonScene = new JsonObject();
-            jsonScene.addProperty("SceneName", scene.getName());
-            jsonScene.addProperty("ScenePath", scene.getPath().toAbsolutePath().toString());
+            jsonScene.addProperty(SCENE_NAME, scene.getName());
+            jsonScene.addProperty(SCENE_PATH, scene.getPath().toAbsolutePath().toString());
 
             String json = gson.toJson(jsonScene);
 
@@ -106,7 +108,7 @@ public class Serializable {
             }
 
         } catch (IOException e) {
-            LogError.println("fail to save " + FileExtension.SCENE_EXTENSION.getFileName());
+            LogError.println(FAIL + FileExtension.SCENE_EXTENSION.getFileName());
         }
     }
 
@@ -125,8 +127,8 @@ public class Serializable {
             }
 
             JsonObject jsonScene = new JsonObject();
-            jsonScene.addProperty("SceneName", SceneHandler.getActiveScene().getName());
-            jsonScene.addProperty("ScenePath", ImguiLayerHandler.getImguiLayer(ContentBrowser.class).getAbsolutePath().toAbsolutePath().toString());
+            jsonScene.addProperty(SCENE_NAME, SceneHandler.getActiveScene().getName());
+            jsonScene.addProperty(SCENE_PATH, SceneHandler.getActiveScene().getPath().toAbsolutePath().toString());
             List<Entity> entities = EntitySystem.getEntitiesFather();
 
             JsonArray jsonEntities = new JsonArray();
@@ -144,7 +146,7 @@ public class Serializable {
             }
 
         } catch (IOException e) {
-            LogError.println("fail to save " + FileExtension.SCENE_EXTENSION.getFileName());
+            LogError.println(FAIL + FileExtension.SCENE_EXTENSION.getFileName());
         }
     }
 
@@ -156,8 +158,8 @@ public class Serializable {
             try (InputStream inputStream = new FileInputStream(file)) {
                 String file = readFromInputStream(inputStream);
                 JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
-                scene.setName(jsonElement.get("SceneName").getAsString());
-                scene.setPath(Paths.get(jsonElement.get("ScenePath").getAsString()));
+                scene.setName(jsonElement.get(SCENE_NAME).getAsString());
+                scene.setPath(Paths.get(jsonElement.get(SCENE_PATH).getAsString()));
                 SceneHandler.setActiveScene(scene);
 
                 EntitySystem.closeEntities();
@@ -170,7 +172,7 @@ public class Serializable {
                 }
 
             } catch (IOException e) {
-                LogError.println("fail to save " + FileExtension.SCENE_EXTENSION.getFileName());
+                LogError.println(FAIL + FileExtension.SCENE_EXTENSION.getFileName());
             }
         }
     }

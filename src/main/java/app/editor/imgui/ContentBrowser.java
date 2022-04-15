@@ -36,8 +36,10 @@ public class ContentBrowser implements ImguiLayer {
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
             dragAndDropTargetEntity();
-            if (ImGui.button("<--") && absolutePath.getParent() != null)
+            if (ImGui.button("<--") && absolutePath.getParent() != null) {
                 absolutePath = absolutePath.getParent();
+                SceneHandler.getActiveScene().setPath(absolutePath);
+            }
             ImGui.sameLine();
             ImGui.labelText("Current Path", absolutePath.toString());
             ImGui.separator();
@@ -52,29 +54,34 @@ public class ContentBrowser implements ImguiLayer {
             int columnCount = (int) (panelWidth / cellSize);
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
+
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
             for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    ImGui.pushID(file.getName());
-                    ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
-                    if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
-                        dragAndDropSourceEntity(file.toPath().toAbsolutePath().toString());
-                    ImGui.textWrapped(file.getName());
-                    ImGui.popID();
-                    ImGui.nextColumn();
-                } else if (file.isDirectory()) {
-                    ImGui.pushID(file.getName());
-                    if (ImGui.imageButton(folderIcon, thumbnailSize, thumbnailSize))
-                        absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
-                    ImGui.textWrapped(file.getName());
-                    ImGui.popID();
-                    ImGui.nextColumn();
-                }
+                fileType(thumbnailSize, file);
             }
             ImGui.popStyleColor();
         }
         ImGui.columns(1);
         ImGui.end();
+    }
+
+    private void fileType(float thumbnailSize, File file) {
+        if (file.isFile()) {
+            ImGui.pushID(file.getName());
+            ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
+            if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
+                dragAndDropSourceEntity(file.toPath().toAbsolutePath().toString());
+            ImGui.textWrapped(file.getName());
+            ImGui.popID();
+            ImGui.nextColumn();
+        } else if (file.isDirectory()) {
+            ImGui.pushID(file.getName());
+            if (ImGui.imageButton(folderIcon, thumbnailSize, thumbnailSize))
+                absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
+            ImGui.textWrapped(file.getName());
+            ImGui.popID();
+            ImGui.nextColumn();
+        }
     }
 
     private void dragAndDropTargetEntity() {
@@ -102,9 +109,5 @@ public class ContentBrowser implements ImguiLayer {
 
     public void setAbsolutePath(Path absolutePath) {
         this.absolutePath = absolutePath;
-    }
-
-    public Path getAbsolutePath() {
-        return absolutePath;
     }
 }
