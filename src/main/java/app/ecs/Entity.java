@@ -3,10 +3,7 @@ package app.ecs;
 import app.ecs.components.Component;
 import app.ecs.components.TransformComponent;
 import app.math.components.OLTransform;
-import app.utilities.logger.LogError;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Entity {
@@ -30,6 +27,7 @@ public class Entity {
         children = new HashMap<>();
         components = new HashSet<>();
         uuid = System.identityHashCode(this);
+        path = "";
     }
 
     public <T extends Component> T getComponent(Class<T> componentClass) {

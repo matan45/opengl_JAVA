@@ -2,6 +2,8 @@ package app.editor.imgui;
 
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
+import app.utilities.serialize.FileExtension;
+import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
@@ -52,13 +54,13 @@ public class MainImgui implements ImguiLayer {
     private void menuBar() {
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New", null, false)) {
-                    OpenFileDialog.openFolder().ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open", null, false)) {
-                    OpenFileDialog.openFile("png,jpg;pdf").ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save", null, false)) {
-                    OpenFileDialog.save("png,jpg;pdf").ifPresent(LogInfo::println);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", null, false)) {
+                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New Scene", "CTRL+N", false)) {
+                    OpenFileDialog.openFolder().ifPresent(Serializable::saveEmptyScene);
+                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open Scene", "CTRL+O", false)) {
+                    OpenFileDialog.openFile(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::loadScene);
+                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save Scene", "CTRL+S", false)) {
+                    OpenFileDialog.save(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::saveScene);
+                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", "EXIT", false)) {
                     closeWindow.set(false);
                 }
                 ImGui.endMenu();
