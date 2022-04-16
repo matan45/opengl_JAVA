@@ -13,9 +13,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-//TODO refactor
+
+
 public class Serializable {
-    private static File file;
     private static final SerializableEntity serializableEntity = new SerializableEntity();
 
     private static final String FAIL = "fail to save ";
@@ -28,7 +28,7 @@ public class Serializable {
     public static void saveEntity(Entity entity, String folderPath) {
         try {
             Gson gson = new Gson();
-            file = new File(folderPath, entity.getName() + "." + FileExtension.PREFAB_EXTENSION.getFileName());
+            File file = new File(folderPath, entity.getName() + "." + FileExtension.PREFAB_EXTENSION.getFileName());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -53,7 +53,7 @@ public class Serializable {
     public static void saveEntity(Entity entity) {
         try {
             Gson gson = new Gson();
-            file = new File(entity.getPath());
+            File file = new File(entity.getPath());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -77,11 +77,11 @@ public class Serializable {
 
     public static Entity loadEntity(String path) {
         Gson gson = new Gson();
-        file = new File(path);
+        File file = new File(path);
         if (file.exists()) {
             try (InputStream inputStream = new FileInputStream(file)) {
-                String file = readFromInputStream(inputStream);
-                JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
+                String fileData = readFromInputStream(inputStream);
+                JsonObject jsonElement = gson.fromJson(fileData, JsonObject.class);
                 Entity entity = serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
                 if (!entity.getName().contains(" (prefab)"))
                     entity.setName(entity.getName() + " (prefab)");
@@ -110,7 +110,7 @@ public class Serializable {
         try {
             Gson gson = new Gson();
             Scene scene = new Scene();
-            file = new File(folderPath, scene.getName() + "." + FileExtension.SCENE_EXTENSION.getFileName());
+            File file = new File(folderPath, scene.getName() + "." + FileExtension.SCENE_EXTENSION.getFileName());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -140,7 +140,7 @@ public class Serializable {
     public static void saveScene(String path) {
         try {
             Gson gson = new Gson();
-            file = new File(path);
+            File file = new File(path);
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -176,13 +176,13 @@ public class Serializable {
     }
 
     public static void loadScene(String path) {
-        file = new File(path);
+        File file = new File(path);
         if (file.exists()) {
             Gson gson = new Gson();
             Scene scene = new Scene();
             try (InputStream inputStream = new FileInputStream(file)) {
-                String file = readFromInputStream(inputStream);
-                JsonObject jsonElement = gson.fromJson(file, JsonObject.class);
+                String fileData = readFromInputStream(inputStream);
+                JsonObject jsonElement = gson.fromJson(fileData, JsonObject.class);
                 scene.setName(jsonElement.get(SCENE_NAME).getAsString());
                 scene.setPath(Paths.get(jsonElement.get(SCENE_PATH).getAsString()));
                 SceneHandler.setActiveScene(scene);

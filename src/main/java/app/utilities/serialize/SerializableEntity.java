@@ -62,6 +62,7 @@ class SerializableEntity {
                 childrenEntity.setName(childrenName);
                 serializableComponent.deserializeComponent(childrenEntities.get(i).getAsJsonObject().getAsJsonArray("ChildrenEntityComponents"), childrenEntity);
                 entity.addChildren(childrenEntity);
+                childrenEntity.setFather(entity);
             }
         }
         return entity;
