@@ -2,6 +2,7 @@ package app.utilities.resource;
 
 import app.renderer.pbr.Mesh;
 import app.utilities.ArrayUtil;
+import app.utilities.logger.LogError;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
@@ -27,8 +28,8 @@ class ResourceMesh {
     private Mesh[] loadMeshItem(String fileName) {
         AIScene aiScene = aiImportFile(fileName, FLAGS);
         if (aiScene == null) {
-            System.err.println("Error loading model");
-            return null;
+            LogError.println("Error loading model");
+            return new Mesh[0];
         }
 
         int numMeshes = aiScene.mNumMeshes();

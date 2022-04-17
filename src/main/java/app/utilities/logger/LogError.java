@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 public final class LogError extends Logger {
 
-    public static void println(String log) {
+    public static void println(Object log) {
         LocalTime time = LocalTime.now();
         String value = time.format(format);
         try {
@@ -13,7 +13,7 @@ public final class LogError extends Logger {
             logArray.write("\t".getBytes());
             logArray.write("ERROR:".getBytes());
             logArray.write("\t".getBytes());
-            logArray.write(log.getBytes());
+            logArray.write(log.toString().getBytes());
             logArray.write("\n".getBytes());
         } catch (IOException e) {
             e.printStackTrace();

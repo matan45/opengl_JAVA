@@ -4,8 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
 
 public sealed class Logger permits LogError, LogInfo {
-    static ByteArrayOutputStream logArray;
-    static DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm:ss");
+    protected static ByteArrayOutputStream logArray;
+    protected static DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     protected Logger() {
     }
