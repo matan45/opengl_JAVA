@@ -70,15 +70,18 @@ public class SceneGraph implements ImguiLayer {
         if (ImGui.beginPopupContextWindow("Entity", ImGuiPopupFlags.MouseButtonRight)) {
             if (ImGui.menuItem("Add Game Object"))
                 EntitySystem.addEntity(new Entity("Default Name", new OLTransform()));
-            else if (selectionNode != null && selectionNode.getFather() == null && ImGui.menuItem("Add Children")) {
-                EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
-            } else if (selectionNode != null && ImGui.menuItem("Remove Game Object")) {
-                EntitySystem.removeEntity(selectionNode);
-                inspector.setEntity(null);
-                selectionNode = null;
-            } else if (selectionNode != null && !selectionNode.getPath().isEmpty() && ImGui.menuItem("Update prefab")) {
-                Serializable.saveEntity(selectionNode);
+
+            else if (selectionNode != null) {
+                if (selectionNode.getFather() == null && ImGui.menuItem("Add Children"))
+                    EntitySystem.addEntityChildren(selectionNode, new Entity("Default Name", new OLTransform()));
+                else if (ImGui.menuItem("Remove Game Object")) {
+                    EntitySystem.removeEntity(selectionNode);
+                    inspector.setEntity(null);
+                    selectionNode = null;
+                } else if (!selectionNode.getPath().isEmpty() && ImGui.menuItem("Update prefab"))
+                    Serializable.saveEntity(selectionNode);
             }
+
             ImGui.endPopup();
         }
     }
