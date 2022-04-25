@@ -4,11 +4,14 @@ import app.ecs.Entity;
 import app.math.components.OLTransform;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Material;
+import app.renderer.pbr.Mesh;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
+import app.utilities.resource.ResourceManager;
 import imgui.ImGui;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class MeshComponent extends Component {
@@ -28,6 +31,7 @@ public class MeshComponent extends Component {
         file = new File("");
     }
 
+
     @Override
     public void imguiDraw() {
         if (ImGui.button("Mesh"))
@@ -36,7 +40,9 @@ public class MeshComponent extends Component {
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
             file = new File(path);
-            meshRenderer.init(path, olTransform);
+            Mesh mesh = ResourceManager.loadMeshFromFile(Paths.get(path));
+            ownerEntity.setName(mesh.name());
+            meshRenderer.init(mesh, olTransform);
         }
 
         ImGui.sameLine();

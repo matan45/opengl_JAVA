@@ -21,11 +21,28 @@ class ResourceMesh {
     private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
 
-    protected Mesh[] readMeshFile(Path path) {
+    protected Mesh readMeshFile(Path path) {
         return loadMeshItem(path.toString());
     }
 
-    private Mesh[] loadMeshItem(String fileName) {
+    protected Mesh[] readMeshesFile(Path path) {
+        return loadMeshesItem(path.toString());
+    }
+
+    private Mesh loadMeshItem(String fileName) {
+        AIScene aiScene = aiImportFile(fileName, FLAGS);
+        if (aiScene == null) {
+            LogError.println("Error loading model");
+            return null;
+        }
+
+        PointerBuffer aiMeshes = aiScene.mMeshes();
+        assert aiMeshes != null;
+        AIMesh aiMesh = AIMesh.create(aiMeshes.get(0));
+        return processMesh(aiMesh);
+    }
+
+    private Mesh[] loadMeshesItem(String fileName) {
         AIScene aiScene = aiImportFile(fileName, FLAGS);
         if (aiScene == null) {
             LogError.println("Error loading model");
@@ -50,13 +67,14 @@ class ResourceMesh {
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
+        aiMesh.mName().dataString();
 
         processVertices(aiMesh, vertices);
         processNormals(aiMesh, normals);
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices));
+        return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString());
     }
 
 

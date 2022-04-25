@@ -8,6 +8,7 @@ import app.renderer.VaoModel;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
+import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
@@ -47,9 +48,9 @@ public class MeshRenderer {
         shaderMesh.stop();
     }
 
-    public void init(String filePath, OLTransform olTransform) {
-        Mesh[] meshes = ResourceManager.loadMeshFromFile(Paths.get(filePath));
-        vaoModel = openGLObjects.loadToVAO(meshes[0].vertices(), meshes[0].textures(), meshes[0].normals(), meshes[0].indices());
+    public void init(Mesh mesh, OLTransform olTransform) {
+
+        vaoModel = openGLObjects.loadToVAO(mesh.vertices(), mesh.textures(), mesh.normals(), mesh.indices());
         this.olTransform = olTransform;
     }
 
