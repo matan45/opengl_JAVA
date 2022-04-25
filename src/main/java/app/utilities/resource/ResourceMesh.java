@@ -20,8 +20,9 @@ import static org.lwjgl.assimp.Assimp.*;
 
 class ResourceMesh {
 
-    private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
-            | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
+    private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes
+            | aiProcess_Triangulate | aiProcess_FixInfacingNormals
+            | aiProcessPreset_TargetRealtime_MaxQuality;
 
     protected Mesh readMeshFile(Path path) {
         return loadMeshItem(path.toAbsolutePath().toString());
