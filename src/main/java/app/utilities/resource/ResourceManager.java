@@ -41,7 +41,7 @@ public class ResourceManager {
         return resourceMesh.readMeshFile(path);
     }
 
-    public static Mesh[] loadMeshesFromFile(Path path) {
+    public static List<Mesh> loadMeshesFromFile(Path path) {
         return resourceMesh.importMeshesFile(path);
     }
 

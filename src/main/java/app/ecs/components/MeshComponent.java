@@ -42,7 +42,6 @@ public class MeshComponent extends Component {
             prePath = path;
             file = new File(path);
             Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
-            assert mesh != null;
             meshRenderer.init(mesh, olTransform);
         }
 

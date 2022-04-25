@@ -4,7 +4,7 @@ import app.renderer.pbr.Mesh;
 
 import java.io.*;
 
-public class SerializableMesh {
+class SerializableMesh {
 
     protected void writeObjectToFile(Mesh mesh, String path) {
         int lastDotIndex = path.lastIndexOf('.');

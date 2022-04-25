@@ -6,7 +6,6 @@ import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
-import app.utilities.serialize.SerializableMesh;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
@@ -14,6 +13,7 @@ import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -81,9 +81,10 @@ public class MainImgui implements ImguiLayer {
             if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Box + " Meshes", null, false)) {
                     OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> {
-                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                        List<Mesh> meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
                         for (Mesh mesh : meshes)
                             Serializable.saveMesh(mesh, path);
+
                     });
                 }
                 ImGui.endMenu();
