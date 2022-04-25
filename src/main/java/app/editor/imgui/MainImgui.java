@@ -5,6 +5,7 @@ import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
+import app.utilities.serialize.MeshSerializable;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.flag.ImGuiDockNodeFlags;
@@ -81,6 +82,8 @@ public class MainImgui implements ImguiLayer {
                 if (ImGui.menuItem(FontAwesomeIcons.Box + " Meshes", null, false)) {
                     OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> {
                         Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                        String pp = MeshSerializable.WriteObjectToFile(meshes[0], path);
+                        MeshSerializable.readObjectToFile(pp);
                     });
                 }
                 ImGui.endMenu();

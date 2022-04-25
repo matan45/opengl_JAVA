@@ -8,6 +8,8 @@ import app.renderer.pbr.Mesh;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
 import app.utilities.resource.ResourceManager;
+import app.utilities.serialize.FileExtension;
+import app.utilities.serialize.MeshSerializable;
 import imgui.ImGui;
 
 import java.io.File;
@@ -35,12 +37,13 @@ public class MeshComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Mesh"))
-            path = OpenFileDialog.openFile("obj,fbx,dae,gltf").orElse(prePath);
+            path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName()).orElse(prePath);
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
             file = new File(path);
-            Mesh mesh = ResourceManager.loadMeshFromFile(Paths.get(path));
+            Mesh mesh = MeshSerializable.readObjectToFile(path);
+            assert mesh != null;
             ownerEntity.setName(mesh.name());
             meshRenderer.init(mesh, olTransform);
         }

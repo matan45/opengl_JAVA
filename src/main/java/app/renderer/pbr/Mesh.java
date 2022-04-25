@@ -1,4 +1,9 @@
 package app.renderer.pbr;
 
-public record Mesh(float[] vertices, float[] textures, float[] normals, int[] indices, String name) { }
+
+import java.io.Serializable;
+
+public record Mesh(float[] vertices, float[] textures, float[] normals, int[] indices,
+                   String name) implements Serializable {
+}
 
