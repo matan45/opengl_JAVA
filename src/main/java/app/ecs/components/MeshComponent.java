@@ -9,7 +9,6 @@ import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
-import app.utilities.serialize.SerializableMesh;
 import imgui.ImGui;
 
 import java.io.File;
@@ -23,7 +22,6 @@ public class MeshComponent extends Component {
 
     private String path = "";
     private String prePath = "";
-    private String meshName = "";
     private File file;
 
     public MeshComponent(Entity ownerEntity) {
@@ -51,8 +49,6 @@ public class MeshComponent extends Component {
 
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
-
-        ImGui.textWrapped("Mesh Name: " + meshName);
 
         ImGui.textWrapped("Material");
         ImGui.separator();
