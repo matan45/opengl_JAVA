@@ -43,7 +43,6 @@ public class MeshComponent extends Component {
             file = new File(path);
             Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
             assert mesh != null;
-            meshName = mesh.name();
             meshRenderer.init(mesh, olTransform);
         }
 
