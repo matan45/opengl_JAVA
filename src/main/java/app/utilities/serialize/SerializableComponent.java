@@ -5,11 +5,9 @@ import app.ecs.components.*;
 import app.math.OLVector3f;
 import app.math.components.OLTransform;
 import app.utilities.logger.LogError;
-import app.utilities.resource.ResourceManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.nio.file.Paths;
 import java.util.Set;
 
 class SerializableComponent {
@@ -205,7 +203,6 @@ class SerializableComponent {
                 mesh.getMaterial().setEmissiveMap(component.get("EmissivePath").getAsString());
                 mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
                 mesh.getMeshRenderer().setSelect(component.get("RenderType").getAsInt());
-                mesh.getMeshRenderer().init(ResourceManager.loadMeshFromFile(Paths.get(mesh.getPath())), mesh.getOlTransform());
                 entity.addComponent(mesh);
             }
             default -> LogError.println("cant find this component " + componentName);

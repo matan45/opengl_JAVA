@@ -23,7 +23,7 @@ public class MeshComponent extends Component {
 
     private final ImInt select;
     private int preSelect;
-    private final String[] types = {"BACK", "FRONT","FRONT AND BACK", "Disable"};
+    private final String[] types = {"BACK", "FRONT", "FRONT AND BACK", "Disable"};
 
     private String path = "";
     private String prePath = "";
@@ -45,12 +45,9 @@ public class MeshComponent extends Component {
         if (ImGui.button("Mesh"))
             path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName()).orElse(prePath);
 
-        if (!path.isEmpty() && !prePath.equals(path)) {
-            prePath = path;
-            file = new File(path);
-            Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
-            meshRenderer.init(mesh, olTransform);
-        }
+        if (!path.isEmpty() && !prePath.equals(path))
+            init();
+
 
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
@@ -139,6 +136,13 @@ public class MeshComponent extends Component {
         return "";
     }
 
+    private void init() {
+        prePath = path;
+        file = new File(path);
+        Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
+        meshRenderer.init(mesh, olTransform);
+    }
+
     @Override
     public void cleanUp() {
         EditorRenderer.getMeshRenderer().removeInstant(meshRenderer);
@@ -154,6 +158,7 @@ public class MeshComponent extends Component {
 
     public void setPath(String path) {
         this.path = path;
+        init();
     }
 
     public OLTransform getOlTransform() {

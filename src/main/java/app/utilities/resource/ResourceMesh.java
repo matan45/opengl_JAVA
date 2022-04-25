@@ -14,15 +14,11 @@ import java.io.ObjectInputStream;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.assimp.Assimp.*;
 
 class ResourceMesh {
-    Map<String, Mesh> mapMeshNames = new HashMap<>();
 
     private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
@@ -31,9 +27,10 @@ class ResourceMesh {
         return loadMeshItem(path.toAbsolutePath().toString());
     }
 
-    protected List<Mesh> importMeshesFile(Path path) {
+    protected Mesh[] importMeshesFile(Path path) {
         return loadMeshesItem(path.toAbsolutePath().toString());
     }
+
 
     private Mesh loadMeshItem(String fileName) {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
@@ -45,26 +42,27 @@ class ResourceMesh {
         return null;
     }
 
-    private List<Mesh> loadMeshesItem(String fileName) {
+    private Mesh[] loadMeshesItem(String fileName) {
         AIScene aiScene = aiImportFile(fileName, FLAGS);
         if (aiScene == null) {
             LogError.println("Error loading model");
-            return Collections.emptyList();
+            return new Mesh[0];
         }
-        mapMeshNames.clear();
+
         int numMeshes = aiScene.mNumMeshes();
         PointerBuffer aiMeshes = aiScene.mMeshes();
-
+        Mesh[] meshes = new Mesh[numMeshes];
         for (int i = 0; i < numMeshes; i++) {
             assert aiMeshes != null;
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-            processMesh(aiMesh, i);
+            Mesh mesh = processMesh(aiMesh, i);
+            meshes[i] = mesh;
         }
 
-        return mapMeshNames.values().stream().toList();
+        return meshes;
     }
 
-    private void processMesh(AIMesh aiMesh, int index) {
+    private Mesh processMesh(AIMesh aiMesh, int index) {
         List<Float> vertices = new ArrayList<>();
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
@@ -75,13 +73,7 @@ class ResourceMesh {
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        Mesh mesh;
-        if (mapMeshNames.containsKey(aiMesh.mName().dataString()))
-            mesh = new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index);
-        else
-            mesh = new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString());
-
-        mapMeshNames.put(mesh.name(), mesh);
+        return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index);
     }
 
 
