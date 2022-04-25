@@ -25,21 +25,13 @@ class ResourceMesh {
         return loadMeshItem(path.toString());
     }
 
-    protected Mesh[] readMeshesFile(Path path) {
+    protected Mesh[] importMeshesFile(Path path) {
         return loadMeshesItem(path.toString());
     }
 
     private Mesh loadMeshItem(String fileName) {
-        AIScene aiScene = aiImportFile(fileName, FLAGS);
-        if (aiScene == null) {
-            LogError.println("Error loading model");
-            return null;
-        }
-
-        PointerBuffer aiMeshes = aiScene.mMeshes();
-        assert aiMeshes != null;
-        AIMesh aiMesh = AIMesh.create(aiMeshes.get(0));
-        return processMesh(aiMesh);
+        //TODO: deserialize the new format file
+        return null;
     }
 
     private Mesh[] loadMeshesItem(String fileName) {
@@ -67,7 +59,6 @@ class ResourceMesh {
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
-        aiMesh.mName().dataString();
 
         processVertices(aiMesh, vertices);
         processNormals(aiMesh, normals);

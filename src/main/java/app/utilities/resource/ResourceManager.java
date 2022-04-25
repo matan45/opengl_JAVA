@@ -42,7 +42,7 @@ public class ResourceManager {
     }
 
     public static Mesh[] loadMeshesFromFile(Path path) {
-        return resourceMesh.readMeshesFile(path);
+        return resourceMesh.importMeshesFile(path);
     }
 
     public static ShortBuffer loadAudio(Path path, STBVorbisInfo info) {
