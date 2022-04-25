@@ -8,8 +8,6 @@ import app.renderer.VaoModel;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
-import app.utilities.logger.LogInfo;
-import app.utilities.resource.ResourceManager;
 
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -26,6 +24,8 @@ public class MeshRenderer {
     private final OpenGLObjects openGLObjects;
     private final Material material;
     private final SkyBox skyBox;
+
+    private int select;
 
     private VaoModel vaoModel;
     private OLTransform olTransform;
@@ -56,8 +56,15 @@ public class MeshRenderer {
 
     public void renderer() {
         if (olTransform != null) {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+            if (select != 3) {
+                glEnable(GL_CULL_FACE);
+                if (select == 0)
+                    glCullFace(GL_BACK);
+                else if (select == 1)
+                    glCullFace(GL_FRONT);
+                else
+                    glCullFace(GL_FRONT_AND_BACK);
+            }
             shaderMesh.start();
             shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
             shaderMesh.loadViewMatrix(camera.getViewMatrix());
@@ -90,7 +97,8 @@ public class MeshRenderer {
             glBindVertexArray(0);
 
             shaderMesh.stop();
-            glDisable(GL_CULL_FACE);
+            if (select != 3)
+                glDisable(GL_CULL_FACE);
         }
     }
 
@@ -144,5 +152,13 @@ public class MeshRenderer {
 
     public void setFog(Fog fog) {
         this.fog = fog;
+    }
+
+    public void setSelect(int select) {
+        this.select = select;
+    }
+
+    public int getSelect() {
+        return select;
     }
 }

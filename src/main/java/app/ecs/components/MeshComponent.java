@@ -10,6 +10,7 @@ import app.utilities.OpenFileDialog;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import imgui.ImGui;
+import imgui.type.ImInt;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -19,6 +20,10 @@ public class MeshComponent extends Component {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
+
+    private final ImInt select;
+    private int preSelect;
+    private final String[] types = {"BACK", "FRONT","FRONT AND BACK", "Disable"};
 
     private String path = "";
     private String prePath = "";
@@ -30,6 +35,8 @@ public class MeshComponent extends Component {
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         material = meshRenderer.getMaterial();
         file = new File("");
+        select = new ImInt(0);
+        preSelect = 0;
     }
 
 
@@ -47,6 +54,14 @@ public class MeshComponent extends Component {
 
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
+
+        ImGui.textWrapped("RenderType");
+        ImGui.sameLine();
+        ImGui.combo("##", select, types);
+        if (preSelect != select.get()) {
+            preSelect = select.get();
+            meshRenderer.setSelect(select.get());
+        }
 
         ImGui.textWrapped("Material");
         ImGui.separator();

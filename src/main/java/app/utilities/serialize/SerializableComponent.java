@@ -90,12 +90,13 @@ class SerializableComponent {
             case MeshComponent mesh -> {
                 serializable.addProperty(COMPONENT_NAME, MeshComponent.class.getSimpleName());
                 serializable.addProperty("MeshPath", mesh.getPath());
+                serializable.addProperty("RenderType", mesh.getMeshRenderer().getSelect());
                 serializable.addProperty("AlbedoPath", mesh.getMaterial().getAlbedoMapPath());
                 serializable.addProperty("NormalPath", mesh.getMaterial().getNormalMapPath());
                 serializable.addProperty("MetallicPath", mesh.getMaterial().getMetallicMapPath());
                 serializable.addProperty("RoughnessPath", mesh.getMaterial().getRoughnessMapPath());
-                serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
                 serializable.addProperty("AoPath", mesh.getMaterial().getAoMapPath());
+                serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
             }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
@@ -203,7 +204,8 @@ class SerializableComponent {
                 mesh.getMaterial().setRoughnessMap(component.get("RoughnessPath").getAsString());
                 mesh.getMaterial().setEmissiveMap(component.get("EmissivePath").getAsString());
                 mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
-                mesh.getMeshRenderer().init( ResourceManager.loadMeshFromFile(Paths.get(mesh.getPath())), mesh.getOlTransform());
+                mesh.getMeshRenderer().setSelect(component.get("RenderType").getAsInt());
+                mesh.getMeshRenderer().init(ResourceManager.loadMeshFromFile(Paths.get(mesh.getPath())), mesh.getOlTransform());
                 entity.addComponent(mesh);
             }
             default -> LogError.println("cant find this component " + componentName);
