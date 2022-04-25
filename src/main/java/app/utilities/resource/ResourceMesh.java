@@ -9,6 +9,8 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.assimp.AIVector3D;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ class ResourceMesh {
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals;
 
     protected Mesh readMeshFile(Path path) {
-        return loadMeshItem(path.toString());
+        return loadMeshItem(path.toAbsolutePath().toString());
     }
 
     protected Mesh[] importMeshesFile(Path path) {
@@ -30,7 +32,12 @@ class ResourceMesh {
     }
 
     private Mesh loadMeshItem(String fileName) {
-        //TODO: deserialize the new format file
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            return (Mesh) objectInputStream.readObject();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 

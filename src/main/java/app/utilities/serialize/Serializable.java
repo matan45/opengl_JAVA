@@ -4,6 +4,7 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.Scene;
 import app.editor.component.SceneHandler;
+import app.renderer.pbr.Mesh;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class Serializable {
     private static final SerializableEntity serializableEntity = new SerializableEntity();
+    private static final SerializableMesh serializableMesh = new SerializableMesh();
 
     private static final String FAIL = "fail to save ";
     private static final String SCENE_NAME = "SceneName";
@@ -202,4 +204,7 @@ public class Serializable {
         }
     }
 
+    public static void saveMesh(Mesh mesh, String path) {
+        serializableMesh.writeObjectToFile(mesh, path);
+    }
 }
