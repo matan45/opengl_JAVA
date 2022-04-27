@@ -2,9 +2,10 @@ package app.utilities;
 
 import app.utilities.logger.LogError;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.util.nfd.NFDPathSet;
 
 import java.nio.ByteBuffer;
-import java.util.Optional;
+import java.util.*;
 
 import static org.lwjgl.system.MemoryUtil.memAllocPointer;
 import static org.lwjgl.system.MemoryUtil.memFree;
@@ -46,6 +47,27 @@ public class OpenFileDialog {
         }
     }
 
+    public static List<String> openMulti(String filters) {
+        NFDPathSet pathSet = NFDPathSet.create();
+        try {
+            int result = NFD_OpenDialogMultiple(filters, null, pathSet);
+            if (result == NFD_OKAY) {
+                List<String> paths = new ArrayList<>();
+                for (int i = 0; i < NFD_PathSet_GetCount(pathSet); i++) {
+                    paths.add(Objects.requireNonNull(NFD_PathSet_GetPath(pathSet, i)));
+                }
+                return paths;
+            } else if (result == NFD_CANCEL)
+                return Collections.emptyList();
+
+            // NFD_ERROR
+            LogError.println("Error: " + NFD_GetError());
+            return Collections.emptyList();
+        } finally {
+            NFD_PathSet_Free(pathSet);
+        }
+    }
+
     private static Optional<String> checkResult(int result, PointerBuffer path) {
         StringBuilder pathResult;
         switch (result) {
@@ -57,6 +79,7 @@ public class OpenFileDialog {
             case NFD_CANCEL -> {
                 return Optional.empty();
             }
+
 
             default -> {
                 // NFD_ERROR

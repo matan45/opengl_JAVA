@@ -30,7 +30,7 @@ public class ContentBrowser implements ImguiLayer {
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
-        //TODO: icons for mesh prefabe and scene
+        //TODO: icons for mesh prefabe, texture, java class and scene
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
         absolutePath = SceneHandler.getActiveScene().getPath();
@@ -40,7 +40,8 @@ public class ContentBrowser implements ImguiLayer {
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
             if (ImGui.button(FontAwesomeIcons.Tools + " Import Mesh")) {
-                OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> new Thread(() -> {
+                //TODO thread pool
+                OpenFileDialog.openMulti("obj,fbx,dae,gltf").forEach(path -> new Thread(() -> {
                     Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
                     for (Mesh mesh : meshes)
                         Serializable.saveMesh(mesh, path);
