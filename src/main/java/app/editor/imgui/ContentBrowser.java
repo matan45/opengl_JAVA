@@ -4,6 +4,9 @@ import app.ecs.Entity;
 import app.editor.component.SceneHandler;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
+import app.renderer.pbr.Mesh;
+import app.utilities.OpenFileDialog;
+import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -23,7 +26,7 @@ public class ContentBrowser implements ImguiLayer {
     private final int folderIcon;
     private final int fileIcon;
 
-    private static final String FOLDER_SPLITTER = "\\";
+    public static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
@@ -36,13 +39,22 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
-            dragAndDropTargetEntity();
+            if (ImGui.button(FontAwesomeIcons.Tools + " Import Mesh")) {
+                OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> new Thread(() -> {
+                    Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                    for (Mesh mesh : meshes)
+                        Serializable.saveMesh(mesh, path);
+                }).start());
+            }
+
+            ImGui.sameLine();
             if (ImGui.button("<--") && absolutePath.getParent() != null) {
                 absolutePath = absolutePath.getParent();
                 SceneHandler.getActiveScene().setPath(absolutePath);
             }
             ImGui.sameLine();
             ImGui.labelText("Current Path", absolutePath.toString());
+            dragAndDropTargetEntity();
             ImGui.separator();
 
             File folder = absolutePath.toFile();

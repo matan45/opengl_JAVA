@@ -1,13 +1,7 @@
 package app.editor.imgui;
 
-import app.ecs.Entity;
-import app.ecs.EntitySystem;
-import app.ecs.components.MeshComponent;
-import app.math.components.OLTransform;
-import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
-import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -15,9 +9,6 @@ import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
-
-import java.io.File;
-import java.nio.file.Path;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -82,42 +73,7 @@ public class MainImgui implements ImguiLayer {
                 }
                 ImGui.endMenu();
             }
-            if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Box + " Meshes", null, false)) {
-                    OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> {
-                        Thread t = new Thread(() -> {
-                            Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
-                            for (Mesh mesh : meshes)
-                                Serializable.saveMesh(mesh, path);
-                        });
-                        t.start();
-                    });
-                } else if (ImGui.menuItem(FontAwesomeIcons.Atlas + " Load Meshes", null, false)) {
-                    OpenFileDialog.openFolder().ifPresent(this::loadMeshFolder);
-                }
-                ImGui.endMenu();
-            }
             ImGui.endMenuBar();
-        }
-    }
-
-    private void loadMeshFolder(String path) {
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
-        assert listOfFiles != null;
-        for (File mesh : listOfFiles) {
-            if (mesh.isFile()) {
-                String absolutePath = mesh.toPath().toAbsolutePath().toString();
-                String fileExtension = absolutePath.substring(absolutePath.lastIndexOf(".") + 1);
-                if (fileExtension.equals(FileExtension.MESH_EXTENSION.getFileName())) {
-                    String meshName = mesh.getName().substring(0, mesh.getName().lastIndexOf('.'));
-                    Entity e = new Entity(meshName, new OLTransform());
-                    MeshComponent m = new MeshComponent(e);
-                    e.addComponent(m);
-                    m.setPath(absolutePath, false);
-                    EntitySystem.addEntity(e);
-                }
-            }
         }
     }
 
