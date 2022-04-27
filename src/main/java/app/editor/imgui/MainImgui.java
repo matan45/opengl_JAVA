@@ -114,7 +114,7 @@ public class MainImgui implements ImguiLayer {
                     Entity e = new Entity(meshName, new OLTransform());
                     MeshComponent m = new MeshComponent(e);
                     e.addComponent(m);
-                    m.setPath(absolutePath);
+                    m.setPath(absolutePath, false);
                     EntitySystem.addEntity(e);
                 }
             }

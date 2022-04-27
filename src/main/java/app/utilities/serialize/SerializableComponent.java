@@ -195,7 +195,7 @@ class SerializableComponent {
             }
             case "MeshComponent" -> {
                 MeshComponent mesh = new MeshComponent(entity);
-                mesh.setPath(component.get("MeshPath").getAsString());
+                mesh.setPath(component.get("MeshPath").getAsString(), true);
                 mesh.getMaterial().setAlbedoMap(component.get("AlbedoPath").getAsString());
                 mesh.getMaterial().setNormalMap(component.get("NormalPath").getAsString());
                 mesh.getMaterial().setMetallicMap(component.get("MetallicPath").getAsString());

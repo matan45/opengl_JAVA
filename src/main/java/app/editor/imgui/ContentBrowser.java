@@ -27,6 +27,7 @@ public class ContentBrowser implements ImguiLayer {
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
+        //TODO: icons for mesh prefabe and scene
         folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
         fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
         absolutePath = SceneHandler.getActiveScene().getPath();

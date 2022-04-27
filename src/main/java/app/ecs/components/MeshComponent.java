@@ -46,7 +46,7 @@ public class MeshComponent extends Component {
             path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName()).orElse(prePath);
 
         if (!path.isEmpty() && !prePath.equals(path))
-            init();
+            init(false);
 
 
         ImGui.sameLine();
@@ -136,10 +136,12 @@ public class MeshComponent extends Component {
         return "";
     }
 
-    private void init() {
+    private void init(boolean useTransform) {
         prePath = path;
         file = new File(path);
         Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
+        if (!useTransform)
+            olTransform.setPosition(mesh.center());
         meshRenderer.init(mesh, olTransform);
     }
 
@@ -156,9 +158,9 @@ public class MeshComponent extends Component {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(String path, boolean useTransform) {
         this.path = path;
-        init();
+        init(useTransform);
     }
 
     public OLTransform getOlTransform() {
