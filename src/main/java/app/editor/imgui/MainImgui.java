@@ -85,14 +85,14 @@ public class MainImgui implements ImguiLayer {
             if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Box + " Meshes", null, false)) {
                     OpenFileDialog.openFile("obj,fbx,dae,gltf").ifPresent(path -> {
-                        //TODO: need to run on thread
-                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
-                        for (Mesh mesh : meshes)
-                            Serializable.saveMesh(mesh, path);
-
+                        Thread t = new Thread(() -> {
+                            Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                            for (Mesh mesh : meshes)
+                                Serializable.saveMesh(mesh, path);
+                        });
+                        t.start();
                     });
                 } else if (ImGui.menuItem(FontAwesomeIcons.Atlas + " Load Meshes", null, false)) {
-                    //TODO: need to run on thread
                     OpenFileDialog.openFolder().ifPresent(this::loadMeshFolder);
                 }
                 ImGui.endMenu();
