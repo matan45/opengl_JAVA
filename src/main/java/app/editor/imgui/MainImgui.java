@@ -78,14 +78,18 @@ public class MainImgui implements ImguiLayer {
                 ImGui.endMenu();
             }
             if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Camera + " Meshes", null, false)) {
+                if (ImGui.menuItem("Meshes", null, false)) {
                     //TODO thread pool
                     OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
                         Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
                         for (Mesh mesh : meshes)
                             Serializable.saveMesh(mesh, path);
                     });
-                } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
+                } else if (ImGui.menuItem("Textures", null, false)) {
+                    LogInfo.println("not implement");
+                } else if (ImGui.menuItem("Audio", null, false)) {
+                    LogInfo.println("not implement");
+                } else if (ImGui.menuItem("Animation", null, false)) {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
