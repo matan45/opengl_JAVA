@@ -12,12 +12,10 @@ public class Music {
     private FloatControl control;
 
     public void loadMusic(Path path) {
-        try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path.toAbsolutePath().toString()));
+        try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path.toAbsolutePath().toString()));){
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-
         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
             e.printStackTrace();
         }

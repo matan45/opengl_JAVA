@@ -1,7 +1,9 @@
 package app.editor.imgui;
 
+import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
+import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -9,6 +11,8 @@ import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+
+import java.nio.file.Path;
 
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -72,6 +76,20 @@ public class MainImgui implements ImguiLayer {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
+            }
+            if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
+                if (ImGui.menuItem(FontAwesomeIcons.Camera + " Meshes", null, false)) {
+                    //TODO thread pool
+                    OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
+                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                        for (Mesh mesh : meshes)
+                            Serializable.saveMesh(mesh, path);
+                    });
+                } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
+                    LogInfo.println("not implement");
+                }
+                ImGui.endMenu();
+
             }
             ImGui.endMenuBar();
         }

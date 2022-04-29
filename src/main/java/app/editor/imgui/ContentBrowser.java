@@ -39,16 +39,7 @@ public class ContentBrowser implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Content Folder")) {
-            if (ImGui.button(FontAwesomeIcons.Tools + " Import Mesh")) {
-                //TODO thread pool
-                OpenFileDialog.openMulti("obj,fbx,dae,gltf").forEach(path -> new Thread(() -> {
-                    Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
-                    for (Mesh mesh : meshes)
-                        Serializable.saveMesh(mesh, path);
-                }).start());
-            }
 
-            ImGui.sameLine();
             if (ImGui.button("<--") && absolutePath.getParent() != null) {
                 absolutePath = absolutePath.getParent();
                 SceneHandler.getActiveScene().setPath(absolutePath);
