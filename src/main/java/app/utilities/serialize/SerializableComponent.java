@@ -8,6 +8,7 @@ import app.utilities.logger.LogError;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 class SerializableComponent {
@@ -170,7 +171,7 @@ class SerializableComponent {
                 terrain.setPath(component.get("Path").getAsString());
                 terrain.getWireframe().set(component.get("Wireframe").getAsBoolean());
                 terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
-                terrain.getTerrain().init(terrain.getPath());
+                terrain.getTerrain().init(Path.of(terrain.getPath()));
                 terrain.getTerrain().setActive(true);
                 entity.addComponent(terrain);
             }
@@ -190,7 +191,7 @@ class SerializableComponent {
                 SkyBoxComponent skyBox = new SkyBoxComponent(entity);
                 skyBox.setPath(component.get("Path").getAsString());
                 skyBox.getSkyBox().setExposure(component.get("Exposure").getAsFloat());
-                skyBox.getSkyBox().init(skyBox.getPath());
+                skyBox.getSkyBox().init(Path.of(skyBox.getPath()));
                 entity.addComponent(skyBox);
             }
             case "MeshComponent" -> {

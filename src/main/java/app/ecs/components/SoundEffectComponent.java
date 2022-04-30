@@ -10,6 +10,7 @@ import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SoundEffectComponent extends Component {
@@ -29,10 +30,10 @@ public class SoundEffectComponent extends Component {
         file = new File("");
 
         Textures textures = EditorRenderer.getTextures();
-        playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\play.png");
-        stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\stop.png");
-        pauseIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\pause.png");
-        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\audio.png"));
+        playIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\play.png"));
+        stopIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\stop.png"));
+        pauseIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\pause.png"));
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\audio.png")));
         soundEffect = new SoundEffect(billboards);
 
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
@@ -47,7 +48,7 @@ public class SoundEffectComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Music"))
-            path = OpenFileDialog.openFile("ogg").orElse(prePath);
+            path = OpenFileDialog.openFile("ogg").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;

@@ -207,7 +207,6 @@ void main()
         vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
         vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-        // if there is no ao map we dont see anything need to sec mabe defult value
         vec3 ambient = (kD * diffuse + specular) * ao;
 
         vec3 color = ambient + DirLight + PointLight + SpotLight;

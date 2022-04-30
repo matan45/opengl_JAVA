@@ -9,6 +9,8 @@ import app.renderer.lights.PointLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
+import java.nio.file.Path;
+
 public class PointLightComponent extends Component {
     private final OLTransform olTransform;
     private final PointLight pointLight;
@@ -17,7 +19,7 @@ public class PointLightComponent extends Component {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         Textures textures = EditorRenderer.getTextures();
-        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\pointLight.png"));
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\lights\\pointLight.png")));
         pointLight = new PointLight(billboards);
         EditorRenderer.getLightHandler().addPointLight(pointLight);
     }

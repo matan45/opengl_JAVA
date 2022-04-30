@@ -7,6 +7,7 @@ import app.renderer.Textures;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -66,7 +67,7 @@ public class TerrainQuadtreeRenderer {
         this.skyBox = skyBox;
     }
 
-    public void init(String path) {
+    public void init(Path path) {
         texture = textures.loadTexture(path);
 
         shaderTerrainQuadtree.start();

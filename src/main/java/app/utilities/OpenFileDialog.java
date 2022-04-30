@@ -5,6 +5,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.util.nfd.NFDPathSet;
 
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.lwjgl.system.MemoryUtil.memAllocPointer;
@@ -17,7 +18,7 @@ public class OpenFileDialog {
     }
 
 
-    public static Optional<String> openFolder() {
+    public static Optional<Path> openFolder() {
         PointerBuffer outPath = memAllocPointer(1);
 
         try {
@@ -27,7 +28,7 @@ public class OpenFileDialog {
         }
     }
 
-    public static Optional<String> openFile(String filters) {
+    public static Optional<Path> openFile(String filters) {
         PointerBuffer outPath = memAllocPointer(1);
 
         try {
@@ -37,7 +38,7 @@ public class OpenFileDialog {
         }
     }
 
-    public static Optional<String> save(String filters) {
+    public static Optional<Path> save(String filters) {
         PointerBuffer savePath = memAllocPointer(1);
 
         try {
@@ -47,14 +48,14 @@ public class OpenFileDialog {
         }
     }
 
-    public static List<String> openMulti(String filters) {
+    public static List<Path> openMulti(String filters) {
         NFDPathSet pathSet = NFDPathSet.create();
         try {
             int result = NFD_OpenDialogMultiple(filters, null, pathSet);
             if (result == NFD_OKAY) {
-                List<String> paths = new ArrayList<>();
+                List<Path> paths = new ArrayList<>();
                 for (int i = 0; i < NFD_PathSet_GetCount(pathSet); i++) {
-                    paths.add(Objects.requireNonNull(NFD_PathSet_GetPath(pathSet, i)));
+                    paths.add(Path.of(Objects.requireNonNull(NFD_PathSet_GetPath(pathSet, i))));
                 }
                 return paths;
             } else if (result == NFD_CANCEL)
@@ -68,13 +69,13 @@ public class OpenFileDialog {
         }
     }
 
-    private static Optional<String> checkResult(int result, PointerBuffer path) {
+    private static Optional<Path> checkResult(int result, PointerBuffer path) {
         StringBuilder pathResult;
         switch (result) {
             case NFD_OKAY -> {
                 pathResult = new StringBuilder(path.getStringUTF8(0));
                 nNFD_Free(path.get(0));
-                return Optional.of(pathResult.toString());
+                return Optional.of(Path.of(pathResult.toString()));
             }
             case NFD_CANCEL -> {
                 return Optional.empty();

@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public class Serializable {
     private Serializable() {
     }
 
-    public static void saveEntity(Entity entity, String folderPath) {
+    public static void saveEntity(Entity entity, Path folderPath) {
         try {
             Gson gson = new Gson();
-            File file = new File(folderPath, entity.getName() + "." + FileExtension.PREFAB_EXTENSION.getFileName());
+            File file = new File(folderPath.toString(), entity.getName() + "." + FileExtension.PREFAB_EXTENSION.getFileName());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -77,9 +78,9 @@ public class Serializable {
         }
     }
 
-    public static Entity loadEntity(String path) {
+    public static Entity loadEntity(Path fileName) {
         Gson gson = new Gson();
-        File file = new File(path);
+        File file = new File(fileName.toAbsolutePath().toString());
         if (file.exists()) {
             try (InputStream inputStream = new FileInputStream(file)) {
                 String fileData = readFromInputStream(inputStream);
@@ -87,7 +88,7 @@ public class Serializable {
                 Entity entity = serializableEntity.deserializeEntity(jsonElement.getAsJsonObject());
                 if (!entity.getName().contains(" (prefab)"))
                     entity.setName(entity.getName() + " (prefab)");
-                entity.setPath(path);
+                entity.setPath(fileName.toAbsolutePath().toString());
                 return entity;
             } catch (IOException e) {
                 LogError.println("fail to load " + FileExtension.PREFAB_EXTENSION.getFileName());
@@ -108,11 +109,11 @@ public class Serializable {
         return resultStringBuilder.toString();
     }
 
-    public static void saveEmptyScene(String folderPath) {
+    public static void saveEmptyScene(Path folderPath) {
         try {
             Gson gson = new Gson();
             Scene scene = new Scene();
-            File file = new File(folderPath, scene.getName() + "." + FileExtension.SCENE_EXTENSION.getFileName());
+            File file = new File(folderPath.toString(), scene.getName() + "." + FileExtension.SCENE_EXTENSION.getFileName());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -139,10 +140,10 @@ public class Serializable {
         }
     }
 
-    public static void saveScene(String path) {
+    public static void saveScene(Path path) {
         try {
             Gson gson = new Gson();
-            File file = new File(path);
+            File file = new File(path.toAbsolutePath().toString());
 
             if (file.exists())
                 Files.delete(file.toPath());
@@ -177,8 +178,8 @@ public class Serializable {
         }
     }
 
-    public static void loadScene(String path) {
-        File file = new File(path);
+    public static void loadScene(Path path) {
+        File file = new File(path.toAbsolutePath().toString());
         if (file.exists()) {
             Gson gson = new Gson();
             Scene scene = new Scene();
@@ -204,7 +205,7 @@ public class Serializable {
         }
     }
 
-    public static void saveMesh(Mesh mesh, String path) {
+    public static void saveMesh(Mesh mesh, Path path) {
         serializableMesh.writeObjectToFile(mesh, path);
     }
 }

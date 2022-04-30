@@ -4,9 +4,6 @@ import app.ecs.Entity;
 import app.editor.component.SceneHandler;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
-import app.renderer.pbr.Mesh;
-import app.utilities.OpenFileDialog;
-import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -31,8 +28,8 @@ public class ContentBrowser implements ImguiLayer {
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
         //TODO: icons for mesh prefabe, texture, java class and scene
-        folderIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png");
-        fileIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png");
+        folderIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png"));
+        fileIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png"));
         absolutePath = SceneHandler.getActiveScene().getPath();
     }
 
@@ -94,7 +91,7 @@ public class ContentBrowser implements ImguiLayer {
             Object payload = ImGui.acceptDragDropPayload(DragAndDrop.SAVE_ENTITY.getType());
             if (payload != null && payload.getClass().isAssignableFrom(Entity.class)) {
                 Entity entity = (Entity) payload;
-                Serializable.saveEntity(entity, absolutePath.toString());
+                Serializable.saveEntity(entity, Path.of(absolutePath.toString()));
             }
             ImGui.endDragDropTarget();
         }

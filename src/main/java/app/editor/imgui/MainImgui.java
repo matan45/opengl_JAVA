@@ -12,8 +12,6 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
-import java.nio.file.Path;
-
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
@@ -81,7 +79,7 @@ public class MainImgui implements ImguiLayer {
                 if (ImGui.menuItem(FontAwesomeIcons.FileImport + " Meshes", null, false)) {
                     //TODO thread pool
                     OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
-                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(Path.of(path));
+                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(path);
                         for (Mesh mesh : meshes)
                             Serializable.saveMesh(mesh, path);
                     });
@@ -89,7 +87,7 @@ public class MainImgui implements ImguiLayer {
                     LogInfo.println("not implement");
                 } else if (ImGui.menuItem(FontAwesomeIcons.FileAudio + " Audio", null, false)) {
                     LogInfo.println("not implement");
-                } else if (ImGui.menuItem(FontAwesomeIcons.FastForward + " Animation", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.Walking + " Animation", null, false)) {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
