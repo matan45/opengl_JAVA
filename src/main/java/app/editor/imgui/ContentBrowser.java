@@ -4,6 +4,7 @@ import app.ecs.Entity;
 import app.editor.component.SceneHandler;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
+import app.utilities.FileUtil;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -13,7 +14,6 @@ import imgui.flag.ImGuiCond;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
@@ -22,14 +22,22 @@ public class ContentBrowser implements ImguiLayer {
 
     private final int folderIcon;
     private final int fileIcon;
+    private final int meshIcon;
+    private final int prefabIcon;
+    private final int javaIcon;
+    private final int sceneIcon;
 
     public static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
-        //TODO: icons for mesh prefabe, texture, java class and scene
+        //TODO: icons for texture, shaders and audio
         folderIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png"));
         fileIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png"));
+        meshIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-mesh.png"));
+        prefabIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-prefab.png"));
+        javaIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-java.png"));
+        sceneIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icons-scene.png"));
         absolutePath = SceneHandler.getActiveScene().getPath();
     }
 
@@ -70,9 +78,10 @@ public class ContentBrowser implements ImguiLayer {
     private void fileType(float thumbnailSize, File file) {
         if (file.isFile()) {
             ImGui.pushID(file.getName());
-            ImGui.imageButton(fileIcon, thumbnailSize, thumbnailSize);
+            int icon = getFileIcon(file);
+            ImGui.imageButton(icon, thumbnailSize, thumbnailSize);
             if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
-                dragAndDropSourceEntity(file.toPath().toAbsolutePath().toString());
+                dragAndDropSourceEntity(file);
             ImGui.textWrapped(file.getName());
             ImGui.popID();
             ImGui.nextColumn();
@@ -86,6 +95,17 @@ public class ContentBrowser implements ImguiLayer {
         }
     }
 
+    private int getFileIcon(File file) {
+        String extension = FileUtil.getFileExtension(file).orElse("");
+        return switch (extension) {
+            case "prefab" -> prefabIcon;
+            case "java" -> javaIcon;
+            case "mesh" -> meshIcon;
+            case "scene" -> sceneIcon;
+            default -> fileIcon;
+        };
+    }
+
     private void dragAndDropTargetEntity() {
         if (ImGui.beginDragDropTarget()) {
             Object payload = ImGui.acceptDragDropPayload(DragAndDrop.SAVE_ENTITY.getType());
@@ -97,16 +117,14 @@ public class ContentBrowser implements ImguiLayer {
         }
     }
 
-    private void dragAndDropSourceEntity(String path) {
-        Optional.ofNullable(path)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(path.lastIndexOf(".") + 1)).ifPresent(extension -> {
-                    if (extension.equals(FileExtension.PREFAB_EXTENSION.getFileName()) && ImGui.beginDragDropSource()) {
-                        ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), path, ImGuiCond.Once);
-                        ImGui.text(path);
-                        ImGui.endDragDropSource();
-                    }
-                });
+    private void dragAndDropSourceEntity(File file) {
+        FileUtil.getFileExtension(file).ifPresent(extension -> {
+            if (extension.equals(FileExtension.PREFAB_EXTENSION.getFileName()) && ImGui.beginDragDropSource()) {
+                ImGui.setDragDropPayload(DragAndDrop.LOAD_ENTITY.getType(), file.getAbsolutePath(), ImGuiCond.Once);
+                ImGui.text(file.toString());
+                ImGui.endDragDropSource();
+            }
+        });
     }
 
     public void setAbsolutePath(Path absolutePath) {
