@@ -26,6 +26,7 @@ public class ContentBrowser implements ImguiLayer {
     private final int prefabIcon;
     private final int javaIcon;
     private final int sceneIcon;
+    private final int shaderIcon;
 
     private static final float THUMBNAIL_SIZE = 96.0f;
     private static final float PADDING = 16.0f;
@@ -34,13 +35,14 @@ public class ContentBrowser implements ImguiLayer {
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
-        //TODO: icons for texture, shaders and audio
+        //TODO: icons for texture and audio
         folderIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png"));
         fileIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png"));
         meshIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-mesh.png"));
         prefabIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-prefab.png"));
         javaIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-java.png"));
-        sceneIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icons-scene.png"));
+        sceneIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-scene.png"));
+        shaderIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-shader.png"));
         absolutePath = SceneHandler.getActiveScene().getPath();
     }
 
@@ -103,6 +105,7 @@ public class ContentBrowser implements ImguiLayer {
             case "java" -> javaIcon;
             case "mesh" -> meshIcon;
             case "scene" -> sceneIcon;
+            case "glsl" -> shaderIcon;
             default -> fileIcon;
         };
     }
