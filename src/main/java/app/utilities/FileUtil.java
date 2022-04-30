@@ -14,4 +14,9 @@ public class FileUtil {
                 .map(f -> f.substring(path.lastIndexOf(".") + 1));
 
     }
+
+    public static String getFileNameWithoutExtension(File file) {
+        String name = file.getName();
+        return name.replaceFirst("[.][^.]+$", "");
+    }
 }

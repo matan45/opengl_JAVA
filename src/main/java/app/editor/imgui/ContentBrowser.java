@@ -27,6 +27,9 @@ public class ContentBrowser implements ImguiLayer {
     private final int javaIcon;
     private final int sceneIcon;
 
+    private static final float THUMBNAIL_SIZE = 96.0f;
+    private static final float PADDING = 16.0f;
+
     public static final String FOLDER_SPLITTER = "\\";
 
     public ContentBrowser() {
@@ -58,16 +61,14 @@ public class ContentBrowser implements ImguiLayer {
             File[] listOfFiles = folder.listFiles();
 
             float panelWidth = ImGui.getContentRegionAvailX();
-            float thumbnailSize = 128.0f;
-            float padding = 16.0f;
-            float cellSize = padding + thumbnailSize;
+            float cellSize = PADDING + THUMBNAIL_SIZE;
             int columnCount = (int) (panelWidth / cellSize);
             ImGui.columns(columnCount, "", false);
             assert listOfFiles != null;
 
             ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 0);
             for (File file : listOfFiles) {
-                fileType(thumbnailSize, file);
+                fileType(file);
             }
             ImGui.popStyleColor();
         }
@@ -75,19 +76,19 @@ public class ContentBrowser implements ImguiLayer {
         ImGui.end();
     }
 
-    private void fileType(float thumbnailSize, File file) {
+    private void fileType(File file) {
         if (file.isFile()) {
             ImGui.pushID(file.getName());
             int icon = getFileIcon(file);
-            ImGui.imageButton(icon, thumbnailSize, thumbnailSize);
+            ImGui.imageButton(icon, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
             if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
                 dragAndDropSourceEntity(file);
-            ImGui.textWrapped(file.getName());
+            ImGui.textWrapped(FileUtil.getFileNameWithoutExtension(file));
             ImGui.popID();
             ImGui.nextColumn();
         } else if (file.isDirectory()) {
             ImGui.pushID(file.getName());
-            if (ImGui.imageButton(folderIcon, thumbnailSize, thumbnailSize))
+            if (ImGui.imageButton(folderIcon, THUMBNAIL_SIZE, THUMBNAIL_SIZE))
                 absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
             ImGui.textWrapped(file.getName());
             ImGui.popID();
