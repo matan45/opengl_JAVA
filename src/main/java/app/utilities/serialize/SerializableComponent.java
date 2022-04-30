@@ -8,6 +8,7 @@ import app.utilities.logger.LogError;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 class SerializableComponent {
@@ -48,16 +49,16 @@ class SerializableComponent {
                 serializable.addProperty("Linear", pointLight.getPointLight().getLinear());
                 serializable.addProperty("Constant", pointLight.getPointLight().getConstant());
             }
-            case SpotLightComponent SpotLight -> {
+            case SpotLightComponent spotLight -> {
                 serializable.addProperty(COMPONENT_NAME, SpotLightComponent.class.getSimpleName());
-                serializable.add("Position", olVector3f(SpotLight.getSpotLight().getPosition()));
-                serializable.add("Direction", olVector3f(SpotLight.getSpotLight().getDirection()));
-                serializable.add("Color", olVector3f(SpotLight.getSpotLight().getColor()));
-                serializable.addProperty("Quadratic", SpotLight.getSpotLight().getQuadratic());
-                serializable.addProperty("Linear", SpotLight.getSpotLight().getLinear());
-                serializable.addProperty("Constant", SpotLight.getSpotLight().getConstant());
-                serializable.addProperty("CutOff", SpotLight.getSpotLight().getCutOff());
-                serializable.addProperty("OuterCutOff", SpotLight.getSpotLight().getOuterCutOff());
+                serializable.add("Position", olVector3f(spotLight.getSpotLight().getPosition()));
+                serializable.add("Direction", olVector3f(spotLight.getSpotLight().getDirection()));
+                serializable.add("Color", olVector3f(spotLight.getSpotLight().getColor()));
+                serializable.addProperty("Quadratic", spotLight.getSpotLight().getQuadratic());
+                serializable.addProperty("Linear", spotLight.getSpotLight().getLinear());
+                serializable.addProperty("Constant", spotLight.getSpotLight().getConstant());
+                serializable.addProperty("CutOff", spotLight.getSpotLight().getCutOff());
+                serializable.addProperty("OuterCutOff", spotLight.getSpotLight().getOuterCutOff());
             }
             case FogComponent fog -> {
                 serializable.addProperty(COMPONENT_NAME, FogComponent.class.getSimpleName());
@@ -88,12 +89,13 @@ class SerializableComponent {
             case MeshComponent mesh -> {
                 serializable.addProperty(COMPONENT_NAME, MeshComponent.class.getSimpleName());
                 serializable.addProperty("MeshPath", mesh.getPath());
+                serializable.addProperty("RenderType", mesh.getMeshRenderer().getSelect());
                 serializable.addProperty("AlbedoPath", mesh.getMaterial().getAlbedoMapPath());
                 serializable.addProperty("NormalPath", mesh.getMaterial().getNormalMapPath());
                 serializable.addProperty("MetallicPath", mesh.getMaterial().getMetallicMapPath());
                 serializable.addProperty("RoughnessPath", mesh.getMaterial().getRoughnessMapPath());
-                serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
                 serializable.addProperty("AoPath", mesh.getMaterial().getAoMapPath());
+                serializable.addProperty("EmissivePath", mesh.getMaterial().getEmissiveMapPath());
             }
             default -> throw new IllegalStateException("Unexpected value: " + component);
         }
@@ -169,7 +171,7 @@ class SerializableComponent {
                 terrain.setPath(component.get("Path").getAsString());
                 terrain.getWireframe().set(component.get("Wireframe").getAsBoolean());
                 terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
-                terrain.getTerrain().init(terrain.getPath());
+                terrain.getTerrain().init(Path.of(terrain.getPath()));
                 terrain.getTerrain().setActive(true);
                 entity.addComponent(terrain);
             }
@@ -189,19 +191,19 @@ class SerializableComponent {
                 SkyBoxComponent skyBox = new SkyBoxComponent(entity);
                 skyBox.setPath(component.get("Path").getAsString());
                 skyBox.getSkyBox().setExposure(component.get("Exposure").getAsFloat());
-                skyBox.getSkyBox().init(skyBox.getPath());
+                skyBox.getSkyBox().init(Path.of(skyBox.getPath()));
                 entity.addComponent(skyBox);
             }
             case "MeshComponent" -> {
                 MeshComponent mesh = new MeshComponent(entity);
-                mesh.setPath(component.get("MeshPath").getAsString());
+                mesh.setPath(component.get("MeshPath").getAsString(), true);
                 mesh.getMaterial().setAlbedoMap(component.get("AlbedoPath").getAsString());
                 mesh.getMaterial().setNormalMap(component.get("NormalPath").getAsString());
                 mesh.getMaterial().setMetallicMap(component.get("MetallicPath").getAsString());
                 mesh.getMaterial().setRoughnessMap(component.get("RoughnessPath").getAsString());
                 mesh.getMaterial().setEmissiveMap(component.get("EmissivePath").getAsString());
                 mesh.getMaterial().setAoMap(component.get("AoPath").getAsString());
-                mesh.getMeshRenderer().init(mesh.getPath(), mesh.getOlTransform());
+                mesh.getMeshRenderer().setSelect(component.get("RenderType").getAsInt());
                 entity.addComponent(mesh);
             }
             default -> LogError.println("cant find this component " + componentName);

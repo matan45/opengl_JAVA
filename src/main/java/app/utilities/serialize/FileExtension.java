@@ -2,9 +2,10 @@ package app.utilities.serialize;
 
 public enum FileExtension {
     PREFAB_EXTENSION("prefab"),
+    MESH_EXTENSION("mesh"),
     SCENE_EXTENSION("scene");
 
-    String file;
+    private final String file;
 
     FileExtension(String file) {
         this.file = file;

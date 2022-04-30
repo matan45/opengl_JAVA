@@ -9,6 +9,8 @@ import app.renderer.lights.DirectionalLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
+import java.nio.file.Path;
+
 public class DirectionalLightComponent extends Component {
     private DirectionalLight directionalLight;
     private final OLTransform olTransform;
@@ -18,7 +20,7 @@ public class DirectionalLightComponent extends Component {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         Textures textures = EditorRenderer.getTextures();
-        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\directionalLight.png"));
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\lights\\directionalLight.png")));
         directionalLight = new DirectionalLight(billboards);
         EditorRenderer.getLightHandler().setDirectionalLight(directionalLight);
     }

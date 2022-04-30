@@ -4,17 +4,26 @@ import app.ecs.Entity;
 import app.math.components.OLTransform;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Material;
+import app.renderer.pbr.Mesh;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
+import app.utilities.resource.ResourceManager;
+import app.utilities.serialize.FileExtension;
 import imgui.ImGui;
+import imgui.type.ImInt;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public class MeshComponent extends Component {
     private final MeshRenderer meshRenderer;
     private final OLTransform olTransform;
     private final Material material;
+
+    private final ImInt select;
+    private int preSelect;
+    private final String[] types = {"BACK", "FRONT", "FRONT AND BACK", "Disable"};
 
     private String path = "";
     private String prePath = "";
@@ -26,21 +35,31 @@ public class MeshComponent extends Component {
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         material = meshRenderer.getMaterial();
         file = new File("");
+        select = new ImInt(0);
+        preSelect = 0;
     }
+
 
     @Override
     public void imguiDraw() {
         if (ImGui.button("Mesh"))
-            path = OpenFileDialog.openFile("obj,fbx,dae,gltf").orElse(prePath);
+            path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName()).orElse(Path.of(prePath)).toString();
 
-        if (!path.isEmpty() && !prePath.equals(path)) {
-            prePath = path;
-            file = new File(path);
-            meshRenderer.init(path, olTransform);
-        }
+
+        if (!path.isEmpty() && !prePath.equals(path))
+            init(false);
+
 
         ImGui.sameLine();
         ImGui.textWrapped(file.getName());
+
+        ImGui.textWrapped("RenderType");
+        ImGui.sameLine();
+        ImGui.combo("##", select, types);
+        if (preSelect != select.get()) {
+            preSelect = select.get();
+            meshRenderer.setSelect(select.get());
+        }
 
         ImGui.textWrapped("Material");
         ImGui.separator();
@@ -111,11 +130,20 @@ public class MeshComponent extends Component {
 
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
-            Optional<String> materialPath = OpenFileDialog.openFile("png,tga,jpg");
+            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg");
             if (materialPath.isPresent())
-                return materialPath.get();
+                return materialPath.get().toAbsolutePath().toString();
         }
         return "";
+    }
+
+    private void init(boolean useTransform) {
+        prePath = path;
+        file = new File(path);
+        Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
+        if (!useTransform)
+            olTransform.setPosition(mesh.center());
+        meshRenderer.init(mesh, olTransform);
     }
 
     @Override
@@ -131,8 +159,9 @@ public class MeshComponent extends Component {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(String path, boolean useTransform) {
         this.path = path;
+        init(useTransform);
     }
 
     public OLTransform getOlTransform() {

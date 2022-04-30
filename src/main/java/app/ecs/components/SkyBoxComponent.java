@@ -8,6 +8,7 @@ import imgui.ImGui;
 import imgui.type.ImInt;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class SkyBoxComponent extends Component {
     private final SkyBox skyBox;
@@ -27,11 +28,11 @@ public class SkyBoxComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("HDR"))
-            path = OpenFileDialog.openFile("hdr").orElse(prePath);
+            path = OpenFileDialog.openFile("hdr").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
-            skyBox.init(path);
+            skyBox.init(Path.of(path));
             file = new File(path);
         }
         ImGui.sameLine();

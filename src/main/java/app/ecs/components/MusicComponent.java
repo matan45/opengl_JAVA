@@ -8,6 +8,7 @@ import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MusicComponent extends Component {
@@ -32,15 +33,15 @@ public class MusicComponent extends Component {
         music = new Music();
 
         Textures textures = EditorRenderer.getTextures();
-        playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\play.png");
-        stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\stop.png");
-        pauseIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\audio\\pause.png");
+        playIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\play.png"));
+        stopIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\stop.png"));
+        pauseIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\audio\\pause.png"));
     }
 
     @Override
     public void imguiDraw() {
         if (ImGui.button("Music"))
-            path = OpenFileDialog.openFile("wav").orElse(prePath);
+            path = OpenFileDialog.openFile("wav").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;

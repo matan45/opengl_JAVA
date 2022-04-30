@@ -12,6 +12,7 @@ import imgui.ImVec2;
 import imgui.flag.*;
 import imgui.type.ImString;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public class SceneGraph implements ImguiLayer {
@@ -23,7 +24,7 @@ public class SceneGraph implements ImguiLayer {
 
     public SceneGraph() {
         Textures textures = EditorRenderer.getTextures();
-        pencil = textures.loadTexture("src\\main\\resources\\editor\\icons\\sceneGraph\\pencil.png");
+        pencil = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\sceneGraph\\pencil.png"));
         firstTime = false;
         inspector = ImguiLayerHandler.getImguiLayer(Inspector.class);
     }

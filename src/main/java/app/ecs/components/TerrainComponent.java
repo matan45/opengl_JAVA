@@ -8,6 +8,7 @@ import imgui.ImGui;
 import imgui.type.ImBoolean;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class TerrainComponent extends Component {
     private final TerrainQuadtreeRenderer terrain;
@@ -27,12 +28,12 @@ public class TerrainComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Height Map"))
-            path = OpenFileDialog.openFile("png,jpg").orElse(prePath);
+            path = OpenFileDialog.openFile("png,jpg").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
             file = new File(path);
-            terrain.init(path);
+            terrain.init(Path.of(path));
             terrain.setActive(true);
         }
         ImGui.sameLine();

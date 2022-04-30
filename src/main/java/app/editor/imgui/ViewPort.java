@@ -19,6 +19,8 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseCursor;
 import imgui.flag.ImGuiWindowFlags;
 
+import java.nio.file.Path;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class ViewPort implements ImguiLayer {
@@ -93,13 +95,13 @@ public class ViewPort implements ImguiLayer {
         EditorRenderer.getGrid().setRender(true);
 
         Textures textures = EditorRenderer.getTextures();
-        scaleIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\scale.png");
-        rotateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png");
-        translateIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\translate.png");
-        playIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\play.png");
-        stopIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\stop.png");
-        cancelIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png");
-        gridIcon = textures.loadTexture("src\\main\\resources\\editor\\icons\\viewPort\\grid.png");
+        scaleIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\scale.png"));
+        rotateIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\rotate.png"));
+        translateIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\translate.png"));
+        playIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\play.png"));
+        stopIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\stop.png"));
+        cancelIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\cancel.png"));
+        gridIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\viewPort\\grid.png"));
 
     }
 
@@ -212,7 +214,7 @@ public class ViewPort implements ImguiLayer {
         if (ImGui.beginDragDropTarget()) {
             String payload = ImGui.acceptDragDropPayload(DragAndDrop.LOAD_ENTITY.getType());
             if (payload != null) {
-                Entity entity = Serializable.loadEntity(payload);
+                Entity entity = Serializable.loadEntity(Path.of(payload));
                 assert entity != null;
                 if (entity.getFather() != null)
                     EntitySystem.addEntity(entity.getFather());

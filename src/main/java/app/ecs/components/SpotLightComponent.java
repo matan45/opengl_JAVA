@@ -9,6 +9,8 @@ import app.renderer.lights.SpotLight;
 import imgui.ImGui;
 import imgui.flag.ImGuiColorEditFlags;
 
+import java.nio.file.Path;
+
 public class SpotLightComponent extends Component {
     private final OLTransform olTransform;
     private final SpotLight spotLight;
@@ -17,7 +19,7 @@ public class SpotLightComponent extends Component {
         super(ownerEntity);
         olTransform = ownerEntity.getComponent(TransformComponent.class).getOlTransform();
         Textures textures = EditorRenderer.getTextures();
-        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture("src\\main\\resources\\editor\\icons\\lights\\spotLight.png"));
+        Billboards billboards = new Billboards(EditorRenderer.getOpenGLObjects(), textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\lights\\spotLight.png")));
         spotLight = new SpotLight(billboards);
         EditorRenderer.getLightHandler().addSpotLight(spotLight);
 

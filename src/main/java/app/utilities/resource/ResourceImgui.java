@@ -11,7 +11,8 @@ class ResourceImgui {
             return Files.readAllBytes(path.toAbsolutePath());
         } catch (IOException e) {
             //TODO custom excption handler
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return new byte[0];
     }
 }

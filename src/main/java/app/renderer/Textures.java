@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +26,11 @@ public class Textures {
         texturesID = new ArrayList<>();
     }
 
-    public int loadTexture(String fileName) {
+    public int loadTexture(Path fileName) {
         ByteBuffer imageBuffer;
         ByteBuffer image;
         try {
-            imageBuffer = ResourceManager.readToByte(Paths.get(fileName));
+            imageBuffer = ResourceManager.readToByte(fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -98,13 +98,13 @@ public class Textures {
         return id;
     }
 
-    public int hdr(String fileName) {
+    public int hdr(Path fileName) {
         stbi_set_flip_vertically_on_load(true);
 
         ByteBuffer imageBuffer;
         FloatBuffer image;
         try {
-            imageBuffer = ResourceManager.readToByte(Paths.get(fileName));
+            imageBuffer = ResourceManager.readToByte(fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

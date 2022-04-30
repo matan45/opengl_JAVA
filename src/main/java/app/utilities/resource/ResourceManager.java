@@ -37,8 +37,12 @@ public class ResourceManager {
         return ResourceUtilises.ioResourceToByteBuffer(path.toAbsolutePath().toString());
     }
 
-    public static Mesh[] loadMeshFromFile(Path path) {
+    public static Mesh loadMeshFromFile(Path path) {
         return resourceMesh.readMeshFile(path);
+    }
+
+    public static Mesh[] loadMeshesFromFile(Path path) {
+        return resourceMesh.importMeshesFile(path);
     }
 
     public static ShortBuffer loadAudio(Path path, STBVorbisInfo info) {

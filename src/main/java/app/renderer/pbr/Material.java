@@ -4,6 +4,7 @@ import app.renderer.Textures;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Path;
 
 public class Material implements Serializable {
     private final transient Textures textures;
@@ -14,6 +15,12 @@ public class Material implements Serializable {
     private int roughnessMap;
     private int aoMap;
     private int emissiveMap;
+
+    private int defaultAlbedoMap;
+    private int defaultNormalMap;
+    private int defaultMetallicMap;
+    private int defaultRoughnessMap;
+    private int defaultAoMap;
 
     private String albedoMapPath;
     private String normalMapPath;
@@ -44,6 +51,18 @@ public class Material implements Serializable {
         roughnessFileName = "";
         aoFileName = "";
         emissiveFileName = "";
+
+        defaultAlbedoMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\albedo.png"));
+        defaultNormalMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\normal.png"));
+        defaultMetallicMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\metallic.png"));
+        defaultRoughnessMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\roughness.png"));
+        defaultAoMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\ao.png"));
+
+        albedoMap = defaultAlbedoMap;
+        normalMap = defaultNormalMap;
+        metallicMap = defaultMetallicMap;
+        roughnessMap = defaultRoughnessMap;
+        aoMap = defaultAoMap;
     }
 
     public int getAlbedoMap() {
@@ -53,14 +72,14 @@ public class Material implements Serializable {
     public void albedoMapRemove() {
         albedoMapPath = "";
         albedoFileName = "";
-        albedoMap = 0;
+        albedoMap = defaultAlbedoMap;
     }
 
     public void setAlbedoMap(String albedoMapPath) {
         if (!albedoMapPath.isEmpty()) {
             this.albedoMapPath = albedoMapPath;
             albedoFileName = new File(albedoMapPath).getName();
-            albedoMap = textures.loadTexture(albedoMapPath);
+            albedoMap = textures.loadTexture(Path.of(albedoMapPath));
         }
     }
 
@@ -71,14 +90,14 @@ public class Material implements Serializable {
     public void normalMapRemove() {
         normalMapPath = "";
         normalFileName = "";
-        normalMap = 0;
+        normalMap = defaultNormalMap;
     }
 
     public void setNormalMap(String normalMapPath) {
         if (!normalMapPath.isEmpty()) {
             this.normalMapPath = normalMapPath;
             normalFileName = new File(normalMapPath).getName();
-            normalMap = textures.loadTexture(normalMapPath);
+            normalMap = textures.loadTexture(Path.of(normalMapPath));
         }
     }
 
@@ -89,14 +108,14 @@ public class Material implements Serializable {
     public void metallicMapRemove() {
         metallicMapPath = "";
         metallicFileName = "";
-        metallicMap = 0;
+        metallicMap = defaultMetallicMap;
     }
 
     public void setMetallicMap(String metallicMapPath) {
         if (!metallicMapPath.isEmpty()) {
             this.metallicMapPath = metallicMapPath;
             metallicFileName = new File(metallicMapPath).getName();
-            metallicMap = textures.loadTexture(metallicMapPath);
+            metallicMap = textures.loadTexture(Path.of(metallicMapPath));
         }
     }
 
@@ -107,14 +126,14 @@ public class Material implements Serializable {
     public void roughnessMapRemove() {
         roughnessMapPath = "";
         roughnessFileName = "";
-        roughnessMap = 0;
+        roughnessMap = defaultRoughnessMap;
     }
 
     public void setRoughnessMap(String roughnessMapPath) {
         if (!roughnessMapPath.isEmpty()) {
             this.roughnessMapPath = roughnessMapPath;
             roughnessFileName = new File(roughnessMapPath).getName();
-            roughnessMap = textures.loadTexture(roughnessMapPath);
+            roughnessMap = textures.loadTexture(Path.of(roughnessMapPath));
         }
     }
 
@@ -125,14 +144,14 @@ public class Material implements Serializable {
     public void aoMapRemove() {
         aoMapPath = "";
         aoFileName = "";
-        aoMap = 0;
+        aoMap = defaultAoMap;
     }
 
     public void setAoMap(String aoMapPath) {
         if (!aoMapPath.isEmpty()) {
             this.aoMapPath = aoMapPath;
             aoFileName = new File(aoMapPath).getName();
-            aoMap = textures.loadTexture(aoMapPath);
+            aoMap = textures.loadTexture(Path.of(aoMapPath));
         }
     }
 
@@ -150,7 +169,7 @@ public class Material implements Serializable {
         if (!emissiveMapPath.isEmpty()) {
             this.emissiveMapPath = emissiveMapPath;
             emissiveFileName = new File(emissiveMapPath).getName();
-            emissiveMap = textures.loadTexture(emissiveMapPath);
+            emissiveMap = textures.loadTexture(Path.of(emissiveMapPath));
         }
     }
 

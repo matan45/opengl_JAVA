@@ -8,6 +8,7 @@ import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.utilities.data.structures.Pair;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -208,13 +209,13 @@ public class SkyBox {
 
     }
 
-    public void init(String filePath) {
+    public void init(Path filePath) {
         isActive = true;
 
         cubeMap(filePath);
     }
 
-    private void cubeMap(String filePath) {
+    private void cubeMap(Path filePath) {
 
         backgroundShader.start();
         backgroundShader.connectTextureUnits();

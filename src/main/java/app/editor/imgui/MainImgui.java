@@ -1,7 +1,9 @@
 package app.editor.imgui;
 
+import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
+import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
@@ -72,6 +74,24 @@ public class MainImgui implements ImguiLayer {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
+            }
+            if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
+                if (ImGui.menuItem(FontAwesomeIcons.FileImport + " Meshes", null, false)) {
+                    //TODO thread pool
+                    OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
+                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(path);
+                        for (Mesh mesh : meshes)
+                            Serializable.saveMesh(mesh, path);
+                    });
+                } else if (ImGui.menuItem(FontAwesomeIcons.FileImage + " Textures", null, false)) {
+                    LogInfo.println("not implement");
+                } else if (ImGui.menuItem(FontAwesomeIcons.FileAudio + " Audio", null, false)) {
+                    LogInfo.println("not implement");
+                } else if (ImGui.menuItem(FontAwesomeIcons.Walking + " Animation", null, false)) {
+                    LogInfo.println("not implement");
+                }
+                ImGui.endMenu();
+
             }
             ImGui.endMenuBar();
         }
