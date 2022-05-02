@@ -22,13 +22,16 @@ public class MainImgui implements ImguiLayer {
     private int width;
     private int height;
 
-    static final String DOCK_SPACE = "Dockspace";
+    private static final String DOCK_SPACE = "Dockspace";
+
+    private final ImBoolean cameraWindow;
 
     public MainImgui(String title, int width, int height) {
         this.title = title;
         this.width = width;
         this.height = height;
         closeWindow = new ImBoolean(true);
+        cameraWindow = new ImBoolean(false);
         windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
     }
@@ -49,6 +52,8 @@ public class MainImgui implements ImguiLayer {
                 final long backupWindowPtr = glfwGetCurrentContext();
                 glfwSetWindowShouldClose(backupWindowPtr, true);
             }
+            if (cameraWindow.get())
+                cameraEditor();
         }
         ImGui.end();
     }
@@ -69,7 +74,7 @@ public class MainImgui implements ImguiLayer {
             }
             if (ImGui.beginMenu(FontAwesomeIcons.Wrench + " Settings")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Camera + " Editor Camera", null, false)) {
-                    LogInfo.println("not implemented");
+                    cameraWindow.set(!cameraWindow.get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
                     LogInfo.println("not implement");
                 }
@@ -97,6 +102,12 @@ public class MainImgui implements ImguiLayer {
         }
     }
 
+    private void cameraEditor() {
+        if (ImGui.begin("Camera Editor", cameraWindow)) {
+
+        }
+        ImGui.end();
+    }
 
     public void setWidth(int width) {
         this.width = width;
