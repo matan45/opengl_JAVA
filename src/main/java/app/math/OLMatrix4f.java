@@ -2,6 +2,7 @@ package app.math;
 
 import java.io.Serializable;
 import java.nio.FloatBuffer;
+import java.util.Objects;
 
 public class OLMatrix4f implements Serializable {
 
@@ -323,6 +324,11 @@ public class OLMatrix4f implements Serializable {
                 && (m13 == matrix4f.m13) && (m20 == matrix4f.m20) && (m21 == matrix4f.m21)
                 && (m22 == matrix4f.m22) && (m23 == matrix4f.m23) && (m30 == matrix4f.m30)
                 && (m31 == matrix4f.m31) && (m32 == matrix4f.m32) && (m33 == matrix4f.m33);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this);
     }
 
 

@@ -1,6 +1,7 @@
 package app.math;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class OLVector2f implements Serializable {
     public float x;
@@ -121,6 +122,11 @@ public class OLVector2f implements Serializable {
         OLVector2f vector2f = (OLVector2f) o;
 
         return (x == vector2f.x) && (y == vector2f.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this);
     }
 
     @Override
