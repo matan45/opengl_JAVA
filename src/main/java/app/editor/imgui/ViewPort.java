@@ -229,7 +229,7 @@ public class ViewPort implements ImguiLayer {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            cameraMovement(position, rotation, dt);
+            cameraMovement(position, rotation, dt, editorCamera.getSpeed());
 
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;
@@ -261,8 +261,7 @@ public class ViewPort implements ImguiLayer {
         }
     }
 
-    private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt) {
-        float speed = 50f;
+    private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt, float speed) {
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;

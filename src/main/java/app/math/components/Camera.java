@@ -11,6 +11,7 @@ public class Camera {
     private final OLMatrix4f viewMatrix;
     private final OLMatrix4f projectionMatrix;
     private OLVector2f viewPort;
+    private float speed;
 
     public Camera() {
         position = new OLVector3f(0.0f, 2f, 5f);
@@ -19,6 +20,7 @@ public class Camera {
         projectionMatrix = new OLMatrix4f();
         negativeCameraPosition = new OLVector3f();
         viewPort = new OLVector2f();
+        speed = 50f;
     }
 
     public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
@@ -72,5 +74,13 @@ public class Camera {
 
     public void setViewPort(OLVector2f viewPort) {
         this.viewPort = viewPort;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 }

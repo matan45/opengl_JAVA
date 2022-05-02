@@ -1,5 +1,7 @@
 package app.editor.imgui;
 
+import app.math.components.Camera;
+import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
@@ -21,6 +23,8 @@ public class MainImgui implements ImguiLayer {
     private int windowFlags;
     private int width;
     private int height;
+
+    private Camera camera;
 
     private static final String DOCK_SPACE = "Dockspace";
 
@@ -74,6 +78,7 @@ public class MainImgui implements ImguiLayer {
             }
             if (ImGui.beginMenu(FontAwesomeIcons.Wrench + " Settings")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Camera + " Editor Camera", null, false)) {
+                    camera = EditorRenderer.getEditorCamera();
                     cameraWindow.set(!cameraWindow.get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
                     LogInfo.println("not implement");
@@ -104,7 +109,14 @@ public class MainImgui implements ImguiLayer {
 
     private void cameraEditor() {
         if (ImGui.begin("Camera Editor", cameraWindow)) {
-
+            ImGui.pushID("Camera Speed");
+            if (ImGui.button("speed"))
+                camera.setSpeed(50f);
+            ImGui.sameLine();
+            float[] cameraValue = {camera.getSpeed()};
+            ImGui.dragFloat("##Y", cameraValue, 0.5f, 0.5f, 100f);
+            camera.setSpeed(cameraValue[0]);
+            ImGui.popID();
         }
         ImGui.end();
     }
