@@ -13,8 +13,8 @@ public class OLVector2f implements Serializable {
     }
 
     public OLVector2f(OLVector2f other) {
-        this.x = other.x;
-        this.y = other.y;
+        x = other.x;
+        y = other.y;
     }
 
     public OLVector2f(float x, float y) {
