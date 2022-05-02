@@ -146,6 +146,17 @@ public class OLVector3f implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OLVector3f vector3f = (OLVector3f) o;
+
+        return (x == vector3f.x) && (y == vector3f.y) && (z == vector3f.z);
+    }
+
+    @Override
     public String toString() {
         return "OLVector3f{" +
                 "x=" + x +

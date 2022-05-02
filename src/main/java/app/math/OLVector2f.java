@@ -113,6 +113,17 @@ public class OLVector2f implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OLVector2f vector2f = (OLVector2f) o;
+
+        return (x == vector2f.x) && (y == vector2f.y);
+    }
+
+    @Override
     public String toString() {
         return "OLVector2f{" +
                 "x=" + x +

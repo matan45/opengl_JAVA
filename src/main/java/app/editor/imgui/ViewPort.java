@@ -141,10 +141,9 @@ public class ViewPort implements ImguiLayer {
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
 
-            if (ImGui.isWindowFocused()) {
+            if (ImGui.isWindowFocused())
                 keyInputImGuizo();
-                cameraInput(dt);
-            }
+            cameraInput(dt);
 
             if (firstFrame) {
                 editorCamera = EditorRenderer.getEditorCamera();

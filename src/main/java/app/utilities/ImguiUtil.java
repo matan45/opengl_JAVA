@@ -10,7 +10,10 @@ public class ImguiUtil {
 
     private static final OLVector2f buttonSize = new OLVector2f();
 
-    public static void drawVector3(String title, OLVector3f olVector3f, float resetValueX,float resetValueY,float resetValueZ) {
+    private ImguiUtil() {
+    }
+
+    public static void drawVector3(String title, OLVector3f olVector3f, float resetValueX, float resetValueY, float resetValueZ) {
         ImGui.pushID(title);
         ImGui.pushStyleColor(ImGuiCol.Text, 1.0f, 1.0f, 1.0f, 1.0f);
         ImGui.text(title);
