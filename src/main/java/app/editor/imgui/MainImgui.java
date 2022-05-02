@@ -14,6 +14,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
+import static app.utilities.ImguiUtil.drawVector3;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
@@ -117,6 +118,9 @@ public class MainImgui implements ImguiLayer {
             ImGui.dragFloat("##Y", cameraValue, 0.5f, 0.5f, 100f);
             camera.setSpeed(cameraValue[0]);
             ImGui.popID();
+
+            drawVector3("Position", camera.getPosition(), 0.0f, 2.0f, 5.0f);
+            drawVector3("Rotation", camera.getRotation(), 45.0f, 0.0f, 0.0f);
         }
         ImGui.end();
     }
