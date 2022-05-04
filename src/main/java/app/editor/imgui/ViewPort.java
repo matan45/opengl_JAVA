@@ -20,6 +20,7 @@ import imgui.flag.ImGuiMouseCursor;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -43,7 +44,6 @@ public class ViewPort implements ImguiLayer {
     private float aspect;
 
     private Camera editorCamera;
-    private boolean isViewChange = false;
 
     private boolean firstFrame = true;
 
@@ -249,14 +249,11 @@ public class ViewPort implements ImguiLayer {
                     rotation.y = 0;
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
-
-                isViewChange = true;
             }
 
-            if (isViewChange) {
-                inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
-                isViewChange = false;
-            }
+            if (!Arrays.equals(inputSapValue, editorCamera.createViewMatrix().getAsArray()))
+                inputViewMatrix = Arrays.copyOf(editorCamera.createViewMatrix().getAsArray(), editorCamera.createViewMatrix().getAsArray().length);
+
         }
     }
 
@@ -264,25 +261,19 @@ public class ViewPort implements ImguiLayer {
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_A)) {
             position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_D)) {
             position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_S)) {
             position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
             position.y += 1 * speed * dt;
-            isViewChange = true;
         }
     }
 
