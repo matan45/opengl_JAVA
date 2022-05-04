@@ -54,19 +54,9 @@ public class ViewPort implements ImguiLayer {
     private final int gridIcon;
     private boolean isGrid;
 
-    private float[] objectMatrices = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+    private float[] objectMatrices;
 
-    private float[] inputViewMatrix = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+    private float[] inputViewMatrix;
 
     private float xLastPos;
     private float yLastPos;
@@ -275,4 +265,8 @@ public class ViewPort implements ImguiLayer {
         }
     }
 
+    public void setCurrentGizmoOperation(int currentGizmoOperation) {
+        this.currentGizmoOperation = currentGizmoOperation;
+        snapValue = 0;
+    }
 }
