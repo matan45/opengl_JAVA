@@ -183,6 +183,7 @@ public class ViewPort implements ImguiLayer {
                     ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
+                    LogInfo.println("hit");
                     //from model matrix need to set scale translate rotation
                     ImGuizmo.decomposeMatrixToComponents(objectMatrices, inputVectorTranslation, inputVectorRotation, inputVectorScale);
 

@@ -1,7 +1,6 @@
 package app.math;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class OLVector2f implements Serializable {
     public float x;
@@ -13,8 +12,8 @@ public class OLVector2f implements Serializable {
     }
 
     public OLVector2f(OLVector2f other) {
-        x = other.x;
-        y = other.y;
+        this.x = other.x;
+        this.y = other.y;
     }
 
     public OLVector2f(float x, float y) {
@@ -111,22 +110,6 @@ public class OLVector2f implements Serializable {
         this.x = Math.abs(this.x);
         this.y = Math.abs(this.y);
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OLVector2f vector2f = (OLVector2f) o;
-
-        return (x == vector2f.x) && (y == vector2f.y);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this);
     }
 
     @Override

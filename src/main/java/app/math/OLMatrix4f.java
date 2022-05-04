@@ -2,7 +2,6 @@ package app.math;
 
 import java.io.Serializable;
 import java.nio.FloatBuffer;
-import java.util.Objects;
 
 public class OLMatrix4f implements Serializable {
 
@@ -11,29 +10,10 @@ public class OLMatrix4f implements Serializable {
     public float m20, m21, m22, m23;
     public float m30, m31, m32, m33;
 
-    private static final float[] matrixArray = new float[4 * 4];
+    float[] matrixArray = new float[4 * 4];
 
     public OLMatrix4f() {
         identity();
-    }
-
-    public OLMatrix4f(OLMatrix4f other) {
-        m00 = other.m00;
-        m01 = other.m01;
-        m02 = other.m02;
-        m03 = other.m03;
-        m10 = other.m10;
-        m11 = other.m11;
-        m12 = other.m12;
-        m13 = other.m13;
-        m20 = other.m20;
-        m21 = other.m21;
-        m22 = other.m22;
-        m23 = other.m23;
-        m30 = other.m30;
-        m31 = other.m31;
-        m32 = other.m32;
-        m33 = other.m33;
     }
 
     public void identity() {
@@ -328,26 +308,6 @@ public class OLMatrix4f implements Serializable {
         // perform optimized matrix multiplication
         // compute last column first, because others do not depend on it
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        OLMatrix4f matrix4f = (OLMatrix4f) o;
-
-        return (m00 == matrix4f.m00) && (m01 == matrix4f.m01) && (m02 == matrix4f.m02) && (m03 == matrix4f.m03)
-                && (m10 == matrix4f.m10) && (m11 == matrix4f.m11) && (m12 == matrix4f.m12)
-                && (m13 == matrix4f.m13) && (m20 == matrix4f.m20) && (m21 == matrix4f.m21)
-                && (m22 == matrix4f.m22) && (m23 == matrix4f.m23) && (m30 == matrix4f.m30)
-                && (m31 == matrix4f.m31) && (m32 == matrix4f.m32) && (m33 == matrix4f.m33);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this);
     }
 
 
