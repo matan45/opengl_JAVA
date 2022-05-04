@@ -12,6 +12,9 @@ public class Camera {
     private final OLMatrix4f projectionMatrix;
     private OLVector2f viewPort;
     private float speed;
+    private float far;
+    private float near;
+    private float aspect;
 
     public Camera() {
         position = new OLVector3f(0.0f, 2f, 5f);
@@ -21,9 +24,12 @@ public class Camera {
         negativeCameraPosition = new OLVector3f();
         viewPort = new OLVector2f();
         speed = 50f;
+        near = 0.1f;
+        far = 2048f;
+        aspect = 1f;
     }
 
-    public OLMatrix4f createPerspectiveMatrix(float fovY, float aspect, float near, float far) {
+    public void createPerspectiveMatrix(float fovY) {
 
         float yScale = (float) (1f / Math.tan(Math.toRadians(fovY / 2f)));
         float xScale = yScale / aspect;
@@ -34,8 +40,6 @@ public class Camera {
         projectionMatrix.m23 = -1;
         projectionMatrix.m32 = -((2 * near * far) / frustumLength);
         projectionMatrix.m33 = 0;
-
-        return projectionMatrix;
     }
 
     public OLMatrix4f createViewMatrix() {
@@ -82,5 +86,27 @@ public class Camera {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    public float getFar() {
+        return far;
+    }
+
+    public void setFar(float far) {
+        this.far = far;
+        createPerspectiveMatrix(70f);
+    }
+
+    public float getNear() {
+        return near;
+    }
+
+    public void setNear(float near) {
+        this.near = near;
+        createPerspectiveMatrix(70f);
+    }
+
+    public void setAspect(float aspect) {
+        this.aspect = aspect;
     }
 }

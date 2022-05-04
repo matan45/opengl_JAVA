@@ -20,7 +20,6 @@ import imgui.flag.ImGuiMouseCursor;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
-import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -40,7 +39,6 @@ public class ViewPort implements ImguiLayer {
 
     private float preWindowWidth;
     private float preWindowHeight;
-    private float[] cameraProjection;
     private float aspect;
 
     private Camera editorCamera;
@@ -153,7 +151,8 @@ public class ViewPort implements ImguiLayer {
 
             if (preWindowHeight != ImGui.getWindowHeight() || preWindowWidth != ImGui.getWindowWidth()) {
                 aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-                cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 2048f).getAsArray();
+                editorCamera.setAspect(aspect);
+                editorCamera.createPerspectiveMatrix(70);
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
                 editorCamera.setViewPort(new OLVector2f(preWindowWidth, preWindowHeight));
@@ -177,6 +176,7 @@ public class ViewPort implements ImguiLayer {
                 inputSapValue[1] = snapValue;
                 inputSapValue[2] = snapValue;
 
+                float[] cameraProjection = editorCamera.getProjectionMatrix().getAsArray();
                 if (snap)
                     ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL, inputSapValue);
                 else

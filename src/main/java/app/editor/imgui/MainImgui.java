@@ -121,6 +121,27 @@ public class MainImgui implements ImguiLayer {
 
             drawVector3("Position", camera.getPosition(), 0.0f, 2.0f, 5.0f);
             drawVector3("Rotation", camera.getRotation(), 45.0f, 0.0f, 0.0f);
+
+            ImGui.textWrapped("Camera Perspective");
+            ImGui.separator();
+            ImGui.pushID("near");
+            if (ImGui.button("Near"))
+                camera.setNear(0.1f);
+            ImGui.sameLine();
+            float[] nearValue = {camera.getNear()};
+            ImGui.dragFloat("##Y", nearValue, 0.1f, 0.1f, 10f);
+            camera.setNear(nearValue[0]);
+            ImGui.popID();
+
+            ImGui.pushID("far");
+            if (ImGui.button("Far"))
+                camera.setFar(2048);
+            ImGui.sameLine();
+            float[] farValue = {camera.getFar()};
+            ImGui.dragFloat("##Y", farValue, 1f, 0.0f, 4096f);
+            camera.setFar(farValue[0]);
+            ImGui.popID();
+
         }
         ImGui.end();
     }
