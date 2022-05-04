@@ -183,7 +183,6 @@ public class ViewPort implements ImguiLayer {
                     ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL);
 
                 if (ImGuizmo.isUsing()) {
-                    LogInfo.println("hit");
                     //from model matrix need to set scale translate rotation
                     ImGuizmo.decomposeMatrixToComponents(objectMatrices, inputVectorTranslation, inputVectorRotation, inputVectorScale);
 
@@ -252,9 +251,7 @@ public class ViewPort implements ImguiLayer {
                 yLastPos = mousePos.y;
             }
 
-            if (!Arrays.equals(inputSapValue, editorCamera.createViewMatrix().getAsArray()))
-                inputViewMatrix = Arrays.copyOf(editorCamera.createViewMatrix().getAsArray(), editorCamera.createViewMatrix().getAsArray().length);
-
+            inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
         }
     }
 
