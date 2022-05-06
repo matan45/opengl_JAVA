@@ -19,6 +19,7 @@ public class Entity {
         components = new HashSet<>();
         components.add(new TransformComponent(this, olTransform));
         children = new HashMap<>();
+        //TODO UUID
         uuid = System.identityHashCode(this);
         path = "";
     }

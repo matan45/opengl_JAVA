@@ -1,5 +1,7 @@
 package app.editor.imgui;
 
+import app.math.components.Camera;
+import app.renderer.draw.EditorRenderer;
 import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
@@ -12,6 +14,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
 
+import static app.utilities.ImguiUtil.drawVector3;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
@@ -22,13 +25,18 @@ public class MainImgui implements ImguiLayer {
     private int width;
     private int height;
 
-    static final String DOCK_SPACE = "Dockspace";
+    private Camera camera;
+
+    private static final String DOCK_SPACE = "Dockspace";
+
+    private final ImBoolean cameraWindow;
 
     public MainImgui(String title, int width, int height) {
         this.title = title;
         this.width = width;
         this.height = height;
         closeWindow = new ImBoolean(true);
+        cameraWindow = new ImBoolean(false);
         windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
     }
@@ -49,6 +57,8 @@ public class MainImgui implements ImguiLayer {
                 final long backupWindowPtr = glfwGetCurrentContext();
                 glfwSetWindowShouldClose(backupWindowPtr, true);
             }
+            if (cameraWindow.get())
+                cameraEditor();
         }
         ImGui.end();
     }
@@ -69,7 +79,8 @@ public class MainImgui implements ImguiLayer {
             }
             if (ImGui.beginMenu(FontAwesomeIcons.Wrench + " Settings")) {
                 if (ImGui.menuItem(FontAwesomeIcons.Camera + " Editor Camera", null, false)) {
-                    LogInfo.println("not implemented");
+                    camera = EditorRenderer.getEditorCamera();
+                    cameraWindow.set(!cameraWindow.get());
                 } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
                     LogInfo.println("not implement");
                 }
@@ -97,6 +108,43 @@ public class MainImgui implements ImguiLayer {
         }
     }
 
+    private void cameraEditor() {
+        if (ImGui.begin("Camera Editor", cameraWindow)) {
+            ImGui.pushID("Camera Speed");
+            if (ImGui.button("speed"))
+                camera.setSpeed(50f);
+            ImGui.sameLine();
+            float[] cameraValue = {camera.getSpeed()};
+            ImGui.dragFloat("##Y", cameraValue, 0.5f, 0.5f, 100f);
+            camera.setSpeed(cameraValue[0]);
+            ImGui.popID();
+
+            drawVector3("Position", camera.getPosition(), 0.0f, 2.0f, 5.0f);
+            drawVector3("Rotation", camera.getRotation(), 45.0f, 0.0f, 0.0f);
+
+            ImGui.textWrapped("Camera Perspective");
+            ImGui.separator();
+            ImGui.pushID("near");
+            if (ImGui.button("Near"))
+                camera.setNear(0.1f);
+            ImGui.sameLine();
+            float[] nearValue = {camera.getNear()};
+            ImGui.dragFloat("##Y", nearValue, 0.1f, 0.1f, 10f);
+            camera.setNear(nearValue[0]);
+            ImGui.popID();
+
+            ImGui.pushID("far");
+            if (ImGui.button("Far"))
+                camera.setFar(2048);
+            ImGui.sameLine();
+            float[] farValue = {camera.getFar()};
+            ImGui.dragFloat("##Y", farValue, 1f, 0.0f, 4096f);
+            camera.setFar(farValue[0]);
+            ImGui.popID();
+
+        }
+        ImGui.end();
+    }
 
     public void setWidth(int width) {
         this.width = width;

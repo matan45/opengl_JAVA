@@ -4,6 +4,8 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.Scene;
 import app.editor.component.SceneHandler;
+import app.editor.imgui.ImguiLayerHandler;
+import app.editor.imgui.ViewPort;
 import app.renderer.pbr.Mesh;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
@@ -198,6 +200,7 @@ public class Serializable {
                         EntitySystem.addEntity(entity);
                     }
                 }
+                ImguiLayerHandler.getImguiLayer(ViewPort.class).setCurrentGizmoOperation(-1);
 
             } catch (IOException e) {
                 LogError.println(FAIL + FileExtension.SCENE_EXTENSION.getFileName());

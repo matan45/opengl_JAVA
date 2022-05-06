@@ -39,11 +39,9 @@ public class ViewPort implements ImguiLayer {
 
     private float preWindowWidth;
     private float preWindowHeight;
-    private float[] cameraProjection;
     private float aspect;
 
     private Camera editorCamera;
-    private boolean isViewChange = false;
 
     private boolean firstFrame = true;
 
@@ -56,19 +54,9 @@ public class ViewPort implements ImguiLayer {
     private final int gridIcon;
     private boolean isGrid;
 
-    private float[] objectMatrices = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+    private float[] objectMatrices;
 
-    private float[] inputViewMatrix = {
-            1.f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f
-    };
+    private float[] inputViewMatrix;
 
     private float xLastPos;
     private float yLastPos;
@@ -141,10 +129,9 @@ public class ViewPort implements ImguiLayer {
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
 
-            if (ImGui.isWindowFocused()) {
+            if (ImGui.isWindowFocused())
                 keyInputImGuizo();
-                cameraInput(dt);
-            }
+            cameraInput(dt);
 
             if (firstFrame) {
                 editorCamera = EditorRenderer.getEditorCamera();
@@ -154,7 +141,8 @@ public class ViewPort implements ImguiLayer {
 
             if (preWindowHeight != ImGui.getWindowHeight() || preWindowWidth != ImGui.getWindowWidth()) {
                 aspect = ImGui.getWindowWidth() / ImGui.getWindowHeight();
-                cameraProjection = editorCamera.createPerspectiveMatrix(70, aspect, 0.1f, 2048f).getAsArray();
+                editorCamera.setAspect(aspect);
+                editorCamera.createPerspectiveMatrix(70);
                 preWindowWidth = ImGui.getWindowWidth();
                 preWindowHeight = ImGui.getWindowHeight();
                 editorCamera.setViewPort(new OLVector2f(preWindowWidth, preWindowHeight));
@@ -178,6 +166,7 @@ public class ViewPort implements ImguiLayer {
                 inputSapValue[1] = snapValue;
                 inputSapValue[2] = snapValue;
 
+                float[] cameraProjection = editorCamera.getProjectionMatrix().getAsArray();
                 if (snap)
                     ImGuizmo.manipulate(inputViewMatrix, cameraProjection, objectMatrices, currentGizmoOperation, Mode.LOCAL, inputSapValue);
                 else
@@ -229,7 +218,7 @@ public class ViewPort implements ImguiLayer {
         if (editorCamera != null) {
             OLVector3f position = editorCamera.getPosition();
             OLVector3f rotation = editorCamera.getRotation();
-            cameraMovement(position, rotation, dt);
+            cameraMovement(position, rotation, dt, editorCamera.getSpeed());
 
             if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_2))
                 isFirst = true;
@@ -250,42 +239,34 @@ public class ViewPort implements ImguiLayer {
                     rotation.y = 0;
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
-
-                isViewChange = true;
             }
 
-            if (isViewChange) {
-                inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
-                isViewChange = false;
-            }
+            inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
         }
     }
 
-    private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt) {
-        float speed = 50f;
+    private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt, float speed) {
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
             position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_A)) {
             position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_D)) {
             position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_S)) {
             position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
             position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed * dt;
-            isViewChange = true;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
             position.y += 1 * speed * dt;
-            isViewChange = true;
         }
     }
 
+    public void setCurrentGizmoOperation(int currentGizmoOperation) {
+        this.currentGizmoOperation = currentGizmoOperation;
+        snapValue = 0;
+    }
 }
