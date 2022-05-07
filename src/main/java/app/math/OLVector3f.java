@@ -58,6 +58,14 @@ public class OLVector3f implements Serializable {
         return this;
     }
 
+    public OLVector3f div(float d) {
+        x /= d;
+        y /= d;
+        z /= d;
+        return this;
+    }
+
+
 
     public OLVector3f mul(OLVector3f v) {
         x *= v.x;

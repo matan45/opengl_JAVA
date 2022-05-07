@@ -7,6 +7,7 @@ import app.renderer.pbr.Material;
 import app.renderer.pbr.Mesh;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
+import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import imgui.ImGui;
@@ -141,8 +142,11 @@ public class MeshComponent extends Component {
         prePath = path;
         file = new File(path);
         Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
-        if (!useTransform)
+        if (!useTransform) {
             olTransform.setPosition(mesh.center());
+            LogInfo.println("min" + mesh.min());
+            LogInfo.println("max" + mesh.max());
+        }
         meshRenderer.init(mesh, olTransform);
     }
 

@@ -24,7 +24,7 @@ public class FogComponent extends Component {
             fog.setSightRange(0.3f);
         ImGui.sameLine();
         float[] sightRangeValue = {fog.getSightRange()};
-        ImGui.dragFloat("##Y", sightRangeValue, 0.01f);
+        ImGui.dragFloat("##Y", sightRangeValue, 0.01f, 0.0f, 10.0f);
         fog.setSightRange(sightRangeValue[0]);
         ImGui.popID();
 

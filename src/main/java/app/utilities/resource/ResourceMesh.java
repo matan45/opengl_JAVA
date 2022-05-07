@@ -69,33 +69,44 @@ class ResourceMesh {
         List<Float> textures = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
-        OLVector3f center = new OLVector3f();
-        processVertices(aiMesh, vertices, center);
+        OLVector3f min = new OLVector3f();
+        OLVector3f max = new OLVector3f();
+        processVertices(aiMesh, vertices, min, max);
         processNormals(aiMesh, normals);
         processTextCoords(aiMesh, textures);
         processIndices(aiMesh, indices);
 
-        return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals), ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index, center);
+        OLVector3f center = min.add(max).div(2.0f);
+
+        return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals),
+                ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index, center, min, max);
     }
 
 
-    private void processVertices(AIMesh aiMesh, List<Float> vertices, OLVector3f center) {
+    private void processVertices(AIMesh aiMesh, List<Float> vertices, OLVector3f min, OLVector3f max) {
         AIVector3D.Buffer aiVertices = aiMesh.mVertices();
-        int sumX = 0;
-        int sumY = 0;
-        int sumZ = 0;
+
         while (aiVertices.remaining() > 0) {
             AIVector3D aiVertex = aiVertices.get();
             vertices.add(aiVertex.x());
-            sumX += aiVertex.x();
             vertices.add(aiVertex.y());
-            sumY += aiVertex.y();
             vertices.add(aiVertex.z());
-            sumZ += aiVertex.z();
+
+            if (aiVertex.x() > max.x)
+                max.x = aiVertex.x();
+            if (aiVertex.y() > max.y)
+                max.y = aiVertex.y();
+            if (aiVertex.z() > max.z)
+                max.z = aiVertex.z();
+
+            if (aiVertex.x() < min.x)
+                min.x = aiVertex.x();
+            if (aiVertex.y() < min.y)
+                min.y = aiVertex.y();
+            if (aiVertex.z() < min.z)
+                min.z = aiVertex.z();
         }
-        center.x = sumX / ((float) vertices.size() / 3);
-        center.y = sumY / ((float) vertices.size() / 3);
-        center.z = sumZ / ((float) vertices.size() / 3);
+
     }
 
     private void processTextCoords(AIMesh aiMesh, List<Float> textures) {
