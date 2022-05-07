@@ -40,10 +40,10 @@ public class TerrainQuadtree {
         terrainNodeTail.originZ = originZ;
         terrainNodeTail.height = height;
         terrainNodeTail.width = width;
-        terrainNodeTail.tscaleNegx = 1.0f;
-        terrainNodeTail.tscaleNegz = 1.0f;
-        terrainNodeTail.tscalePosx = 1.0f;
-        terrainNodeTail.tscalePosz = 1.0f;
+        terrainNodeTail.scaleNegx = 1.0f;
+        terrainNodeTail.scaleNegz = 1.0f;
+        terrainNodeTail.scalePosx = 1.0f;
+        terrainNodeTail.scalePosz = 1.0f;
         terrainNodeTail.p = parent;
         terrainNodeTail.n = null;
         terrainNodeTail.s = null;
@@ -140,10 +140,10 @@ public class TerrainQuadtree {
         terrainTree.originZ = originZ;
         terrainTree.height = height;
         terrainTree.width = width;
-        terrainTree.tscaleNegx = 1.0f;
-        terrainTree.tscaleNegz = 1.0f;
-        terrainTree.tscalePosx = 1.0f;
-        terrainTree.tscalePosz = 1.0f;
+        terrainTree.scaleNegx = 1.0f;
+        terrainTree.scaleNegz = 1.0f;
+        terrainTree.scalePosx = 1.0f;
+        terrainTree.scalePosz = 1.0f;
         terrainTree.p = null;
         terrainTree.n = null;
         terrainTree.s = null;
@@ -187,22 +187,22 @@ public class TerrainQuadtree {
         // Positive Z (north)
         t = find(terrainTree, node.originX, node.originZ + 1 + node.width / 2.0f);
         if (t.width > node.width)
-            node.tscalePosz = 2.0f;
+            node.scalePosz = 2.0f;
 
         // Positive X (east)
         t = find(terrainTree, node.originX + 1 + node.width / 2.0f, node.originZ);
         if (t.width > node.width)
-            node.tscalePosx = 2.0f;
+            node.scalePosx = 2.0f;
 
         // Negative Z (south)
         t = find(terrainTree, node.originX, node.originZ - 1 - node.width / 2.0f);
         if (t.width > node.width)
-            node.tscaleNegz = 2.0f;
+            node.scaleNegz = 2.0f;
 
         // Negative X (west)
         t = find(terrainTree, node.originX - 1 - node.width / 2.0f, node.originZ);
         if (t.width > node.width)
-            node.tscaleNegx = 2.0f;
+            node.scaleNegx = 2.0f;
     }
 
 
@@ -214,16 +214,14 @@ public class TerrainQuadtree {
         // Calculate the tess scale factor
         calcTessScale(node);
 
-        // Setup matrices
         shaderTerrainQuadtree.loadModelMatrix(node.getOlTransform());
 
         shaderTerrainQuadtree.loadTileScale(node.width);
-        shaderTerrainQuadtree.loadScaleNegx(node.tscaleNegx);
-        shaderTerrainQuadtree.loadScaleNegz(node.tscaleNegz);
-        shaderTerrainQuadtree.loadScalePosx(node.tscalePosx);
-        shaderTerrainQuadtree.loadScalePosz(node.tscalePosz);
+        shaderTerrainQuadtree.loadScaleNegx(node.scaleNegx);
+        shaderTerrainQuadtree.loadScaleNegz(node.scaleNegz);
+        shaderTerrainQuadtree.loadScalePosx(node.scalePosx);
+        shaderTerrainQuadtree.loadScalePosz(node.scalePosz);
 
-        // Do it
         glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);
     }
 
