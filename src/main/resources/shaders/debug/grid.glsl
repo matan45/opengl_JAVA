@@ -1,6 +1,6 @@
 #type VERTEX
 #version 460 core
-layout (location = 0) in vec3 position;
+layout (location = 0) in vec2 position;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -20,12 +20,11 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
 
 void main()
 {
-    vec3 p = position;
-    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
-    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
+    nearPoint = UnprojectPoint(position.x, position.y, 0.1, view, projection).xyz; // unprojecting on the near plane
+    farPoint = UnprojectPoint(position.x, position.y, 1.0, view, projection).xyz; // unprojecting on the far plane
     fragView = view;
     fragProj = projection;
-    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
+    gl_Position = vec4(position,0.0 , 1.0); // using directly the clipped coordinates
 }
 
 #type FRAGMENT
@@ -37,8 +36,8 @@ in vec3 farPoint; // farPoint calculated in vertex shader
 in mat4 fragView;
 in mat4 fragProj;
 
-const float near=0.01; //0.01
-const float far=100; //100
+uniform float near;
+uniform float far;
 
 vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
     vec2 coord = fragPos3D.xz * scale;

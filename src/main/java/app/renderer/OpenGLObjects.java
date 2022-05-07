@@ -54,6 +54,13 @@ public class OpenGLObjects {
         return vaoID;
     }
 
+    public int loadToVAOVec2(float[] positions) {
+        int vaoID = createVAO();
+        storeDataInAttributeList(0, 2, positions);
+        unbindVAO();
+        return vaoID;
+    }
+
 
     public void updateVbo(int vbo, float[] data, FloatBuffer buffer) {
         buffer.clear();
