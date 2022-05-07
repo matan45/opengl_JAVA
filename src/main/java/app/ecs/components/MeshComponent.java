@@ -142,11 +142,9 @@ public class MeshComponent extends Component {
         prePath = path;
         file = new File(path);
         Mesh mesh = ResourceManager.loadMeshFromFile(Path.of(path));
-        if (!useTransform) {
+        if (!useTransform)
             olTransform.setPosition(mesh.center());
-            LogInfo.println("min" + mesh.min());
-            LogInfo.println("max" + mesh.max());
-        }
+
         meshRenderer.init(mesh, olTransform);
     }
 

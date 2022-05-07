@@ -90,7 +90,7 @@ public class GlfwWindow {
         glfwMakeContextCurrent(window);
 
         //Enable v-sync
-        glfwSwapInterval(1);
+        //glfwSwapInterval(1);
 
         glfwShowWindow(window);
 

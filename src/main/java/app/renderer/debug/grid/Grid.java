@@ -2,6 +2,7 @@ package app.renderer.debug.grid;
 
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
+import app.renderer.framebuffer.Framebuffer;
 
 import java.nio.file.Paths;
 
@@ -30,10 +31,11 @@ public class Grid {
             SIZE, -SIZE
     };
 
-    public Grid(OpenGLObjects openGLObjects, Camera camera) {
+    public Grid(OpenGLObjects openGLObjects, Framebuffer framebuffer, Camera camera) {
         this.camera = camera;
         shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
         vaoModel = openGLObjects.loadToVAOVec2(quadData);
+        glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());
     }
 
     public void render() {
