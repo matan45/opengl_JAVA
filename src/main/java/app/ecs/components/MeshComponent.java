@@ -7,7 +7,6 @@ import app.renderer.pbr.Material;
 import app.renderer.pbr.Mesh;
 import app.renderer.pbr.MeshRenderer;
 import app.utilities.OpenFileDialog;
-import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
 import app.utilities.serialize.FileExtension;
 import imgui.ImGui;
