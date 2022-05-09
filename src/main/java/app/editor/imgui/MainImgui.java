@@ -119,8 +119,8 @@ public class MainImgui implements ImguiLayer {
             camera.setSpeed(cameraValue[0]);
             ImGui.popID();
 
-            drawVector3("Position", camera.getPosition(), 0.0f, 2.0f, 5.0f);
-            drawVector3("Rotation", camera.getRotation(), 45.0f, 0.0f, 0.0f);
+            drawVector3("Position", camera.getPosition(), 0.0f, 25.0f, 51.0f);
+            drawVector3("Rotation", camera.getRotation(), 34.0f, 0.0f, 0.0f);
 
             ImGui.textWrapped("Camera Perspective");
             ImGui.separator();

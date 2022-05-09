@@ -17,13 +17,13 @@ public class Camera {
     private float aspect;
 
     public Camera() {
-        position = new OLVector3f(0.0f, 2f, 5f);
-        rotation = new OLVector3f(45, 0, 0);
+        position = new OLVector3f(0.0f, 25f, 51f);
+        rotation = new OLVector3f(34, 0, 0);
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
         negativeCameraPosition = new OLVector3f();
         viewPort = new OLVector2f();
-        speed = 50f;
+        speed = 20f;
         near = 0.1f;
         far = 2048f;
         aspect = 1f;
