@@ -212,11 +212,6 @@ public class SkyBox {
     public void init(Path filePath) {
         isActive = true;
 
-        cubeMap(filePath);
-    }
-
-    private void cubeMap(Path filePath) {
-
         backgroundShader.start();
         backgroundShader.connectTextureUnits();
         backgroundShader.stop();
@@ -232,10 +227,11 @@ public class SkyBox {
         shaderPreFilter.start();
         shaderPreFilter.connectTextureUnits();
         shaderPreFilter.stop();
+        cubeMap(filePath);
+    }
 
-        irradianceMap = 0;
-        prefilterMap = 0;
-        brdfLUTTexture = 0;
+    private void cubeMap(Path filePath) {
+
         int hdrTexture = textures.hdr(filePath);
 
         final OLMatrix4f[] captureViews =

@@ -41,15 +41,15 @@ public class Textures {
 
         // Use info to read image metadata without decoding the entire image.
         // We don't need this for this demo, just testing the API.
-        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+        if (!stbi_info_from_memory(imageBuffer, w, h, comp))
             throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-        }
+
 
         // Decode the image
         image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
-        if (image == null) {
+        if (image == null)
             throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-        }
+
 
         int id = glGenTextures();
         texturesID.add(id);
@@ -58,18 +58,18 @@ public class Textures {
 
 
         if (comp.get(0) == 3) {
-            if ((w.get(0) & 3) != 0) {
+            if ((w.get(0) & 3) != 0)
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w.get(0) & 1));
-            }
+
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w.get(0), h.get(0), 0, GL_RGB,
                     GL_UNSIGNED_BYTE, image);
-        } else if (comp.get(0) == 1) {
+        } else if (comp.get(0) == 1)
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w.get(0), h.get(0), 0, GL_RED,
                     GL_UNSIGNED_BYTE, image);
-        } else {
+        else
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w.get(0), h.get(0), 0, GL_RGBA,
                     GL_UNSIGNED_BYTE, image);
-        }
+
         glGenerateMipmap(GL_TEXTURE_2D);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -115,15 +115,14 @@ public class Textures {
 
         // Use info to read image metadata without decoding the entire image.
         // We don't need this for this demo, just testing the API.
-        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+        if (!stbi_info_from_memory(imageBuffer, w, h, comp))
             throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-        }
+
 
         // Decode the image
         image = stbi_loadf_from_memory(imageBuffer, w, h, comp, 0);
-        if (image == null) {
+        if (image == null)
             throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-        }
 
         int hdrTexture = glGenTextures();
         texturesID.add(hdrTexture);
@@ -145,9 +144,9 @@ public class Textures {
         int envCubeMap = glGenTextures();
         texturesID.add(envCubeMap);
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-        for (int i = 0; i < 6; ++i) {
+        for (int i = 0; i < 6; ++i)
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, 0);
-        }
+
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
