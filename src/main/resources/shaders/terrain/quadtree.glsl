@@ -36,9 +36,6 @@ layout(vertices = 4) out;
 
 in vec2 vs_terrainTexCoord[];
 
-patch out float gl_TessLevelOuter[4];
-patch out float gl_TessLevelInner[2];
-
 out vec2 tcs_terrainTexCoord[];
 out float tcs_tessLevel[];
 
@@ -130,6 +127,7 @@ void main()
 
 	// Output tessellation level (used for wireframe coloring)
 	tcs_tessLevel[gl_InvocationID] = gl_TessLevelOuter[0];
+
 }
 
 
@@ -137,9 +135,6 @@ void main()
 #version 460 core
 
 layout(quads, fractional_even_spacing, cw) in;
-
-patch in float gl_TessLevelOuter[4];
-patch in float gl_TessLevelInner[2];
 
 in vec2 tcs_terrainTexCoord[];
 in float tcs_tessLevel[];

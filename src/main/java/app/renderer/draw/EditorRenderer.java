@@ -38,6 +38,8 @@ public class EditorRenderer {
     public static void init() {
         LogInfo.println("OPENGL VERSION " + Objects.requireNonNull(glGetString(GL_VERSION)));
         LogInfo.println("GLSL VERSION " + Objects.requireNonNull(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+        LogInfo.println("VENDOR " + Objects.requireNonNull(glGetString(GL_VENDOR)));
+        LogInfo.println("RENDERER " + Objects.requireNonNull(glGetString(GL_RENDERER)));
 
         textures = new Textures();
         editorCamera = new Camera();

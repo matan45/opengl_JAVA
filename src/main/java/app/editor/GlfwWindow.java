@@ -90,7 +90,7 @@ public class GlfwWindow {
         glfwMakeContextCurrent(window);
 
         //Enable v-sync
-        //glfwSwapInterval(1);
+        glfwSwapInterval(1);
 
         glfwShowWindow(window);
 
@@ -98,8 +98,6 @@ public class GlfwWindow {
     }
 
     private void windowSizeChanged(long window, int width, int height) {
-        this.width = width;
-        this.height = height;
         mainImgui.setHeight(height);
         mainImgui.setWidth(width);
     }
@@ -119,7 +117,7 @@ public class GlfwWindow {
 
     public void run() {
         //create opengl context
-        createCapabilities();
+        createCapabilities(true);
         Logger.init();
         EditorRenderer.init();
 

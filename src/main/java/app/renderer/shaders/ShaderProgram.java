@@ -38,7 +38,10 @@ public abstract class ShaderProgram {
 
 
     protected int getUniformLocation(String uniformName) {
-        return glGetUniformLocation(programID, uniformName);
+        int location = glGetUniformLocation(programID, uniformName);
+        if (location == 0xFFFFFFFF)
+            LogError.println("cant find Uniform location " + uniformName);
+        return location;
     }
 
     protected void bindAttribute(int attribute, String variableName) {
@@ -46,32 +49,26 @@ public abstract class ShaderProgram {
     }
 
     protected void loadFloat(int location, float value) {
-        checkLocation(location);
         glUniform1f(location, value);
     }
 
     protected void load3DVector(int location, OLVector3f vector) {
-        checkLocation(location);
         glUniform3f(location, vector.x, vector.y, vector.z);
     }
 
     protected void load4DVector(int location, float x, float y, float z, float w) {
-        checkLocation(location);
         glUniform4f(location, x, y, z, w);
     }
 
     protected void load2DVector(int location, OLVector2f vector) {
-        checkLocation(location);
         glUniform2f(location, vector.x, vector.y);
     }
 
     protected void loadInt(int location, int value) {
-        checkLocation(location);
         glUniform1i(location, value);
     }
 
     protected void loadBoolean(int location, boolean value) {
-        checkLocation(location);
         float toLoad = 0;
         if (value)
             toLoad = 1;
@@ -79,7 +76,6 @@ public abstract class ShaderProgram {
     }
 
     protected void loadMatrix(int location, OLMatrix4f matrix) {
-        checkLocation(location);
         matrix.store(matrixBuffer);
         matrixBuffer.flip();
         glUniformMatrix4fv(location, false, matrixBuffer);
@@ -109,11 +105,6 @@ public abstract class ShaderProgram {
         }
     }
 
-    private void checkLocation(int location) {
-        if (location == -1) {
-            LogError.println("cant find");
-        }
-    }
 
     public void cleanUp() {
         stop();

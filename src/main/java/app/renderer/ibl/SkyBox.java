@@ -285,7 +285,6 @@ public class SkyBox {
     public void render() {
         if (isActive) {
             backgroundShader.start();
-            backgroundShader.connectTextureUnits();
             backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
             backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
             backgroundShader.loadExposure(exposure);
