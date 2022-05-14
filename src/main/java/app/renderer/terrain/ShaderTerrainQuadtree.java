@@ -45,10 +45,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationFogColor = super.getUniformLocation("fogColor");
         locationIsFog = super.getUniformLocation("isFog");
 
-        locationScaleNegx = super.getUniformLocation("tscale_negx");
-        locationScaleNegz = super.getUniformLocation("tscale_negz");
-        locationScalePosx = super.getUniformLocation("tscale_posx");
-        locationScalePosz = super.getUniformLocation("tscale_posz");
+        locationScaleNegx = super.getUniformLocation("scaleNegx");
+        locationScaleNegz = super.getUniformLocation("scaleNegz");
+        locationScalePosx = super.getUniformLocation("scalePosx");
+        locationScalePosz = super.getUniformLocation("scalePosz");
 
         locationTerrainLength = super.getUniformLocation("TerrainLength");
         locationTerrainWidth = super.getUniformLocation("TerrainWidth");

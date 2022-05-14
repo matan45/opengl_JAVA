@@ -48,10 +48,10 @@ uniform mat4 model;
 uniform sampler2D TexTerrainHeight;
 uniform float TerrainHeightOffset;
 
-uniform float tscale_negx;
-uniform float tscale_negz;
-uniform float tscale_posx;
-uniform float tscale_posz;
+uniform float scaleNegx;
+uniform float scaleNegz;
+uniform float scalePosx;
+uniform float scalePosz;
 
 /**
 * Dynamic level of detail using camera distance algorithm.
@@ -109,13 +109,13 @@ void main()
 	gl_TessLevelOuter[2] = dlodCameraDistance(gl_in[1].gl_Position, gl_in[2].gl_Position, tcs_terrainTexCoord[1], tcs_terrainTexCoord[2]);
 	gl_TessLevelOuter[3] = dlodCameraDistance(gl_in[2].gl_Position, gl_in[3].gl_Position, tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 	
-	if (tscale_negx == 2.0)
+	if (scaleNegx == 2.0)
 		gl_TessLevelOuter[0] = max(2.0, gl_TessLevelOuter[0] * 0.5);
-	if (tscale_negz == 2.0)
+	if (scaleNegz == 2.0)
 		gl_TessLevelOuter[1] = max(2.0, gl_TessLevelOuter[1] * 0.5);
-	if (tscale_posx == 2.0)
+	if (scalePosx == 2.0)
 		gl_TessLevelOuter[2] = max(2.0, gl_TessLevelOuter[2] * 0.5);
-	if (tscale_posz == 2.0)
+	if (scalePosz == 2.0)
 		gl_TessLevelOuter[3] = max(2.0, gl_TessLevelOuter[3] * 0.5);
 
 	// Inner tessellation level

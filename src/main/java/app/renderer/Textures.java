@@ -128,7 +128,7 @@ public class Textures {
         texturesID.add(hdrTexture);
 
         glBindTexture(GL_TEXTURE_2D, hdrTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w.get(0), h.get(0), 0, GL_RGB, GL_FLOAT, image); // note how we specify the texture's data value to be float
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w.get(0), h.get(0), 0, GL_RGB, GL_FLOAT, image);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

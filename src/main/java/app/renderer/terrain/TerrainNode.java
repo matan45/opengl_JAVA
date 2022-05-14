@@ -3,7 +3,7 @@ package app.renderer.terrain;
 import app.math.OLMatrix4f;
 
 
-public class TerrainNode {
+class TerrainNode {
     float originX;
     float originY;
     float originZ;
