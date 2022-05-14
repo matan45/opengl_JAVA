@@ -2,10 +2,10 @@ package app.renderer.ibl;
 
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
-import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.framebuffer.Framebuffer;
+import app.renderer.shaders.UniformsNames;
 import app.utilities.data.structures.Pair;
 
 import java.nio.file.Path;
@@ -21,25 +21,18 @@ public class SkyBox {
     private final ShaderIrradianceConvolution irradianceShader;
     private final Shaderbrdf shaderbrdf;
     private final ShaderPreFilter shaderPreFilter;
-
-    private final Camera editorCamera;
     private final Textures textures;
     private final Framebuffer framebuffer;
-
     private final int captureFBO;
     private final int captureRBO;
-
     private float exposure;
-
     private boolean isActive;
     private boolean showLightMap;
     private boolean showPreFilterMap;
-
     private int envCubeMap;
     private int irradianceMap;
     private int prefilterMap;
     private int brdfLUTTexture;
-
     private final int quadVAO;
     private static final float[] quadVertices = {
             // positions
@@ -189,13 +182,14 @@ public class SkyBox {
             0.0f, 0.0f
     };
 
-    public SkyBox(Camera editorCamera, Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
-        this.editorCamera = editorCamera;
+    public SkyBox(Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.textures = textures;
         this.framebuffer = framebuffer;
         exposure = 2.2f;
 
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
+        backgroundShader.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
+
         equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
         irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
         shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
@@ -285,8 +279,6 @@ public class SkyBox {
     public void render() {
         if (isActive) {
             backgroundShader.start();
-            backgroundShader.loadViewMatrix(editorCamera.getViewMatrix());
-            backgroundShader.loadProjectionMatrix(editorCamera.getProjectionMatrix());
             backgroundShader.loadExposure(exposure);
             glActiveTexture(GL_TEXTURE0);
 

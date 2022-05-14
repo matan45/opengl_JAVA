@@ -44,7 +44,7 @@ public class EditorRenderer {
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
 
-        skyBox = new SkyBox(editorCamera, textures, framebuffer, openGLObjects);
+        skyBox = new SkyBox(textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, framebuffer, editorCamera);
 
         terrainQuadtreeRenderer = new TerrainQuadtreeRenderer(openGLObjects, textures, editorCamera, skyBox);

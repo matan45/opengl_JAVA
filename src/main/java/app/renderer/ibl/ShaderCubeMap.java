@@ -1,11 +1,10 @@
 package app.renderer.ibl;
 
-import app.math.OLMatrix4f;
-import app.renderer.shaders.UniformsNames;
+import app.renderer.shaders.ShaderProgram;
 
 import java.nio.file.Path;
 
-public final class ShaderCubeMap extends CommonShaderSkyBox {
+public final class ShaderCubeMap extends ShaderProgram {
     private int locationEnvironmentMap;
     private int locationExposure;
 
@@ -15,25 +14,12 @@ public final class ShaderCubeMap extends CommonShaderSkyBox {
 
     @Override
     protected void getAllUniformLocations() {
-        locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
-        locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationEnvironmentMap = super.getUniformLocation("environmentMap");
         locationExposure = super.getUniformLocation("exposure");
     }
 
-    @Override
     public void connectTextureUnits() {
         super.loadInt(locationEnvironmentMap, 0);
-    }
-
-    @Override
-    public void loadViewMatrix(OLMatrix4f view) {
-        super.loadMatrix(locationViewMatrix, view);
-    }
-
-    @Override
-    public void loadProjectionMatrix(OLMatrix4f projection) {
-        super.loadMatrix(locationProjectionMatrix, projection);
     }
 
     public void loadExposure(float exposure) {
