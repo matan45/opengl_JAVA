@@ -36,7 +36,7 @@ public class ImguiHandler {
         // Here we are using it just to combine all required glyphs in one place
         final ImFontGlyphRangesBuilder rangesBuilder = new ImFontGlyphRangesBuilder(); // Glyphs ranges provide
         rangesBuilder.addRanges(io.getFonts().getGlyphRangesDefault());
-        rangesBuilder.addRanges(FontAwesomeIcons._IconRange);
+        rangesBuilder.addRanges(FontAwesomeIcons.ICON_RANGE);
 
         io.getFonts().addFontFromMemoryTTF(ResourceManager.loadFromResources(Paths.get("src\\main\\resources\\editor\\Roboto-Regular.ttf")), FONT_SIZE); // font awesome
         // Font config for additional fonts

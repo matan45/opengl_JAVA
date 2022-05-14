@@ -182,6 +182,15 @@ public class SkyBox {
             0.0f, 0.0f
     };
 
+    private static final OLMatrix4f[] captureViews = {
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(0.0f, 1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f)),
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(0.0f, -1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f)),
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
+            new OLMatrix4f().lookAt(new OLVector3f(), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
+    };
+
     public SkyBox(Textures textures, Framebuffer framebuffer, OpenGLObjects openGLObjects) {
         this.textures = textures;
         this.framebuffer = framebuffer;
@@ -200,7 +209,6 @@ public class SkyBox {
         Pair<Integer, Integer> temp = framebuffer.frameBufferFixSize(512, 512);
         captureFBO = temp.getValue();
         captureRBO = temp.getValue2();
-
     }
 
     public void init(Path filePath) {
@@ -228,16 +236,6 @@ public class SkyBox {
 
         int hdrTexture = textures.hdr(filePath);
 
-        final OLMatrix4f[] captureViews =
-                {
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(-1.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, -1.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, 1.0f), new OLVector3f(0.0f, -1.0f, 0.0f)),
-                        new OLMatrix4f().lookAt(new OLVector3f(0.0f, 0.0f, 0.0f), new OLVector3f(0.0f, 0.0f, -1.0f), new OLVector3f(0.0f, -1.0f, 0.0f))
-                };
-
         // configure global opengl state
         // -----------------------------
         glEnable(GL_DEPTH_TEST);
@@ -247,15 +245,15 @@ public class SkyBox {
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
         envCubeMap = textures.createCubTexture(512, 512);
-        convert(captureViews, envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
+        convert(envCubeMap, 512, 512, hdrTexture, equiangularToCubeShader);
         glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         bindFrameBuffer(32, 32);
         irradianceMap = textures.createCubTexture(32, 32);
-        convert(captureViews, irradianceMap, 32, 32, envCubeMap, irradianceShader);
+        convert(irradianceMap, 32, 32, envCubeMap, irradianceShader);
 
-        prefilterMap(shaderPreFilter, captureViews);
+        prefilterMap(shaderPreFilter);
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         brdfLUTTexture = textures.createBrdfTexture(512, 512);
@@ -291,14 +289,10 @@ public class SkyBox {
 
             renderCube();
             backgroundShader.stop();
-
-           /* shaderbrdf.start();
-            renderQuad();
-            shaderbrdf.stop();*/
         }
     }
 
-    private void prefilterMap(ShaderPreFilter shaderPreFilter, OLMatrix4f[] captureViews) {
+    private void prefilterMap(ShaderPreFilter shaderPreFilter) {
         prefilterMap = textures.createCubTexture(128, 128);
         shaderPreFilter.start();
         shaderPreFilter.connectTextureUnits();
@@ -337,7 +331,7 @@ public class SkyBox {
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
     }
 
-    private void convert(OLMatrix4f[] captureViews, int cubTexture, int width, int height, int texture, CommonShaderSkyBox shader) {
+    private void convert(int cubTexture, int width, int height, int texture, CommonShaderSkyBox shader) {
         shader.start();
         shader.connectTextureUnits();
         shader.loadProjectionMatrix(new OLMatrix4f());
