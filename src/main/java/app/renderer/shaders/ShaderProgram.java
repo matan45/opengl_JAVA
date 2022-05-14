@@ -52,10 +52,6 @@ public abstract class ShaderProgram {
         return location;
     }
 
-    protected void bindAttribute(int attribute, String variableName) {
-        glBindAttribLocation(programID, attribute, variableName);
-    }
-
     protected void loadFloat(int location, float value) {
         glUniform1f(location, value);
     }
@@ -105,7 +101,7 @@ public abstract class ShaderProgram {
             glShaderSource(shaderID, tempShader.shaderSource());
             glCompileShader(shaderID);
             if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-                System.out.println(glGetShaderInfoLog(shaderID, 500));
+                System.out.println(glGetShaderInfoLog(shaderID, 512));
                 System.err.println("Could not compile shader " + tempShader.type());
                 System.exit(-1);
             }
