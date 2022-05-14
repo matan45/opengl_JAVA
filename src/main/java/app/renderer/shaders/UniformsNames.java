@@ -4,7 +4,8 @@ public enum UniformsNames {
     PROJECTION("projection"),
     VIEW("view"),
     MODEL("model"),
-    CAMERA_POSITION("cameraPosition");
+    CAMERA_POSITION("cameraPosition"),
+    MATRICES("Matrices");
 
     private final String uniformsName;
 

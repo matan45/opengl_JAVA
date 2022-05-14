@@ -1,7 +1,6 @@
 package app.renderer.lights;
 
 import app.math.OLVector3f;
-import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
 import java.io.Serializable;
@@ -41,8 +40,8 @@ public class SpotLight implements Serializable {
         color.z = b;
     }
 
-    public void drawBillboards(Camera camera) {
-        billboards.render(camera, position);
+    public void drawBillboards() {
+        billboards.render( position);
     }
 
     public OLVector3f getPosition() {

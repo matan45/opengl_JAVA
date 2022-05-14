@@ -5,7 +5,6 @@ layout (location = 0) in vec4 position;
 
 uniform mat4 model;
 
-
 uniform float TerrainLength;
 uniform float TerrainWidth;
 uniform vec3 TerrainOrigin;
@@ -39,7 +38,11 @@ in vec2 vs_terrainTexCoord[];
 out vec2 tcs_terrainTexCoord[];
 out float tcs_tessLevel[];
 
-uniform mat4 view;
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
@@ -142,9 +145,13 @@ in float tcs_tessLevel[];
 out vec2 tes_terrainTexCoord;
 out float tes_tessLevel;
 
-uniform mat4 view;
 uniform mat4 model;
-uniform mat4 projection;
+
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 
 uniform sampler2D TexTerrainHeight;
 uniform float TerrainHeightOffset;

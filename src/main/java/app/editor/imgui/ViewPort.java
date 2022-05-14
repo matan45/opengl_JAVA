@@ -28,23 +28,17 @@ public class ViewPort implements ImguiLayer {
     private Entity preEntity;
     private TransformComponent component;
     private int currentGizmoOperation;
-
     private final float[] inputVectorTranslation;
     private final float[] inputVectorScale;
     private final float[] inputVectorRotation;
-
     private final float[] inputSapValue;
     private boolean snap;
     private float snapValue;
-
     private float preWindowWidth;
     private float preWindowHeight;
     private float aspect;
-
     private Camera editorCamera;
-
     private boolean firstFrame = true;
-
     private final int scaleIcon;
     private final int rotateIcon;
     private final int translateIcon;
@@ -53,11 +47,8 @@ public class ViewPort implements ImguiLayer {
     private final int stopIcon;
     private final int gridIcon;
     private boolean isGrid;
-
     private float[] objectMatrices;
-
     private float[] inputViewMatrix;
-
     private float xLastPos;
     private float yLastPos;
     private boolean isFirst = false;
@@ -129,9 +120,10 @@ public class ViewPort implements ImguiLayer {
             //TODO for mouse picking need to fined for select entity
             Entity entity = inspector.getEntity();
 
-            if (ImGui.isWindowFocused())
+            if (ImGui.isWindowFocused()) {
                 keyInputImGuizo();
-            cameraInput(dt);
+                cameraInput(dt);
+            }
 
             if (firstFrame) {
                 editorCamera = EditorRenderer.getEditorCamera();

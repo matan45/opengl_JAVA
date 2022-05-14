@@ -22,14 +22,11 @@ public class EditorRenderer {
     private static Camera editorCamera;
     private static Textures textures;
     private static OpenGLObjects openGLObjects;
-
     private static int fboID;
-
     private static LightHandler lightHandler;
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
     private static Grid grid;
-
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
 
     private EditorRenderer() {
@@ -42,8 +39,8 @@ public class EditorRenderer {
         LogInfo.println("RENDERER " + Objects.requireNonNull(glGetString(GL_RENDERER)));
 
         textures = new Textures();
-        editorCamera = new Camera();
         openGLObjects = new OpenGLObjects();
+        editorCamera = new Camera(openGLObjects);
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createFrameRenderBuffer();
 
@@ -61,10 +58,11 @@ public class EditorRenderer {
         glClearColor(0f, 0f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
-        Audio.billboards(editorCamera);
+        Audio.billboards();
+        editorCamera.updateMatrices();
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
-        lightHandler.drawBillboards(editorCamera);
+        lightHandler.drawBillboards();
         skyBox.render();
         grid.render();
         disable();

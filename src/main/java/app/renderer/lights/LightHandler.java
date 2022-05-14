@@ -1,7 +1,5 @@
 package app.renderer.lights;
 
-import app.math.components.Camera;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,14 +45,14 @@ public class LightHandler {
         this.directionalLight = directionalLight;
     }
 
-    public void drawBillboards(Camera camera) {
+    public void drawBillboards() {
         for (SpotLight spotLight : spotLights)
-            spotLight.drawBillboards(camera);
+            spotLight.drawBillboards();
 
         for (PointLight pointLight : pointLights)
-            pointLight.drawBillboards(camera);
+            pointLight.drawBillboards();
 
         if (directionalLight != null)
-            directionalLight.drawBillboards(camera);
+            directionalLight.drawBillboards();
     }
 }

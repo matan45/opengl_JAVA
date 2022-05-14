@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 
 public abstract class ShaderProgram {
     private final int programID;
@@ -36,6 +38,12 @@ public abstract class ShaderProgram {
 
     protected abstract void getAllUniformLocations();
 
+    public void bindBlockBuffer(String uniformName, int location) {
+        int index = glGetUniformBlockIndex(programID, uniformName);
+        if (index == 0xFFFFFFFF)
+            LogError.println("cant find Uniform location " + uniformName);
+        glUniformBlockBinding(programID, index, location);
+    }
 
     protected int getUniformLocation(String uniformName) {
         int location = glGetUniformLocation(programID, uniformName);

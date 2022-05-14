@@ -1,7 +1,6 @@
 package app.audio;
 
 import app.math.OLVector3f;
-import app.math.components.Camera;
 import app.renderer.debug.billboards.Billboards;
 
 import java.io.Serializable;
@@ -95,8 +94,8 @@ public class SoundEffect implements Serializable {
         return velocity;
     }
 
-    public void renderBillboards(Camera camera) {
-        billboards.render(camera, position);
+    public void renderBillboards() {
+        billboards.render(position);
     }
 
 }

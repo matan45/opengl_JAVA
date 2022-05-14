@@ -8,6 +8,7 @@ import app.renderer.VaoModel;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
+import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -38,6 +39,7 @@ public class MeshRenderer {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
         shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
+        shaderMesh.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         material = new Material(textures);
 
         this.skyBox = skyBox;
@@ -67,8 +69,6 @@ public class MeshRenderer {
             }
             shaderMesh.start();
             shaderMesh.loadModelMatrix(olTransform.getModelMatrix());
-            shaderMesh.loadViewMatrix(camera.getViewMatrix());
-            shaderMesh.loadProjectionMatrix(camera.getProjectionMatrix());
             shaderMesh.loadCameraPosition(camera.getPosition());
 
             shaderMesh.loadDirLight(lightHandler.getDirectionalLight());

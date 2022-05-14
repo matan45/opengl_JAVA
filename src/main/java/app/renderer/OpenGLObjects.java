@@ -9,6 +9,7 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 public class OpenGLObjects {
     private final List<Integer> vaos;
@@ -31,7 +32,7 @@ public class OpenGLObjects {
         return new VaoModel(vaoID, indices.length);
     }
 
-    public int loadToVAO(float[] positions,int[] indices) {
+    public int loadToVAO(float[] positions, int[] indices) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 4, positions);
@@ -61,6 +62,15 @@ public class OpenGLObjects {
         return vaoID;
     }
 
+    public int createUniformBufferFloat(int size, long amount) {
+        int vbo = glGenBuffers();
+        vbos.add(vbo);
+        glBindBuffer(GL_UNIFORM_BUFFER, vbo);
+        glBufferData(GL_UNIFORM_BUFFER, amount * size * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        glBindBufferRange(GL_UNIFORM_BUFFER, 0, vbo, 0, amount * size * Float.BYTES);
+        return vbo;
+    }
 
     public void updateVbo(int vbo, float[] data, FloatBuffer buffer) {
         buffer.clear();
