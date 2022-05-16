@@ -42,7 +42,6 @@ public class Camera {
     }
 
     public void createPerspectiveMatrix(float fovY) {
-
         float yScale = (float) (1f / Math.tan(Math.toRadians(fovY / 2f)));
         float xScale = yScale / aspect;
         float frustumLength = far - near;

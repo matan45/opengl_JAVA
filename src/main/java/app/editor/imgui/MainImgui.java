@@ -112,7 +112,7 @@ public class MainImgui implements ImguiLayer {
         if (ImGui.begin("Camera Editor", cameraWindow)) {
             ImGui.pushID("Camera Speed");
             if (ImGui.button("speed"))
-                camera.setSpeed(50f);
+                camera.setSpeed(20f);
             ImGui.sameLine();
             float[] cameraValue = {camera.getSpeed()};
             ImGui.dragFloat("##Y", cameraValue, 0.5f, 0.5f, 100f);
