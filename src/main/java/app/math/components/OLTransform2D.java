@@ -8,18 +8,20 @@ public class OLTransform2D {
     private OLVector2f position;
     private OLVector2f scale;
     private OLVector2f rotation;
-    private OLMatrix4f modelMatrix;
+    private final OLMatrix4f modelMatrix;
 
     public OLTransform2D(OLVector2f position, OLVector2f scale, OLVector2f rotation) {
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
+        modelMatrix = new OLMatrix4f();
     }
 
     public OLTransform2D() {
         this.position = new OLVector2f();
         this.scale = new OLVector2f();
         this.rotation = new OLVector2f();
+        modelMatrix = new OLMatrix4f();
     }
 
     public OLVector2f getPosition() {

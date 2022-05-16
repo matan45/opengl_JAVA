@@ -65,40 +65,40 @@ public class MainImgui implements ImguiLayer {
 
     private void menuBar() {
         if (ImGui.beginMenuBar()) {
-            if (ImGui.beginMenu(FontAwesomeIcons.File + " File")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Plus + " New Scene", "CTRL+N", false)) {
+            if (ImGui.beginMenu(FontAwesomeIcons.FILE + " File")) {
+                if (ImGui.menuItem(FontAwesomeIcons.PLUS + " New Scene", "CTRL+N", false)) {
                     OpenFileDialog.openFolder().ifPresent(Serializable::saveEmptyScene);
-                } else if (ImGui.menuItem(FontAwesomeIcons.FolderOpen + " Open Scene", "CTRL+O", false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.FOLDER_OPEN + " Open Scene", "CTRL+O", false)) {
                     OpenFileDialog.openFile(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::loadScene);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Save + " Save Scene", "CTRL+S", false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.SAVE + " Save Scene", "CTRL+S", false)) {
                     OpenFileDialog.save(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::saveScene);
-                } else if (ImGui.menuItem(FontAwesomeIcons.Outdent + " Exit", "EXIT", false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.OUT_DENT + " Exit", "EXIT", false)) {
                     closeWindow.set(false);
                 }
                 ImGui.endMenu();
             }
-            if (ImGui.beginMenu(FontAwesomeIcons.Wrench + " Settings")) {
-                if (ImGui.menuItem(FontAwesomeIcons.Camera + " Editor Camera", null, false)) {
+            if (ImGui.beginMenu(FontAwesomeIcons.WRENCH + " Settings")) {
+                if (ImGui.menuItem(FontAwesomeIcons.CAMERA + " Editor Camera", null, false)) {
                     camera = EditorRenderer.getEditorCamera();
                     cameraWindow.set(!cameraWindow.get());
-                } else if (ImGui.menuItem(FontAwesomeIcons.LayerGroup + " Layout Style", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.LAYER_GROUP + " Layout Style", null, false)) {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
             }
-            if (ImGui.beginMenu(FontAwesomeIcons.Tools + " Import")) {
-                if (ImGui.menuItem(FontAwesomeIcons.FileImport + " Meshes", null, false)) {
+            if (ImGui.beginMenu(FontAwesomeIcons.TOOLS + " Import")) {
+                if (ImGui.menuItem(FontAwesomeIcons.FILE_IMPORT + " Meshes", null, false)) {
                     //TODO thread pool
                     OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
                         Mesh[] meshes = ResourceManager.loadMeshesFromFile(path);
                         for (Mesh mesh : meshes)
                             Serializable.saveMesh(mesh, path);
                     });
-                } else if (ImGui.menuItem(FontAwesomeIcons.FileImage + " Textures", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.FILE_IMAGE + " Textures", null, false)) {
                     LogInfo.println("not implement");
-                } else if (ImGui.menuItem(FontAwesomeIcons.FileAudio + " Audio", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.FILE_AUDIO + " Audio", null, false)) {
                     LogInfo.println("not implement");
-                } else if (ImGui.menuItem(FontAwesomeIcons.Walking + " Animation", null, false)) {
+                } else if (ImGui.menuItem(FontAwesomeIcons.WALKING + " Animation", null, false)) {
                     LogInfo.println("not implement");
                 }
                 ImGui.endMenu();
@@ -119,8 +119,8 @@ public class MainImgui implements ImguiLayer {
             camera.setSpeed(cameraValue[0]);
             ImGui.popID();
 
-            drawVector3("Position", camera.getPosition(), 0.0f, 2.0f, 5.0f);
-            drawVector3("Rotation", camera.getRotation(), 45.0f, 0.0f, 0.0f);
+            drawVector3("Position", camera.getPosition(), 0.0f, 25.0f, 51.0f);
+            drawVector3("Rotation", camera.getRotation(), 34.0f, 0.0f, 0.0f);
 
             ImGui.textWrapped("Camera Perspective");
             ImGui.separator();

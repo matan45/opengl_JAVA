@@ -161,6 +161,14 @@ public class OLMatrix4f implements Serializable {
         m33 += m03 * translate.x + m13 * translate.y + m23 * translate.z;
     }
 
+    public void translate(float x, float y, float z) {
+
+        m30 += m00 * x + m10 * y + m20 * z;
+        m31 += m01 * x + m11 * y + m21 * z;
+        m32 += m02 * x + m12 * y + m22 * z;
+        m33 += m03 * x + m13 * y + m23 * z;
+    }
+
     public void translate(OLVector2f translate) {
 
         m30 += m00 * translate.x + m10 * translate.y;

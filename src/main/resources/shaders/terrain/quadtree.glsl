@@ -5,7 +5,6 @@ layout (location = 0) in vec4 position;
 
 uniform mat4 model;
 
-
 uniform float TerrainLength;
 uniform float TerrainWidth;
 uniform vec3 TerrainOrigin;
@@ -36,22 +35,23 @@ layout(vertices = 4) out;
 
 in vec2 vs_terrainTexCoord[];
 
-patch out float gl_TessLevelOuter[4];
-patch out float gl_TessLevelInner[2];
-
 out vec2 tcs_terrainTexCoord[];
 out float tcs_tessLevel[];
 
-uniform mat4 view;
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
 uniform float TerrainHeightOffset;
 
-uniform float tscale_negx;
-uniform float tscale_negz;
-uniform float tscale_posx;
-uniform float tscale_posz;
+uniform float scaleNegx;
+uniform float scaleNegz;
+uniform float scalePosx;
+uniform float scalePosz;
 
 /**
 * Dynamic level of detail using camera distance algorithm.
@@ -109,13 +109,13 @@ void main()
 	gl_TessLevelOuter[2] = dlodCameraDistance(gl_in[1].gl_Position, gl_in[2].gl_Position, tcs_terrainTexCoord[1], tcs_terrainTexCoord[2]);
 	gl_TessLevelOuter[3] = dlodCameraDistance(gl_in[2].gl_Position, gl_in[3].gl_Position, tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 	
-	if (tscale_negx == 2.0)
+	if (scaleNegx == 2.0)
 		gl_TessLevelOuter[0] = max(2.0, gl_TessLevelOuter[0] * 0.5);
-	if (tscale_negz == 2.0)
+	if (scaleNegz == 2.0)
 		gl_TessLevelOuter[1] = max(2.0, gl_TessLevelOuter[1] * 0.5);
-	if (tscale_posx == 2.0)
+	if (scalePosx == 2.0)
 		gl_TessLevelOuter[2] = max(2.0, gl_TessLevelOuter[2] * 0.5);
-	if (tscale_posz == 2.0)
+	if (scalePosz == 2.0)
 		gl_TessLevelOuter[3] = max(2.0, gl_TessLevelOuter[3] * 0.5);
 
 	// Inner tessellation level
@@ -130,6 +130,7 @@ void main()
 
 	// Output tessellation level (used for wireframe coloring)
 	tcs_tessLevel[gl_InvocationID] = gl_TessLevelOuter[0];
+
 }
 
 
@@ -138,18 +139,19 @@ void main()
 
 layout(quads, fractional_even_spacing, cw) in;
 
-patch in float gl_TessLevelOuter[4];
-patch in float gl_TessLevelInner[2];
-
 in vec2 tcs_terrainTexCoord[];
 in float tcs_tessLevel[];
 
 out vec2 tes_terrainTexCoord;
 out float tes_tessLevel;
 
-uniform mat4 view;
 uniform mat4 model;
-uniform mat4 projection;
+
+layout (std140, binding = 0) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
 
 uniform sampler2D TexTerrainHeight;
 uniform float TerrainHeightOffset;

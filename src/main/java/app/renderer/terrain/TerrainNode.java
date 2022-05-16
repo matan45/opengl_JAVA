@@ -1,9 +1,9 @@
 package app.renderer.terrain;
 
 import app.math.OLMatrix4f;
-import app.math.OLVector3f;
 
-public class TerrainNode {
+
+class TerrainNode {
     float originX;
     float originY;
     float originZ;
@@ -14,10 +14,10 @@ public class TerrainNode {
     private final OLMatrix4f olTransform = new OLMatrix4f();
 
     // Tessellation scale
-    float tscaleNegx; // negative x edge
-    float tscalePosx; // Positive x edge
-    float tscaleNegz; // Negative z edge
-    float tscalePosz; // Positive z edge
+    float scaleNegx; // negative x edge
+    float scalePosx; // Positive x edge
+    float scaleNegz; // Negative z edge
+    float scalePosz; // Positive z edge
 
     TerrainNode p; // Parent
     TerrainNode c1; // Children
@@ -32,7 +32,7 @@ public class TerrainNode {
 
 
     public OLMatrix4f getOlTransform() {
-        olTransform.translate(new OLVector3f(originX,originY,originZ));
+        olTransform.translate(originX, originY, originZ);
         return olTransform;
     }
 }

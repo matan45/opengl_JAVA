@@ -12,7 +12,7 @@ import imgui.flag.ImGuiColorEditFlags;
 import java.nio.file.Path;
 
 public class DirectionalLightComponent extends Component {
-    private DirectionalLight directionalLight;
+    private final DirectionalLight directionalLight;
     private final OLTransform olTransform;
 
 

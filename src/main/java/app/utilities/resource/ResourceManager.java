@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ResourceManager {
-    //TODO Resource pooling map path and object Map<path,object>
+    //TODO Resource pooling map id and object Map<id,object>
     private static final ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
     private static final ResourceShader resourceShader = new ResourceShader();
     private static final ResourceImgui resourceImgui = new ResourceImgui();

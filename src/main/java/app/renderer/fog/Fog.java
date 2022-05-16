@@ -1,7 +1,7 @@
 package app.renderer.fog;
 
 import app.math.OLVector3f;
-
+//TODO add to post processing
 public class Fog {
     private float sightRange;
     private final OLVector3f fogColor;

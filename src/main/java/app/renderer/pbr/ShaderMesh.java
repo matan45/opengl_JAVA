@@ -13,8 +13,6 @@ import java.util.List;
 
 
 public class ShaderMesh extends ShaderProgram {
-    private int locationProjectionMatrix;
-    private int locationViewMatrix;
     private int locationModelMatrix;
     private int locationCameraPosition;
 
@@ -45,8 +43,6 @@ public class ShaderMesh extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
-        locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
-        locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
@@ -97,16 +93,8 @@ public class ShaderMesh extends ShaderProgram {
         super.load3DVector(locationFogColor, fogColor);
     }
 
-    public void loadViewMatrix(OLMatrix4f view) {
-        super.loadMatrix(locationViewMatrix, view);
-    }
-
     public void loadModelMatrix(OLMatrix4f model) {
         super.loadMatrix(locationModelMatrix, model);
-    }
-
-    public void loadProjectionMatrix(OLMatrix4f projection) {
-        super.loadMatrix(locationProjectionMatrix, projection);
     }
 
     public void loadCameraPosition(OLVector3f camera) {

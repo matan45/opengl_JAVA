@@ -8,12 +8,12 @@ import static org.lwjgl.opengl.GL40.GL_PATCHES;
 
 public class TerrainQuadtree {
 
-    private static final int MAX_RECURSION = 100;
+    private static final int MAX_NODE_SIZE = 512;
     private static final int MAX_TERRAIN_NODES = 500;
 
-    private TerrainNode terrainTree;
-    private int numTerrainNodes = 0;
+    private TerrainNode terrainRootNode;
 
+    private int numTerrainNodes = 0;
     private int renderDepth = 0;
 
     private final Camera camera;
@@ -40,10 +40,10 @@ public class TerrainQuadtree {
         terrainNodeTail.originZ = originZ;
         terrainNodeTail.height = height;
         terrainNodeTail.width = width;
-        terrainNodeTail.tscaleNegx = 1.0f;
-        terrainNodeTail.tscaleNegz = 1.0f;
-        terrainNodeTail.tscalePosx = 1.0f;
-        terrainNodeTail.tscalePosz = 1.0f;
+        terrainNodeTail.scaleNegx = 1.0f;
+        terrainNodeTail.scaleNegz = 1.0f;
+        terrainNodeTail.scalePosx = 1.0f;
+        terrainNodeTail.scalePosz = 1.0f;
         terrainNodeTail.p = parent;
         terrainNodeTail.n = null;
         terrainNodeTail.s = null;
@@ -74,7 +74,7 @@ public class TerrainQuadtree {
         // from current origin to corner of current square.
         // OR
         // Max recursion level has been hit
-        return (d <= 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0))) && (node.width >= MAX_RECURSION);
+        return (d <= 2.5 * Math.sqrt(Math.pow(0.5 * node.width, 2.0) + Math.pow(0.5 * node.height, 2.0))) && (node.width >= MAX_NODE_SIZE);
     }
 
     /**
@@ -133,25 +133,25 @@ public class TerrainQuadtree {
     public void terrainCreateTree(float originX, float originY, float originZ, float width, float height) {
         terrainClearTree();
 
-        terrainTree = new TerrainNode();
-        terrainTree.type = 0;
-        terrainTree.originX = originX;
-        terrainTree.originY = originY;
-        terrainTree.originZ = originZ;
-        terrainTree.height = height;
-        terrainTree.width = width;
-        terrainTree.tscaleNegx = 1.0f;
-        terrainTree.tscaleNegz = 1.0f;
-        terrainTree.tscalePosx = 1.0f;
-        terrainTree.tscalePosz = 1.0f;
-        terrainTree.p = null;
-        terrainTree.n = null;
-        terrainTree.s = null;
-        terrainTree.e = null;
-        terrainTree.w = null;
+        terrainRootNode = new TerrainNode();
+        terrainRootNode.type = 0;
+        terrainRootNode.originX = originX;
+        terrainRootNode.originY = originY;
+        terrainRootNode.originZ = originZ;
+        terrainRootNode.height = height;
+        terrainRootNode.width = width;
+        terrainRootNode.scaleNegx = 1.0f;
+        terrainRootNode.scaleNegz = 1.0f;
+        terrainRootNode.scalePosx = 1.0f;
+        terrainRootNode.scalePosz = 1.0f;
+        terrainRootNode.p = null;
+        terrainRootNode.n = null;
+        terrainRootNode.s = null;
+        terrainRootNode.e = null;
+        terrainRootNode.w = null;
 
         // Recursively subdivide the terrain
-        terrainDivideNode(terrainTree);
+        terrainDivideNode(terrainRootNode);
     }
 
     /**
@@ -185,45 +185,43 @@ public class TerrainQuadtree {
         TerrainNode t;
 
         // Positive Z (north)
-        t = find(terrainTree, node.originX, node.originZ + 1 + node.width / 2.0f);
+        t = find(terrainRootNode, node.originX, node.originZ + 1 + node.width / 2.0f);
         if (t.width > node.width)
-            node.tscalePosz = 2.0f;
+            node.scalePosz = 2.0f;
 
         // Positive X (east)
-        t = find(terrainTree, node.originX + 1 + node.width / 2.0f, node.originZ);
+        t = find(terrainRootNode, node.originX + 1 + node.width / 2.0f, node.originZ);
         if (t.width > node.width)
-            node.tscalePosx = 2.0f;
+            node.scalePosx = 2.0f;
 
         // Negative Z (south)
-        t = find(terrainTree, node.originX, node.originZ - 1 - node.width / 2.0f);
+        t = find(terrainRootNode, node.originX, node.originZ - 1 - node.width / 2.0f);
         if (t.width > node.width)
-            node.tscaleNegz = 2.0f;
+            node.scaleNegz = 2.0f;
 
         // Negative X (west)
-        t = find(terrainTree, node.originX - 1 - node.width / 2.0f, node.originZ);
+        t = find(terrainRootNode, node.originX - 1 - node.width / 2.0f, node.originZ);
         if (t.width > node.width)
-            node.tscaleNegx = 2.0f;
+            node.scaleNegx = 2.0f;
     }
 
 
     /**
      * Pushes a node (patch) to the GPU to be drawn.
-     * note: height parameter is here but not used. currently only dealing with square terrains (width is used only)
+     * note: height parameter is here but not used. currently, only dealing with square terrains (width is used only)
      */
     private void terrainRenderNode(TerrainNode node) {
         // Calculate the tess scale factor
         calcTessScale(node);
 
-        // Setup matrices
         shaderTerrainQuadtree.loadModelMatrix(node.getOlTransform());
 
         shaderTerrainQuadtree.loadTileScale(node.width);
-        shaderTerrainQuadtree.loadScaleNegx(node.tscaleNegx);
-        shaderTerrainQuadtree.loadScaleNegz(node.tscaleNegz);
-        shaderTerrainQuadtree.loadScalePosx(node.tscalePosx);
-        shaderTerrainQuadtree.loadScalePosz(node.tscalePosz);
+        shaderTerrainQuadtree.loadScaleNegx(node.scaleNegx);
+        shaderTerrainQuadtree.loadScaleNegz(node.scaleNegz);
+        shaderTerrainQuadtree.loadScalePosx(node.scalePosx);
+        shaderTerrainQuadtree.loadScalePosz(node.scalePosz);
 
-        // Do it
         glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);
     }
 
@@ -239,7 +237,7 @@ public class TerrainQuadtree {
             return;
         }
 
-        // Otherwise, recruse to the children.
+        // Otherwise, recurse to the children.
         // Note: we're checking if the child exists. Theoretically, with our algorithm,
         // either all the children are null or all the children are not null.
         // There shouldn't be any other cases, but we check here for safety.
@@ -254,12 +252,12 @@ public class TerrainQuadtree {
     }
 
     /**
-     * Draw the terrrain.
+     * Draw the terrain.
      */
     public void terrainRender() {
         renderDepth = 0;
 
-        terrainRenderRecursive(terrainTree);
+        terrainRenderRecursive(terrainRootNode);
     }
 
     public int getRenderDepth() {

@@ -5,7 +5,7 @@ import app.renderer.shaders.ShaderProgram;
 
 import java.nio.file.Path;
 
-public abstract sealed class CommonShaderSkyBox extends ShaderProgram permits ShaderCubeMap, ShaderPreFilter, ShaderIrradiance, ShaderIrradianceConvolution {
+public abstract sealed class CommonShaderSkyBox extends ShaderProgram permits ShaderPreFilter, ShaderIrradiance, ShaderIrradianceConvolution {
     protected int locationProjectionMatrix;
     protected int locationViewMatrix;
 

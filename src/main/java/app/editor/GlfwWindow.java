@@ -98,8 +98,6 @@ public class GlfwWindow {
     }
 
     private void windowSizeChanged(long window, int width, int height) {
-        this.width = width;
-        this.height = height;
         mainImgui.setHeight(height);
         mainImgui.setWidth(width);
     }
@@ -119,12 +117,12 @@ public class GlfwWindow {
 
     public void run() {
         //create opengl context
-        createCapabilities();
+        createCapabilities(true);
         Logger.init();
         EditorRenderer.init();
 
         imgui = new ImguiHandler("#version 460", window);
-        //TODO: more generic to add imgui window
+
         mainImgui = new MainImgui(title, width, height);
         ImguiLayerHandler.addLayer(mainImgui);
         ImguiLayerHandler.addLayer(new Inspector());
@@ -158,15 +156,5 @@ public class GlfwWindow {
         }
         close();
     }
-
-    //TODO manager window
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
 
 }

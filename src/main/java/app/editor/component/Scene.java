@@ -9,7 +9,7 @@ public class Scene {
 
     public Scene() {
         name = "default scene";
-        path = Path.of("C:\\matan\\java\\src\\main");
+        path = Path.of(System.getProperty("user.dir"));
     }
 
     public String getName() {

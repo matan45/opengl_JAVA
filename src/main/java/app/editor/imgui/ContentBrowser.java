@@ -19,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 
 public class ContentBrowser implements ImguiLayer {
     private Path absolutePath;
-
     private final int folderIcon;
     private final int fileIcon;
     private final int meshIcon;

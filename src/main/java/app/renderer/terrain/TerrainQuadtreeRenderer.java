@@ -6,6 +6,7 @@ import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
+import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +57,7 @@ public class TerrainQuadtreeRenderer {
 
         this.textures = textures;
         shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quadtree.glsl"));
-
+        shaderTerrainQuadtree.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
@@ -86,8 +87,6 @@ public class TerrainQuadtreeRenderer {
             glCullFace(GL_BACK);
             shaderTerrainQuadtree.start();
             shaderTerrainQuadtree.loadViewPort(camera.getViewPort());
-            shaderTerrainQuadtree.loadViewMatrix(camera.getViewMatrix());
-            shaderTerrainQuadtree.loadProjectionMatrix(camera.getProjectionMatrix());
             shaderTerrainQuadtree.loadCameraPosition(camera.getPosition());
 
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);

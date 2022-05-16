@@ -9,9 +9,6 @@ import app.renderer.shaders.UniformsNames;
 import java.nio.file.Path;
 
 public class ShaderTerrainQuadtree extends ShaderProgram {
-
-    private int locationProjectionMatrix;
-    private int locationViewMatrix;
     private int locationModelMatrix;
     private int locationScaleNegx;
     private int locationScaleNegz;
@@ -37,8 +34,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
-        locationProjectionMatrix = super.getUniformLocation(UniformsNames.PROJECTION.getUniformsName());
-        locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
@@ -50,10 +45,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationFogColor = super.getUniformLocation("fogColor");
         locationIsFog = super.getUniformLocation("isFog");
 
-        locationScaleNegx = super.getUniformLocation("tscale_negx");
-        locationScaleNegz = super.getUniformLocation("tscale_negz");
-        locationScalePosx = super.getUniformLocation("tscale_posx");
-        locationScalePosz = super.getUniformLocation("tscale_posz");
+        locationScaleNegx = super.getUniformLocation("scaleNegx");
+        locationScaleNegz = super.getUniformLocation("scaleNegz");
+        locationScalePosx = super.getUniformLocation("scalePosx");
+        locationScalePosz = super.getUniformLocation("scalePosz");
 
         locationTerrainLength = super.getUniformLocation("TerrainLength");
         locationTerrainWidth = super.getUniformLocation("TerrainWidth");
@@ -79,10 +74,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadFogColor(OLVector3f fogColor) {
         super.load3DVector(locationFogColor, fogColor);
-    }
-
-    public void loadViewMatrix(OLMatrix4f view) {
-        super.loadMatrix(locationViewMatrix, view);
     }
 
     public void loadToggleWireframe(boolean wire) {
@@ -133,11 +124,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadTerrainOrigin(OLVector3f origin) {
         super.load3DVector(locationTerrainOrigin, origin);
-    }
-
-
-    public void loadProjectionMatrix(OLMatrix4f projection) {
-        super.loadMatrix(locationProjectionMatrix, projection);
     }
 
     public void loadModelMatrix(OLMatrix4f model) {

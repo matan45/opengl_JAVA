@@ -13,8 +13,6 @@ public class Music {
 
     public void loadMusic(Path path) {
         try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path.toAbsolutePath().toString()))){
-            System.out.println(AudioSystem.getAudioFileFormat(new File(path.toAbsolutePath().toString())).getFormat().getSampleRate());
-            System.out.println(AudioSystem.getAudioFileFormat(new File(path.toAbsolutePath().toString())).getFormat().getChannels());
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);

@@ -3,6 +3,14 @@ package app.math.components;
 import app.math.OLMatrix4f;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
+import app.renderer.OpenGLObjects;
+import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
+
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferSubData;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 public class Camera {
     private final OLVector3f position;
@@ -15,18 +23,22 @@ public class Camera {
     private float far;
     private float near;
     private float aspect;
+    private final int uboMatrices;
+    private static final FloatBuffer viewBuffer = BufferUtils.createFloatBuffer(4 * 4);
+    private static final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4 * 4);
 
-    public Camera() {
-        position = new OLVector3f(0.0f, 2f, 5f);
-        rotation = new OLVector3f(45, 0, 0);
+    public Camera(OpenGLObjects openGLObjects) {
+        position = new OLVector3f(0.0f, 25f, 51f);
+        rotation = new OLVector3f(34, 0, 0);
         viewMatrix = new OLMatrix4f();
         projectionMatrix = new OLMatrix4f();
         negativeCameraPosition = new OLVector3f();
         viewPort = new OLVector2f();
-        speed = 50f;
+        speed = 20f;
         near = 0.1f;
         far = 2048f;
         aspect = 1f;
+        uboMatrices = openGLObjects.createUniformBufferFloat(16, 2L);
     }
 
     public void createPerspectiveMatrix(float fovY) {
@@ -54,6 +66,19 @@ public class Camera {
         negativeCameraPosition.setOLVector3f(-position.x, -position.y, -position.z);
         viewMatrix.translate(negativeCameraPosition);
         return viewMatrix;
+    }
+
+    public void updateMatrices() {
+        projectionBuffer.clear();
+        projectionBuffer.put(projectionMatrix.getAsArray());
+        projectionBuffer.flip();
+        viewBuffer.clear();
+        viewBuffer.put(viewMatrix.getAsArray());
+        viewBuffer.flip();
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, projectionBuffer);
+        glBufferSubData(GL_UNIFORM_BUFFER, 64, viewBuffer);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
     public OLVector3f getPosition() {

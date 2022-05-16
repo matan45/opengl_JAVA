@@ -16,11 +16,11 @@ public class Material implements Serializable {
     private int aoMap;
     private int emissiveMap;
 
-    private int defaultAlbedoMap;
-    private int defaultNormalMap;
-    private int defaultMetallicMap;
-    private int defaultRoughnessMap;
-    private int defaultAoMap;
+    private final int defaultAlbedoMap;
+    private final int defaultNormalMap;
+    private final int defaultMetallicMap;
+    private final int defaultRoughnessMap;
+    private final int defaultAoMap;
 
     private String albedoMapPath;
     private String normalMapPath;

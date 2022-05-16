@@ -3,7 +3,6 @@ package app.utilities.resource;
 import app.math.OLVector3f;
 import app.renderer.pbr.Mesh;
 import app.utilities.ArrayUtil;
-import app.utilities.logger.LogError;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
@@ -45,23 +44,20 @@ class ResourceMesh {
     }
 
     private Mesh[] loadMeshesItem(String fileName) {
-        AIScene aiScene = aiImportFile(fileName, FLAGS);
-        if (aiScene == null) {
-            LogError.println("Error loading model");
-            return new Mesh[0];
-        }
+        try (AIScene aiScene = aiImportFile(fileName, FLAGS)) {
+            assert aiScene != null;
+            int numMeshes = aiScene.mNumMeshes();
+            PointerBuffer aiMeshes = aiScene.mMeshes();
+            Mesh[] meshes = new Mesh[numMeshes];
+            for (int i = 0; i < numMeshes; i++) {
+                assert aiMeshes != null;
+                AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
+                Mesh mesh = processMesh(aiMesh, i);
+                meshes[i] = mesh;
+            }
 
-        int numMeshes = aiScene.mNumMeshes();
-        PointerBuffer aiMeshes = aiScene.mMeshes();
-        Mesh[] meshes = new Mesh[numMeshes];
-        for (int i = 0; i < numMeshes; i++) {
-            assert aiMeshes != null;
-            AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
-            Mesh mesh = processMesh(aiMesh, i);
-            meshes[i] = mesh;
+            return meshes;
         }
-
-        return meshes;
     }
 
     private Mesh processMesh(AIMesh aiMesh, int index) {

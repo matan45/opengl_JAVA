@@ -3,6 +3,7 @@ package app.renderer.shaders;
 import app.math.OLMatrix4f;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
+import app.utilities.logger.LogError;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
+import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 
 public abstract class ShaderProgram {
     private final int programID;
@@ -35,13 +38,18 @@ public abstract class ShaderProgram {
 
     protected abstract void getAllUniformLocations();
 
-
-    protected int getUniformLocation(String uniformName) {
-        return glGetUniformLocation(programID, uniformName);
+    public void bindBlockBuffer(String uniformName, int location) {
+        int index = glGetUniformBlockIndex(programID, uniformName);
+        if (index == 0xFFFFFFFF)
+            LogError.println("cant find Uniform location " + uniformName);
+        glUniformBlockBinding(programID, index, location);
     }
 
-    protected void bindAttribute(int attribute, String variableName) {
-        glBindAttribLocation(programID, attribute, variableName);
+    protected int getUniformLocation(String uniformName) {
+        int location = glGetUniformLocation(programID, uniformName);
+        if (location == 0xFFFFFFFF)
+            LogError.println("cant find Uniform location " + uniformName);
+        return location;
     }
 
     protected void loadFloat(int location, float value) {
@@ -93,15 +101,14 @@ public abstract class ShaderProgram {
             glShaderSource(shaderID, tempShader.shaderSource());
             glCompileShader(shaderID);
             if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-                System.out.println(glGetShaderInfoLog(shaderID, 500));
+                System.out.println(glGetShaderInfoLog(shaderID, 512));
                 System.err.println("Could not compile shader " + tempShader.type());
                 System.exit(-1);
             }
             shadersID.add(shaderID);
         }
-
-
     }
+
 
     public void cleanUp() {
         stop();

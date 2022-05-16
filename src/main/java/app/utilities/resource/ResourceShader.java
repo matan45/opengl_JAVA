@@ -41,7 +41,6 @@ class ResourceShader {
             }
             shaderModelList.add(new ShaderModel(type, shaderSource.toString()));
         } catch (IOException e) {
-            System.err.println("Could not read file");
             e.printStackTrace();
             System.exit(-1);
         }

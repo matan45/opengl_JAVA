@@ -29,7 +29,7 @@ public class LogWindow implements ImguiLayer {
             ImGui.sameLine();
             ImGui.text("FPS: " + fps);
             ImGui.sameLine();
-            ImGui.text("Delta Timea: " + dt);
+            ImGui.text("Delta Time: " + dt);
             ImGui.separator();
             ImGui.pushStyleColor(ImGuiCol.ChildBg, ImColor.intToColor(0, 0, 0));
             if (ImGui.beginChild("Log", 0, 0, false, ImGuiWindowFlags.HorizontalScrollbar)) {
