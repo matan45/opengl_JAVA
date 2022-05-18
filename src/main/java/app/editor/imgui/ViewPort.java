@@ -48,7 +48,6 @@ public class ViewPort implements ImguiLayer {
     private final int gridIcon;
     private boolean isGrid;
     private float[] objectMatrices;
-    private float[] inputViewMatrix;
     private float xLastPos;
     private float yLastPos;
     private boolean isFirst = false;
@@ -127,7 +126,6 @@ public class ViewPort implements ImguiLayer {
 
             if (firstFrame) {
                 editorCamera = EditorRenderer.getEditorCamera();
-                inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
                 firstFrame = false;
             }
 
@@ -145,6 +143,7 @@ public class ViewPort implements ImguiLayer {
             ImGuizmo.setDrawList();
             ImGuizmo.setRect(ImGui.getWindowPosX(), ImGui.getWindowPosY(), ImGui.getWindowWidth(), ImGui.getWindowHeight());
 
+            float[] inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
 
             if (entity != null && currentGizmoOperation != -1) {
 
@@ -232,8 +231,6 @@ public class ViewPort implements ImguiLayer {
                 xLastPos = mousePos.x;
                 yLastPos = mousePos.y;
             }
-
-            inputViewMatrix = editorCamera.createViewMatrix().getAsArray();
         }
     }
 
