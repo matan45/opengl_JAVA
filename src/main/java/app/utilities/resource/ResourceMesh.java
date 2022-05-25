@@ -3,6 +3,7 @@ package app.utilities.resource;
 import app.math.OLVector3f;
 import app.renderer.pbr.Mesh;
 import app.utilities.ArrayUtil;
+import app.utilities.UUIDItem;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
@@ -14,12 +15,14 @@ import java.io.ObjectInputStream;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.assimp.Assimp.*;
 
 class ResourceMesh {
-
+    private Map<Long, Mesh> pool = new HashMap<>();
     private static final int FLAGS = aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals
             | aiProcessPreset_TargetRealtime_MaxQuality;
@@ -36,7 +39,9 @@ class ResourceMesh {
     private Mesh loadMeshItem(String fileName) {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            return (Mesh) objectInputStream.readObject();
+            Mesh temp = (Mesh) objectInputStream.readObject();
+            if (pool.containsKey(temp.id())) return pool.get(temp.id());
+            else pool.put(temp.id(), temp);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -75,7 +80,7 @@ class ResourceMesh {
         OLVector3f center = min.add(max).div(2.0f);
 
         return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals),
-                ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index, center, min, max);
+                ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index, center, min, max, UUIDItem.generateUUID());
     }
 
 
