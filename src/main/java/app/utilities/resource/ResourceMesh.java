@@ -74,7 +74,7 @@ class ResourceMesh {
         processIndices(aiMesh, indices);
 
         OLVector3f center = min.add(max).div(2.0f);
-        System.out.println(center.toString());
+
         return new Mesh(ArrayUtil.listToArray(vertices), ArrayUtil.listToArray(textures), ArrayUtil.listToArray(normals),
                 ArrayUtil.listIntToArray(indices), aiMesh.mName().dataString() + "_" + index, center, min, max, UUIDItem.generateUUID());
     }
