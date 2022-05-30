@@ -2,7 +2,7 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.math.components.OLTransform;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.debug.billboards.Billboards;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.lights.PointLight;

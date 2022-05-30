@@ -6,7 +6,7 @@ import app.ecs.components.TransformComponent;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import app.utilities.serialize.Serializable;

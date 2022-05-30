@@ -1,6 +1,6 @@
 package app.renderer.framebuffer;
 
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.utilities.data.structures.Pair;
 
 import static org.lwjgl.opengl.GL30.*;

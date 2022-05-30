@@ -12,7 +12,8 @@ public class Music {
     private FloatControl control;
 
     public void loadMusic(Path path) {
-        try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path.toAbsolutePath().toString()))){
+        try (AudioInputStream audioIn = AudioSystem.getAudioInputStream(new File(path.toAbsolutePath().toString()))) {
+            close();
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -78,7 +79,7 @@ public class Music {
             if (loop)
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
             else
-                clip.loop(-1);
+                clip.loop(1);
         }
     }
 

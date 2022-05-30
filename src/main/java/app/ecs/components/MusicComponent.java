@@ -2,7 +2,7 @@ package app.ecs.components;
 
 import app.audio.Music;
 import app.ecs.Entity;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;

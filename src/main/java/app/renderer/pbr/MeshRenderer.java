@@ -3,7 +3,7 @@ package app.renderer.pbr;
 import app.math.components.Camera;
 import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.VaoModel;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;

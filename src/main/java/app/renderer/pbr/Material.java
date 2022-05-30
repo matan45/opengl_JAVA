@@ -1,6 +1,6 @@
 package app.renderer.pbr;
 
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 
 import java.io.File;
 import java.io.Serializable;

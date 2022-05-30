@@ -3,7 +3,7 @@ package app.renderer.ibl;
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.renderer.OpenGLObjects;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.shaders.UniformsNames;
 import app.utilities.data.structures.Pair;

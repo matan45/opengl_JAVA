@@ -1,4 +1,4 @@
-package app.renderer;
+package app.renderer.texture;
 
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
@@ -9,7 +9,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
@@ -21,6 +23,9 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Textures {
     private final List<Integer> texturesID;
+    //map image uuid to texture id
+    private final Map<Long, Integer> loadTextureMap = new HashMap<>();
+    private final Map<Long, Integer> loadHdrMap = new HashMap<>();
 
     public Textures() {
         texturesID = new ArrayList<>();

@@ -3,7 +3,7 @@ package app.renderer.draw;
 import app.audio.Audio;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;

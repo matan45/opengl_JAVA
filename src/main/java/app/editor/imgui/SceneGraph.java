@@ -4,7 +4,7 @@ import app.ecs.Entity;
 import app.ecs.EntitySystem;
 import app.editor.component.SceneHandler;
 import app.math.components.OLTransform;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;

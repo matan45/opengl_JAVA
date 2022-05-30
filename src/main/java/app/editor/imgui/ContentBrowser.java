@@ -2,7 +2,7 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.editor.component.SceneHandler;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.FileUtil;
 import app.utilities.serialize.FileExtension;
@@ -34,7 +34,7 @@ public class ContentBrowser implements ImguiLayer {
 
     public ContentBrowser() {
         Textures textures = EditorRenderer.getTextures();
-        //TODO: icons for texture and audio
+        //TODO: icons for image and audio
         folderIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-folder.png"));
         fileIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-file.png"));
         meshIcon = textures.loadTexture(Path.of("src\\main\\resources\\editor\\icons\\contentBrowser\\icon-mesh.png"));

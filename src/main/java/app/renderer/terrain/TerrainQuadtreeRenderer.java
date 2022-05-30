@@ -3,7 +3,7 @@ package app.renderer.terrain;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
-import app.renderer.Textures;
+import app.renderer.texture.Textures;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.shaders.UniformsNames;
