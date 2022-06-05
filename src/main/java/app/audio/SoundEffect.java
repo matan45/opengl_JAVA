@@ -30,6 +30,7 @@ public class SoundEffect implements Serializable {
     }
 
     public void loadSound(Path path) {
+        stop();
         int buffer = Audio.loadSource(path);
         alSourcei(sourceID, AL_BUFFER, buffer);
     }

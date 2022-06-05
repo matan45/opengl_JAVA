@@ -2,7 +2,6 @@ package app.editor.imgui;
 
 import app.math.components.Camera;
 import app.renderer.draw.EditorRenderer;
-import app.renderer.pbr.Mesh;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
@@ -13,6 +12,8 @@ import imgui.flag.ImGuiDockNodeFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImBoolean;
+
+import java.util.Arrays;
 
 import static app.utilities.ImguiUtil.drawVector3;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
@@ -89,11 +90,9 @@ public class MainImgui implements ImguiLayer {
             if (ImGui.beginMenu(FontAwesomeIcons.TOOLS + " Import")) {
                 if (ImGui.menuItem(FontAwesomeIcons.FILE_IMPORT + " Meshes", null, false)) {
                     //TODO thread pool
-                    OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
-                        Mesh[] meshes = ResourceManager.loadMeshesFromFile(path);
-                        for (Mesh mesh : meshes)
-                            Serializable.saveMesh(mesh, path);
-                    });
+                    OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path ->
+                            Arrays.stream(ResourceManager.loadMeshesFromFile(path)).forEach(mesh -> Serializable.saveMesh(mesh, path)));
+
                 } else if (ImGui.menuItem(FontAwesomeIcons.FILE_IMAGE + " Textures", null, false)) {
                     LogInfo.println("not implement");
                 } else if (ImGui.menuItem(FontAwesomeIcons.FILE_AUDIO + " Audio", null, false)) {

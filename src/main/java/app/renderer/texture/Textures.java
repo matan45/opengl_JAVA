@@ -2,6 +2,7 @@ package app.renderer.texture;
 
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -180,5 +181,7 @@ public class Textures {
         for (int texture : texturesID) {
             glDeleteTextures(texture);
         }
+        loadTextureMap.values().forEach(GL11::glDeleteTextures);
+        loadHdrMap.values().forEach(GL11::glDeleteTextures);
     }
 }
