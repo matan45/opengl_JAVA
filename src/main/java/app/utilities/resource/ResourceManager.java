@@ -2,6 +2,7 @@ package app.utilities.resource;
 
 import app.renderer.pbr.Mesh;
 import app.renderer.shaders.ShaderModel;
+import app.renderer.texture.Image;
 import org.lwjgl.stb.STBVorbisInfo;
 
 import java.io.IOException;
@@ -11,12 +12,12 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class ResourceManager {
-    //TODO Resource pooling map id and object Map<id,object>
     private static final ResourceWindowGLFW windowGLFW = new ResourceWindowGLFW();
     private static final ResourceShader resourceShader = new ResourceShader();
     private static final ResourceImgui resourceImgui = new ResourceImgui();
     private static final ResourceMesh resourceMesh = new ResourceMesh();
     private static final ResourceAudio resourceAudio = new ResourceAudio();
+    private static final ResourceTexture resourceTexture=new ResourceTexture();
 
     private ResourceManager() {
     }
@@ -43,6 +44,10 @@ public class ResourceManager {
 
     public static Mesh[] loadMeshesFromFile(Path path) {
         return resourceMesh.importMeshesFile(path);
+    }
+
+    public static Image loadTextureFromFile(Path path) {
+        return resourceTexture.importTextureFile(path);
     }
 
     public static ShortBuffer loadAudio(Path path, STBVorbisInfo info) {

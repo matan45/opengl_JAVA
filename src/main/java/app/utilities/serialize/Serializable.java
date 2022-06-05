@@ -7,6 +7,7 @@ import app.editor.component.SceneHandler;
 import app.editor.imgui.ImguiLayerHandler;
 import app.editor.imgui.ViewPort;
 import app.renderer.pbr.Mesh;
+import app.renderer.texture.Image;
 import app.utilities.logger.LogError;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -22,6 +23,7 @@ import java.util.List;
 public class Serializable {
     private static final SerializableEntity serializableEntity = new SerializableEntity();
     private static final SerializableMesh serializableMesh = new SerializableMesh();
+    private static final SerializableTexture serializableTexture = new SerializableTexture();
 
     private static final String FAIL = "fail to save ";
     private static final String SCENE_NAME = "SceneName";
@@ -209,6 +211,10 @@ public class Serializable {
     }
 
     public static void saveMesh(Mesh mesh, Path path) {
-        serializableMesh.writeObjectToFile(mesh, path);
+        serializableMesh.writeMeshToFile(mesh, path);
+    }
+
+    public static void saveTexture(Image image, Path path) {
+        serializableTexture.writeTextureToFile(image, path);
     }
 }

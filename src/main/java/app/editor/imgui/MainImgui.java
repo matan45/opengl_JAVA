@@ -2,6 +2,7 @@ package app.editor.imgui;
 
 import app.math.components.Camera;
 import app.renderer.draw.EditorRenderer;
+import app.renderer.texture.Image;
 import app.utilities.OpenFileDialog;
 import app.utilities.logger.LogInfo;
 import app.utilities.resource.ResourceManager;
@@ -94,7 +95,10 @@ public class MainImgui implements ImguiLayer {
                             Arrays.stream(ResourceManager.loadMeshesFromFile(path)).forEach(mesh -> Serializable.saveMesh(mesh, path)));
 
                 } else if (ImGui.menuItem(FontAwesomeIcons.FILE_IMAGE + " Textures", null, false)) {
-                    LogInfo.println("not implement");
+                    OpenFileDialog.openMulti("hdr,png,tga,jpg").parallelStream().forEach(path -> {
+                        Image image = ResourceManager.loadTextureFromFile(path);
+                        Serializable.saveTexture(image, path);
+                    });
                 } else if (ImGui.menuItem(FontAwesomeIcons.FILE_AUDIO + " Audio", null, false)) {
                     LogInfo.println("not implement");
                 } else if (ImGui.menuItem(FontAwesomeIcons.WALKING + " Animation", null, false)) {
