@@ -1,7 +1,6 @@
 package app.utilities.resource;
 
 import app.renderer.texture.Image;
-import app.utilities.ArrayUtil;
 import app.utilities.FileUtil;
 import app.utilities.UUIDItem;
 import org.lwjgl.BufferUtils;
@@ -11,8 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.*;
@@ -49,11 +46,11 @@ public class ResourceTexture {
         else
             format = GL_RGBA;
 
-        List<Float> data = new ArrayList<>();
+        float[] floatData = new float[image.capacity()];
         for (int i = 0; i < image.capacity(); i++)
-            data.add(image.get(i));
+            floatData[i] = image.get(i);
 
         stbi_image_free(image);
-        return new Image(ArrayUtil.listToArray(data), fileName, w.get(0), h.get(0), format, UUIDItem.generateUUID());
+        return new Image(floatData, fileName, w.get(0), h.get(0), format, UUIDItem.generateUUID());
     }
 }
