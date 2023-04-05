@@ -371,7 +371,7 @@ void colorMapping(vec4 high){
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-	FragColor = vec4(normal, 1.0);
+	FragColor = vec4(color, 1.0);
 	
 }
 
@@ -395,7 +395,7 @@ vec3 getNormal()
     vec2 offyx = vec2(0, -1);
     vec2 offyz = vec2(0, 1);
 
-    float L = texture(TexTerrainHeight, (gs_terrainTexCoord + offxy).r;
+    float L = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).r;
 	float R = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).r;
 	float D = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).r;
 	float U = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).r;
