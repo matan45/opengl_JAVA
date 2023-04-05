@@ -320,8 +320,6 @@ uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
 uniform vec3 cameraPosition;
 
-uniform mat4 model;
-
 uniform samplerCube irradianceMap;
 
 uniform float TerrainLength;
@@ -334,15 +332,12 @@ vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
 vec3 getFogColor(vec3 albedo);
 vec3 getNormal(vec4 high);
+float getFogFactor(float dist);
 
 const float zfar = 1000;
 uniform vec3 fogColor;
 uniform float sightRange;
 uniform float isFog;
-float getFogFactor(float dist)
-{
-	return -0.0002 / sightRange * ( dist - (zfar) / 10 * sightRange) + 1;
-}
 
 void main(){
 
@@ -387,10 +382,14 @@ void colorMapping(vec4 high){
 }
 
 vec3 getFogColor(vec3 albedo){
-	vec3 localPosition = vec4(model * vec4(worldPosition, 1.0)).xyz;
-	float dist = length(cameraPosition -  localPosition);
+	float dist = length(cameraPosition);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
+}
+
+float getFogFactor(float dist)
+{
+	return -0.0002 / sightRange * ( dist - (zfar) / 10 * sightRange) + 1;
 }
 
 
