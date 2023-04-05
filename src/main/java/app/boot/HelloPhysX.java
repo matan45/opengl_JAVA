@@ -79,7 +79,7 @@ public class HelloPhysX {
         tolerances.destroy();
 
         // box starts at a height of 5
-        float boxHeight = box.getGlobalPose().getP().getY();
+        float boxHeight;
 
         // run physics simulation
         for (int i = 0; i <= 500; i++) {
