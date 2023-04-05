@@ -205,8 +205,6 @@ in float tes_tessLevel[];
 out vec4 gs_wireColor;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
-out vec3 worldPosition;
-out vec3 tangentNormal;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -256,7 +254,6 @@ vec3 calcTangent()
 void main()
 {
 	gs_wireColor = wireframeColor();
-	tangentNormal = calcTangent();
 
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
@@ -297,8 +294,7 @@ void main()
 
 		EmitVertex();
 	}
-	
-	worldPosition = position * 0.5;
+
 	
 	EndPrimitive();
 }
@@ -311,8 +307,6 @@ in vec4 gs_wireColor;
 noperspective in vec3 gs_edgeDist;
 
 in vec2 gs_terrainTexCoord;
-in vec3 worldPosition;
-in vec3 tangentNormal;
 
 out vec4 FragColor;
 
@@ -331,7 +325,7 @@ vec3 colormix (vec3 a, vec3 b, float h, float m, float n);
 vec3 tricolormix (vec3 a, vec3 b, vec3 c,float h, float m, float n);
 vec3 biomeColor (float h);
 vec3 getFogColor(vec3 albedo);
-vec3 getNormal(vec4 high);
+vec3 getNormal();
 float getFogFactor(float dist);
 
 const float zfar = 1000;
@@ -360,9 +354,9 @@ void main(){
 void colorMapping(vec4 high){
 	vec3 albedo = pow(biomeColor(high.r), vec3(2.2));
 
-	vec3 normal = getNormal(high);
+	vec3 normal = getNormal();
 
-	vec3 irradiance = texture(irradianceMap, -normal).rgb;
+	vec3 irradiance = texture(irradianceMap, normal).rgb;
     vec3 diffuse    = irradiance * albedo;
 	
 	vec3 color;
@@ -377,7 +371,7 @@ void colorMapping(vec4 high){
     // gamma correct
     color = pow(color, vec3(1.0/2.2));
 
-	FragColor = vec4(color, 1.0);
+	FragColor = vec4(normal, 1.0);
 	
 }
 
@@ -393,24 +387,23 @@ float getFogFactor(float dist)
 }
 
 
-vec3 getNormal(vec4 high)
-{ 
+vec3 getNormal()
+{
+	//TODO: texture normal map
     vec2 offxy = vec2(-1, 0);
     vec2 offzy = vec2(1, 0);
     vec2 offyx = vec2(0, -1);
     vec2 offyz = vec2(0, 1);
 
-    float L = texture(TexTerrainHeight, gs_terrainTexCoord + offxy).x;
-	float R = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).x;
-	float D = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).x;
-	float U = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).x;
-    
-	vec3 bump =  vec3(L - R, 2, D - U);
+    float L = texture(TexTerrainHeight, (gs_terrainTexCoord + offxy).r;
+	float R = texture(TexTerrainHeight, gs_terrainTexCoord + offzy).r;
+	float D = texture(TexTerrainHeight, gs_terrainTexCoord + offyx).r;
+	float U = texture(TexTerrainHeight, gs_terrainTexCoord + offyz).r;
 
-	vec3 bitangent = normalize(cross(tangentNormal, bump));
-	mat3 TBN = mat3(tangentNormal, bump, bitangent);
+	vec3 dx = vec3(2.0*(gs_terrainTexCoord.x/TerrainLength), L - R, 0);
+	vec3 dy = vec3(0.0, D - U,2.0*(gs_terrainTexCoord.y/TerrainWidth));
 
-    return normalize(TBN * bump * 2 - 1); 
+    return normalize(cross(dy, dx));
 
 }
 
