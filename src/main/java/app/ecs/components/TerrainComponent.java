@@ -91,6 +91,7 @@ public class TerrainComponent extends Component {
             material.normalMapRemove();
         ImGui.popID();
 
+        ImGui.columns(1);
     }
 
     @Override

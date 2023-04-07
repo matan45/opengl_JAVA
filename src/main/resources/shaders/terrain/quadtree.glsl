@@ -142,6 +142,8 @@ layout(quads, fractional_even_spacing, cw) in;
 in vec2 tcs_terrainTexCoord[];
 in float tcs_tessLevel[];
 
+out vec3 pos;
+
 out vec2 tes_terrainTexCoord;
 out float tes_tessLevel;
 
@@ -175,7 +177,7 @@ void main(){
 
     // Calculate the vertex position using the four original points and interpolate depneding on the tessellation coordinates.	
 	gl_Position = interpolate(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position, gl_in[3].gl_Position);
-
+	pos=gl_Position.xyz;
 	// Terrain heightmap coords
 	vec2 terrainTexCoord = interpolate2(tcs_terrainTexCoord[0], tcs_terrainTexCoord[1], tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 
@@ -203,6 +205,7 @@ in vec2 tes_terrainTexCoord[];
 in float tes_tessLevel[];
 
 out vec4 gs_wireColor;
+out vec3 position;
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
 
@@ -223,6 +226,17 @@ vec4 wireframeColor()
 		return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
+vec3 calcPositon()
+{
+	vec3 v0 = gl_in[0].gl_Position.xyz;
+	vec3 v1 = gl_in[1].gl_Position.xyz;
+	vec3 v2 = gl_in[2].gl_Position.xyz;
+	vec3 position = vec3(0.0);
+	position.x=(v0.x+v1.x+v2.x)/3;
+	position.y=(v0.y+v1.y+v2.y)/3;
+	position.z=(v0.z+v1.z+v2.z)/3;
+	return position;
+}
 
 vec3 calcTangent()
 {	
@@ -254,7 +268,7 @@ vec3 calcTangent()
 void main()
 {
 	gs_wireColor = wireframeColor();
-
+	position = calcPositon();
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
 	if (ToggleWireframe == 1.0)
@@ -277,13 +291,12 @@ void main()
 		ha = hb = hc = 0.0;
 	}
 
-	vec3 position;
+
 	// Output verts
 	for(int i = 0; i < gl_in.length(); ++i)
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gs_terrainTexCoord = tes_terrainTexCoord[i];
-		position += gl_in[i].gl_Position.xyz;
 
 		if (i == 0)
 			gs_edgeDist = vec3(ha, 0, 0);
@@ -309,6 +322,8 @@ noperspective in vec3 gs_edgeDist;
 in vec2 gs_terrainTexCoord;
 
 out vec4 FragColor;
+
+in vec3 position;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
@@ -343,6 +358,9 @@ void main(){
 	float d = min(gs_edgeDist.x, gs_edgeDist.y);
 	d = min(d, gs_edgeDist.z);
 
+	// input lighting data
+	vec3 V = cameraPosition - pos;
+
 	float LineWidth = 0.75;
 	float mixVal = smoothstep(LineWidth - 1, LineWidth + 1, d);
 	vec3 color = colorMapping(roughness);
@@ -356,7 +374,7 @@ void main(){
 
 vec3 colorMapping(float roughness){
 //TODO use roughness
-	vec3 normal = texture(normalMap, gs_terrainTexCoord).xyz * 2.0 - 1.0;
+	vec3 normal = texture(normalMap, gs_terrainTexCoord).xyz;
 	vec3 albedo = pow(texture(albedoMap, gs_terrainTexCoord).rgb, vec3(2.2));
 
 	vec3 irradiance = texture(irradianceMap, normal).rgb;
@@ -379,7 +397,7 @@ vec3 colorMapping(float roughness){
 }
 
 vec3 getFogColor(vec3 albedo){
-	float dist = length(cameraPosition);
+	float dist = length(cameraPosition - pos);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
 }
