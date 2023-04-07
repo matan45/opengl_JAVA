@@ -2,6 +2,8 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.renderer.draw.EditorRenderer;
+import app.renderer.pbr.Material;
+import app.renderer.terrain.TerrainMaterial;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
@@ -9,10 +11,12 @@ import imgui.type.ImBoolean;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class TerrainComponent extends Component {
     private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
+    private final TerrainMaterial material;
 
     private String path = "";
     private String prePath = "";
@@ -23,6 +27,7 @@ public class TerrainComponent extends Component {
         terrain = EditorRenderer.getTerrainQuadtreeRenderer();
         wireframe = new ImBoolean();
         file = new File("");
+        material=terrain.getTerrainMaterial();
     }
 
     @Override
@@ -54,6 +59,38 @@ public class TerrainComponent extends Component {
         ImGui.checkbox("Wireframe", wireframe);
         terrain.setWireframe(wireframe.get());
 
+        ImGui.textWrapped("Material");
+        ImGui.pushID("RoughnessTerrain");
+        if (ImGui.button("Roughness"))
+            material.setRoughness(0.1f);
+        ImGui.sameLine();
+        float[] roughnessValue = {material.getRoughness()};
+        ImGui.dragFloat("##Y", roughnessValue, 0.01f);
+        material.setRoughness(roughnessValue[0]);
+        ImGui.popID();
+
+        ImGui.separator();
+        ImGui.columns(3, "", true);
+
+        material.setAlbedoMap(materialPath("Albedo"));
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getAlbedoFileName());
+        ImGui.nextColumn();
+        ImGui.pushID("Albedo");
+        if (ImGui.button("X"))
+            material.albedoMapRemove();
+        ImGui.popID();
+
+        ImGui.nextColumn();
+        material.setNormalMap(materialPath("Normal"));
+        ImGui.nextColumn();
+        ImGui.textWrapped(material.getNormalFileName());
+        ImGui.nextColumn();
+        ImGui.pushID("Normal");
+        if (ImGui.button("X"))
+            material.normalMapRemove();
+        ImGui.popID();
+
     }
 
     @Override
@@ -77,5 +114,13 @@ public class TerrainComponent extends Component {
         this.path = path;
     }
 
+    private String materialPath(String buttonName) {
+        if (ImGui.button(buttonName)) {
+            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg");
+            if (materialPath.isPresent())
+                return materialPath.get().toAbsolutePath().toString();
+        }
+        return "";
+    }
 
 }

@@ -27,6 +27,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationFogColor;
     private int locationIsFog;
     private int locationIrradianceMap;
+    private int locationAlbedoMap;
+    private int locationNormalMap;
+    private int locationRoughness;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -58,6 +61,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
 
+        locationAlbedoMap = super.getUniformLocation("albedoMap");
+        locationNormalMap = super.getUniformLocation("normalMap");
+        locationRoughness = super.getUniformLocation("roughnessScale");
+
     }
 
     public void loadCameraPosition(OLVector3f camera) {
@@ -84,6 +91,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         super.loadInt(locationTexTerrainHeight, 0);
         super.loadInt(locationIrradianceMap, 1);
+
+        super.loadInt(locationAlbedoMap, 2);
+        super.loadInt(locationNormalMap, 3);
     }
 
     public void loadViewPort(OLVector2f viewPort) {
@@ -120,6 +130,10 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadTerrainHeightOffset(float terrainHeightOffset) {
         super.loadFloat(locationTerrainHeightOffset, terrainHeightOffset);
+    }
+
+    public void loadRoughness(float roughness) {
+        super.loadFloat(locationRoughness, roughness);
     }
 
     public void loadTerrainOrigin(OLVector3f origin) {

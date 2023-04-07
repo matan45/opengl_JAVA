@@ -47,6 +47,8 @@ public class TerrainQuadtreeRenderer {
 
     private float displacementFactor;
 
+    private final TerrainMaterial terrainMaterial;
+
     private Fog fog;
     private final SkyBox skyBox;
 
@@ -61,6 +63,7 @@ public class TerrainQuadtreeRenderer {
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
+        terrainMaterial=new TerrainMaterial(textures);
         wireframe = false;
         displacementFactor = 200f;
 
@@ -92,6 +95,8 @@ public class TerrainQuadtreeRenderer {
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
 
+            shaderTerrainQuadtree.loadRoughness(terrainMaterial.getRoughness());
+
             if (fog != null) {
                 shaderTerrainQuadtree.loadIsFog(true);
                 shaderTerrainQuadtree.loadFogColor(fog.getFogColor());
@@ -109,6 +114,12 @@ public class TerrainQuadtreeRenderer {
 
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap());
+
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap());
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
             terrainQuadtree.terrainRender();
@@ -150,4 +161,7 @@ public class TerrainQuadtreeRenderer {
         isActive = active;
     }
 
+    public TerrainMaterial getTerrainMaterial() {
+        return terrainMaterial;
+    }
 }
