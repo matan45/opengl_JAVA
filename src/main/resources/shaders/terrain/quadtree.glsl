@@ -359,7 +359,7 @@ void main(){
 	d = min(d, gs_edgeDist.z);
 
 	// input lighting data
-	vec3 V = cameraPosition - pos;
+	vec3 V = cameraPosition - position;
 
 	float LineWidth = 0.75;
 	float mixVal = smoothstep(LineWidth - 1, LineWidth + 1, d);
@@ -397,7 +397,7 @@ vec3 colorMapping(float roughness){
 }
 
 vec3 getFogColor(vec3 albedo){
-	float dist = length(cameraPosition - pos);
+	float dist = length(cameraPosition - position);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
 }
