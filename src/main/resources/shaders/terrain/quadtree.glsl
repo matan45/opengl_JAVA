@@ -144,8 +144,6 @@ layout(quads, fractional_even_spacing, cw) in;
 in vec2 tcs_terrainTexCoord[];
 in float tcs_tessLevel[];
 
-out vec3 pos;
-
 out vec2 tes_terrainTexCoord;
 out float tes_tessLevel;
 
@@ -179,7 +177,7 @@ void main(){
 
     // Calculate the vertex position using the four original points and interpolate depneding on the tessellation coordinates.	
 	gl_Position = interpolate(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position, gl_in[3].gl_Position);
-	pos=gl_Position.xyz;
+
 	// Terrain heightmap coords
 	vec2 terrainTexCoord = interpolate2(tcs_terrainTexCoord[0], tcs_terrainTexCoord[1], tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 
@@ -234,9 +232,7 @@ vec3 calcPositon()
 	vec3 v1 = gl_in[1].gl_Position.xyz;
 	vec3 v2 = gl_in[2].gl_Position.xyz;
 	vec3 position = vec3(0.0);
-	position.x=(v0.x+v1.x+v2.x)/3;
-	position.y=(v0.y+v1.y+v2.y)/3;
-	position.z=(v0.z+v1.z+v2.z)/3;
+	position = (v0 + v1 + v2)/3;
 	return position;
 }
 
