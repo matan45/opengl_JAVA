@@ -17,6 +17,11 @@ vec2 calcTerrainTexCoord(vec4 pos)
 	return vec2(abs(pos.x - TerrainOrigin.x) / TerrainWidth, abs(pos.z - TerrainOrigin.z) / TerrainLength);
 }
 
+vec2 calcNodeTexCoord(vec4 pos)
+{
+	return vec2(pos.x / tileScale,pos.z / tileScale);
+}
+
 void main(void)
 {
 	// Calcuate texture coordantes (u,v) relative to entire terrain
@@ -46,7 +51,6 @@ layout (std140, binding = 0) uniform Matrices
 uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
-uniform float TerrainHeightOffset;
 
 uniform float scaleNegx;
 uniform float scaleNegz;
@@ -59,9 +63,7 @@ uniform float scalePosz;
 float dlodCameraDistance(vec4 p0, vec4 p1, vec2 t0, vec2 t1)
 {
 	vec4 samp = texture(TexTerrainHeight, t0);
-	p0.y = samp[0] * TerrainHeightOffset;
 	samp = texture(TexTerrainHeight, t1);
-	p1.y = samp[0] * TerrainHeightOffset;
 
 	vec4 view0 = model * view * p0;
 	vec4 view1 = model * view * p1;
@@ -238,32 +240,6 @@ vec3 calcPositon()
 	return position;
 }
 
-vec3 calcTangent()
-{	
-	vec3 v0 = gl_in[0].gl_Position.xyz;
-	vec3 v1 = gl_in[1].gl_Position.xyz;
-	vec3 v2 = gl_in[2].gl_Position.xyz;
-
-	// edges of the face/triangle
-    vec3 e1 = v1 - v0;
-    vec3 e2 = v2 - v0;
-	
-	vec2 uv0 = tes_terrainTexCoord[0];
-	vec2 uv1 = tes_terrainTexCoord[1];
-	vec2 uv2 = tes_terrainTexCoord[2];
-
-    vec2 deltaUV1 = uv1 - uv0;
-	vec2 deltaUV2 = uv2 - uv0;
-	
-	float r = 1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-	vec3 tangent = vec3(0.0);
-	tangent.x = r * (deltaUV2.y * e1.x - deltaUV1.y * e2.x);
-	tangent.y = r * (deltaUV2.y * e1.y - deltaUV1.y * e2.y);
-	tangent.z = r * (deltaUV2.y * e1.z - deltaUV1.y * e2.z);
-	
-	return tangent;
-}
 
 void main()
 {
@@ -290,7 +266,6 @@ void main()
 	{
 		ha = hb = hc = 0.0;
 	}
-
 
 	// Output verts
 	for(int i = 0; i < gl_in.length(); ++i)
@@ -342,7 +317,6 @@ vec3 colorMapping(float roughness);
 
 vec3 getFogColor(vec3 albedo);
 float getFogFactor(float dist);
-vec3 getNormalFromMap();
 
 const float zfar = 1000;
 uniform vec3 fogColor;
