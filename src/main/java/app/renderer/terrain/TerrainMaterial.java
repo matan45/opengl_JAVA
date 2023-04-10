@@ -10,9 +10,6 @@ public class TerrainMaterial implements Serializable {
     private final transient Textures textures;
     private int albedoMap;
     private int normalMap;
-
-    private float roughness;
-
     private final int defaultAlbedoMap;
     private final int defaultNormalMap;
     private String albedoMapPath;
@@ -87,11 +84,4 @@ public class TerrainMaterial implements Serializable {
         return normalFileName;
     }
 
-    public float getRoughness() {
-        return roughness;
-    }
-
-    public void setRoughness(float roughness) {
-        this.roughness = roughness;
-    }
 }

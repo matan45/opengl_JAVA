@@ -95,7 +95,6 @@ public class TerrainQuadtreeRenderer {
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
 
-            shaderTerrainQuadtree.loadRoughness(terrainMaterial.getRoughness());
 
             if (fog != null) {
                 shaderTerrainQuadtree.loadIsFog(true);

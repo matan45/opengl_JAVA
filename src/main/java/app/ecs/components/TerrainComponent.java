@@ -2,7 +2,6 @@ package app.ecs.components;
 
 import app.ecs.Entity;
 import app.renderer.draw.EditorRenderer;
-import app.renderer.pbr.Material;
 import app.renderer.terrain.TerrainMaterial;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.OpenFileDialog;
@@ -60,15 +59,6 @@ public class TerrainComponent extends Component {
         terrain.setWireframe(wireframe.get());
 
         ImGui.textWrapped("Material");
-        ImGui.pushID("RoughnessTerrain");
-        if (ImGui.button("Roughness"))
-            material.setRoughness(0.1f);
-        ImGui.sameLine();
-        float[] roughnessValue = {material.getRoughness()};
-        ImGui.dragFloat("##Y", roughnessValue, 0.01f);
-        material.setRoughness(roughnessValue[0]);
-        ImGui.popID();
-
         ImGui.separator();
         ImGui.columns(3, "", true);
 

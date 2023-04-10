@@ -29,7 +29,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationIrradianceMap;
     private int locationAlbedoMap;
     private int locationNormalMap;
-    private int locationRoughness;
     private int locationNodePosition;
 
     protected ShaderTerrainQuadtree(Path path) {
@@ -66,7 +65,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationAlbedoMap = super.getUniformLocation("albedoMap");
         locationNormalMap = super.getUniformLocation("normalMap");
-        locationRoughness = super.getUniformLocation("roughnessScale");
 
     }
 
@@ -136,10 +134,6 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadTerrainHeightOffset(float terrainHeightOffset) {
         super.loadFloat(locationTerrainHeightOffset, terrainHeightOffset);
-    }
-
-    public void loadRoughness(float roughness) {
-        super.loadFloat(locationRoughness, roughness);
     }
 
     public void loadTerrainOrigin(OLVector3f origin) {

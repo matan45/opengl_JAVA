@@ -306,9 +306,8 @@ uniform samplerCube irradianceMap;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
-uniform float roughnessScale;
 
-vec3 colorMapping(float roughness);
+vec3 colorMapping();
 
 vec3 getFogColor(vec3 albedo,vec3 position);
 float getFogFactor(float dist);
@@ -321,18 +320,13 @@ uniform float isFog;
 
 void main(){
 
-	float roughness = roughnessScale;
-
 	// Wireframe junk
 	float d = min(gs_edgeDist.x, gs_edgeDist.y);
 	d = min(d, gs_edgeDist.z);
 
-	// input lighting data
-	vec3 V = cameraPosition - nodePosition;
-
 	float LineWidth = 0.75;
 	float mixVal = smoothstep(LineWidth - 1, LineWidth + 1, d);
-	vec3 color = colorMapping(roughness);
+	vec3 color = colorMapping();
 
 	if (ToggleWireframe == 1.0)
 		FragColor = mix(gs_wireColor, vec4(color,1.0), mixVal);
@@ -341,7 +335,7 @@ void main(){
 
 }
 
-vec3 colorMapping(float roughness){
+vec3 colorMapping(){
 //TODO use roughness
 	vec3 normal = texture(normalMap, gs_nodeTexCoord).xyz;
 	vec3 albedo = pow(texture(albedoMap, gs_nodeTexCoord).rgb, vec3(2.2));
@@ -369,6 +363,7 @@ vec3 colorMapping(float roughness){
 }
 
 vec3 getFogColor(vec3 albedo,vec3 position){
+		//need to interpolate2 sample pos +-1 x and y
 	float dist = length(cameraPosition - position);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));

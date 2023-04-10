@@ -72,7 +72,6 @@ class SerializableComponent {
                 serializable.addProperty("Displacement", terrain.getTerrain().getDisplacementFactor());
                 serializable.addProperty("MaterialTerrainAlbedo", terrain.getTerrain().getTerrainMaterial().getAlbedoMapPath());
                 serializable.addProperty("MaterialTerrainNormal", terrain.getTerrain().getTerrainMaterial().getNormalMapPath());
-                serializable.addProperty("MaterialTerrainRoughness", terrain.getTerrain().getTerrainMaterial().getRoughness());
             }
             case MusicComponent music -> {
                 serializable.addProperty(COMPONENT_NAME, MusicComponent.class.getSimpleName());
@@ -176,7 +175,6 @@ class SerializableComponent {
                 terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
                 terrain.getTerrain().init(Path.of(terrain.getPath()));
                 terrain.getTerrain().setActive(true);
-                terrain.getTerrain().getTerrainMaterial().setRoughness(component.get("MaterialTerrainRoughness").getAsFloat());
                 terrain.getTerrain().getTerrainMaterial().setAlbedoMap(component.get("MaterialTerrainAlbedo").getAsString());
                 terrain.getTerrain().getTerrainMaterial().setNormalMap(component.get("MaterialTerrainNormal").getAsString());
                 entity.addComponent(terrain);
