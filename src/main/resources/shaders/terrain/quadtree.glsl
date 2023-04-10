@@ -64,16 +64,11 @@ uniform float scalePosz;
 /**
 * Dynamic level of detail using camera distance algorithm.
 */
-float dlodCameraDistance(vec4 p0, vec4 p1, vec2 t0, vec2 t1)
+float dlodCameraDistance(vec4 p0, vec4 p1)
 {
-	vec4 samp = texture(TexTerrainHeight, t0);
-	samp = texture(TexTerrainHeight, t1);
-
-	vec4 view0 = model * view * p0;
-	vec4 view1 = model * view * p1;
 
 	float MinDepth = 10.0;
-	float MaxDepth = 100000.0;
+	float MaxDepth = 1000.0;
 
 	float d0 = clamp( (abs(p0.z) - MinDepth) / (MaxDepth - MinDepth), 0.0, 1.0);
 	float d1 = clamp( (abs(p1.z) - MinDepth) / (MaxDepth - MinDepth), 0.0, 1.0);
@@ -81,23 +76,23 @@ float dlodCameraDistance(vec4 p0, vec4 p1, vec2 t0, vec2 t1)
 	float t = mix(64, 2, (d0 + d1) * 0.5);
 
 	if (t <= 2.0)
-	{ 
+	{
 		return 2.0;
 	}
 	if (t <= 4.0)
-	{ 
+	{
 		return 4.0;
 	}
 	if (t <= 8.0)
-	{ 
+	{
 		return 8.0;
 	}
 	if (t <= 16.0)
-	{ 
+	{
 		return 16.0;
 	}
 	if (t <= 32.0)
-	{ 
+	{
 		return 32.0;
 	}
 	
@@ -108,26 +103,26 @@ float dlodCameraDistance(vec4 p0, vec4 p1, vec2 t0, vec2 t1)
 
 void main()
 {
+	if (gl_InvocationID == 0){
+		// Outer tessellation level
+		gl_TessLevelOuter[0] = dlodCameraDistance(gl_in[3].gl_Position, gl_in[0].gl_Position);
+		gl_TessLevelOuter[1] = dlodCameraDistance(gl_in[0].gl_Position, gl_in[1].gl_Position);
+		gl_TessLevelOuter[2] = dlodCameraDistance(gl_in[1].gl_Position, gl_in[2].gl_Position);
+		gl_TessLevelOuter[3] = dlodCameraDistance(gl_in[2].gl_Position, gl_in[3].gl_Position);
 
-	// Outer tessellation level
-	gl_TessLevelOuter[0] = dlodCameraDistance(gl_in[3].gl_Position, gl_in[0].gl_Position, tcs_terrainTexCoord[3], tcs_terrainTexCoord[0]);
-	gl_TessLevelOuter[1] = dlodCameraDistance(gl_in[0].gl_Position, gl_in[1].gl_Position, tcs_terrainTexCoord[0], tcs_terrainTexCoord[1]);
-	gl_TessLevelOuter[2] = dlodCameraDistance(gl_in[1].gl_Position, gl_in[2].gl_Position, tcs_terrainTexCoord[1], tcs_terrainTexCoord[2]);
-	gl_TessLevelOuter[3] = dlodCameraDistance(gl_in[2].gl_Position, gl_in[3].gl_Position, tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
-	
-	if (scaleNegx == 2.0)
-		gl_TessLevelOuter[0] = max(2.0, gl_TessLevelOuter[0] * 0.5);
-	if (scaleNegz == 2.0)
-		gl_TessLevelOuter[1] = max(2.0, gl_TessLevelOuter[1] * 0.5);
-	if (scalePosx == 2.0)
-		gl_TessLevelOuter[2] = max(2.0, gl_TessLevelOuter[2] * 0.5);
-	if (scalePosz == 2.0)
-		gl_TessLevelOuter[3] = max(2.0, gl_TessLevelOuter[3] * 0.5);
+		if (scaleNegx == 2.0)
+			gl_TessLevelOuter[0] = max(2.0, gl_TessLevelOuter[0] * 0.5);
+		if (scaleNegz == 2.0)
+			gl_TessLevelOuter[1] = max(2.0, gl_TessLevelOuter[1] * 0.5);
+		if (scalePosx == 2.0)
+			gl_TessLevelOuter[2] = max(2.0, gl_TessLevelOuter[2] * 0.5);
+		if (scalePosz == 2.0)
+			gl_TessLevelOuter[3] = max(2.0, gl_TessLevelOuter[3] * 0.5);
 
-	// Inner tessellation level
-	gl_TessLevelInner[0] = 0.5 * (gl_TessLevelOuter[0] + gl_TessLevelOuter[3]);
-	gl_TessLevelInner[1] = 0.5 * (gl_TessLevelOuter[2] + gl_TessLevelOuter[1]);
-
+		// Inner tessellation level
+		gl_TessLevelInner[0] = 0.5 * (gl_TessLevelOuter[0] + gl_TessLevelOuter[3]);
+		gl_TessLevelInner[1] = 0.5 * (gl_TessLevelOuter[2] + gl_TessLevelOuter[1]);
+	}
 	// Pass the patch verts along
 	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
 
@@ -336,7 +331,7 @@ void main(){
 }
 
 vec3 colorMapping(){
-//TODO use roughness
+
 	vec3 normal = texture(normalMap, gs_nodeTexCoord).xyz;
 	vec3 albedo = pow(texture(albedoMap, gs_nodeTexCoord).rgb, vec3(2.2));
 
@@ -363,8 +358,7 @@ vec3 colorMapping(){
 }
 
 vec3 getFogColor(vec3 albedo,vec3 position){
-		//need to interpolate2 sample pos +-1 x and y
-	float dist = length(cameraPosition - position);
+	float dist = length(cameraPosition - nodePosition);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));
 }
