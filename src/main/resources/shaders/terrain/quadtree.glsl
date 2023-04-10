@@ -11,6 +11,7 @@ uniform vec3 TerrainOrigin;
 uniform float tileScale;
 
 out vec2 vs_terrainTexCoord;
+out vec2 vs_nodeTexCoord;
 
 vec2 calcTerrainTexCoord(vec4 pos)
 {
@@ -19,7 +20,7 @@ vec2 calcTerrainTexCoord(vec4 pos)
 
 vec2 calcNodeTexCoord(vec4 pos)
 {
-	return vec2(pos.x / tileScale,pos.z / tileScale);
+	return vec2(pos.x / tileScale, pos.z / tileScale);
 }
 
 void main(void)
@@ -28,6 +29,7 @@ void main(void)
 	vec4 p = model * vec4(position.xyz * tileScale, 1.0);
 	vs_terrainTexCoord = calcTerrainTexCoord(p);
 
+	vs_nodeTexCoord = calcNodeTexCoord(p);
 	// Send vertex position along
 	gl_Position = vec4(position.xyz * tileScale, 1.0);
 }
@@ -39,8 +41,10 @@ void main(void)
 layout(vertices = 4) out;
 
 in vec2 vs_terrainTexCoord[];
+in vec2 vs_nodeTexCoord[];
 
 out vec2 tcs_terrainTexCoord[];
+out vec2 tcs_nodeTexCoord[];
 out float tcs_tessLevel[];
 
 layout (std140, binding = 0) uniform Matrices
@@ -129,6 +133,7 @@ void main()
 
 	// Output heightmap coordinates
 	tcs_terrainTexCoord[gl_InvocationID] = vs_terrainTexCoord[gl_InvocationID];
+	tcs_nodeTexCoord[gl_InvocationID] = vs_nodeTexCoord[gl_InvocationID];
 
 	// Output tessellation level (used for wireframe coloring)
 	tcs_tessLevel[gl_InvocationID] = gl_TessLevelOuter[0];
@@ -142,9 +147,11 @@ void main()
 layout(quads, fractional_even_spacing, cw) in;
 
 in vec2 tcs_terrainTexCoord[];
+in vec2 tcs_nodeTexCoord[];
 in float tcs_tessLevel[];
 
 out vec2 tes_terrainTexCoord;
+out vec2 tes_nodeTexCoord;
 out float tes_tessLevel;
 
 uniform mat4 model;
@@ -180,6 +187,7 @@ void main(){
 
 	// Terrain heightmap coords
 	vec2 terrainTexCoord = interpolate2(tcs_terrainTexCoord[0], tcs_terrainTexCoord[1], tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
+	vec2 nodeTexCoord = interpolate2(tcs_nodeTexCoord[0], tcs_nodeTexCoord[1], tcs_nodeTexCoord[2], tcs_nodeTexCoord[3]);
 
 	// Sample the heightmap and offset y position of vertex
 	vec4 samp = texture(TexTerrainHeight, terrainTexCoord);
@@ -190,6 +198,7 @@ void main(){
  	gl_Position = projection * view * worldPosition;
 
 	tes_terrainTexCoord = terrainTexCoord;
+	tes_nodeTexCoord = nodeTexCoord;
 	tes_tessLevel = tcs_tessLevel[0];
 }
 
@@ -202,12 +211,14 @@ layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
 in vec2 tes_terrainTexCoord[];
+in vec2 tes_nodeTexCoord[];
 in float tes_tessLevel[];
 
 out vec4 gs_wireColor;
-out vec3 position;
+
 noperspective out vec3 gs_edgeDist;
 out vec2 gs_terrainTexCoord;
+out vec2 gs_nodeTexCoord;
 
 uniform vec2 Viewport;
 uniform float ToggleWireframe;
@@ -226,21 +237,11 @@ vec4 wireframeColor()
 		return vec4(1.0, 0.0, 0.0, 1.0);
 }
 
-vec3 calcPositon()
-{
-	vec3 v0 = gl_in[0].gl_Position.xyz;
-	vec3 v1 = gl_in[1].gl_Position.xyz;
-	vec3 v2 = gl_in[2].gl_Position.xyz;
-	vec3 position = vec3(0.0);
-	position = (v0 + v1 + v2)/3;
-	return position;
-}
 
 
 void main()
 {
 	gs_wireColor = wireframeColor();
-	position = calcPositon();
 	// Calculate edge distances for wireframe
 	float ha, hb, hc;
 	if (ToggleWireframe == 1.0)
@@ -268,6 +269,7 @@ void main()
 	{
 		gl_Position = gl_in[i].gl_Position;
 		gs_terrainTexCoord = tes_terrainTexCoord[i];
+		gs_nodeTexCoord = tes_nodeTexCoord[i];
 
 		if (i == 0)
 			gs_edgeDist = vec3(ha, 0, 0);
@@ -291,19 +293,16 @@ in vec4 gs_wireColor;
 noperspective in vec3 gs_edgeDist;
 
 in vec2 gs_terrainTexCoord;
+in vec2 gs_nodeTexCoord;
 
 out vec4 FragColor;
-
-in vec3 position;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
 uniform vec3 cameraPosition;
+uniform vec3 nodePosition;
 
 uniform samplerCube irradianceMap;
-
-uniform float TerrainLength;
-uniform float TerrainWidth;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
@@ -311,7 +310,7 @@ uniform float roughnessScale;
 
 vec3 colorMapping(float roughness);
 
-vec3 getFogColor(vec3 albedo);
+vec3 getFogColor(vec3 albedo,vec3 position);
 float getFogFactor(float dist);
 
 const float zfar = 1000;
@@ -329,7 +328,7 @@ void main(){
 	d = min(d, gs_edgeDist.z);
 
 	// input lighting data
-	vec3 V = cameraPosition - position;
+	vec3 V = cameraPosition - nodePosition;
 
 	float LineWidth = 0.75;
 	float mixVal = smoothstep(LineWidth - 1, LineWidth + 1, d);
@@ -344,15 +343,18 @@ void main(){
 
 vec3 colorMapping(float roughness){
 //TODO use roughness
-	vec3 normal = texture(normalMap, gs_terrainTexCoord).xyz;
-	vec3 albedo = pow(texture(albedoMap, gs_terrainTexCoord).rgb, vec3(2.2));
+	vec3 normal = texture(normalMap, gs_nodeTexCoord).xyz;
+	vec3 albedo = pow(texture(albedoMap, gs_nodeTexCoord).rgb, vec3(2.2));
 
 	vec3 irradiance = texture(irradianceMap, normal).rgb;
     vec3 diffuse    = irradiance * albedo;
+	vec3 position;
+	position.y = texture(TexTerrainHeight, gs_terrainTexCoord).y;
+	position.xz = nodePosition.xz;
 
 	vec3 color;
 	if(isFog == 1.0){
-		color = getFogColor(diffuse);
+		color = getFogColor(diffuse,position);
 	} else {
 		color = diffuse;
 	}
@@ -366,7 +368,7 @@ vec3 colorMapping(float roughness){
 	
 }
 
-vec3 getFogColor(vec3 albedo){
+vec3 getFogColor(vec3 albedo,vec3 position){
 	float dist = length(cameraPosition - position);
 	float fogFactor = getFogFactor(dist);
 	return mix(fogColor, albedo, clamp(fogFactor, 0, 1));

@@ -30,6 +30,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationAlbedoMap;
     private int locationNormalMap;
     private int locationRoughness;
+    private int locationNodePosition;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -52,6 +53,8 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationScaleNegz = super.getUniformLocation("scaleNegz");
         locationScalePosx = super.getUniformLocation("scalePosx");
         locationScalePosz = super.getUniformLocation("scalePosz");
+
+        locationNodePosition = super.getUniformLocation("nodePosition");
 
         locationTerrainLength = super.getUniformLocation("TerrainLength");
         locationTerrainWidth = super.getUniformLocation("TerrainWidth");
@@ -81,6 +84,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     public void loadFogColor(OLVector3f fogColor) {
         super.load3DVector(locationFogColor, fogColor);
+    }
+    public void loadNodePosition(OLVector3f nodePosition) {
+        super.load3DVector(locationNodePosition, nodePosition);
     }
 
     public void loadToggleWireframe(boolean wire) {
