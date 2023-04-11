@@ -4,6 +4,7 @@ import app.audio.Audio;
 import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.renderer.draw.EditorRenderer;
+import app.utilities.FileUtil;
 import app.utilities.logger.Logger;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -11,7 +12,6 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
-import java.nio.file.Paths;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -60,7 +60,8 @@ public class GlfwWindow {
             throw new RuntimeException("Failed to create GLFW window");
 
         //window icon
-        ResourceManager.setWindowGLFWIcon(Paths.get("src\\main\\resources\\editor\\icons\\icon-window.png"), window);
+        ResourceManager.setWindowGLFWIcon(FileUtil.absolutePath("editor\\icons\\icon-window.png"), window);
+
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
