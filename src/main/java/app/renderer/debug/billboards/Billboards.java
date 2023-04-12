@@ -27,7 +27,7 @@ public class Billboards {
     };
 
     public Billboards(OpenGLObjects openGLObjects, int imageIcon) {
-        shaderBillboards = new ShaderBillboards(Paths.get("resources\\shaders\\debug\\billboards.glsl"));
+        shaderBillboards = new ShaderBillboards(Paths.get("src\\main\\resources\\shaders\\debug\\billboards.glsl"));
         shaderBillboards.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         shaderBillboards.start();
         shaderBillboards.connectTextureUnits();

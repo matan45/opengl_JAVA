@@ -58,7 +58,7 @@ public class TerrainQuadtreeRenderer {
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera, SkyBox skyBox) {
 
         this.textures = textures;
-        shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("resources\\shaders\\terrain\\quadtree.glsl"));
+        shaderTerrainQuadtree = new ShaderTerrainQuadtree(Paths.get("src\\main\\resources\\shaders\\terrain\\quadtree.glsl"));
         shaderTerrainQuadtree.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);

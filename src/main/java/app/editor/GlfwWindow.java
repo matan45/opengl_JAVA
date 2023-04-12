@@ -61,7 +61,7 @@ public class GlfwWindow {
             throw new RuntimeException("Failed to create GLFW window");
 
         //window icon
-        ResourceManager.setWindowGLFWIcon(Path.of("resources\\editor\\icons\\icon-window.png"), window);
+        ResourceManager.setWindowGLFWIcon(Path.of("src\\main\\resources\\editor\\icons\\icon-window.png"), window);
 
 
         // Get the thread stack and push a new frame

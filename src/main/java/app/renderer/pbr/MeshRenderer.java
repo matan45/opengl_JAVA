@@ -38,7 +38,7 @@ public class MeshRenderer {
     public MeshRenderer(Camera camera, OpenGLObjects openGLObjects, Textures textures, SkyBox skyBox, LightHandler lightHandler) {
         this.camera = camera;
         this.openGLObjects = openGLObjects;
-        shaderMesh = new ShaderMesh(Paths.get("resources\\shaders\\pbr\\pbrMesh.glsl"));
+        shaderMesh = new ShaderMesh(Paths.get("src\\main\\resources\\shaders\\pbr\\pbrMesh.glsl"));
         shaderMesh.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         material = new Material(textures);
 
