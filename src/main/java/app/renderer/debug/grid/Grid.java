@@ -34,7 +34,7 @@ public class Grid {
 
     public Grid(OpenGLObjects openGLObjects, Framebuffer framebuffer, Camera camera) {
         this.camera = camera;
-        shaderGrid = new ShaderGrid(Paths.get("src\\main\\resources\\shaders\\debug\\grid.glsl"));
+        shaderGrid = new ShaderGrid(Paths.get("resources\\shaders\\debug\\grid.glsl"));
         shaderGrid.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
         vaoModel = openGLObjects.loadToVAOVec2(quadData);
         glViewport(0, 0, framebuffer.getWidth(), framebuffer.getHeight());

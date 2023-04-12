@@ -25,8 +25,8 @@ public class TerrainMaterial implements Serializable {
         albedoFileName = "";
         normalFileName = "";
 
-        defaultAlbedoMap = textures.loadTexture(Path.of("C:\\matan\\opengl_JAVA\\src\\main\\resources\\material\\terrainDefaltMaterial\\albedo.jpg"));
-        defaultNormalMap = textures.loadTexture(Path.of("C:\\matan\\opengl_JAVA\\src\\main\\resources\\material\\terrainDefaltMaterial\\normal.png"));
+        defaultAlbedoMap = textures.loadTexture(Path.of("resources\\material\\terrainDefaltMaterial\\albedo.jpg"));
+        defaultNormalMap = textures.loadTexture(Path.of("resources\\material\\terrainDefaltMaterial\\normal.png"));
 
         albedoMap = defaultAlbedoMap;
         normalMap = defaultNormalMap;

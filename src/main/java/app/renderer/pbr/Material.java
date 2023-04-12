@@ -52,11 +52,11 @@ public class Material implements Serializable {
         aoFileName = "";
         emissiveFileName = "";
 
-        defaultAlbedoMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\albedo.png"));
-        defaultNormalMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\normal.png"));
-        defaultMetallicMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\metallic.png"));
-        defaultRoughnessMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\roughness.png"));
-        defaultAoMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\ao.png"));
+        defaultAlbedoMap = textures.loadTexture(Path.of("resources\\material\\defaultMaterial\\albedo.png"));
+        defaultNormalMap = textures.loadTexture(Path.of("resources\\material\\defaultMaterial\\normal.png"));
+        defaultMetallicMap = textures.loadTexture(Path.of("resources\\material\\defaultMaterial\\metallic.png"));
+        defaultRoughnessMap = textures.loadTexture(Path.of("resources\\material\\defaultMaterial\\roughness.png"));
+        defaultAoMap = textures.loadTexture(Path.of("resources\\material\\defaultMaterial\\ao.png"));
 
         albedoMap = defaultAlbedoMap;
         normalMap = defaultNormalMap;

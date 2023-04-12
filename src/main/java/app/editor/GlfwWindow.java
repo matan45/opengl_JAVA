@@ -12,6 +12,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -60,7 +61,7 @@ public class GlfwWindow {
             throw new RuntimeException("Failed to create GLFW window");
 
         //window icon
-        ResourceManager.setWindowGLFWIcon(FileUtil.absolutePath("editor\\icons\\icon-window.png"), window);
+        ResourceManager.setWindowGLFWIcon(Path.of("resources\\editor\\icons\\icon-window.png"), window);
 
 
         // Get the thread stack and push a new frame

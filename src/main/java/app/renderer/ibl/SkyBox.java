@@ -199,10 +199,10 @@ public class SkyBox {
         backgroundShader = new ShaderCubeMap(Paths.get("src\\main\\resources\\shaders\\skybox\\background.glsl"));
         backgroundShader.bindBlockBuffer(UniformsNames.MATRICES.getUniformsName(), 0);
 
-        equiangularToCubeShader = new ShaderIrradiance(Paths.get("src\\main\\resources\\shaders\\skybox\\cubmap.glsl"));
-        irradianceShader = new ShaderIrradianceConvolution(Paths.get("src\\main\\resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
-        shaderbrdf = new Shaderbrdf(Paths.get("src\\main\\resources\\shaders\\skybox\\brdf.glsl"));
-        shaderPreFilter = new ShaderPreFilter(Paths.get("src\\main\\resources\\shaders\\skybox\\prefilter.glsl"));
+        equiangularToCubeShader = new ShaderIrradiance(Paths.get("resources\\shaders\\skybox\\cubmap.glsl"));
+        irradianceShader = new ShaderIrradianceConvolution(Paths.get("resources\\shaders\\skybox\\equirectangular_convolution.glsl"));
+        shaderbrdf = new Shaderbrdf(Paths.get("resources\\shaders\\skybox\\brdf.glsl"));
+        shaderPreFilter = new ShaderPreFilter(Paths.get("resources\\shaders\\skybox\\prefilter.glsl"));
 
         cubeVAO = openGLObjects.loadToVAO(cubeVertices, cubeTextureCoords, cubeNormals);
         quadVAO = openGLObjects.loadToVAO(quadVertices, quadTextureCoords);
