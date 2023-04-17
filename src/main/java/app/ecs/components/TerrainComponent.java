@@ -108,8 +108,7 @@ public class TerrainComponent extends Component {
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
             Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg");
-            if (materialPath.isPresent())
-                return materialPath.get().toAbsolutePath().toString();
+            return materialPath.orElse(Path.of("")).toString();
         }
         return "";
     }

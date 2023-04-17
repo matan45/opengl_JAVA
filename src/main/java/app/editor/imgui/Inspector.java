@@ -65,6 +65,8 @@ public class Inspector implements ImguiLayer {
                     entity.addComponent(new SkyBoxComponent(entity));
                 if (ImGui.menuItem("Mesh"))
                     entity.addComponent(new MeshComponent(entity));
+                if (ImGui.menuItem("Particle"))
+                    entity.addComponent(new ParticleComponent(entity));
                 if (ImGui.menuItem("Terrain"))
                     entity.addComponent(new TerrainComponent(entity));
                 if (ImGui.menuItem("Fog"))

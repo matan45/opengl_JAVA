@@ -8,6 +8,7 @@ import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
+import app.renderer.particle.ParticleRendererHandler;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
@@ -26,6 +27,7 @@ public class EditorRenderer {
     private static LightHandler lightHandler;
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
+    private static ParticleRendererHandler particleRenderer;
     private static Grid grid;
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
 
@@ -51,6 +53,7 @@ public class EditorRenderer {
 
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
+        particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
     }
 
     public static void draw() {
@@ -106,6 +109,10 @@ public class EditorRenderer {
 
     public static MeshRendererHandler getMeshRenderer() {
         return meshRenderer;
+    }
+
+    public static ParticleRendererHandler getParticleRenderer() {
+        return particleRenderer;
     }
 
     public static LightHandler getLightHandler() {
