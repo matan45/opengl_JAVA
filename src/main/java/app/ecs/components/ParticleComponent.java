@@ -71,6 +71,51 @@ public class ParticleComponent extends Component {
 
         ImGui.columns(1);
 
+        ImGui.pushID("particleMetallic");
+        if (ImGui.button("Metallic"))
+            particleMaterial.setMetallic(0.1f);
+        ImGui.sameLine();
+        float[] constantValueMetallic = {particleMaterial.getMetallic()};
+        ImGui.dragFloat("##Y", constantValueMetallic, 0.01f,0.0f,1.0f);
+        particleMaterial.setMetallic(constantValueMetallic[0]);
+        ImGui.popID();
+
+        ImGui.pushID("particleRoughness");
+        if (ImGui.button("Roughness"))
+            particleMaterial.setRoughness(0.1f);
+        ImGui.sameLine();
+        float[] constantValueRoughness = { particleMaterial.getRoughness()};
+        ImGui.dragFloat("##Y", constantValueRoughness, 0.01f,0.0f,1.0f);
+        particleMaterial.setRoughness(constantValueRoughness[0]);
+        ImGui.popID();
+
+        ImGui.pushID("particleAo");
+        if (ImGui.button("Ao"))
+            particleMaterial.setAo(0.1f);
+        ImGui.sameLine();
+        float[] constantValueAo = {particleMaterial.getAo()};
+        ImGui.dragFloat("##Y", constantValueAo, 0.01f,0.0f,1.0f);
+        particleMaterial.setAo(constantValueAo[0]);
+        ImGui.popID();
+
+        ImGui.pushID("particleEmissive");
+        if (ImGui.button("Emissive"))
+            particleMaterial.setEmissive(0.1f);
+        ImGui.sameLine();
+        float[] constantValueEmissive = {particleMaterial.getEmissive()};
+        ImGui.dragFloat("##Y", constantValueEmissive, 0.01f,0.0f,1.0f);
+        particleMaterial.setEmissive(constantValueEmissive[0]);
+        ImGui.popID();
+
+        ImGui.pushID("particleAmount");
+        if (ImGui.button("Amount"))
+            particleMaterial.setAmount(5f);
+        ImGui.sameLine();
+        float[] constantValueAmount = {particleMaterial.getAmount()};
+        ImGui.dragFloat("##Y", constantValueAmount, 1f,0.0f,100.0f);
+        particleMaterial.setAmount(constantValueAmount[0]);
+        ImGui.popID();
+
     }
 
     private void init(boolean useTransform) {

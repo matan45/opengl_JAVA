@@ -24,6 +24,7 @@ public class ParticleMaterial {
     private float roughness;
     private float ao;
     private float emissive;
+    private float amount;
 
     public ParticleMaterial(Textures textures) {
         this.textures = textures;
@@ -32,6 +33,8 @@ public class ParticleMaterial {
 
         albedoFileName = "";
         normalFileName = "";
+
+        amount = 5f;
 
         defaultAlbedoMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\albedo.png"));
         defaultNormalMap = textures.loadTexture(Path.of("src\\main\\resources\\material\\defaultMaterial\\normal.png"));
@@ -124,4 +127,11 @@ public class ParticleMaterial {
         return normalMapPath;
     }
 
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 }
