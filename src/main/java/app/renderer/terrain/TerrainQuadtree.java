@@ -1,5 +1,6 @@
 package app.renderer.terrain;
 
+import app.math.OLVector3f;
 import app.math.components.Camera;
 
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
@@ -221,6 +222,7 @@ public class TerrainQuadtree {
         shaderTerrainQuadtree.loadScaleNegz(node.scaleNegz);
         shaderTerrainQuadtree.loadScalePosx(node.scalePosx);
         shaderTerrainQuadtree.loadScalePosz(node.scalePosz);
+        shaderTerrainQuadtree.loadNodePosition(new OLVector3f(node.originX, node.originY, node.originZ));
 
         glDrawElements(GL_PATCHES, 4, GL_UNSIGNED_INT, 0);
     }

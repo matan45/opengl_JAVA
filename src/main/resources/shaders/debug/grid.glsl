@@ -72,10 +72,11 @@ void main() {
     vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
 
     gl_FragDepth = computeDepth(fragPos3D);
+    //gl_FragDepth = 1.0; //disable depth test
 
     float linearDepth = computeLinearDepth(fragPos3D);
     float fading = max(0, (0.5 - linearDepth));
 
-    FragColor = (grid(fragPos3D * 0.01, 30, true) + grid(fragPos3D * 0.01, 30, true))* float(t > 0); // adding multiple resolution for the grid
+    FragColor = (grid(fragPos3D * 0.01, 10, true) + grid(fragPos3D * 0.01, 10, true))* float(t > 0); // adding multiple resolution for the grid
     FragColor.a *= fading;
 }

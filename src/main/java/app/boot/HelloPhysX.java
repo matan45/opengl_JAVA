@@ -57,6 +57,8 @@ public class HelloPhysX {
         groundShape.setSimulationFilterData(tmpFilterData);
         ground.attachShape(groundShape);
         scene.addActor(ground);
+        /*PxCooking cooking;
+        cooking.createHeightField();*/
 
         // create a small dynamic box with size 1x1x1, which will fall on the ground
         tmpVec.setX(0f); tmpVec.setY(5f); tmpVec.setZ(0f);

@@ -88,10 +88,6 @@ public class Camera {
         return rotation;
     }
 
-    public OLMatrix4f getViewMatrix() {
-        return viewMatrix;
-    }
-
     public OLMatrix4f getProjectionMatrix() {
         return projectionMatrix;
     }

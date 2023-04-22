@@ -28,7 +28,7 @@ public class SkyBoxComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("HDR"))
-            path = OpenFileDialog.openFile("hdr").orElse(Path.of(prePath)).toString();
+            path = OpenFileDialog.openFile("hdr","HDR").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;

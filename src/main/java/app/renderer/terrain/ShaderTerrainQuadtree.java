@@ -27,6 +27,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationFogColor;
     private int locationIsFog;
     private int locationIrradianceMap;
+    private int locationAlbedoMap;
+    private int locationNormalMap;
+    private int locationNodePosition;
 
     protected ShaderTerrainQuadtree(Path path) {
         super(path);
@@ -50,6 +53,8 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationScalePosx = super.getUniformLocation("scalePosx");
         locationScalePosz = super.getUniformLocation("scalePosz");
 
+        locationNodePosition = super.getUniformLocation("nodePosition");
+
         locationTerrainLength = super.getUniformLocation("TerrainLength");
         locationTerrainWidth = super.getUniformLocation("TerrainWidth");
         locationTerrainOrigin = super.getUniformLocation("TerrainOrigin");
@@ -57,6 +62,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
         locationTerrainHeightOffset = super.getUniformLocation("TerrainHeightOffset");
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
+
+        locationAlbedoMap = super.getUniformLocation("albedoMap");
+        locationNormalMap = super.getUniformLocation("normalMap");
 
     }
 
@@ -75,6 +83,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     public void loadFogColor(OLVector3f fogColor) {
         super.load3DVector(locationFogColor, fogColor);
     }
+    public void loadNodePosition(OLVector3f nodePosition) {
+        super.load3DVector(locationNodePosition, nodePosition);
+    }
 
     public void loadToggleWireframe(boolean wire) {
         super.loadBoolean(locationToggleWireframe, wire);
@@ -84,6 +95,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         super.loadInt(locationTexTerrainHeight, 0);
         super.loadInt(locationIrradianceMap, 1);
+
+        super.loadInt(locationAlbedoMap, 2);
+        super.loadInt(locationNormalMap, 3);
     }
 
     public void loadViewPort(OLVector2f viewPort) {
