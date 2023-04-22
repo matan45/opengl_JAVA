@@ -48,7 +48,7 @@ public class SoundEffectComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Music"))
-            path = OpenFileDialog.openFile("ogg").orElse(Path.of(prePath)).toString();
+            path = OpenFileDialog.openFile("ogg","Music").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;

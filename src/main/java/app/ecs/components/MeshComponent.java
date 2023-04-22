@@ -43,7 +43,7 @@ public class MeshComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Mesh"))
-            path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName()).orElse(Path.of(prePath)).toString();
+            path = OpenFileDialog.openFile(FileExtension.MESH_EXTENSION.getFileName(),"Mesh").orElse(Path.of(prePath)).toString();
 
 
         if (!path.isEmpty() && !prePath.equals(path))
@@ -130,7 +130,7 @@ public class MeshComponent extends Component {
 
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
-            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg");
+            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg","Texture");
             return materialPath.orElse(Path.of("")).toString();
         }
         return "";

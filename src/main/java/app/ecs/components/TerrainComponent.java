@@ -32,7 +32,7 @@ public class TerrainComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Height Map"))
-            path = OpenFileDialog.openFile("png,jpg").orElse(Path.of(prePath)).toString();
+            path = OpenFileDialog.openFile("png,jpg","Texture").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
@@ -107,7 +107,7 @@ public class TerrainComponent extends Component {
 
     private String materialPath(String buttonName) {
         if (ImGui.button(buttonName)) {
-            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg");
+            Optional<Path> materialPath = OpenFileDialog.openFile("png,tga,jpg","Texture");
             return materialPath.orElse(Path.of("")).toString();
         }
         return "";

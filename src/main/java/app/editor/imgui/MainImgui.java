@@ -69,9 +69,9 @@ public class MainImgui implements ImguiLayer {
                 if (ImGui.menuItem(FontAwesomeIcons.PLUS + " New Scene", "CTRL+N", false)) {
                     OpenFileDialog.openFolder().ifPresent(Serializable::saveEmptyScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.FOLDER_OPEN + " Open Scene", "CTRL+O", false)) {
-                    OpenFileDialog.openFile(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::loadScene);
+                    OpenFileDialog.openFile(FileExtension.SCENE_EXTENSION.getFileName(),"Scene").ifPresent(Serializable::loadScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.SAVE + " Save Scene", "CTRL+S", false)) {
-                    OpenFileDialog.save(FileExtension.SCENE_EXTENSION.getFileName()).ifPresent(Serializable::saveScene);
+                    OpenFileDialog.save(FileExtension.SCENE_EXTENSION.getFileName(),"Scene").ifPresent(Serializable::saveScene);
                 } else if (ImGui.menuItem(FontAwesomeIcons.OUT_DENT + " Exit", "EXIT", false)) {
                     closeWindow.set(false);
                 }
@@ -89,7 +89,7 @@ public class MainImgui implements ImguiLayer {
             if (ImGui.beginMenu(FontAwesomeIcons.TOOLS + " Import")) {
                 if (ImGui.menuItem(FontAwesomeIcons.FILE_IMPORT + " Meshes", null, false)) {
                     //TODO thread pool
-                    OpenFileDialog.openMulti("obj,fbx,dae,gltf").parallelStream().forEach(path -> {
+                    OpenFileDialog.openMulti("obj,fbx,dae,gltf","Meshes").parallelStream().forEach(path -> {
                         Mesh[] meshes = ResourceManager.loadMeshesFromFile(path);
                         for (Mesh mesh : meshes)
                             Serializable.saveMesh(mesh, path);

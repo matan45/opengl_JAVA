@@ -41,7 +41,7 @@ public class MusicComponent extends Component {
     @Override
     public void imguiDraw() {
         if (ImGui.button("Music"))
-            path = OpenFileDialog.openFile("wav").orElse(Path.of(prePath)).toString();
+            path = OpenFileDialog.openFile("wav","Music").orElse(Path.of(prePath)).toString();
 
         if (!path.isEmpty() && !prePath.equals(path)) {
             prePath = path;
