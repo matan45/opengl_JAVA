@@ -7,9 +7,7 @@ public class FontAwesomeIcons {
     protected static final short[] ICON_RANGE = new short[]{ICON_RANGE_MIN, ICON_RANGE_MAX, 0};
 
     public static final String CAMERA = "\uf030";
-
     public static final String FILE = "\uf15b";
-
     public static final String FILE_AUDIO = "\uf1c7";
     public static final String FILE_IMAGE = "\uf1c5";
     public static final String FILE_IMPORT = "\uf56f";

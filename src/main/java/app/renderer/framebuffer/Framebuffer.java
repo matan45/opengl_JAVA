@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public record Framebuffer(int width, int height, Textures textures) {
 
-    public int createFrameRenderBuffer() {
+    public int createColorAttachmentBuffer() {
         // Generate framebuffer
         int fboID = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fboID);
@@ -22,6 +22,22 @@ public record Framebuffer(int width, int height, Textures textures) {
         glBindRenderbuffer(GL_RENDERBUFFER, rboID);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, width, height);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID);
+
+        assert glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE : "Error: Framebuffer is not complete";
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        return fboID;
+    }
+
+    public int createDepthAttachmentBuffer(){
+        // Create renderers store the depth info
+        int fboID = glGenRenderbuffers();
+        int texture = textures.frameBufferTexture(width, height);
+        glBindRenderbuffer(GL_RENDERBUFFER, fboID);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                texture, 0);
 
         assert glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE : "Error: Framebuffer is not complete";
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
