@@ -29,8 +29,7 @@ public record Framebuffer(int width, int height, Textures textures) {
         return fboID;
     }
 
-    public int createDepthAttachmentBuffer(){
-        // Create renderers store the depth info
+    public int createDepthAttachmentBuffer() {
         int fboID = glGenRenderbuffers();
         int texture = textures.frameBufferTexture(width, height);
         glBindRenderbuffer(GL_RENDERBUFFER, fboID);

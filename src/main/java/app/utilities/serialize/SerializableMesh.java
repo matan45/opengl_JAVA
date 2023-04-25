@@ -15,8 +15,9 @@ class SerializableMesh {
         try (FileOutputStream fileOut = new FileOutputStream(newPath)) {
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
             objectOut.writeObject(mesh);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            objectOut.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

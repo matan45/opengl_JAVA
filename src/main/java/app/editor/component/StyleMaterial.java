@@ -93,8 +93,9 @@ public class StyleMaterial {
     }
 
     public void staveToFile(Path filePath) {
-        try (FileWriter myWriter = new FileWriter(filePath.toAbsolutePath().toString())) {
-            myWriter.write(createJsonObject());
+        try (FileOutputStream writer = new FileOutputStream(filePath.toAbsolutePath().toString())) {
+            writer.write(createJsonObject().getBytes());
+            writer.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
