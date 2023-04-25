@@ -2,10 +2,7 @@ package app.editor.component;
 
 import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,9 +92,12 @@ public class StyleMaterial {
         this.styleList = styleList;
     }
 
-
-    public String createJsonObject() {
-        return new Gson().toJson(styleList.stream().toList());
+    public void staveToFile(Path filePath) {
+        try (FileWriter myWriter = new FileWriter(filePath.toAbsolutePath().toString())) {
+            myWriter.write(createJsonObject());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createMaterialObject(Path filePath) {
@@ -109,8 +109,10 @@ public class StyleMaterial {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
 
-
+    private String createJsonObject() {
+        return new Gson().toJson(styleList.stream().toList());
     }
 
 }
