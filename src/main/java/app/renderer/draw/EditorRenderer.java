@@ -44,7 +44,7 @@ public class EditorRenderer {
         openGLObjects = new OpenGLObjects();
         editorCamera = new Camera(openGLObjects);
         framebuffer = new Framebuffer(1920, 1080, textures);
-        fboID = framebuffer.createFrameRenderBuffer();
+        fboID = framebuffer.createColorAttachmentBuffer();
 
         skyBox = new SkyBox(textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, framebuffer, editorCamera);

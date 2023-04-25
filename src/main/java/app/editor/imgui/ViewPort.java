@@ -17,6 +17,7 @@ import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseCursor;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
@@ -86,7 +87,6 @@ public class ViewPort implements ImguiLayer {
     @Override
     public void render(float dt) {
         if (ImGui.begin("Scene View", ImGuiWindowFlags.MenuBar)) {
-            ImGui.pushStyleColor(ImGuiCol.Button, 0, 0, 0, 255);
             if (ImGui.beginMenuBar()) {
                 if (ImGui.imageButton(playIcon, 30, 20))
                     LogInfo.println("not implement");
@@ -108,9 +108,8 @@ public class ViewPort implements ImguiLayer {
                     isGrid = !isGrid;
                     EditorRenderer.getGrid().setRender(isGrid);
                 }
+                ImGui.endMenuBar();
             }
-            ImGui.endMenuBar();
-            ImGui.popStyleColor();
 
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
