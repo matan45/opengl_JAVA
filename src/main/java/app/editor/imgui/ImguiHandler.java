@@ -1,5 +1,6 @@
 package app.editor.imgui;
 
+import app.editor.component.StyleMaterial;
 import app.utilities.resource.ResourceManager;
 import imgui.*;
 import imgui.extension.imguizmo.ImGuizmo;
@@ -9,6 +10,8 @@ import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImguiHandler {
     private final ImGuiImplGlfw imGuiGlfw;
@@ -123,9 +126,18 @@ public class ImguiHandler {
         style.setColor(ImGuiCol.NavWindowingHighlight, 1.00f, 1.00f, 1.00f, 0.70f);
         style.setColor(ImGuiCol.NavWindowingDimBg, 0.80f, 0.80f, 0.80f, 0.20f);
         style.setColor(ImGuiCol.ModalWindowDimBg, 0.80f, 0.80f, 0.80f, 0.35f);
-        style.setGrabRounding(2.3f);
-        style.setFrameRounding(2.3f);
 
+       /* StyleMaterial styleMaterial = new StyleMaterial();
+        List<StyleMaterial.Style> styleList = new ArrayList<>();
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleList.add(new StyleMaterial.Style(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f));
+        styleMaterial.setStyleList(styleList);
+        System.out.println(styleMaterial);*/
         //TODO: read from a file the values
 
     }
