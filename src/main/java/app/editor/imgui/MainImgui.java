@@ -27,7 +27,6 @@ public class MainImgui implements ImguiLayer {
     private static final String DOCK_SPACE = "Dockspace";
     private final ImBoolean cameraWindowBoolean;
     private final CameraWindow cameraEditor;
-
     private final StyleWindow styleWindow;
     private final ImBoolean styleWindowBoolean;
 
@@ -42,6 +41,7 @@ public class MainImgui implements ImguiLayer {
         styleWindow = new StyleWindow();
         windowFlags |= ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar;
         windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.MenuBar;
+        styleWindow.theme();
     }
 
     @Override
