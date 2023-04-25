@@ -1,7 +1,6 @@
 package app.editor.component;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -9,9 +8,8 @@ import java.io.FileReader;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class StyleMaterial {
     private List<Style> styleList;
@@ -99,26 +97,15 @@ public class StyleMaterial {
 
 
     public String createJsonObject() {
-        return new Gson().toJson(
-                styleList.stream().map(s -> {
-                    Map<String, Object> jsonObject = new HashMap<>();
-                    jsonObject.put("StyleName", s.styleName);
-                    jsonObject.put("StyleFlag", s.styleFlag);
-                    jsonObject.put("Red", s.r);
-                    jsonObject.put("Green", s.g);
-                    jsonObject.put("Blue", s.b);
-                    jsonObject.put("Alpha", s.a);
-                    return jsonObject;
-                }).toList()
-        );
+        return new Gson().toJson(styleList.stream().toList());
     }
 
     public void createMaterialObject(Path filePath) {
-        BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(filePath.toAbsolutePath().toString()));
-            Gson gson = new Gson();
-            JsonArray json = gson.fromJson(bufferedReader, JsonArray.class);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath.toAbsolutePath().toString()));
+            Style[] styles = new Gson().fromJson(bufferedReader, Style[].class);
+            styleList = Arrays.stream(styles).toList();
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
