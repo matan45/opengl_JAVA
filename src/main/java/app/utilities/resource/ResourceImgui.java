@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 class ResourceImgui {
 
-    protected byte[] loadAsByte(Path path) {
+    public byte[] loadAsByte(Path path) {
         try {
             return Files.readAllBytes(path.toAbsolutePath());
         } catch (IOException e) {

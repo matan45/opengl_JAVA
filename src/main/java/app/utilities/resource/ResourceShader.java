@@ -11,13 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ResourceShader {
-    StringBuilder shaderSource = new StringBuilder();
-    static final String TYPE = "#type ";
-    List<ShaderModel> shaderModelList = new ArrayList<>();
+    private static final String TYPE = "#type ";
 
-    protected List<ShaderModel> readShaderFile(Path path) {
-        shaderSource.setLength(0);
-        shaderModelList.clear();
+    public List<ShaderModel> readShaderFile(Path path) {
+        StringBuilder shaderSource = new StringBuilder();
+        List<ShaderModel> shaderModelList = new ArrayList<>();
         ShaderType type = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toAbsolutePath().toString()))) {
             String line;

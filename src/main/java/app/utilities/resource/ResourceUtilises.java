@@ -18,7 +18,7 @@ class ResourceUtilises {
     private ResourceUtilises() {
     }
 
-    protected static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
+    public static ByteBuffer ioResourceToByteBuffer(String resource) throws IOException {
         ByteBuffer buffer;
         int bufferSize = 10 * 1024;
         Path path = Paths.get(resource);

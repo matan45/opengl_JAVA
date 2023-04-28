@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 class ResourceAudio {
 
-    protected ShortBuffer loadSourceFromFile(Path path, STBVorbisInfo info) {
+    public ShortBuffer loadSourceFromFile(Path path, STBVorbisInfo info) {
         ByteBuffer vorbis;
         try {
             vorbis = ResourceUtilises.ioResourceToByteBuffer(path.toAbsolutePath().toString());

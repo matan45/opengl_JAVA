@@ -24,11 +24,11 @@ class ResourceMesh {
             | aiProcess_Triangulate | aiProcess_FixInfacingNormals
             | aiProcessPreset_TargetRealtime_MaxQuality;
 
-    protected Mesh readMeshFile(Path path) {
+    public Mesh readMeshFile(Path path) {
         return loadMeshItem(path.toAbsolutePath().toString());
     }
 
-    protected Mesh[] importMeshesFile(Path path) {
+    public Mesh[] importMeshesFile(Path path) {
         return loadMeshesItem(path.toAbsolutePath().toString());
     }
 
