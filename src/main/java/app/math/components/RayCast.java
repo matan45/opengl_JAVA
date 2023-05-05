@@ -14,7 +14,7 @@ public class RayCast {
         float y = (float) (1.0 - 2.0 * ImGui.getMousePos().y / height);
         OLVector4f clipCords = new OLVector4f(x, y, -1.0f, 1.0f);
         OLVector4f eyeCords = toEyeCords(clipCords);
-        return toWorldCords(eyeCords);
+        return toWorldCords(eyeCords).normalize();
     }
 
     private static OLVector3f toWorldCords(OLVector4f eyeCords) {
