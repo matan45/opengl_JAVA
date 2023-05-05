@@ -126,7 +126,7 @@ public class ViewPort implements ImguiLayer {
 
                 if (80 < ImGui.getMousePos().y && ImGui.getMousePos().y < windowSize.y) {
                     if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_1)) {
-                        LogInfo.println(RayCast.calculateMouseRay().toString());
+                        LogInfo.println(RayCast.calculateMouseRay(windowSize.x, windowSize.y - 80).toString());
                     }
                 }
             }
