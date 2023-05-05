@@ -2,6 +2,7 @@ package app.renderer.draw;
 
 import app.audio.Audio;
 import app.math.components.Camera;
+import app.math.components.RayCast;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
 import app.renderer.debug.grid.Grid;
@@ -43,6 +44,7 @@ public class EditorRenderer {
         textures = new Textures();
         openGLObjects = new OpenGLObjects();
         editorCamera = new Camera(openGLObjects);
+        RayCast.camera = editorCamera;
         framebuffer = new Framebuffer(1920, 1080, textures);
         fboID = framebuffer.createColorAttachmentBuffer();
 

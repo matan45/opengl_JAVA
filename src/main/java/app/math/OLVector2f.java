@@ -75,9 +75,9 @@ public class OLVector2f implements Serializable {
     }
 
     public OLVector2f normalize() {
-        float invLength = length();
-        this.x = x * invLength;
-        this.y = y * invLength;
+        float scalar = length();
+        x /= scalar;
+        y /= scalar;
         return this;
     }
 
