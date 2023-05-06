@@ -28,8 +28,4 @@ public class RayCast {
         OLVector4f eyeCords = invertedProjection.transform(clipCords);
         return new OLVector4f(eyeCords.x, eyeCords.y, -1.0f, 0f);
     }
-
-    public static OLVector3f endPointRay(OLVector3f direction) {
-        return direction.mul(RAY_RANGE).add(camera.getPosition());
-    }
 }
