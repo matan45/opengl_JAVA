@@ -21,8 +21,7 @@ import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL41.glShaderBinary;
 import static org.lwjgl.opengl.GL46.GL_SHADER_BINARY_FORMAT_SPIR_V;
-import static org.lwjgl.util.shaderc.Shaderc.shaderc_compilation_status_success;
-import static org.lwjgl.util.shaderc.Shaderc.shaderc_glsl_vertex_shader;
+import static org.lwjgl.util.shaderc.Shaderc.*;
 
 public abstract class ShaderProgram {
     private final int programID;
@@ -34,8 +33,10 @@ public abstract class ShaderProgram {
     protected ShaderProgram(Path path) {
         shadersID = new HashSet<>();
         options = Shaderc.shaderc_compile_options_initialize();
-        Shaderc.shaderc_compile_options_set_source_language(options, Shaderc.shaderc_source_language_glsl);
+        Shaderc.shaderc_compile_options_set_source_language(options, shaderc_source_language_glsl);
         Shaderc.shaderc_compile_options_set_warnings_as_errors(options);
+        Shaderc.shaderc_compile_options_set_auto_bind_uniforms(options, false);
+        Shaderc.shaderc_compile_options_set_optimization_level(options, shaderc_optimization_level_performance);
         compiler = Shaderc.shaderc_compiler_initialize();
 
         loadShader(path);
@@ -121,33 +122,30 @@ public abstract class ShaderProgram {
                     options);
 
             long status = Shaderc.shaderc_result_get_compilation_status(result);
+            handleFailStatus(status, result, tempShader);
 
-            if (status != shaderc_compilation_status_success) {
-                System.err.println(Shaderc.shaderc_result_get_error_message(result));
-                System.err.println("Could not compile shader " + tempShader.type());
-                long warnings = Shaderc.shaderc_result_get_num_warnings(result);
-                long errors = Shaderc.shaderc_result_get_num_errors(result);
-                System.err.println("Number of  warnings " + warnings);
-                System.err.println("Number of errors" + errors);
-                Shaderc.shaderc_compile_options_release(options);
-                Shaderc.shaderc_result_release(result);
-                Shaderc.shaderc_compiler_release(compiler);
-                System.exit(-1);
-            }
             IntBuffer shaders = IntBuffer.allocate(1);
             shaders.put(shaderID);
             shaders.rewind();
             glShaderBinary(shaders, GL_SHADER_BINARY_FORMAT_SPIR_V, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
             Shaderc.shaderc_result_release(result);
 
-            /*glShaderSource(shaderID, tempShader.shaderSource());
-            glCompileShader(shaderID);
-            if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-                System.out.println(glGetShaderInfoLog(shaderID, 512));
-                System.err.println("Could not compile shader " + tempShader.type());
-                System.exit(-1);
-            }*/
             shadersID.add(shaderID);
+        }
+    }
+
+    private void handleFailStatus(long status, long result, ShaderModel tempShader) {
+        if (status != shaderc_compilation_status_success) {
+            System.err.println(Shaderc.shaderc_result_get_error_message(result));
+            System.err.println("Could not compile shader " + tempShader.type());
+            long warnings = Shaderc.shaderc_result_get_num_warnings(result);
+            long errors = Shaderc.shaderc_result_get_num_errors(result);
+            System.err.println("Number of warnings " + warnings);
+            System.err.println("Number of errors" + errors);
+            Shaderc.shaderc_compile_options_release(options);
+            Shaderc.shaderc_result_release(result);
+            Shaderc.shaderc_compiler_release(compiler);
+            System.exit(-1);
         }
     }
 
