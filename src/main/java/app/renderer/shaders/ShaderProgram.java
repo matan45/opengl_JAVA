@@ -6,16 +6,22 @@ import app.math.OLVector3f;
 import app.utilities.logger.LogError;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.shaderc.Shaderc;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
+import static org.lwjgl.opengl.GL41.glShaderBinary;
+import static org.lwjgl.opengl.GL46.GL_SHADER_BINARY_FORMAT_SPIR_V;
+import static org.lwjgl.util.shaderc.Shaderc.shaderc_glsl_vertex_shader;
 
 public abstract class ShaderProgram {
     private final int programID;
@@ -98,6 +104,32 @@ public abstract class ShaderProgram {
 
         for (ShaderModel tempShader : shaderModels) {
             int shaderID = glCreateShader(tempShader.type().getValue());
+            long options = Shaderc.shaderc_compile_options_initialize();
+            Shaderc.shaderc_compile_options_set_source_language(options, Shaderc.shaderc_source_language_glsl);
+            Shaderc.shaderc_compile_options_set_warnings_as_errors(options);
+            long compiler = Shaderc.shaderc_compiler_initialize();
+
+            long result = Shaderc.shaderc_compile_into_spv(compiler,
+                    tempShader.shaderSource(),
+                    shaderc_glsl_vertex_shader,
+                    "test",
+                    "main",
+                    options);
+
+            long status = Shaderc.shaderc_result_get_compilation_status(result);
+            IntBuffer shaders = IntBuffer.allocate(1);
+            shaders.put(shaderID);
+            shaders.rewind();
+            glShaderBinary(shaders,GL_SHADER_BINARY_FORMAT_SPIR_V, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
+            if( status != Shaderc.shaderc_compilation_status_success){
+                System.err.println(Shaderc.shaderc_result_get_error_message(result));
+                long num_warnings = Shaderc.shaderc_result_get_num_warnings(result);
+                long  num_errors = Shaderc.shaderc_result_get_num_errors(result);
+                Shaderc.shaderc_compile_options_release(options);
+                Shaderc.shaderc_result_release(result);
+                Shaderc.shaderc_compiler_release(compiler);
+                System.exit(-1);
+            }
             glShaderSource(shaderID, tempShader.shaderSource());
             glCompileShader(shaderID);
             if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
