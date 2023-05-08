@@ -2,13 +2,10 @@
 #version 460 core
 layout (location = 0) in vec3 position;
 
-layout(location = 0) out vec3 WorldPos;
+layout (location = 0) out vec3 WorldPos;
 
-layout (std140, binding = 0) uniform Matrices
-{
-    mat4 projection;
-    mat4 view;
-};
+layout (location = 0) uniform mat4 projection;
+layout (location = 1) uniform mat4 view;
 
 void main()
 {
@@ -18,10 +15,10 @@ void main()
 
 #type FRAGMENT
 #version 460 core
-layout(location = 0) out vec4 FragColor;
-layout(location = 0) in vec3 WorldPos;
+layout (location = 0) out vec4 FragColor;
+layout (location = 0) in vec3 WorldPos;
 
-uniform sampler2D equirectangularMap;
+layout (binding = 0) uniform sampler2D equirectangularMap;
 
 const vec2 invAtan = vec2(0.1591, 0.3183);
 vec2 SampleSphericalMap(vec3 v)

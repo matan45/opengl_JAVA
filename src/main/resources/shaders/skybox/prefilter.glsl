@@ -2,10 +2,10 @@
 #version 460 core
 layout (location = 0) in vec3 position;
 
-out vec3 WorldPos;
+layout (location = 0) out vec3 WorldPos;
 
-uniform mat4 projection;
-uniform mat4 view;
+layout (location = 0) uniform mat4 projection;
+layout (location = 1) uniform mat4 view;
 
 void main()
 {
@@ -15,11 +15,11 @@ void main()
 
 #type FRAGMENT
 #version 460 core
-out vec4 FragColor;
-in vec3 WorldPos;
+layout (location = 0) out vec4 FragColor;
+layout (location = 0) in vec3 WorldPos;
 
-uniform samplerCube environmentMap;
-uniform float roughness;
+layout (binding = 0) uniform samplerCube environmentMap;
+layout (location = 0) uniform float roughness;
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------

@@ -8,7 +8,6 @@ import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.shaderc.Shaderc;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -20,9 +19,8 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
-import static org.lwjgl.opengl.GL41.GL_SHADER_BINARY_FORMATS;
 import static org.lwjgl.opengl.GL41.glShaderBinary;
-import static org.lwjgl.opengl.GL46.GL_SHADER_BINARY_FORMAT_SPIR_V;
+import static org.lwjgl.opengl.GL46.GL_SPIR_V_BINARY;
 import static org.lwjgl.util.shaderc.Shaderc.*;
 
 public abstract class ShaderProgram {
@@ -130,7 +128,7 @@ public abstract class ShaderProgram {
             IntBuffer shaders = IntBuffer.allocate(1);
             shaders.put(shaderID);
             shaders.rewind();
-            glShaderBinary(shaders, GL_SHADER_BINARY_FORMATS, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
+            glShaderBinary(shaders, GL_SPIR_V_BINARY, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
             Shaderc.shaderc_result_release(result);
 
             shadersID.add(shaderID);
