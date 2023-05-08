@@ -16,9 +16,7 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
-import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseCursor;
-import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
@@ -129,7 +127,7 @@ public class ViewPort implements ImguiLayer {
                         OLVector3f worldPos = RayCast.calculateMouseRay(windowSize.x, windowSize.y);
                         OLVector3f dir = worldPos.sub(editorCamera.getPosition());
                         LogInfo.println(worldPos.toString());
-                        LogInfo.println(dir.toString());
+                        LogInfo.println(dir.normalize().toString());
                     }
                 }
             }
