@@ -8,6 +8,7 @@ import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.shaderc.Shaderc;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
+import static org.lwjgl.opengl.GL41.GL_SHADER_BINARY_FORMATS;
 import static org.lwjgl.opengl.GL41.glShaderBinary;
 import static org.lwjgl.opengl.GL46.GL_SHADER_BINARY_FORMAT_SPIR_V;
 import static org.lwjgl.util.shaderc.Shaderc.*;
@@ -32,12 +34,13 @@ public abstract class ShaderProgram {
 
     protected ShaderProgram(Path path) {
         shadersID = new HashSet<>();
-        options = Shaderc.shaderc_compile_options_initialize();
-        Shaderc.shaderc_compile_options_set_source_language(options, shaderc_source_language_glsl);
-        Shaderc.shaderc_compile_options_set_warnings_as_errors(options);
-        Shaderc.shaderc_compile_options_set_auto_bind_uniforms(options, false);
-        Shaderc.shaderc_compile_options_set_optimization_level(options, shaderc_optimization_level_performance);
-        compiler = Shaderc.shaderc_compiler_initialize();
+        options = shaderc_compile_options_initialize();
+        shaderc_compile_options_set_source_language(options, shaderc_source_language_glsl);
+        shaderc_compile_options_set_target_env(options, shaderc_target_env_opengl, 4);
+        shaderc_compile_options_set_warnings_as_errors(options);
+        shaderc_compile_options_set_auto_bind_uniforms(options, false);
+        shaderc_compile_options_set_optimization_level(options, shaderc_optimization_level_performance);
+        compiler = shaderc_compiler_initialize();
 
         loadShader(path);
 
@@ -112,12 +115,12 @@ public abstract class ShaderProgram {
         List<ShaderModel> shaderModels = ResourceManager.readShader(file);
 
         for (ShaderModel tempShader : shaderModels) {
-            int shaderID = glCreateShader(tempShader.type().getValue());
+            int shaderID = glCreateShader(tempShader.type().getOpenglType());
 
             long result = Shaderc.shaderc_compile_into_spv(compiler,
                     tempShader.shaderSource(),
-                    shaderc_glsl_vertex_shader,
-                    "",
+                    tempShader.type().getShaderCType(),
+                    file.toAbsolutePath().toString(),
                     "main",
                     options);
 
@@ -127,7 +130,7 @@ public abstract class ShaderProgram {
             IntBuffer shaders = IntBuffer.allocate(1);
             shaders.put(shaderID);
             shaders.rewind();
-            glShaderBinary(shaders, GL_SHADER_BINARY_FORMAT_SPIR_V, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
+            glShaderBinary(shaders, GL_SHADER_BINARY_FORMATS, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
             Shaderc.shaderc_result_release(result);
 
             shadersID.add(shaderID);
@@ -141,7 +144,7 @@ public abstract class ShaderProgram {
             long warnings = Shaderc.shaderc_result_get_num_warnings(result);
             long errors = Shaderc.shaderc_result_get_num_errors(result);
             System.err.println("Number of warnings " + warnings);
-            System.err.println("Number of errors" + errors);
+            System.err.println("Number of errors " + errors);
             Shaderc.shaderc_compile_options_release(options);
             Shaderc.shaderc_result_release(result);
             Shaderc.shaderc_compiler_release(compiler);

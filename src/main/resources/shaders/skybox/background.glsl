@@ -1,6 +1,6 @@
 #type VERTEX
 #version 460 core
-layout (location = 0) in vec3 position;
+layout(location = 0) in vec3 position;
 
 layout (std140, binding = 0) uniform Matrices
 {
@@ -8,7 +8,7 @@ layout (std140, binding = 0) uniform Matrices
     mat4 view;
 };
 
-out vec3 WorldPos;
+layout(location = 0) out vec3 WorldPos;
 
 void main()
 {
@@ -22,11 +22,11 @@ void main()
 
 #type FRAGMENT
 #version 460 core
-out vec4 FragColor;
-in vec3 WorldPos;
+layout(location = 0) out vec4 FragColor;
+layout(location = 0) in vec3 WorldPos;
 
 uniform samplerCube environmentMap;
-uniform float exposure;
+layout(location = 0) uniform float exposure;
 
 void main()
 {		
