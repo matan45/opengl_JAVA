@@ -21,13 +21,13 @@ public class OpenGLObjects {
     }
 
 
-    public VaoModel loadToVAO(float[] positions, float[] textureCoords, float[] normals,
+    public VaoModel loadToVAO(float[] positions, float[] textureCords, float[] normals,
                               int[] indices) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, positions);
         storeDataInAttributeList(1, 3, normals);
-        storeDataInAttributeList(2, 2, textureCoords);
+        storeDataInAttributeList(2, 2, textureCords);
         unbindVAO();
         return new VaoModel(vaoID, indices.length);
     }

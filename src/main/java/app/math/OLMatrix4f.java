@@ -35,6 +35,87 @@ public class OLMatrix4f implements Serializable {
         m33 = 1.0f;
     }
 
+    public float determinant() {
+        float f =
+                m00
+                        * ((m11 * m22 * m33 + m12 * m23 * m31 + m13 * m21 * m32)
+                        - m13 * m22 * m31
+                        - m11 * m23 * m32
+                        - m12 * m21 * m33);
+        f -= m01
+                * ((m10 * m22 * m33 + m12 * m23 * m30 + m13 * m20 * m32)
+                - m13 * m22 * m30
+                - m10 * m23 * m32
+                - m12 * m20 * m33);
+        f += m02
+                * ((m10 * m21 * m33 + m11 * m23 * m30 + m13 * m20 * m31)
+                - m13 * m21 * m30
+                - m10 * m23 * m31
+                - m11 * m20 * m33);
+        f -= m03
+                * ((m10 * m21 * m32 + m11 * m22 * m30 + m12 * m20 * m31)
+                - m12 * m21 * m30
+                - m10 * m22 * m31
+                - m11 * m20 * m32);
+        return f;
+    }
+
+    private float determinant3x3(float t00, float t01, float t02,
+                                 float t10, float t11, float t12,
+                                 float t20, float t21, float t22) {
+        return t00 * (t11 * t22 - t12 * t21)
+                + t01 * (t12 * t20 - t10 * t22)
+                + t02 * (t10 * t21 - t11 * t20);
+    }
+
+    public OLMatrix4f invert() {
+        float determinant = determinant();
+        OLMatrix4f result = new OLMatrix4f();
+        if (determinant != 0) {
+            float determinant_inv = 1f / determinant;
+            // first row
+            float t00 = determinant3x3(m11, m12, m13, m21, m22, m23, m31, m32, m33);
+            float t01 = -determinant3x3(m10, m12, m13, m20, m22, m23, m30, m32, m33);
+            float t02 = determinant3x3(m10, m11, m13, m20, m21, m23, m30, m31, m33);
+            float t03 = -determinant3x3(m10, m11, m12, m20, m21, m22, m30, m31, m32);
+            // second row
+            float t10 = -determinant3x3(m01, m02, m03, m21, m22, m23, m31, m32, m33);
+            float t11 = determinant3x3(m00, m02, m03, m20, m22, m23, m30, m32, m33);
+            float t12 = -determinant3x3(m00, m01, m03, m20, m21, m23, m30, m31, m33);
+            float t13 = determinant3x3(m00, m01, m02, m20, m21, m22, m30, m31, m32);
+            // third row
+            float t20 = determinant3x3(m01, m02, m03, m11, m12, m13, m31, m32, m33);
+            float t21 = -determinant3x3(m00, m02, m03, m10, m12, m13, m30, m32, m33);
+            float t22 = determinant3x3(m00, m01, m03, m10, m11, m13, m30, m31, m33);
+            float t23 = -determinant3x3(m00, m01, m02, m10, m11, m12, m30, m31, m32);
+            // fourth row
+            float t30 = -determinant3x3(m01, m02, m03, m11, m12, m13, m21, m22, m23);
+            float t31 = determinant3x3(m00, m02, m03, m10, m12, m13, m20, m22, m23);
+            float t32 = -determinant3x3(m00, m01, m03, m10, m11, m13, m20, m21, m23);
+            float t33 = determinant3x3(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+
+            // transpose and divide by the determinant
+            result.m00 = t00 * determinant_inv;
+            result.m11 = t11 * determinant_inv;
+            result.m22 = t22 * determinant_inv;
+            result.m33 = t33 * determinant_inv;
+            result.m01 = t10 * determinant_inv;
+            result.m10 = t01 * determinant_inv;
+            result.m20 = t02 * determinant_inv;
+            result.m02 = t20 * determinant_inv;
+            result.m12 = t21 * determinant_inv;
+            result.m21 = t12 * determinant_inv;
+            result.m03 = t30 * determinant_inv;
+            result.m30 = t03 * determinant_inv;
+            result.m13 = t31 * determinant_inv;
+            result.m31 = t13 * determinant_inv;
+            result.m32 = t23 * determinant_inv;
+            result.m23 = t32 * determinant_inv;
+            return result;
+        }
+        return result;
+    }
+
     public OLMatrix4f mul(OLMatrix4f right) {
 
         float nm00 = m00 * right.m00 + m10 * right.m01 + m20 * right.m02 + m30 * right.m03;
@@ -159,6 +240,16 @@ public class OLMatrix4f implements Serializable {
         m31 += m01 * translate.x + m11 * translate.y + m21 * translate.z;
         m32 += m02 * translate.x + m12 * translate.y + m22 * translate.z;
         m33 += m03 * translate.x + m13 * translate.y + m23 * translate.z;
+    }
+
+    public OLVector4f transform(OLVector4f translate) {
+
+        float x = m00 * translate.x + m10 * translate.y + m20 * translate.z + m30 * translate.w;
+        float y = m01 * translate.x + m11 * translate.y + m21 * translate.z + m31 * translate.w;
+        float z = m02 * translate.x + m12 * translate.y + m22 * translate.z + m32 * translate.w;
+        float w = m03 * translate.x + m13 * translate.y + m23 * translate.z + m33 * translate.w;
+
+        return new OLVector4f(x,y,z,w);
     }
 
     public void translate(float x, float y, float z) {

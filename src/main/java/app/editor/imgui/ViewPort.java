@@ -6,6 +6,7 @@ import app.ecs.components.TransformComponent;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
+import app.math.components.RayCast;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
@@ -15,9 +16,7 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
-import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseCursor;
-import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
@@ -113,6 +112,7 @@ public class ViewPort implements ImguiLayer {
 
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+
             dragAndDropTargetEntity();
             //Gizmos
             //TODO for mouse picking need to fined for select entity
@@ -121,6 +121,15 @@ public class ViewPort implements ImguiLayer {
             if (ImGui.isWindowFocused()) {
                 keyInputImGuizo();
                 cameraInput(dt);
+
+                if (80 < ImGui.getMousePos().y && ImGui.getMousePos().y < windowSize.y) {
+                    if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_1)) {
+                        OLVector3f worldPos = RayCast.calculateMouseRay(windowSize.x, windowSize.y);
+                        OLVector3f dir = worldPos.sub(editorCamera.getPosition());
+                        LogInfo.println(worldPos.toString());
+                        LogInfo.println(dir.normalize().toString());
+                    }
+                }
             }
 
             if (firstFrame) {

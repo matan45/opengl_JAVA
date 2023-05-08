@@ -30,55 +30,37 @@ public class OLVector3f implements Serializable {
         this.z = z;
     }
 
-    public OLVector3f setOLVector3f(OLVector3f v) {
+    public void setOLVector3f(OLVector3f v) {
         x = v.x;
         y = v.y;
         z = v.z;
-        return this;
     }
 
-    public OLVector3f setOLVector3f(float x, float y, float z) {
+    public void setOLVector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        return this;
     }
 
     public OLVector3f sub(OLVector3f v) {
-        x -= v.x;
-        y -= v.y;
-        z -= v.z;
-        return this;
+        return new OLVector3f(x - v.x, y - v.y, z - v.z);
     }
 
     public OLVector3f add(OLVector3f v) {
-        x += v.x;
-        y += v.y;
-        z += v.z;
-        return this;
+        return new OLVector3f(x + v.x, y + v.y, z + v.z);
     }
 
     public OLVector3f div(float d) {
-        x /= d;
-        y /= d;
-        z /= d;
-        return this;
+        return new OLVector3f(x / d, y / d, z / d);
     }
-
 
 
     public OLVector3f mul(OLVector3f v) {
-        x *= v.x;
-        y *= v.y;
-        z *= v.z;
-        return this;
+        return new OLVector3f(x * v.x, y * v.y, z * v.z);
     }
 
     public OLVector3f mul(float scalar) {
-        x += scalar;
-        y += scalar;
-        z += scalar;
-        return this;
+        return new OLVector3f(x * scalar, y * scalar, z * scalar);
     }
 
     public float lengthSquared() {
@@ -91,27 +73,18 @@ public class OLVector3f implements Serializable {
 
     public OLVector3f normalize() {
         float scalar = length();
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
-        return this;
+        return new OLVector3f(x / scalar, y / scalar, z / scalar);
     }
 
     public OLVector3f cross(OLVector3f v) {
         float rx = y * v.z - z * v.y;
         float ry = x * v.z - z * v.x;
         float rz = x * v.y - y * v.x;
-        x = rx;
-        y = ry;
-        z = rz;
-        return this;
+        return new OLVector3f(rx, ry, rz);
     }
 
     public OLVector3f negate() {
-        x = -x;
-        y = -y;
-        z = -z;
-        return this;
+        return new OLVector3f(-x, -y, -z);
     }
 
     public float distance(OLVector3f v) {
@@ -129,25 +102,16 @@ public class OLVector3f implements Serializable {
     }
 
     public OLVector3f min(OLVector3f v) {
-        x = Math.min(x, v.x);
-        y = Math.min(y, v.y);
-        z = Math.min(z, v.z);
-        return this;
+        return new OLVector3f(Math.min(x, v.x), Math.min(y, v.y), Math.min(z, v.z));
     }
 
 
     public OLVector3f max(OLVector3f v) {
-        x = Math.max(x, v.x);
-        y = Math.max(y, v.y);
-        z = Math.max(z, v.z);
-        return this;
+        return new OLVector3f(Math.max(x, v.x), Math.max(y, v.y), Math.max(z, v.z));
     }
 
     public OLVector3f absolute() {
-        x = Math.abs(x);
-        y = Math.abs(y);
-        z = Math.abs(z);
-        return this;
+        return new OLVector3f(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
 

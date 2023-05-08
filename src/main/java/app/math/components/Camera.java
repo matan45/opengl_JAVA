@@ -129,4 +129,8 @@ public class Camera {
     public void setAspect(float aspect) {
         this.aspect = aspect;
     }
+
+    public OLMatrix4f getViewMatrix() {
+        return viewMatrix;
+    }
 }

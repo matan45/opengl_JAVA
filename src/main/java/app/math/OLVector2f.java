@@ -21,29 +21,23 @@ public class OLVector2f implements Serializable {
         this.y = y;
     }
 
-    public OLVector2f setOLVector2f(float x, float y) {
+    public void setOLVector2f(float x, float y) {
         this.x = x;
         this.y = y;
-        return this;
     }
 
-    public OLVector2f setOLVector2f(OLVector2f v) {
+    public void setOLVector2f(OLVector2f v) {
         x = v.x;
         y = v.y;
-        return this;
     }
 
     public OLVector2f negate() {
-        x = -x;
-        y = -y;
-        return this;
+        return new OLVector2f(-x, -y);
     }
 
 
     public OLVector2f sub(OLVector2f v) {
-        x -= v.x;
-        y -= v.y;
-        return this;
+        return new OLVector2f(x - v.x, y - v.y);
     }
 
     public float cross(OLVector2f v) {
@@ -75,41 +69,42 @@ public class OLVector2f implements Serializable {
     }
 
     public OLVector2f normalize() {
-        float invLength = length();
-        this.x = x * invLength;
-        this.y = y * invLength;
-        return this;
+        float scalar = length();
+        return new OLVector2f(x / scalar, y / scalar);
     }
 
 
     public OLVector2f add(OLVector2f v) {
-        x += v.x;
-        y += v.y;
-        return this;
+        return new OLVector2f(x + v.x, y + v.y);
     }
 
     public OLVector2f mul(float scalar) {
-        x *= scalar;
-        y *= scalar;
-        return this;
+        return new OLVector2f(x * scalar, y * scalar);
     }
 
     public OLVector2f min(OLVector2f v) {
-        this.x = Math.min(x, v.x);
-        this.y = Math.min(y, v.y);
-        return this;
+        return new OLVector2f(Math.min(x, v.x), Math.min(y, v.y));
     }
 
     public OLVector2f max(OLVector2f v) {
         this.x = Math.max(x, v.x);
         this.y = Math.max(y, v.y);
-        return this;
+        return new OLVector2f(x, y);
     }
 
     public OLVector2f absolute() {
-        this.x = Math.abs(this.x);
-        this.y = Math.abs(this.y);
-        return this;
+        return new OLVector2f(Math.abs(x), Math.abs(y));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OLVector2f vector2f = (OLVector2f) o;
+
+        return (x == vector2f.x) && (y == vector2f.y);
     }
 
     @Override
