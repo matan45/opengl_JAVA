@@ -7,9 +7,9 @@ layout (std140, binding = 0) uniform Matrices
     mat4 projection;
     mat4 view;
 };
-uniform vec3 centerPosition;
+layout (location = 0) uniform vec3 centerPosition;
 
-out vec2 TexCoords;
+layout (location = 0) out vec2 TexCoords;
 
 void main() {
     vec3 CameraRight_worldspace = vec3(view[0][0], view[1][0], view[2][0]);
@@ -25,11 +25,11 @@ void main() {
 
 #type FRAGMENT
 #version 460 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
 
-in vec2 TexCoords;
+layout (location = 0) in vec2 TexCoords;
 
-uniform sampler2D imageIcon;
+layout (binding = 0) uniform sampler2D imageIcon;
 
 void main() {
 

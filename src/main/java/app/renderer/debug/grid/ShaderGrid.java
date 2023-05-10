@@ -17,6 +17,9 @@ public class ShaderGrid extends ShaderProgram {
     protected void getAllUniformLocations() {
         locationFar = super.getUniformLocation("far");
         locationNear = super.getUniformLocation("near");
+        System.out.println("ShaderGrid");
+        System.out.println(locationFar);
+        System.out.println(locationNear);
     }
 
 

@@ -15,14 +15,14 @@ import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL41.glShaderBinary;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL46.GL_SHADER_BINARY_FORMAT_SPIR_V;
+import static org.lwjgl.opengl.GL46.glSpecializeShader;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.util.shaderc.Shaderc.*;
 
@@ -37,9 +37,10 @@ public abstract class ShaderProgram {
         shadersID = new HashSet<>();
         options = shaderc_compile_options_initialize();
         shaderc_compile_options_set_source_language(options, shaderc_source_language_glsl);
-        shaderc_compile_options_set_target_env(options, shaderc_target_env_opengl, 4);
+        shaderc_compile_options_set_target_env(options, shaderc_target_env_opengl, 460);
+        shaderc_compile_options_set_target_spirv(options, shaderc_spirv_version_1_0);
         shaderc_compile_options_set_warnings_as_errors(options);
-        shaderc_compile_options_set_auto_bind_uniforms(options, false);
+        shaderc_compile_options_set_auto_bind_uniforms(options, true);
         shaderc_compile_options_set_optimization_level(options, shaderc_optimization_level_performance);
         compiler = shaderc_compiler_initialize();
 

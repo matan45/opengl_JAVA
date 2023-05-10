@@ -51,11 +51,11 @@ public class EditorRenderer {
         skyBox = new SkyBox(textures, framebuffer, openGLObjects);
         grid = new Grid(openGLObjects, framebuffer, editorCamera);
 
-        terrainQuadtreeRenderer = new TerrainQuadtreeRenderer(openGLObjects, textures, editorCamera, skyBox);
+       // terrainQuadtreeRenderer = new TerrainQuadtreeRenderer(openGLObjects, textures, editorCamera, skyBox);
 
-        lightHandler = new LightHandler();
-        meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
+        //lightHandler = new LightHandler();
+       // meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
+        //particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
     }
 
     public static void draw() {
@@ -65,9 +65,9 @@ public class EditorRenderer {
         enable();
         Audio.billboards();
         editorCamera.updateMatrices();
-        meshRenderer.renderers();
-        terrainQuadtreeRenderer.render();
-        lightHandler.drawBillboards();
+        //meshRenderer.renderers();
+        //terrainQuadtreeRenderer.render();
+        //lightHandler.drawBillboards();
         skyBox.render();
         grid.render();
         disable();
