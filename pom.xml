@@ -66,11 +66,6 @@
 
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-shaderc</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-nfd</artifactId>
         </dependency>
         <dependency>
@@ -125,11 +120,7 @@
             <artifactId>lwjgl-openal</artifactId>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-shaderc</artifactId>
-            <classifier>${lwjgl.natives}</classifier>
-        </dependency>
+
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-opengl</artifactId>
