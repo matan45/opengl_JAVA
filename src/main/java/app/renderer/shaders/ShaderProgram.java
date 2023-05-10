@@ -6,8 +6,10 @@ import app.math.OLVector3f;
 import app.utilities.logger.LogError;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.shaderc.Shaderc;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -20,7 +22,8 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL31.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31.glUniformBlockBinding;
 import static org.lwjgl.opengl.GL41.glShaderBinary;
-import static org.lwjgl.opengl.GL46.GL_SPIR_V_BINARY;
+import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.util.shaderc.Shaderc.*;
 
 public abstract class ShaderProgram {
@@ -125,13 +128,19 @@ public abstract class ShaderProgram {
             long status = Shaderc.shaderc_result_get_compilation_status(result);
             handleFailStatus(status, result, tempShader);
 
-            IntBuffer shaders = IntBuffer.allocate(1);
-            shaders.put(shaderID);
-            shaders.rewind();
-            glShaderBinary(shaders, GL_SPIR_V_BINARY, Objects.requireNonNull(Shaderc.shaderc_result_get_bytes(result)));
-            Shaderc.shaderc_result_release(result);
+            try (MemoryStack stack = stackPush()) {
+                ByteBuffer shader = Shaderc.shaderc_result_get_bytes(result);
+                IntBuffer shaders = stack.mallocInt(1);
+                shaders.put(shaderID).flip();
 
-            shadersID.add(shaderID);
+                assert shader != null;
+                glShaderBinary(shaders, GL_SHADER_BINARY_FORMAT_SPIR_V, shader);
+                glSpecializeShader(shaderID, stack.UTF8("main"), stack.mallocInt(0), stack.mallocInt(0));
+                Shaderc.shaderc_result_release(result);
+
+                shadersID.add(shaderID);
+            }
+
         }
     }
 

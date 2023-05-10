@@ -3,15 +3,15 @@
 
 layout (location = 0) in vec4 position;
 
-uniform mat4 model;
+layout (location = 0) uniform mat4 model;
 
-uniform float TerrainLength;
-uniform float TerrainWidth;
-uniform vec3 TerrainOrigin;
-uniform float tileScale;
+layout (location = 1) uniform float TerrainLength;
+layout (location = 2) uniform float TerrainWidth;
+layout (location = 3) uniform vec3 TerrainOrigin;
+layout (location = 4) uniform float tileScale;
 
-out vec2 vs_terrainTexCoord;
-out vec2 vs_nodeTexCoord;
+layout (location = 0) out vec2 vs_terrainTexCoord;
+layout (location = 1) out vec2 vs_nodeTexCoord;
 
 vec2 calcTerrainTexCoord(vec4 pos)
 {
@@ -40,26 +40,26 @@ void main(void)
 
 layout(vertices = 4) out;
 
-in vec2 vs_terrainTexCoord[];
-in vec2 vs_nodeTexCoord[];
+layout (location = 0) in vec2 vs_terrainTexCoord[];
+layout (location = 1) in vec2 vs_nodeTexCoord[];
 
-out vec2 tcs_terrainTexCoord[];
-out vec2 tcs_nodeTexCoord[];
-out float tcs_tessLevel[];
+layout (location = 0) out vec2 tcs_terrainTexCoord[];
+layout (location = 1) out vec2 tcs_nodeTexCoord[];
+layout (location = 2) out float tcs_tessLevel[];
 
 layout (std140, binding = 0) uniform Matrices
 {
     mat4 projection;
     mat4 view;
 };
-uniform mat4 model;
+layout (location = 0) uniform mat4 model;
 
-uniform sampler2D TexTerrainHeight;
+layout (binding = 0) uniform sampler2D TexTerrainHeight;
 
-uniform float scaleNegx;
-uniform float scaleNegz;
-uniform float scalePosx;
-uniform float scalePosz;
+layout (location = 5) uniform float scaleNegx;
+layout (location = 6) uniform float scaleNegz;
+layout (location = 7) uniform float scalePosx;
+layout (location = 8) uniform float scalePosz;
 
 /**
 * Dynamic level of detail using camera distance algorithm.

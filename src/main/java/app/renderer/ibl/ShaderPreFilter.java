@@ -38,5 +38,10 @@ public final class ShaderPreFilter extends CommonShaderSkyBox {
         locationViewMatrix = super.getUniformLocation(UniformsNames.VIEW.getUniformsName());
         locationEnvironmentMap = super.getUniformLocation("environmentMap");
         locationRoughness = super.getUniformLocation("roughness");
+        System.out.println("ShaderPreFilter");
+        System.out.println(locationProjectionMatrix);
+        System.out.println(locationViewMatrix);
+        System.out.println(locationEnvironmentMap);
+        System.out.println(locationRoughness);
     }
 }
