@@ -6,9 +6,14 @@ import java.time.LocalTime;
 public final class LogError extends Logger {
 
     public static void println(Object log) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StackTraceElement callingFrame = stackTrace[2]; // skip first two frames (getStackTrace and log)
+        String sourceLocation = "CLASS: " + callingFrame.getFileName() + ": LINE: " + callingFrame.getLineNumber();
         LocalTime time = LocalTime.now();
         String value = time.format(format);
         try {
+            logArray.write(sourceLocation.getBytes());
+            logArray.write("\n".getBytes());
             logArray.write(value.getBytes());
             logArray.write("\t".getBytes());
             logArray.write("ERROR:".getBytes());

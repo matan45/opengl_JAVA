@@ -31,9 +31,9 @@ public class LogWindow implements ImguiLayer {
             ImGui.sameLine();
             ImGui.text("Delta Time: " + dt);
             ImGui.separator();
-            ImGui.pushStyleColor(ImGuiCol.ChildBg, ImColor.intToColor(0, 0, 0));
+            ImGui.pushStyleColor(ImGuiCol.ChildBg, ImColor.rgb(0, 0, 0));
             if (ImGui.beginChild("Log", 0, 0, false, ImGuiWindowFlags.HorizontalScrollbar)) {
-                ImGui.pushStyleColor(ImGuiCol.Text, ImColor.intToColor(0, 255, 0));
+                ImGui.pushStyleColor(ImGuiCol.Text, ImColor.rgb(0, 255, 0));
                 ImGui.textUnformatted(Logger.outputLog());
                 ImGui.popStyleColor();
             }
