@@ -20,6 +20,12 @@ public class OpenGLObjects {
         vbos = new ArrayList<>();
     }
 
+    public VaoModel loadToVAO(float[] positions, int dimensions) {
+        int vaoID = createVAO();
+        this.storeDataInAttributeList(0, dimensions, positions);
+        unbindVAO();
+        return new VaoModel(vaoID, positions.length / dimensions);
+    }
 
     public VaoModel loadToVAO(float[] positions, float[] textureCords, float[] normals,
                               int[] indices) {
@@ -120,6 +126,15 @@ public class OpenGLObjects {
         buffer.put(data);
         buffer.flip();
         return buffer;
+    }
+
+    public int createEmptyVbo(int floatCount) {
+        int vbo = glGenBuffers();
+        vbos.add(vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, floatCount * 4L, GL_STREAM_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        return vbo;
     }
 
     private void unbindVAO() {
