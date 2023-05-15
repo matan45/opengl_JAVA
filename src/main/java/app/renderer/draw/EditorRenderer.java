@@ -9,7 +9,7 @@ import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
-import app.renderer.particle.ParticleRendererHandler;
+import app.renderer.particle.mesh.ParticleRendererHandler;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;

@@ -1,4 +1,4 @@
-package app.renderer.particle;
+package app.renderer.particle.mesh;
 
 import app.math.components.Camera;
 import app.math.components.OLTransform;

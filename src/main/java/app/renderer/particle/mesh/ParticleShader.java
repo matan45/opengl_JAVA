@@ -1,4 +1,4 @@
-package app.renderer.particle;
+package app.renderer.particle.mesh;
 
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
