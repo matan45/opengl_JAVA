@@ -126,6 +126,11 @@ public class Camera {
         createPerspectiveMatrix(70f);
     }
 
+    public OLVector3f getCameraDirection() {
+        OLMatrix4f invertedViewMatrix = viewMatrix.invert();
+        return new OLVector3f(invertedViewMatrix.m20, invertedViewMatrix.m21, invertedViewMatrix.m22).normalize();
+    }
+
     public void setAspect(float aspect) {
         this.aspect = aspect;
     }

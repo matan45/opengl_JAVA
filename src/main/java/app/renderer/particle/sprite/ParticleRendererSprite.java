@@ -11,8 +11,8 @@ import java.util.List;
 
 public class ParticleRendererSprite {
     private static final float[] VERTICES = {-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
-    private static int MAX_INSTANCES = 10000;
-    private static int INSTANCE_DATA_LENGTH = 21;
+    private static final int MAX_INSTANCES = 10000;
+    private static final int INSTANCE_DATA_LENGTH = 21;
     private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
     private List<Particle> particles;
     private int vbo;
