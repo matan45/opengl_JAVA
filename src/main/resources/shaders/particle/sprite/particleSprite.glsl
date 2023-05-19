@@ -1,6 +1,7 @@
 #type VERTEX
 #version 460 core
 layout (location = 0) in vec2 position;
+layout (location = 1) in mat4 model;
 
 
 layout (std140, binding = 0) uniform Matrices
@@ -8,7 +9,6 @@ layout (std140, binding = 0) uniform Matrices
     mat4 projection;
     mat4 view;
 };
-uniform mat4 model;
 
 
 void main()
