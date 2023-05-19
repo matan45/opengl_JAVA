@@ -10,6 +10,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class OpenGLObjects {
     private final List<Integer> vaos;
@@ -135,6 +136,15 @@ public class OpenGLObjects {
         glBufferData(GL_ARRAY_BUFFER, (long) floatCount *  Float.BYTES, GL_STREAM_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         return vbo;
+    }
+
+    public void addInstanceAttribute(int vao, int vbo, int attribute, int dataSize, int instancedDataLength, int offset) {
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBindVertexArray(vao);
+        glVertexAttribPointer(attribute, dataSize, GL_FLOAT, false, instancedDataLength * Float.BYTES, (long) offset * Float.BYTES);
+        glVertexAttribDivisor(attribute, 1);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
     }
 
     private void unbindVAO() {
