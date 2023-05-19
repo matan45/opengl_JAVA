@@ -14,6 +14,7 @@ import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.particle.mesh.ParticleRendererHandler;
 import app.renderer.particle.sprite.Particle;
+import app.renderer.particle.sprite.ParticleHandler;
 import app.renderer.particle.sprite.ParticleRendererSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
@@ -36,7 +37,6 @@ public class EditorRenderer {
     private static ParticleRendererHandler particleRenderer;
     private static Grid grid;
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
-    private static ParticleRendererSprite particleRendererSprite;
 
     private EditorRenderer() {
     }
@@ -62,8 +62,11 @@ public class EditorRenderer {
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        particleRendererSprite = new ParticleRendererSprite(openGLObjects);
-        particleRendererSprite.init(new OLTransform(), new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), 1.0f, 500));
+        ParticleHandler.init(openGLObjects);
+
+
+        new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
+                new OLVector3f(10.0f, 10.0f, 10.0f), new OLVector3f(), 1.0f, 10.0f);
     }
 
     public static void draw(float dt) {
@@ -73,10 +76,10 @@ public class EditorRenderer {
         enable();
         Audio.billboards();
         editorCamera.updateMatrices();
-        particleRendererSprite.update(dt);
+        ParticleHandler.update(dt);
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
-        particleRendererSprite.render();
+        ParticleHandler.render();
         lightHandler.drawBillboards();
         skyBox.render();
         grid.render();

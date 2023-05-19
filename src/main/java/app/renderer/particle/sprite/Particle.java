@@ -12,7 +12,7 @@ public class Particle {
     private final float lifeLength;
     private float elapsedTime = 0;
 
-    public Particle(OLVector3f position, OLVector3f velocity, OLVector3f scale, OLVector3f rotation, float gravityEffect, float lifeLength) {
+    public Particle(OLVector3f position, OLVector3f rotation, OLVector3f scale, OLVector3f velocity, float gravityEffect, float lifeLength) {
         this.position = position;
         this.velocity = velocity;
         this.scale = scale;
@@ -23,7 +23,7 @@ public class Particle {
     }
 
     public OLTransform getTransform() {
-        return new OLTransform(position, rotation, scale);
+        return new OLTransform(position, scale, rotation);
     }
 
     public boolean isLife() {
