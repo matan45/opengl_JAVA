@@ -30,6 +30,7 @@
         <imgui.java.version>1.86.10</imgui.java.version>
         <com.google.code.gson>2.10.1</com.google.code.gson>
         <physx-jni>2.0.5</physx-jni>
+        <joml.version>1.10.5</joml.version>
     </properties>
 
 
@@ -153,6 +154,12 @@
             <artifactId>physx-jni</artifactId>
             <version>${physx-jni}</version>
         </dependency>
+
+    <dependency>
+        <groupId>org.joml</groupId>
+        <artifactId>joml</artifactId>
+        <version>${joml.version}</version>
+    </dependency>
         <dependency>
             <groupId>de.fabmax</groupId>
             <artifactId>physx-jni</artifactId>

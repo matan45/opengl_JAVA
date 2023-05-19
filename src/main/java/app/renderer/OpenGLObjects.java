@@ -83,7 +83,7 @@ public class OpenGLObjects {
         buffer.put(data);
         buffer.flip();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, buffer.capacity() * 4L, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) buffer.capacity() * Float.BYTES, GL_STREAM_DRAW);
         glBufferSubData(GL_ARRAY_BUFFER, 0, buffer);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -132,7 +132,7 @@ public class OpenGLObjects {
         int vbo = glGenBuffers();
         vbos.add(vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, floatCount * 4L, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) floatCount *  Float.BYTES, GL_STREAM_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         return vbo;
     }

@@ -1,26 +1,58 @@
 package app.renderer.particle.sprite;
 
 import app.math.OLVector3f;
+import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
 
 public class Particle {
     private OLVector3f position;
     private float gravityEffect;
-    private float lifeLength;
-    private float elapsedTime = 0;
+    private final float[] positions;
+    private final FloatBuffer particleBuffer;
+    private final int size;
 
-    public Particle(OLVector3f position, float gravityEffect, float lifeLength) {
+    public Particle(OLVector3f position, float gravityEffect, int size) {
         this.position = position;
         this.gravityEffect = gravityEffect;
-        this.lifeLength = lifeLength;
+        positions = new float[size * 3];
+        particleBuffer = BufferUtils.createFloatBuffer(size * 3);
+        this.size = size;
+        init();
     }
 
-    public void update(float dt){
-        //need dt
-
+    private void init() {
+        for (int i = 0; i < positions.length / 3; i++) {
+            positions[i * 3] = position.x;
+            positions[i * 3 + 1] = position.y;
+            positions[i * 3 + 2] = position.z;
+        }
+        particleBuffer.put(positions);
+        particleBuffer.flip();
     }
 
-    public boolean isLife(){
-        return elapsedTime < lifeLength;
+    public void update(float dt) {
+        for (int i = 0; i < positions.length / 3; i++) {
+            positions[i * 3] = getRandomNumber(position.x - 2, position.x + 2) * dt * gravityEffect;
+            positions[i * 3 + 1] = getRandomNumber(position.y - 2, position.y + 2) * dt * gravityEffect;
+            positions[i * 3 + 2] = getRandomNumber(position.z - 2, position.z + 2) * dt * gravityEffect;
+        }
+    }
+
+    private float getRandomNumber(float min, float max) {
+        return (float) ((Math.random() * (max - min)) + min);
+    }
+
+    public FloatBuffer getParticleBuffer() {
+        return particleBuffer;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public float[] getPositions() {
+        return positions;
     }
 
     public OLVector3f getPosition() {
@@ -31,27 +63,4 @@ public class Particle {
         this.position = position;
     }
 
-    public float getGravityEffect() {
-        return gravityEffect;
-    }
-
-    public void setGravityEffect(float gravityEffect) {
-        this.gravityEffect = gravityEffect;
-    }
-
-    public float getLifeLength() {
-        return lifeLength;
-    }
-
-    public void setLifeLength(float lifeLength) {
-        this.lifeLength = lifeLength;
-    }
-
-    public float getElapsedTime() {
-        return elapsedTime;
-    }
-
-    public void setElapsedTime(float elapsedTime) {
-        this.elapsedTime = elapsedTime;
-    }
 }

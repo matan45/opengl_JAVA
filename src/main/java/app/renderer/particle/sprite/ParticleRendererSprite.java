@@ -1,30 +1,55 @@
 package app.renderer.particle.sprite;
 
-import app.math.components.Camera;
+import app.math.components.OLTransform;
 import app.renderer.OpenGLObjects;
-import app.renderer.Textures;
 import app.renderer.VaoModel;
-import org.lwjgl.BufferUtils;
 
-import java.nio.FloatBuffer;
-import java.util.List;
+import java.nio.file.Paths;
+
+import static org.lwjgl.opengl.GL11.GL_POINTS;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL31C.glDrawArraysInstanced;
 
 public class ParticleRendererSprite {
-    private static final float[] VERTICES = {-0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f};
-    private static final int MAX_INSTANCES = 10000;
-    private static final int INSTANCE_DATA_LENGTH = 21;
-    private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
-    private List<Particle> particles;
+    private Particle particle;
     private int vbo;
-    private Camera camera;
-    private OpenGLObjects openGLObjects;
-    private Textures textures;
+    private final OpenGLObjects openGLObjects;
+    private OLTransform olTransform;
+    private final ParticleShaderSprite particleShaderSprite;
     private VaoModel vaoModel;
 
-    public ParticleRendererSprite(Camera camera, OpenGLObjects openGLObjects, Textures textures) {
-        this.camera = camera;
+    public ParticleRendererSprite(OpenGLObjects openGLObjects) {
         this.openGLObjects = openGLObjects;
-        vbo = openGLObjects.createEmptyVbo(INSTANCE_DATA_LENGTH * MAX_INSTANCES);
-        vaoModel = openGLObjects.loadToVAO(VERTICES, 2);
+        particleShaderSprite = new ParticleShaderSprite(Paths.get("src\\main\\resources\\shaders\\particle\\sprite\\particleSprite.glsl"));
+    }
+
+    public void init(OLTransform olTransform, Particle particle){
+        this.particle = particle;
+        this.olTransform = olTransform;
+        vbo = openGLObjects.createEmptyVbo(particle.getSize() * 3);
+        vaoModel = openGLObjects.loadToVAO(particle.getPositions(), 3);
+    }
+
+    public void update(float dt) {
+        particle.update(dt);
+    }
+
+    public void render() {
+        particleShaderSprite.start();
+        particleShaderSprite.loadModelMatrix(olTransform.getModelMatrix());
+        glBindVertexArray(vaoModel.vaoID());
+        glEnableVertexAttribArray(0);
+
+        openGLObjects.updateVbo(vbo, particle.getPositions(), particle.getParticleBuffer());
+
+        glDrawArraysInstanced(GL_POINTS, 0, vaoModel.VertexCount(), particle.getSize());
+
+        glDisableVertexAttribArray(0);
+
+        glBindVertexArray(0);
+
+        particleShaderSprite.stop();
     }
 }
