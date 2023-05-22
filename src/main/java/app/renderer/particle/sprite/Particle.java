@@ -5,15 +5,18 @@ import app.math.components.OLTransform;
 
 public class Particle {
     private OLVector3f position;
+    private final OLVector3f initPosition;
     private OLVector3f velocity;
     private OLVector3f scale;
     private OLVector3f rotation;
     private float gravityEffect;
     private final float lifeLength;
     private float elapsedTime = 0;
+    private boolean isInfinity = false;
 
     public Particle(OLVector3f position, OLVector3f rotation, OLVector3f scale, OLVector3f velocity, float gravityEffect, float lifeLength) {
-        this.position = position;
+        this.initPosition = position;
+        this.position = new OLVector3f(initPosition);
         this.velocity = velocity;
         this.scale = scale;
         this.rotation = rotation;
@@ -31,9 +34,15 @@ public class Particle {
     }
 
     public void update(float dt) {
-        velocity.y += gravityEffect * dt;
-        position = position.add(velocity.mul(dt));
-        elapsedTime += dt;
+        if (isLife()) {
+            //TODO use compute for all Particles
+            velocity.y -= gravityEffect * dt;
+            position = position.add(velocity.mul(dt));
+            elapsedTime += dt;
+        } else if (isInfinity) {
+            position = new OLVector3f(initPosition);
+            elapsedTime = 0;
+        }
     }
 
 
@@ -75,5 +84,9 @@ public class Particle {
 
     public void setGravityEffect(float gravityEffect) {
         this.gravityEffect = gravityEffect;
+    }
+
+    public void setInfinity(boolean infinity) {
+        isInfinity = infinity;
     }
 }

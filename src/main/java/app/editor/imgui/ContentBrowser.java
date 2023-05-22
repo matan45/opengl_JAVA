@@ -78,23 +78,20 @@ public class ContentBrowser implements ImguiLayer {
     }
 
     private void fileType(File file) {
+        ImGui.pushID(file.getName());
         if (file.isFile()) {
-            ImGui.pushID(file.getName());
             int icon = getFileIcon(file);
             ImGui.imageButton(icon, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
             if (ImGui.isMouseDragging(GLFW_MOUSE_BUTTON_1))
                 dragAndDropSourceEntity(file);
             ImGui.textWrapped(FileUtil.getFileNameWithoutExtension(file));
-            ImGui.popID();
-            ImGui.nextColumn();
         } else if (file.isDirectory()) {
-            ImGui.pushID(file.getName());
             if (ImGui.imageButton(folderIcon, THUMBNAIL_SIZE, THUMBNAIL_SIZE))
                 absolutePath = Paths.get(absolutePath + FOLDER_SPLITTER + file.getName());
             ImGui.textWrapped(file.getName());
-            ImGui.popID();
-            ImGui.nextColumn();
         }
+        ImGui.popID();
+        ImGui.nextColumn();
     }
 
     private int getFileIcon(File file) {

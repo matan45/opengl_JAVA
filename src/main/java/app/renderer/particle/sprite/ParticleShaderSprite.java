@@ -1,8 +1,6 @@
 package app.renderer.particle.sprite;
 
-import app.math.OLMatrix4f;
 import app.renderer.shaders.ShaderProgram;
-import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Path;
 

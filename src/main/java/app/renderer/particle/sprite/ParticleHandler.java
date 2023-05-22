@@ -8,6 +8,7 @@ import java.util.List;
 public class ParticleHandler {
     private static ParticleRendererSprite particleRendererSprite;
     private static final List<Particle> particles = new ArrayList<>();
+    private static int image = 0;
 
     public static void init(OpenGLObjects openGLObjects) {
         particleRendererSprite = new ParticleRendererSprite(openGLObjects);
@@ -18,7 +19,15 @@ public class ParticleHandler {
     }
 
     public static void render() {
-        particleRendererSprite.render(particles);
+        particleRendererSprite.render(particles,image);
+    }
+
+    public static int getImage() {
+        return image;
+    }
+
+    public static void setImage(int image) {
+        ParticleHandler.image = image;
     }
 
     public static void add(Particle particle) {

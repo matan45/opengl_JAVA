@@ -20,6 +20,7 @@ import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -64,7 +65,7 @@ public class EditorRenderer {
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         ParticleHandler.init(openGLObjects);
 
-
+        ParticleHandler.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
         new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
                 new OLVector3f(10.0f, 10.0f, 10.0f), new OLVector3f(), 1.0f, 10.0f);
     }

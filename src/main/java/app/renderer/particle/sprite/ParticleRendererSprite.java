@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -22,9 +24,9 @@ public class ParticleRendererSprite {
     private static final int INSTANCE_DATA_LENGTH = 16;
     private static final FloatBuffer buffer = BufferUtils.createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
     private final OpenGLObjects openGLObjects;
-    private int vbo;
+    private final int vbo;
     private final ParticleShaderSprite particleShaderSprite;
-    private VaoModel vaoModel;
+    private final VaoModel vaoModel;
     private int pointer;
 
     public ParticleRendererSprite(OpenGLObjects openGLObjects) {
@@ -38,7 +40,7 @@ public class ParticleRendererSprite {
         openGLObjects.addInstanceAttribute(vaoModel.vaoID(), vbo, 4, 4, INSTANCE_DATA_LENGTH, 12);
     }
 
-    public void render(List<Particle> particles) {
+    public void render(List<Particle> particles, int image) {
         particleShaderSprite.start();
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
@@ -49,13 +51,22 @@ public class ParticleRendererSprite {
         glDepthMask(false);
         pointer = 0;
         float[] vboData = new float[particles.size() * INSTANCE_DATA_LENGTH];
+        int number = 0;
         for (Particle particle : particles) {
-            fillModel(vboData, particle.getTransform().getModelMatrix());
+            if (particle.isLife()) {
+                fillModel(vboData, particle.getTransform().getModelMatrix());
+                number++;
+            }
         }
 
         openGLObjects.updateVbo(vbo, vboData, buffer);
 
-        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, vaoModel.VertexCount(), particles.size());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, image);
+
+        glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, vaoModel.VertexCount(), number);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         glDepthMask(true);
         glDisableVertexAttribArray(0);
