@@ -29,7 +29,7 @@
         <lwjgl.natives>natives-windows</lwjgl.natives>
         <imgui.java.version>1.86.10</imgui.java.version>
         <com.google.code.gson>2.10.1</com.google.code.gson>
-        <physx-jni>2.0.5</physx-jni>
+        <physx-jni>2.0.6</physx-jni>
         <joml.version>1.10.5</joml.version>
     </properties>
 

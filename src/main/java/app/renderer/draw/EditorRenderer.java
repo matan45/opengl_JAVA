@@ -66,8 +66,18 @@ public class EditorRenderer {
         ParticleHandler.init(openGLObjects);
 
         ParticleHandler.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
-        new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
-                new OLVector3f(10.0f, 10.0f, 10.0f), new OLVector3f(), 1.0f, 10.0f);
+
+        ParticleHandler.create(
+                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 10.0f), 3
+        );
+
+        ParticleHandler.create(
+                new Particle(new OLVector3f(3.0f, 3.0f, 3.0f), new OLVector3f(),
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 3
+        );
+
+        ParticleHandler.setIsInfinity(true);
     }
 
     public static void draw(float dt) {

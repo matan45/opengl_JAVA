@@ -7,23 +7,34 @@ public class Particle {
     private OLVector3f position;
     private final OLVector3f initPosition;
     private OLVector3f velocity;
+    private final OLVector3f initVelocity;
     private OLVector3f scale;
     private OLVector3f rotation;
     private float gravityEffect;
     private final float lifeLength;
-    private float elapsedTime = 0;
-    private boolean isInfinity = false;
+    private float elapsedTime;
+    private boolean isInfinity;
 
     public Particle(OLVector3f position, OLVector3f rotation, OLVector3f scale, OLVector3f velocity, float gravityEffect, float lifeLength) {
-        this.initPosition = position;
+        this.initPosition = new OLVector3f();
+        this.initPosition.x = getRandomNumber(position.x + 3, position.x - 3);
+        this.initPosition.y = getRandomNumber(position.y + 3, position.y - 3);
+        this.initPosition.z = getRandomNumber(position.z + 3, position.z - 3);
         this.position = new OLVector3f(initPosition);
-        this.velocity = velocity;
+        this.initVelocity = velocity;
+        this.velocity = new OLVector3f(initVelocity);
         this.scale = scale;
         this.rotation = rotation;
         this.gravityEffect = gravityEffect;
         this.lifeLength = lifeLength;
-        ParticleHandler.add(this);
+        this.elapsedTime = 0;
+        this.isInfinity = false;
     }
+
+    public Particle(Particle particle) {
+        this(particle.position, particle.rotation, particle.scale, particle.velocity, particle.gravityEffect, particle.lifeLength);
+    }
+
 
     public OLTransform getTransform() {
         return new OLTransform(position, scale, rotation);
@@ -41,6 +52,7 @@ public class Particle {
             elapsedTime += dt;
         } else if (isInfinity) {
             position = new OLVector3f(initPosition);
+            velocity = new OLVector3f(initVelocity);
             elapsedTime = 0;
         }
     }
@@ -84,6 +96,10 @@ public class Particle {
 
     public void setGravityEffect(float gravityEffect) {
         this.gravityEffect = gravityEffect;
+    }
+
+    public float getRandomNumber(float min, float max) {
+        return (float) ((Math.random() * (max - min)) + min);
     }
 
     public void setInfinity(boolean infinity) {
