@@ -49,4 +49,8 @@ public class ParticleHandler {
     public static void setPause(boolean pause) {
         ParticleHandler.pause = pause;
     }
+
+    public static void cleanUp() {
+        particles.clear();
+    }
 }

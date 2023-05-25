@@ -69,15 +69,16 @@ public class EditorRenderer {
 
         ParticleHandler.create(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 10.0f), 50
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 5.0f), 200
         );
 
         ParticleHandler.create(
-                new Particle(new OLVector3f(3.0f, 3.0f, 3.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 50
+                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 200
         );
 
         ParticleHandler.setIsInfinity(true);
+        ParticleHandler.setPause(true);
     }
 
     public static void draw(float dt) {
@@ -111,6 +112,7 @@ public class EditorRenderer {
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
+        ParticleHandler.cleanUp();
     }
 
     public static Camera getEditorCamera() {

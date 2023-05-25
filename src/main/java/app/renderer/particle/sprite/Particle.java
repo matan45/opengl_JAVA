@@ -23,8 +23,8 @@ public class Particle {
             this.initPosition.y = getRandomNumber(position.y + 3, position.y - 3);
             this.initPosition.z = getRandomNumber(position.z + 3, position.z - 3);
             this.position = new OLVector3f(this.initPosition);
-            this.velocity = velocity;
             this.initVelocity = new OLVector3f(velocity);
+            this.velocity = new OLVector3f(this.initVelocity);
             this.scale = scale;
             this.rotation = rotation;
             this.gravityEffect = gravityEffect;
