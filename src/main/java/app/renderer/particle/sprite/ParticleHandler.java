@@ -8,6 +8,7 @@ import java.util.List;
 public class ParticleHandler {
     private static ParticleRendererSprite particleRendererSprite;
     private static final List<Particle> particles = new ArrayList<>();
+    private static final int batchSize = 64; // Define the batch size
     private static int image = 0;
     private static boolean pause = false;
 
@@ -16,8 +17,15 @@ public class ParticleHandler {
     }
 
     public static void update(float dt) {
-        if (!pause)
-            particles.forEach(p -> p.update(dt));
+        if (!pause) {
+            int numParticles = particles.size();
+            for (int i = 0; i < numParticles; i += batchSize) {
+                int endIndex = Math.min(i + batchSize, numParticles);
+                for (int j = i; j < endIndex; j++) {
+                    particles.get(j).update(dt);
+                }
+            }
+        }
     }
 
     public static void render() {

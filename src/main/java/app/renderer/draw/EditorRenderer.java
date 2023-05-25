@@ -69,12 +69,12 @@ public class EditorRenderer {
 
         ParticleHandler.create(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 10.0f), 3
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 10.0f), 50
         );
 
         ParticleHandler.create(
                 new Particle(new OLVector3f(3.0f, 3.0f, 3.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 3
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 50
         );
 
         ParticleHandler.setIsInfinity(true);
