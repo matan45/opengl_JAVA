@@ -1,10 +1,8 @@
 package app.renderer.draw;
 
 import app.audio.Audio;
-import app.math.OLMatrix4f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
-import app.math.components.OLTransform;
 import app.math.components.RayCast;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
@@ -14,8 +12,8 @@ import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.particle.mesh.ParticleRendererHandler;
 import app.renderer.particle.sprite.Particle;
-import app.renderer.particle.sprite.ParticleHandler;
-import app.renderer.particle.sprite.ParticleRendererSprite;
+import app.renderer.particle.sprite.ParticleEmitter;
+import app.renderer.particle.sprite.ParticleSystem;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
@@ -63,22 +61,23 @@ public class EditorRenderer {
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        ParticleHandler.init(openGLObjects);
+        ParticleSystem.init(openGLObjects);
 
-        ParticleHandler.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
+        ParticleEmitter particleEmitter = ParticleSystem.createEmitter();
+        particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
 
-        ParticleHandler.create(
+        particleEmitter.createParticle(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
                         new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 5.0f), 200
         );
 
-        ParticleHandler.create(
+        particleEmitter.createParticle(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
                         new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 200
         );
 
-        ParticleHandler.setIsInfinity(true);
-        ParticleHandler.setPause(true);
+        particleEmitter.setIsInfinity(true);
+        particleEmitter.setPause(true);
     }
 
     public static void draw(float dt) {
@@ -88,10 +87,10 @@ public class EditorRenderer {
         enable();
         Audio.billboards();
         editorCamera.updateMatrices();
-        ParticleHandler.update(dt);
+        ParticleSystem.update(dt);
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
-        ParticleHandler.render();
+        ParticleSystem.render();
         lightHandler.drawBillboards();
         skyBox.render();
         grid.render();
@@ -112,7 +111,7 @@ public class EditorRenderer {
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
-        ParticleHandler.cleanUp();
+        ParticleSystem.cleanUp();
     }
 
     public static Camera getEditorCamera() {
