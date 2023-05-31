@@ -5,14 +5,14 @@ import app.renderer.OpenGLObjects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParticleSystem {
+public class ParticleSystemSprite {
 
     private static final List<ParticleEmitter> emitters = new ArrayList<>();
 
     private static OpenGLObjects openGLObjects;
 
     public static void init(OpenGLObjects openGLObjects) {
-        ParticleSystem.openGLObjects = openGLObjects;
+        ParticleSystemSprite.openGLObjects = openGLObjects;
     }
 
     public static ParticleEmitter createEmitter() {
@@ -25,11 +25,9 @@ public class ParticleSystem {
         emitters.forEach(e -> e.update(dt));
     }
 
-    public static void add(ParticleEmitter particleEmitter) {
-        emitters.add(particleEmitter);
-    }
 
     public static void remove(ParticleEmitter particleEmitter) {
+        particleEmitter.cleanUp();
         emitters.remove(particleEmitter);
     }
 

@@ -13,7 +13,7 @@ import app.renderer.lights.LightHandler;
 import app.renderer.particle.mesh.ParticleRendererHandler;
 import app.renderer.particle.sprite.Particle;
 import app.renderer.particle.sprite.ParticleEmitter;
-import app.renderer.particle.sprite.ParticleSystem;
+import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
@@ -61,9 +61,9 @@ public class EditorRenderer {
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        ParticleSystem.init(openGLObjects);
+        ParticleSystemSprite.init(openGLObjects);
 
-        ParticleEmitter particleEmitter = ParticleSystem.createEmitter();
+        ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
         particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
 
         particleEmitter.createParticle(
@@ -87,12 +87,12 @@ public class EditorRenderer {
         enable();
         Audio.billboards();
         editorCamera.updateMatrices();
-        ParticleSystem.update(dt);
+        ParticleSystemSprite.update(dt);
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
-        ParticleSystem.render();
         lightHandler.drawBillboards();
         skyBox.render();
+        ParticleSystemSprite.render();
         grid.render();
         disable();
         framebuffer.unbind();
@@ -111,7 +111,7 @@ public class EditorRenderer {
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
-        ParticleSystem.cleanUp();
+        ParticleSystemSprite.cleanUp();
     }
 
     public static Camera getEditorCamera() {

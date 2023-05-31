@@ -11,6 +11,7 @@ public class ParticleEmitter {
     private final List<Particle> particles = new ArrayList<>();
     private int image = 0;
     private boolean pause = false;
+    private boolean play = false;
 
     public ParticleEmitter(OpenGLObjects openGLObjects) {
         particleRendererSprite = new ParticleRendererSprite(openGLObjects);
@@ -31,7 +32,14 @@ public class ParticleEmitter {
     }
 
     public void render() {
-        particleRendererSprite.render(particles, image);
+        if (play)
+            particleRendererSprite.render(particles, image);
+    }
+
+    public void reset() {
+        play = false;
+        pause = true;
+        cleanUp();
     }
 
 
@@ -50,6 +58,10 @@ public class ParticleEmitter {
 
     public void setPause(boolean pause) {
         this.pause = pause;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
     }
 
     public void cleanUp() {
