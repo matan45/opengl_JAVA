@@ -52,8 +52,8 @@ public class ParticleEmitter {
             particles.add(new Particle(particle));
     }
 
-    public void setIsInfinity(boolean isInfinity) {
-        particles.forEach(p -> p.setInfinity(isInfinity));
+    public void setInfinity(boolean infinity) {
+        particles.forEach(p -> p.setInfinity(infinity));
     }
 
     public void setPause(boolean pause) {

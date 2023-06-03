@@ -1,80 +1,48 @@
 package app.renderer.particle.sprite;
 
-import app.math.OLVector3f;
 import app.math.components.OLTransform;
+import app.renderer.particle.sprite.data.ParticleMaterialSprite;
 
 public class Particle {
-    private static class ParticleData {
-        public OLVector3f position;
-        public OLVector3f initPosition;
-        public OLVector3f velocity;
-        public OLVector3f initVelocity;
-        public OLVector3f scale;
-        public OLVector3f rotation;
-        public float gravityEffect;
-        public float lifeLength;
-        public float elapsedTime;
-        public boolean isInfinity;
+    private final ParticleMaterialSprite data;
+    private float elapsedTime;
 
-        public ParticleData(OLVector3f position, OLVector3f rotation, OLVector3f scale,
-                            OLVector3f velocity, float gravityEffect, float lifeLength) {
-            this.initPosition = new OLVector3f();
-            this.initPosition.x = getRandomNumber(position.x + 3, position.x - 3);
-            this.initPosition.y = getRandomNumber(position.y + 3, position.y - 3);
-            this.initPosition.z = getRandomNumber(position.z + 3, position.z - 3);
-            this.position = new OLVector3f(this.initPosition);
-            this.initVelocity = new OLVector3f(velocity);
-            this.velocity = new OLVector3f(this.initVelocity);
-            this.scale = scale;
-            this.rotation = rotation;
-            this.gravityEffect = gravityEffect;
-            this.lifeLength = lifeLength;
-            this.elapsedTime = 0;
-            this.isInfinity = false;
-        }
-
-        private float getRandomNumber(float min, float max) {
-            return (float) ((Math.random() * (max - min)) + min);
-        }
-    }
-
-    private final ParticleData data;
-
-    public Particle(OLVector3f position, OLVector3f rotation, OLVector3f scale,
-                    OLVector3f velocity, float gravityEffect, float lifeLength) {
-        this.data = new ParticleData(position, rotation, scale, velocity, gravityEffect, lifeLength);
+    public Particle(ParticleMaterialSprite data) {
+        this.data = data;
+        elapsedTime = 0;
     }
 
     public Particle(Particle particle) {
-        this.data = new ParticleData(
-                particle.data.position, particle.data.rotation, particle.data.scale,
-                particle.data.velocity, particle.data.gravityEffect, particle.data.lifeLength
-        );
+        this(particle.data);
     }
 
-
     public OLTransform getTransform() {
-        return new OLTransform(data.position, data.scale, data.rotation);
+        return new OLTransform(data.getParticlePosition().getUpdatePosition(),
+                data.getParticleScale().getUpdateScale(), data.getRotation());
     }
 
     public boolean isLife() {
-        return data.elapsedTime < data.lifeLength;
+        return elapsedTime < data.getLifeLength();
     }
 
     public void update(float dt) {
         if (isLife()) {
             //TODO use compute for all Particles
-            data.velocity.y -= data.gravityEffect * dt;
-            data.position = data.position.add(data.velocity.mul(dt));
-            data.elapsedTime += dt;
-        } else if (data.isInfinity) {
-            data.position = new OLVector3f(data.initPosition);
-            data.velocity = new OLVector3f(data.initVelocity);
-            data.elapsedTime = 0;
+            data.getParticleVelocity().getUpdateVelocity().y = data.getGravityEffect() * dt;
+            data.getParticlePosition().setUpdatePosition(
+                    data.getParticlePosition().getUpdatePosition().add(data.getParticleVelocity().getUpdateVelocity().mul(dt))
+            );
+
+            elapsedTime += dt;
+        } else if (data.isInfinity()) {
+            data.getParticlePosition().reset();
+            data.getParticleVelocity().reset();
+            data.getParticleScale().reset();
+            elapsedTime = 0;
         }
     }
 
     public void setInfinity(boolean infinity) {
-        data.isInfinity = infinity;
+        data.setInfinity(infinity);
     }
 }

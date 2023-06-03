@@ -1,7 +1,6 @@
 package app.renderer.draw;
 
 import app.audio.Audio;
-import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.math.components.RayCast;
 import app.renderer.OpenGLObjects;
@@ -11,7 +10,6 @@ import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.particle.mesh.ParticleRendererHandler;
-import app.renderer.particle.sprite.Particle;
 import app.renderer.particle.sprite.ParticleEmitter;
 import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
@@ -66,7 +64,7 @@ public class EditorRenderer {
         ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
         particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
 
-        particleEmitter.createParticle(
+      /*  particleEmitter.createParticle(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
                         new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 5.0f), 200
         );
@@ -76,8 +74,9 @@ public class EditorRenderer {
                         new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 200
         );
 
-        particleEmitter.setIsInfinity(true);
+        particleEmitter.setInfinity(true);
         particleEmitter.setPause(true);
+        particleEmitter.setPlay(true);*/
     }
 
     public static void draw(float dt) {
