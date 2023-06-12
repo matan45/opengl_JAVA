@@ -1,22 +1,25 @@
 package app.renderer.particle.sprite;
 
 import app.renderer.OpenGLObjects;
+import app.renderer.Textures;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ParticleSystemSprite {
 
-    private static final List<ParticleEmitter> emitters = new ArrayList<>();
+    private static final List<ParticleEmitterSprite> emitters = new ArrayList<>();
 
     private static OpenGLObjects openGLObjects;
+    private static Textures textures;
 
-    public static void init(OpenGLObjects openGLObjects) {
+    public static void init(OpenGLObjects openGLObjects, Textures textures) {
         ParticleSystemSprite.openGLObjects = openGLObjects;
+        ParticleSystemSprite.textures = textures;
     }
 
-    public static ParticleEmitter createEmitter() {
-        ParticleEmitter particleEmitter = new ParticleEmitter(openGLObjects);
+    public static ParticleEmitterSprite createEmitter() {
+        ParticleEmitterSprite particleEmitter = new ParticleEmitterSprite(openGLObjects, textures);
         emitters.add(particleEmitter);
         return particleEmitter;
     }
@@ -26,18 +29,18 @@ public class ParticleSystemSprite {
     }
 
 
-    public static void remove(ParticleEmitter particleEmitter) {
+    public static void remove(ParticleEmitterSprite particleEmitter) {
         particleEmitter.cleanUp();
         emitters.remove(particleEmitter);
     }
 
 
     public static void render() {
-        emitters.forEach(ParticleEmitter::render);
+        emitters.forEach(ParticleEmitterSprite::render);
     }
 
     public static void cleanUp() {
-        emitters.forEach(ParticleEmitter::cleanUp);
+        emitters.forEach(ParticleEmitterSprite::cleanUp);
         emitters.clear();
     }
 }

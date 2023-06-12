@@ -40,7 +40,7 @@ public class ParticleRendererSprite {
         openGLObjects.addInstanceAttribute(vaoModel.vaoID(), vbo, 4, 4, INSTANCE_DATA_LENGTH, 12);
     }
 
-    public void render(List<Particle> particles, int image) {
+    public void render(List<ParticleSprite> particles, int image) {
         particleShaderSprite.start();
         glBindVertexArray(vaoModel.vaoID());
         glEnableVertexAttribArray(0);
@@ -52,7 +52,7 @@ public class ParticleRendererSprite {
         pointer = 0;
         float[] vboData = new float[particles.size() * INSTANCE_DATA_LENGTH];
         int number = 0;
-        for (Particle particle : particles) {
+        for (ParticleSprite particle : particles) {
             if (particle.isLife()) {
                 fillModel(vboData, particle.getTransform().getModelMatrix());
                 number++;

@@ -9,9 +9,9 @@ public class ParticleMaterialSprite {
     private String texturePath;
     private boolean infinity;
     private OLVector3f rotation;
-    private ParticlePosition particlePosition;
-    private ParticleScale particleScale;
-    private ParticleVelocity particleVelocity;
+    private OLVector3f scale;
+    private ParticlePositionSprite particlePosition;
+    private ParticleVelocitySprite particleVelocity;
 
     public ParticleMaterialSprite() {
         lifeLength = 0;
@@ -19,14 +19,14 @@ public class ParticleMaterialSprite {
         gravityEffect = 0;
         texturePath = "";
         infinity = false;
-        particlePosition = new ParticlePosition();
-        particleScale = new ParticleScale();
-        particleVelocity = new ParticleVelocity();
+        particlePosition = new ParticlePositionSprite();
+        particleVelocity = new ParticleVelocitySprite();
         rotation = new OLVector3f();
+        scale=new OLVector3f();
     }
 
     public ParticleMaterialSprite(float lifeLength, float particleAmount, float gravityEffect, String texturePath, boolean infinity,
-                                  ParticlePosition particlePosition, ParticleScale particleScale, ParticleVelocity particleVelocity
+                                  ParticlePositionSprite particlePosition, ParticleVelocitySprite particleVelocity, OLVector3f scale
             , OLVector3f rotation) {
         this.lifeLength = lifeLength;
         this.particleAmount = particleAmount;
@@ -34,7 +34,7 @@ public class ParticleMaterialSprite {
         this.texturePath = texturePath;
         this.infinity = infinity;
         this.particlePosition = particlePosition;
-        this.particleScale = particleScale;
+        this.scale = scale;
         this.particleVelocity = particleVelocity;
         this.rotation = rotation;
     }
@@ -79,27 +79,27 @@ public class ParticleMaterialSprite {
         this.infinity = infinity;
     }
 
-    public ParticlePosition getParticlePosition() {
+    public ParticlePositionSprite getParticlePosition() {
         return particlePosition;
     }
 
-    public void setParticlePosition(ParticlePosition particlePosition) {
+    public void setParticlePosition(ParticlePositionSprite particlePosition) {
         this.particlePosition = particlePosition;
     }
 
-    public ParticleScale getParticleScale() {
-        return particleScale;
+    public OLVector3f getScale() {
+        return scale;
     }
 
-    public void setParticleScale(ParticleScale particleScale) {
-        this.particleScale = particleScale;
+    public void setScale(OLVector3f scale) {
+        this.scale = scale;
     }
 
-    public ParticleVelocity getParticleVelocity() {
+    public ParticleVelocitySprite getParticleVelocity() {
         return particleVelocity;
     }
 
-    public void setParticleVelocity(ParticleVelocity particleVelocity) {
+    public void setParticleVelocity(ParticleVelocitySprite particleVelocity) {
         this.particleVelocity = particleVelocity;
     }
 

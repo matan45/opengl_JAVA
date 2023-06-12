@@ -3,22 +3,18 @@ package app.renderer.particle.sprite;
 import app.math.components.OLTransform;
 import app.renderer.particle.sprite.data.ParticleMaterialSprite;
 
-public class Particle {
+public class ParticleSprite {
     private final ParticleMaterialSprite data;
     private float elapsedTime;
 
-    public Particle(ParticleMaterialSprite data) {
+    public ParticleSprite(ParticleMaterialSprite data) {
         this.data = data;
         elapsedTime = 0;
     }
 
-    public Particle(Particle particle) {
-        this(particle.data);
-    }
-
     public OLTransform getTransform() {
         return new OLTransform(data.getParticlePosition().getUpdatePosition(),
-                data.getParticleScale().getUpdateScale(), data.getRotation());
+                data.getScale(), data.getRotation());
     }
 
     public boolean isLife() {
@@ -30,14 +26,14 @@ public class Particle {
             //TODO use compute for all Particles
             data.getParticleVelocity().getUpdateVelocity().y = data.getGravityEffect() * dt;
             data.getParticlePosition().setUpdatePosition(
-                    data.getParticlePosition().getUpdatePosition().add(data.getParticleVelocity().getUpdateVelocity().mul(dt))
+                    data.getParticlePosition().getUpdatePosition()
+                            .add(data.getParticleVelocity().getUpdateVelocity().mul(dt))
             );
 
             elapsedTime += dt;
         } else if (data.isInfinity()) {
             data.getParticlePosition().reset();
             data.getParticleVelocity().reset();
-            data.getParticleScale().reset();
             elapsedTime = 0;
         }
     }

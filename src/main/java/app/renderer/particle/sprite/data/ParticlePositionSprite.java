@@ -3,20 +3,20 @@ package app.renderer.particle.sprite.data;
 import app.math.MathUtil;
 import app.math.OLVector3f;
 
-public class ParticlePosition {
+public class ParticlePositionSprite {
     private OLVector3f initPosition;
     private OLVector3f updatePosition;
     private OLVector3f maxOffsetPosition;
     private OLVector3f minOffsetPosition;
 
-    public ParticlePosition() {
+    public ParticlePositionSprite() {
         initPosition = new OLVector3f();
         updatePosition = new OLVector3f();
         maxOffsetPosition = new OLVector3f();
         minOffsetPosition = new OLVector3f();
     }
 
-    public ParticlePosition(OLVector3f initPosition, OLVector3f maxOffsetPosition, OLVector3f minOffsetPosition) {
+    public ParticlePositionSprite(OLVector3f initPosition, OLVector3f maxOffsetPosition, OLVector3f minOffsetPosition) {
         this.initPosition = MathUtil.getRandomNumber(initPosition.add(minOffsetPosition), initPosition.add(maxOffsetPosition));
         this.updatePosition = new OLVector3f(this.initPosition);
         this.maxOffsetPosition = maxOffsetPosition;

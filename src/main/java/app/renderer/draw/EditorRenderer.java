@@ -10,13 +10,11 @@ import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
 import app.renderer.particle.mesh.ParticleRendererHandler;
-import app.renderer.particle.sprite.ParticleEmitter;
 import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -59,10 +57,10 @@ public class EditorRenderer {
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        ParticleSystemSprite.init(openGLObjects);
+        ParticleSystemSprite.init(openGLObjects,textures);
 
-        ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
-        particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));
+        /*ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
+        particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));*/
 
       /*  particleEmitter.createParticle(
                 new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),

@@ -1,20 +1,25 @@
 package app.renderer.particle.sprite;
 
 import app.renderer.OpenGLObjects;
+import app.renderer.Textures;
+import app.renderer.particle.sprite.data.ParticleMaterialSprite;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ParticleEmitter {
+public class ParticleEmitterSprite {
     private final ParticleRendererSprite particleRendererSprite;
-    private final List<Particle> particles = new ArrayList<>();
+    private final Textures textures;
+    private final List<ParticleSprite> particles = new ArrayList<>();
     private int image = 0;
     private boolean pause = false;
     private boolean play = false;
 
-    public ParticleEmitter(OpenGLObjects openGLObjects) {
+    public ParticleEmitterSprite(OpenGLObjects openGLObjects, Textures textures) {
         particleRendererSprite = new ParticleRendererSprite(openGLObjects);
+        this.textures = textures;
     }
 
     public void update(float dt) {
@@ -42,14 +47,10 @@ public class ParticleEmitter {
         cleanUp();
     }
 
-
-    public void setImage(int image) {
-        this.image = image;
-    }
-
-    public void createParticle(Particle particle, int amount) {
-        for (int i = 0; i < amount; i++)
-            particles.add(new Particle(particle));
+    public void createParticle(ParticleMaterialSprite particleMaterial) {
+        image = textures.loadTexture(Path.of(particleMaterial.getTexturePath()));
+        for (int i = 0; i < particleMaterial.getParticleAmount(); i++)
+            particles.add(new ParticleSprite(particleMaterial));
     }
 
     public void setInfinity(boolean infinity) {
@@ -72,7 +73,7 @@ public class ParticleEmitter {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ParticleEmitter that = (ParticleEmitter) o;
+        ParticleEmitterSprite that = (ParticleEmitterSprite) o;
         return Objects.equals(this, that);
     }
 }

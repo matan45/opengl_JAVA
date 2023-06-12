@@ -3,21 +3,21 @@ package app.renderer.particle.sprite.data;
 import app.math.MathUtil;
 import app.math.OLVector3f;
 
-public class ParticleVelocity {
+public class ParticleVelocitySprite {
 
     private OLVector3f initVelocity;
     private OLVector3f updateVelocity;
     private OLVector3f maxOffsetVelocity;
     private OLVector3f minOffsetVelocity;
 
-    public ParticleVelocity() {
+    public ParticleVelocitySprite() {
         initVelocity = new OLVector3f();
         updateVelocity = new OLVector3f();
         maxOffsetVelocity = new OLVector3f();
         minOffsetVelocity = new OLVector3f();
     }
 
-    public ParticleVelocity(OLVector3f initVelocity, OLVector3f updateVelocity, OLVector3f maxOffsetVelocity, OLVector3f minOffsetVelocity) {
+    public ParticleVelocitySprite(OLVector3f initVelocity, OLVector3f updateVelocity, OLVector3f maxOffsetVelocity, OLVector3f minOffsetVelocity) {
         this.initVelocity = MathUtil.getRandomNumber(initVelocity.add(minOffsetVelocity), initVelocity.add(maxOffsetVelocity));
         this.updateVelocity = new OLVector3f(this.initVelocity);
         this.maxOffsetVelocity = maxOffsetVelocity;
