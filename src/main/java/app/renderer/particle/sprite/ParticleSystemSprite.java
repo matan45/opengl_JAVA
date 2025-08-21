@@ -43,4 +43,12 @@ public class ParticleSystemSprite {
         emitters.forEach(ParticleEmitterSprite::cleanUp);
         emitters.clear();
     }
+
+    public static List<ParticleEmitterSprite> getEmitters() {
+        return emitters;
+    }
+
+    public static boolean hasEmitter(ParticleEmitterSprite emitter) {
+        return emitters.contains(emitter);
+    }
 }
