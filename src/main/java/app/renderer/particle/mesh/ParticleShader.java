@@ -45,10 +45,10 @@ public class ParticleShader extends ShaderProgram {
         locationAlbedoMap = super.getUniformLocation("albedoMap");
         locationNormalMap = super.getUniformLocation("normalMap");
 
-        locationMetallic = super.getUniformLocation("metallicMap");
-        locationRoughness = super.getUniformLocation("roughnessMap");
-        locationAo = super.getUniformLocation("aoMap");
-        locationEmissive = super.getUniformLocation("emissiveMap");
+        locationMetallic = super.getUniformLocation("metallic");
+        locationRoughness = super.getUniformLocation("roughness");
+        locationAo = super.getUniformLocation("ao");
+        locationEmissive = super.getUniformLocation("emissive");
 
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
         locationPrefilterMap = super.getUniformLocation("prefilterMap");

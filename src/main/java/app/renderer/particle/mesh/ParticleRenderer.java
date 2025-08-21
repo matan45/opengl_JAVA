@@ -11,7 +11,13 @@ import app.renderer.pbr.Mesh;
 import app.renderer.shaders.UniformsNames;
 
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class ParticleRenderer {
     private final ParticleMaterial particleMaterial;
@@ -43,6 +49,58 @@ public class ParticleRenderer {
 
     public void renderer() {
     }
+    
+    public void renderParticles(List<ParticleMesh> particles, VaoModel model) {
+        if (particles.isEmpty() || model == null) {
+            return;
+        }
+        
+        particleShader.start();
+        particleShader.connectTextureUnits();
+        particleShader.loadCameraPosition(camera.getPosition());
+        
+        if (lightHandler.getDirectionalLight() != null) {
+            particleShader.loadDirLight(lightHandler.getDirectionalLight());
+        }
+        
+        particleShader.loadMetallic(particleMaterial.getMetallic());
+        particleShader.loadRoughness(particleMaterial.getRoughness());
+        particleShader.loadAo(particleMaterial.getAo());
+        particleShader.loadEmissive(particleMaterial.getEmissive());
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getPrefilterMap());
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, skyBox.getBrdfLUTTexture());
+        
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, particleMaterial.getAlbedoMap());
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, particleMaterial.getNormalMap());
+        
+        glBindVertexArray(model.vaoID());
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+        
+        for (ParticleMesh particle : particles) {
+            particleShader.loadModelMatrix(particle.getModelMatrix());
+            glDrawElements(GL_TRIANGLES, model.VertexCount(), GL_UNSIGNED_INT, 0);
+        }
+        
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+        glBindVertexArray(0);
+        
+        particleShader.stop();
+    }
+    
+    public VaoModel getVaoModel() {
+        return vaoModel;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -54,5 +112,9 @@ public class ParticleRenderer {
 
     public ParticleMaterial getMaterial() {
         return particleMaterial;
+    }
+    
+    public void setSelect(int select) {
+        this.select = select;
     }
 }
