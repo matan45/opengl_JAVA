@@ -14,6 +14,7 @@ public class CameraWindow {
     }
 
     public void cameraEditor(ImBoolean cameraWindow) {
+
         if (ImGui.begin("Camera Editor", cameraWindow)) {
             ImGui.pushID("Camera Speed");
             if (ImGui.button("speed"))
