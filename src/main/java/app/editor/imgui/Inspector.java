@@ -61,12 +61,17 @@ public class Inspector implements ImguiLayer {
                         entity.addComponent(new MusicComponent(entity));
                     ImGui.endMenu();
                 }
+                if (ImGui.beginMenu("Particle")) {
+                    if (ImGui.menuItem("Mesh"))
+                        entity.addComponent(new ParticleMeshComponent(entity));
+                    if (ImGui.menuItem("Sprite"))
+                        entity.addComponent(new ParticleSpriteComponent(entity));
+                    ImGui.endMenu();
+                }
                 if (ImGui.menuItem("Sky Box"))
                     entity.addComponent(new SkyBoxComponent(entity));
                 if (ImGui.menuItem("Mesh"))
                     entity.addComponent(new MeshComponent(entity));
-                if (ImGui.menuItem("Particle"))
-                    entity.addComponent(new ParticleComponent(entity));
                 if (ImGui.menuItem("Terrain"))
                     entity.addComponent(new TerrainComponent(entity));
                 if (ImGui.menuItem("Fog"))

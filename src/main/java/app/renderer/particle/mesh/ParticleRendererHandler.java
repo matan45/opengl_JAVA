@@ -1,12 +1,10 @@
-package app.renderer.particle;
+package app.renderer.particle.mesh;
 
 import app.math.components.Camera;
 import app.renderer.OpenGLObjects;
 import app.renderer.Textures;
-import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
-import app.renderer.pbr.MeshRenderer;
 
 import java.util.HashSet;
 import java.util.Set;

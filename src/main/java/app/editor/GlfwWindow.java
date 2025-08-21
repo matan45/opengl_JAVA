@@ -148,7 +148,7 @@ public class GlfwWindow {
 
             EntitySystem.updateEntities(deltaTime);
 
-            EditorRenderer.draw();
+            EditorRenderer.draw(deltaTime);
 
             imgui.startFrame();
             ImguiLayerHandler.renderImGui(deltaTime);

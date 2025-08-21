@@ -9,7 +9,9 @@ import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
-import app.renderer.particle.ParticleRendererHandler;
+import app.renderer.particle.mesh.ParticleRendererHandler;
+import app.renderer.particle.mesh.ParticleSystemMesh;
+import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
@@ -56,19 +58,42 @@ public class EditorRenderer {
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
+        ParticleSystemSprite.init(openGLObjects,textures);
+        ParticleSystemMesh.init(editorCamera, openGLObjects, textures, skyBox, lightHandler);
+
+        /*ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
+        particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));*/
+
+      /*  particleEmitter.createParticle(
+                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 5.0f), 200
+        );
+
+        particleEmitter.createParticle(
+                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
+                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 200
+        );
+
+        particleEmitter.setInfinity(true);
+        particleEmitter.setPause(true);
+        particleEmitter.setPlay(true);*/
     }
 
-    public static void draw() {
+    public static void draw(float dt) {
         framebuffer.bind(fboID);
         glClearColor(0f, 0f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         enable();
         Audio.billboards();
         editorCamera.updateMatrices();
+        ParticleSystemSprite.update(dt);
+        ParticleSystemMesh.update(dt);
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
         lightHandler.drawBillboards();
         skyBox.render();
+        ParticleSystemSprite.render();
+        ParticleSystemMesh.render();
         grid.render();
         disable();
         framebuffer.unbind();
@@ -87,6 +112,8 @@ public class EditorRenderer {
     public static void cleanUp() {
         textures.cleanUp();
         openGLObjects.cleanUp();
+        ParticleSystemSprite.cleanUp();
+        ParticleSystemMesh.cleanUp();
     }
 
     public static Camera getEditorCamera() {

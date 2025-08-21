@@ -1,4 +1,4 @@
-package app.renderer.particle;
+package app.renderer.particle.mesh;
 
 import app.renderer.Textures;
 
