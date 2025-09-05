@@ -16,7 +16,9 @@ import imgui.ImVec2;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
 import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiMouseCursor;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 
 import java.nio.file.Path;
@@ -85,33 +87,74 @@ public class ViewPort implements ImguiLayer {
 
     @Override
     public void render(float dt) {
-        if (ImGui.begin("Scene View", ImGuiWindowFlags.MenuBar)) {
-            if (ImGui.beginMenuBar()) {
-                if (ImGui.imageButton(playIcon, 30, 20))
+        if (ImGui.begin("Scene View")) {
+
+            ImVec2 windowSize = ImGui.getWindowSize();
+            ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 50, 0, 1, 1, 0);
+
+            // Get image bounds
+            ImVec2 imagePos = ImGui.getItemRectMin();
+
+            // Create a child window for overlay toolbar
+            ImGui.setCursorScreenPos(imagePos.x, imagePos.y);
+            ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 5, 5);
+            ImGui.pushStyleColor(ImGuiCol.ChildBg, 0, 0, 0, 0f);
+
+            if (ImGui.beginChild("OverlayToolbar", 300, 33, false,
+                    ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)) {
+
+                // Make buttons transparent
+                ImGui.pushStyleColor(ImGuiCol.Button, 0.1f, 0.1f, 0.1f, 0.5f);
+                ImGui.pushStyleColor(ImGuiCol.ButtonHovered, 0.3f, 0.3f, 0.3f, 0.8f);
+                ImGui.pushStyleColor(ImGuiCol.ButtonActive, 0.4f, 0.4f, 0.4f, 0.9f);
+
+                // Render buttons horizontally
+                if (ImGui.imageButton(playIcon, 25, 25))
                     LogInfo.println("not implement");
-                else if (ImGui.imageButton(stopIcon, 30, 20))
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(stopIcon, 25, 25))
                     LogInfo.println("not implement");
-                else if (ImGui.imageButton(translateIcon, 30, 20)) {
+                ImGui.sameLine();
+
+                ImGui.separator();
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(translateIcon, 25, 25)) {
                     currentGizmoOperation = Operation.TRANSLATE;
                     snapValue = 0.5f;
-                } else if (ImGui.imageButton(rotateIcon, 30, 20)) {
+                }
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(rotateIcon, 25, 25)) {
                     currentGizmoOperation = Operation.ROTATE;
                     snapValue = 45.0f;
-                } else if (ImGui.imageButton(scaleIcon, 30, 20)) {
+                }
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(scaleIcon, 25, 25)) {
                     currentGizmoOperation = Operation.SCALE;
                     snapValue = 0.5f;
-                } else if (ImGui.imageButton(cancelIcon, 30, 20)) {
+                }
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(cancelIcon, 25, 25)) {
                     currentGizmoOperation = -1;
                     snapValue = 0f;
-                } else if (ImGui.imageButton(gridIcon, 30, 20)) {
+                }
+                ImGui.sameLine();
+
+                if (ImGui.imageButton(gridIcon, 25, 25)) {
                     isGrid = !isGrid;
                     EditorRenderer.getGrid().setRender(isGrid);
                 }
-                ImGui.endMenuBar();
-            }
 
-            ImVec2 windowSize = ImGui.getWindowSize();
-            ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 80, 0, 1, 1, 0);
+                ImGui.popStyleColor(3);
+            }
+            ImGui.endChild();
+
+            ImGui.popStyleColor();
+            ImGui.popStyleVar();
 
             dragAndDropTargetEntity();
             //Gizmos
