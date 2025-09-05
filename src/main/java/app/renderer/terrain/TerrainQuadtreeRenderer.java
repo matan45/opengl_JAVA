@@ -7,7 +7,10 @@ import app.renderer.Textures;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.shaders.UniformsNames;
+import app.renderer.terrain.sculpting.TerrainDataManager;
+import app.utilities.logger.LogInfo;
 
+import java.nio.FloatBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,6 +51,7 @@ public class TerrainQuadtreeRenderer {
     private float displacementFactor;
 
     private final TerrainMaterial terrainMaterial;
+    private TerrainDataManager terrainDataManager;
 
     private Fog fog;
     private final SkyBox skyBox;
@@ -73,9 +77,13 @@ public class TerrainQuadtreeRenderer {
 
     public void init(Path path) {
         texture = textures.loadTexture(path);
+        
+        // TerrainDataManager will be initialized on-demand by enableSculpting()
+        LogInfo.println("Terrain renderer initialized - sculpting will be enabled on demand");
 
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
+        shaderTerrainQuadtree.loadTexModificationMap();
         shaderTerrainQuadtree.loadTerrainWidth(WIDTH);
         shaderTerrainQuadtree.loadTerrainLength(LENGTH);
         OLVector3f origin = new OLVector3f(WIDTH / 2.0f, 0.0f, LENGTH / 2.0f);
@@ -94,6 +102,11 @@ public class TerrainQuadtreeRenderer {
 
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
+            System.out.println("📏 TerrainHeightOffset (displacement factor): " + displacementFactor);
+            
+            // CRITICAL FIX: Load modification texture uniform
+            shaderTerrainQuadtree.loadTexModificationMap();
+            System.out.println("🎯 Loaded TexTerrainModification uniform to texture unit 1");
 
 
             if (fog != null) {
@@ -108,16 +121,29 @@ public class TerrainQuadtreeRenderer {
             glBindVertexArray(vao);
             glEnableVertexAttribArray(0);
 
+            // Bind base heightmap
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
-
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+            
+            // Bind modification texture if sculpting is enabled
+            if (terrainDataManager != null) {
+                System.out.println("🎨 Binding modification texture - TerrainDataManager exists");
+                terrainDataManager.updateModificationTexture();
+                glActiveTexture(GL_TEXTURE1);
+                int modTexture = terrainDataManager.getModificationTexture();
+                glBindTexture(GL_TEXTURE_2D, modTexture);
+                System.out.println("🖼️ Bound modification texture ID: " + modTexture + " to GL_TEXTURE1");
+            } else {
+                System.out.println("❌ No TerrainDataManager - sculpting not enabled");
+            }
 
             glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap());
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
 
             glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap());
+
+            glActiveTexture(GL_TEXTURE4);
             glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap());
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
@@ -162,5 +188,37 @@ public class TerrainQuadtreeRenderer {
 
     public TerrainMaterial getTerrainMaterial() {
         return terrainMaterial;
+    }
+    
+    public TerrainDataManager getTerrainDataManager() {
+        return terrainDataManager;
+    }
+    
+    public void enableSculpting() {
+        if (terrainDataManager == null) {
+            // Use reasonable texture resolution (1024x1024) with correct world scale
+            int textureResolution = 1024;
+            terrainDataManager = new TerrainDataManager(textureResolution, textureResolution, WIDTH);
+            
+            // Set base heightmap texture for sculpting reference
+            if (texture != 0) {
+                terrainDataManager.setBaseHeightmap(texture, null);
+            }
+            
+            LogInfo.println("Terrain sculpting enabled - Texture: " + textureResolution + "x" + textureResolution + ", Scale: " + WIDTH);
+        }
+    }
+    
+    public void disableSculpting() {
+        if (terrainDataManager != null) {
+            terrainDataManager.clearModifications();
+            LogInfo.println("Terrain sculpting disabled");
+        }
+    }
+    
+    public void cleanUp() {
+        if (terrainDataManager != null) {
+            terrainDataManager.cleanUp();
+        }
     }
 }

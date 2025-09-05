@@ -1,9 +1,13 @@
 package app.ecs.components;
 
 import app.ecs.Entity;
+import app.editor.imgui.ImguiLayerHandler;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.terrain.TerrainMaterial;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
+import app.renderer.terrain.sculpting.TerrainDataManager;
+import app.renderer.terrain.sculpting.TerrainSculptingIntegration;
+import app.utilities.logger.LogInfo;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
@@ -16,6 +20,7 @@ public class TerrainComponent extends Component {
     private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
     private final TerrainMaterial material;
+    private TerrainDataManager dataManager;
 
     private String path = "";
     private String prePath = "";
@@ -82,6 +87,107 @@ public class TerrainComponent extends Component {
         ImGui.popID();
 
         ImGui.columns(1);
+        
+        // Terrain Sculpting Section
+        ImGui.separator();
+        ImGui.text("🏔️ Terrain Sculpting");
+        
+        boolean hasSculpting = ownerEntity.hasComponent(TerrainSculptingComponent.class);
+        TerrainSculptingComponent sculptingComponent = ownerEntity.getComponent(TerrainSculptingComponent.class);
+        
+        if (!hasSculpting) {
+            if (ImGui.button("Enable Sculpting", 200, 30)) {
+                enableTerrainSculpting();
+            }
+            ImGui.textDisabled("Click to enable terrain sculpting tools");
+        } else {
+            // Sculpting is enabled - show quick controls
+            boolean isActive = sculptingComponent.isActive();
+            
+            if (isActive) {
+                ImGui.pushStyleColor(ImGuiCol.Button, 0.8f, 0.2f, 0.2f, 1.0f);
+                if (ImGui.button("Disable Sculpting", 150, 25)) {
+                    sculptingComponent.setActive(false);
+                }
+                ImGui.popStyleColor();
+            } else {
+                ImGui.pushStyleColor(ImGuiCol.Button, 0.2f, 0.8f, 0.2f, 1.0f);
+                if (ImGui.button("Activate Sculpting", 150, 25)) {
+                    sculptingComponent.setActive(true);
+                }
+                ImGui.popStyleColor();
+            }
+            
+            ImGui.sameLine();
+            if (ImGui.button("Open Sculpting Window", 150, 25)) {
+                openSculptingWindow();
+            }
+            
+            // Show quick stats
+            if (isActive) {
+                ImGui.text("Status: ✅ Active");
+                ImGui.text("Modifications: " + sculptingComponent.getModificationsCount());
+                ImGui.text("Tool: " + sculptingComponent.getBrushSettings().getBrushType().getDisplayName());
+            } else {
+                ImGui.textDisabled("Status: ⏸️ Paused");
+            }
+        }
+    }
+    
+    private void enableTerrainSculpting() {
+        // Add sculpting component to this entity
+        TerrainSculptingComponent sculptingComponent = new TerrainSculptingComponent(ownerEntity);
+        ownerEntity.addComponent(sculptingComponent);
+        
+        // Enable sculpting renderer support
+        terrain.enableSculpting();
+        
+        // Get the global sculpting integration and register this entity
+        TerrainSculptingIntegration sculptingIntegration = EditorRenderer.getSculptingIntegration();
+        if (sculptingIntegration != null) {
+            sculptingIntegration.enableSculptingForTerrain(ownerEntity);
+        }
+    }
+    
+    private void openSculptingWindow() {
+        try {
+            TerrainSculptingIntegration sculptingIntegration = EditorRenderer.getSculptingIntegration();
+            if (sculptingIntegration == null) {
+                LogInfo.println("ERROR: SculptingIntegration is null - not initialized properly");
+                return;
+            }
+            
+            if (!sculptingIntegration.isInitialized()) {
+                LogInfo.println("ERROR: SculptingIntegration is not initialized - attempting to initialize");
+                EditorRenderer.initializeSculpting();
+                if (!sculptingIntegration.isInitialized()) {
+                    LogInfo.println("ERROR: Failed to initialize SculptingIntegration");
+                    return;
+                }
+            }
+            
+            if (sculptingIntegration.getSculptingWindow() == null) {
+                LogInfo.println("ERROR: SculptingWindow is null after initialization");
+                return;
+            }
+            
+            // Set window as open
+            sculptingIntegration.getSculptingWindow().setOpen(true);
+            
+            // Add the window to ImguiLayerHandler - now thread-safe with duplicate check
+            ImguiLayerHandler.addLayer(sculptingIntegration.getSculptingWindow());
+            
+            LogInfo.println("Sculpting window opened successfully");
+            
+        } catch (Exception e) {
+            LogInfo.println("ERROR: Exception while opening sculpting window: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    // ImGui color constants
+    private static class ImGuiCol {
+        static final int Button = 21;
     }
 
     @Override
@@ -103,6 +209,14 @@ public class TerrainComponent extends Component {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public TerrainDataManager getDataManager() {
+        return dataManager;
+    }
+
+    public void setDataManager(TerrainDataManager dataManager) {
+        this.dataManager = dataManager;
     }
 
     private String materialPath(String buttonName) {

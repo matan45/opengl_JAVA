@@ -55,6 +55,7 @@ layout (std140, binding = 0) uniform Matrices
 uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 
 uniform float scaleNegx;
 uniform float scaleNegz;
@@ -158,6 +159,7 @@ layout (std140, binding = 0) uniform Matrices
 };
 
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 uniform float TerrainHeightOffset;
 
 
@@ -184,9 +186,11 @@ void main(){
 	vec2 terrainTexCoord = interpolate2(tcs_terrainTexCoord[0], tcs_terrainTexCoord[1], tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 	vec2 nodeTexCoord = interpolate2(tcs_nodeTexCoord[0], tcs_nodeTexCoord[1], tcs_nodeTexCoord[2], tcs_nodeTexCoord[3]);
 
-	// Sample the heightmap and offset y position of vertex
-	vec4 samp = texture(TexTerrainHeight, terrainTexCoord);
-	gl_Position.y = samp[0] * TerrainHeightOffset;
+	// Sample the heightmap and modification texture, combine them
+	vec4 baseSamp = texture(TexTerrainHeight, terrainTexCoord);
+	vec4 modSamp = texture(TexTerrainModification, terrainTexCoord);
+	float combinedHeight = baseSamp.r + modSamp.r;
+	gl_Position.y = combinedHeight * TerrainHeightOffset;
 
 	// Project the vertex to clip space and send it along
 	vec4 worldPosition = model * gl_Position;
@@ -294,6 +298,7 @@ out vec4 FragColor;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 uniform vec3 cameraPosition;
 uniform vec3 nodePosition;
 
@@ -338,7 +343,9 @@ vec3 colorMapping(){
 	vec3 irradiance = texture(irradianceMap, normal).rgb;
     vec3 diffuse    = irradiance * albedo;
 	vec3 position;
-	position.y = texture(TexTerrainHeight, gs_terrainTexCoord).y;
+	vec4 baseHeight = texture(TexTerrainHeight, gs_terrainTexCoord);
+	vec4 modHeight = texture(TexTerrainModification, gs_terrainTexCoord);
+	position.y = baseHeight.r + modHeight.r;
 	position.xz = nodePosition.xz;
 
 	vec3 color;

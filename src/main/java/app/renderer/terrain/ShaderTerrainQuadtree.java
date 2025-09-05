@@ -18,6 +18,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationTerrainLength;
     private int locationTerrainWidth;
     private int locationTexTerrainHeight;
+    private int locationTexTerrainModification;
     private int locationToggleWireframe;
     private int locationTerrainOrigin;
     private int locationTerrainHeightOffset;
@@ -61,6 +62,7 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationTerrainHeightOffset = super.getUniformLocation("TerrainHeightOffset");
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
+        locationTexTerrainModification = super.getUniformLocation("TexTerrainModification");
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
 
         locationAlbedoMap = super.getUniformLocation("albedoMap");
@@ -94,10 +96,14 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     public void loadTexHighMap() {
 
         super.loadInt(locationTexTerrainHeight, 0);
-        super.loadInt(locationIrradianceMap, 1);
+        super.loadInt(locationIrradianceMap, 2);
 
-        super.loadInt(locationAlbedoMap, 2);
-        super.loadInt(locationNormalMap, 3);
+        super.loadInt(locationAlbedoMap, 3);
+        super.loadInt(locationNormalMap, 4);
+    }
+    
+    public void loadTexModificationMap() {
+        super.loadInt(locationTexTerrainModification, 1);
     }
 
     public void loadViewPort(OLVector2f viewPort) {

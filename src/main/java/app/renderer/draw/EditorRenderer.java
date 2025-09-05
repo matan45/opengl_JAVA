@@ -1,6 +1,7 @@
 package app.renderer.draw;
 
 import app.audio.Audio;
+import app.math.OLVector2f;
 import app.math.components.Camera;
 import app.math.components.RayCast;
 import app.renderer.OpenGLObjects;
@@ -14,6 +15,8 @@ import app.renderer.particle.mesh.ParticleSystemMesh;
 import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
+import app.renderer.terrain.sculpting.TerrainSculptingIntegration;
+import app.ecs.EntitySystem;
 import app.utilities.logger.LogInfo;
 
 import java.util.Objects;
@@ -33,6 +36,8 @@ public class EditorRenderer {
     private static ParticleRendererHandler particleRenderer;
     private static Grid grid;
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
+    private static TerrainSculptingIntegration sculptingIntegration;
+    private static EntitySystem entitySystem;
 
     private EditorRenderer() {
     }
@@ -60,6 +65,13 @@ public class EditorRenderer {
         particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         ParticleSystemSprite.init(openGLObjects,textures);
         ParticleSystemMesh.init(editorCamera, openGLObjects, textures, skyBox, lightHandler);
+        
+        // Initialize terrain sculpting integration
+        // Note: EntitySystem will be set later when available
+        sculptingIntegration = new TerrainSculptingIntegration();
+        if (entitySystem != null) {
+            sculptingIntegration.initialize(editorCamera, entitySystem);
+        }
 
         /*ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
         particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));*/
@@ -88,8 +100,26 @@ public class EditorRenderer {
         editorCamera.updateMatrices();
         ParticleSystemSprite.update(dt);
         ParticleSystemMesh.update(dt);
+        
+        // Update sculpting system before rendering
+        if (sculptingIntegration != null && sculptingIntegration.isInitialized()) {
+            OLVector2f viewport = editorCamera.getViewPort();
+            float viewportWidth = viewport != null ? viewport.x : 1920f;
+            float viewportHeight = viewport != null ? (viewport.y - 50f) : 1030f; // Subtract toolbar height
+            sculptingIntegration.update(dt, viewportWidth, viewportHeight);
+        }
+        
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
+        
+        // Render brush preview after terrain but before UI elements
+        if (sculptingIntegration != null && sculptingIntegration.isInitialized()) {
+            OLVector2f viewport = editorCamera.getViewPort();
+            float viewportWidth = viewport != null ? viewport.x : 1920f;
+            float viewportHeight = viewport != null ? (viewport.y - 50f) : 1030f; // Subtract toolbar height
+            sculptingIntegration.renderBrushPreview(viewportWidth, viewportHeight);
+        }
+        
         lightHandler.drawBillboards();
         skyBox.render();
         ParticleSystemSprite.render();
@@ -154,5 +184,15 @@ public class EditorRenderer {
 
     public static TerrainQuadtreeRenderer getTerrainQuadtreeRenderer() {
         return terrainQuadtreeRenderer;
+    }
+    
+    public static TerrainSculptingIntegration getSculptingIntegration() {
+        return sculptingIntegration;
+    }
+    
+    public static void initializeSculpting() {
+        if (sculptingIntegration != null && !sculptingIntegration.isInitialized()) {
+            sculptingIntegration.initialize(editorCamera);
+        }
     }
 }

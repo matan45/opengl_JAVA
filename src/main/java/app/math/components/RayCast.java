@@ -16,6 +16,28 @@ public class RayCast {
         OLVector4f eyeCords = toEyeCords(clipCords);
         return toWorldCords(eyeCords).normalize();
     }
+    
+    public static OLVector3f calculateMouseRayOrigin(float width, float height) {
+        float x = (float) (-1.0 + 2.0 * ImGui.getMousePos().x / width);
+        float y = (float) (1.0 - 2.0 * ImGui.getMousePos().y / height);
+        
+        // Calculate near plane position (z = -1 in clip space)
+        OLVector4f nearClipCoords = new OLVector4f(x, y, -1.0f, 1.0f);
+        OLVector4f nearEyeCoords = toEyeCordsForOrigin(nearClipCoords);
+        return toWorldCords(nearEyeCoords);
+    }
+    
+    private static OLVector4f toEyeCordsForOrigin(OLVector4f clipCords) {
+        OLMatrix4f invertedProjection = camera.getProjectionMatrix().invert();
+        OLVector4f eyeCords = invertedProjection.transform(clipCords);
+        // For origin calculation, we need the actual position, not direction
+        if (eyeCords.w != 0.0f) {
+            eyeCords.x /= eyeCords.w;
+            eyeCords.y /= eyeCords.w;
+            eyeCords.z /= eyeCords.w;
+        }
+        return new OLVector4f(eyeCords.x, eyeCords.y, eyeCords.z, 1.0f);
+    }
 
     private static OLVector3f toWorldCords(OLVector4f eyeCords) {
         OLMatrix4f invertedView = camera.getViewMatrix().invert();

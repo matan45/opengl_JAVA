@@ -87,6 +87,11 @@ public class GlfwWindow {
             );
         } // the stack frame is popped automatically
         glfwSetWindowSizeCallback(window, this::windowSizeChanged);
+        
+        // Set up input callbacks for sculpting system
+        glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
+        glfwSetScrollCallback(window, this::scrollCallback);
+        glfwSetKeyCallback(window, this::keyCallback);
 
         //make opengl context
         glfwMakeContextCurrent(window);
@@ -102,6 +107,27 @@ public class GlfwWindow {
     private void windowSizeChanged(long window, int width, int height) {
         mainImgui.setHeight(height);
         mainImgui.setWidth(width);
+    }
+
+    private void mouseButtonCallback(long window, int button, int action, int mods) {
+        // Forward mouse events to sculpting system
+        if (EditorRenderer.getSculptingIntegration() != null) {
+            EditorRenderer.getSculptingIntegration().handleMouseButton(button, action, mods);
+        }
+    }
+
+    private void scrollCallback(long window, double xOffset, double yOffset) {
+        // Forward scroll events to sculpting system
+        if (EditorRenderer.getSculptingIntegration() != null) {
+            EditorRenderer.getSculptingIntegration().handleMouseScroll(xOffset, yOffset);
+        }
+    }
+
+    private void keyCallback(long window, int key, int scancode, int action, int mods) {
+        // Forward key events to sculpting system
+        if (EditorRenderer.getSculptingIntegration() != null) {
+            EditorRenderer.getSculptingIntegration().handleKeyboard(key, scancode, action, mods);
+        }
     }
 
     private void close() {
@@ -122,6 +148,9 @@ public class GlfwWindow {
         createCapabilities(true);
         Logger.init();
         EditorRenderer.init();
+        
+        // Initialize sculpting integration
+        EditorRenderer.initializeSculpting();
 
         imgui = new ImguiHandler("#version 460", window);
 
@@ -147,6 +176,11 @@ public class GlfwWindow {
             dt = frame;
 
             EntitySystem.updateEntities(deltaTime);
+            
+            // Update sculpting system
+            if (EditorRenderer.getSculptingIntegration() != null) {
+                EditorRenderer.getSculptingIntegration().update(deltaTime, width, height);
+            }
 
             EditorRenderer.draw(deltaTime);
 

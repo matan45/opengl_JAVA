@@ -2,12 +2,17 @@ package app.editor.imgui;
 
 import app.ecs.Entity;
 import app.ecs.EntitySystem;
+import app.ecs.components.TerrainComponent;
+import app.ecs.components.TerrainSculptingComponent;
 import app.ecs.components.TransformComponent;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
 import app.math.components.RayCast;
 import app.renderer.Textures;
+import app.renderer.terrain.sculpting.BrushSettings;
+import app.renderer.terrain.sculpting.BrushType;
+import app.renderer.terrain.sculpting.TerrainDataManager;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
 import app.utilities.serialize.Serializable;
@@ -172,6 +177,9 @@ public class ViewPort implements ImguiLayer {
                         LogInfo.println(worldPos.toString());
                         LogInfo.println(dir.normalize().toString());
                     }
+                    
+                    // Handle terrain sculpting in ViewPort
+                    handleTerrainSculpting(windowSize);
                 }
             }
 
@@ -308,5 +316,81 @@ public class ViewPort implements ImguiLayer {
     public void setCurrentGizmoOperation(int currentGizmoOperation) {
         this.currentGizmoOperation = currentGizmoOperation;
         snapValue = 0;
+    }
+    
+    public float getViewportWidth() {
+        return preWindowWidth;
+    }
+    
+    public float getViewportHeight() {
+        return preWindowHeight - 50; // Subtract toolbar height
+    }
+    
+    private void handleTerrainSculpting(ImVec2 windowSize) {
+        if (!ImGui.isMouseDown(GLFW_MOUSE_BUTTON_LEFT)) {
+            return;
+        }
+        
+        // Find terrain entities with sculpting components
+        for (Entity entity : EntitySystem.getEntitiesFather()) {
+            if (!entity.hasComponent(TerrainSculptingComponent.class) || !entity.hasComponent(TerrainComponent.class)) {
+                continue;
+            }
+            
+            TerrainSculptingComponent sculptingComponent = entity.getComponent(TerrainSculptingComponent.class);
+            if (!sculptingComponent.isActive()) {
+                continue;
+            }
+            
+            // Calculate terrain intersection using correct viewport coordinates (subtract toolbar height)
+            float viewportWidth = windowSize.x;
+            float viewportHeight = windowSize.y - 50; // Subtract toolbar height
+            OLVector3f rayDirection = RayCast.calculateMouseRay(viewportWidth, viewportHeight);
+            OLVector3f rayOrigin = editorCamera.getPosition();
+            
+            TransformComponent transform = entity.getComponent(TransformComponent.class);
+            if (transform == null) continue;
+            
+            float terrainY = transform.getOlTransform().getPosition().y;
+            
+            if (Math.abs(rayDirection.y) < 0.001f) continue;
+            
+            float t = (terrainY - rayOrigin.y) / rayDirection.y;
+            if (t < 0) continue;
+            
+            OLVector3f hitPoint = new OLVector3f(
+                rayOrigin.x + rayDirection.x * t,
+                terrainY,
+                rayOrigin.z + rayDirection.z * t
+            );
+            
+            // Check if hit point is within terrain bounds
+            float terrainSize = 8192.0f;
+            if (hitPoint.x < 0 || hitPoint.x > terrainSize || hitPoint.z < 0 || hitPoint.z > terrainSize) {
+                continue;
+            }
+            
+            // Apply terrain modification
+            BrushSettings brush = sculptingComponent.getBrushSettings();
+            TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
+            
+            // Enable sculpting and get data manager
+            terrainComponent.getTerrain().enableSculpting();
+            TerrainDataManager dataManager = terrainComponent.getTerrain().getTerrainDataManager();
+            
+            if (dataManager != null) {
+                System.out.println("🎯 ViewPort Sculpting: " + hitPoint.x + ", " + hitPoint.z + " with " + brush.getBrushType());
+                dataManager.applyBrushModification(
+                    hitPoint.x, 
+                    hitPoint.z, 
+                    brush, 
+                    brush.getBrushType(), 
+                    0.016f
+                );
+                
+                sculptingComponent.setCurrentlySculpting(true);
+                sculptingComponent.incrementModifications();
+            }
+        }
     }
 }
