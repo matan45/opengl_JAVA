@@ -90,6 +90,7 @@ public class GlfwWindow {
         
         // Set up input callbacks for sculpting system
         glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
+        glfwSetCursorPosCallback(window, this::cursorPosCallback);
         glfwSetScrollCallback(window, this::scrollCallback);
         glfwSetKeyCallback(window, this::keyCallback);
 
@@ -113,6 +114,13 @@ public class GlfwWindow {
         // Forward mouse events to sculpting system
         if (EditorRenderer.getSculptingIntegration() != null) {
             EditorRenderer.getSculptingIntegration().handleMouseButton(button, action, mods);
+        }
+    }
+
+    private void cursorPosCallback(long window, double xpos, double ypos) {
+        // Forward cursor position events to sculpting system
+        if (EditorRenderer.getSculptingIntegration() != null) {
+            EditorRenderer.getSculptingIntegration().handleMouseMove(xpos, ypos);
         }
     }
 

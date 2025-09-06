@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL40.GL_PATCHES;
 
 public class TerrainQuadtree {
 
-    private static final int MAX_NODE_SIZE = 512;
+    private static final int MAX_NODE_SIZE = 64;
     private static final int MAX_TERRAIN_NODES = 500;
 
     private TerrainNode terrainRootNode;

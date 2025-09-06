@@ -15,6 +15,7 @@ import app.renderer.terrain.sculpting.BrushType;
 import app.renderer.terrain.sculpting.TerrainDataManager;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
+import app.utilities.debug.TerrainDebug;
 import app.utilities.serialize.Serializable;
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -169,17 +170,45 @@ public class ViewPort implements ImguiLayer {
             if (ImGui.isWindowFocused()) {
                 keyInputImGuizo();
                 cameraInput(dt);
+                
+                // Update sculpting system with viewport-relative mouse coordinates
+                updateSculptingMouseCoordinates();
 
                 if (80 < ImGui.getMousePos().y && ImGui.getMousePos().y < windowSize.y) {
                     if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_1)) {
-                        OLVector3f worldPos = RayCast.calculateMouseRay(windowSize.x, windowSize.y);
-                        OLVector3f dir = worldPos.sub(editorCamera.getPosition());
-                        LogInfo.println(worldPos.toString());
-                        LogInfo.println(dir.normalize().toString());
+                        // Debug viewport and ray information
+                        TerrainDebug.printSeparator("VIEWPORT DEBUG INFO");
+                        TerrainDebug.printf("Image Size: %.1f x %.1f", imagePos.x, imagePos.y);
+                        TerrainDebug.printf("Viewport Size (corrected): %.1f x %.1f", getViewportWidth(), getViewportHeight());
+                        TerrainDebug.printf("Mouse Position: %.1f, %.1f", ImGui.getMousePos().x, ImGui.getMousePos().y);
+                        TerrainDebug.printf("Camera Position: %s", editorCamera.getPosition().toString());
+                        
+                        // Debug matrices
+                        float[] viewMatrix = editorCamera.createViewMatrix().getAsArray();
+                        float[] projMatrix = editorCamera.getProjectionMatrix().getAsArray();
+                        TerrainDebug.println("View Matrix:");
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", viewMatrix[0], viewMatrix[4], viewMatrix[8], viewMatrix[12]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", viewMatrix[1], viewMatrix[5], viewMatrix[9], viewMatrix[13]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", viewMatrix[2], viewMatrix[6], viewMatrix[10], viewMatrix[14]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", viewMatrix[3], viewMatrix[7], viewMatrix[11], viewMatrix[15]);
+                        
+                        TerrainDebug.println("Projection Matrix:");
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", projMatrix[0], projMatrix[4], projMatrix[8], projMatrix[12]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", projMatrix[1], projMatrix[5], projMatrix[9], projMatrix[13]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", projMatrix[2], projMatrix[6], projMatrix[10], projMatrix[14]);
+                        TerrainDebug.printf("[%.3f %.3f %.3f %.3f]", projMatrix[3], projMatrix[7], projMatrix[11], projMatrix[15]);
+                        
+                        // Ray cast with both viewport sizes for comparison
+                        OLVector3f rayDir1 = RayCast.calculateMouseRay(windowSize.x, windowSize.y);
+                        OLVector3f rayDir2 = RayCast.calculateMouseRay(getViewportWidth(), getViewportHeight());
+                        
+                        TerrainDebug.println("Ray Cast Results:");
+                        TerrainDebug.printf("Ray Direction (full window): %s", rayDir1.toString());
+                        TerrainDebug.printf("Ray Direction (corrected viewport): %s", rayDir2.toString());
                     }
                     
-                    // Handle terrain sculpting in ViewPort
-                    handleTerrainSculpting(windowSize);
+                    // Handle terrain sculpting in ViewPort (DISABLED - using SculptingSystem instead)
+                    // handleTerrainSculpting(windowSize);
                 }
             }
 
@@ -247,6 +276,11 @@ public class ViewPort implements ImguiLayer {
             snap = true;
         else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
             snap = false;
+            
+        // Toggle terrain debug mode with F9 key
+        if (ImGui.isKeyPressed(GLFW_KEY_F9)) {
+            TerrainDebug.toggleDebug();
+        }
     }
 
     private void dragAndDropTargetEntity() {
@@ -342,21 +376,43 @@ public class ViewPort implements ImguiLayer {
                 continue;
             }
             
+            TerrainDebug.printSeparator("TERRAIN SCULPTING DEBUG");
+            
             // Calculate terrain intersection using correct viewport coordinates (subtract toolbar height)
-            float viewportWidth = windowSize.x;
-            float viewportHeight = windowSize.y - 50; // Subtract toolbar height
+            float viewportWidth = getViewportWidth();
+            float viewportHeight = getViewportHeight();
+            TerrainDebug.printf("Using viewport dimensions: %.1f x %.1f", viewportWidth, viewportHeight);
+            
             OLVector3f rayDirection = RayCast.calculateMouseRay(viewportWidth, viewportHeight);
             OLVector3f rayOrigin = editorCamera.getPosition();
             
+            TerrainDebug.printf("Ray Origin: %s", rayOrigin.toString());
+            TerrainDebug.printf("Ray Direction: %s", rayDirection.toString());
+            
             TransformComponent transform = entity.getComponent(TransformComponent.class);
-            if (transform == null) continue;
+            if (transform == null) {
+                TerrainDebug.println("❌ No TransformComponent found on terrain entity");
+                continue;
+            }
             
-            float terrainY = transform.getOlTransform().getPosition().y;
+            OLVector3f terrainPosition = transform.getOlTransform().getPosition();
+            float terrainY = terrainPosition.y;
             
-            if (Math.abs(rayDirection.y) < 0.001f) continue;
+            TerrainDebug.printf("Terrain Transform Position: %s", terrainPosition.toString());
+            TerrainDebug.printf("Terrain Y-plane: %.3f", terrainY);
+            
+            if (Math.abs(rayDirection.y) < 0.001f) {
+                TerrainDebug.println("❌ Ray direction is nearly horizontal, no intersection possible");
+                continue;
+            }
             
             float t = (terrainY - rayOrigin.y) / rayDirection.y;
-            if (t < 0) continue;
+            TerrainDebug.printf("Ray parameter t: %.3f", t);
+            
+            if (t < 0) {
+                TerrainDebug.println("❌ Ray intersection behind camera (t < 0)");
+                continue;
+            }
             
             OLVector3f hitPoint = new OLVector3f(
                 rayOrigin.x + rayDirection.x * t,
@@ -364,13 +420,26 @@ public class ViewPort implements ImguiLayer {
                 rayOrigin.z + rayDirection.z * t
             );
             
-            // Check if hit point is within terrain bounds
-            float terrainSize = 8192.0f;
-            if (hitPoint.x < 0 || hitPoint.x > terrainSize || hitPoint.z < 0 || hitPoint.z > terrainSize) {
+            TerrainDebug.printf("Ray Hit Point: %s", hitPoint.toString());
+            
+            // Check if hit point is within terrain bounds (updated for 2048x2048 terrain)
+            float terrainSize = 2048.0f;
+            float terrainCenterX = 1024.0f; // Terrain center (WIDTH/2)
+            float terrainCenterZ = 1024.0f; // Terrain center (LENGTH/2)
+            
+            // Transform hit point to terrain local coordinates
+            float localX = hitPoint.x - terrainPosition.x + terrainCenterX;
+            float localZ = hitPoint.z - terrainPosition.z + terrainCenterZ;
+            
+            TerrainDebug.printf("Terrain bounds: 0 to %.0f", terrainSize);
+            TerrainDebug.printf("Hit point in terrain local space: (%.1f, %.1f)", localX, localZ);
+            
+            if (localX < 0 || localX > terrainSize || localZ < 0 || localZ > terrainSize) {
+                TerrainDebug.println("❌ Hit point outside terrain bounds");
                 continue;
             }
             
-            // Apply terrain modification
+            // Apply terrain modification using local coordinates
             BrushSettings brush = sculptingComponent.getBrushSettings();
             TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
             
@@ -379,10 +448,13 @@ public class ViewPort implements ImguiLayer {
             TerrainDataManager dataManager = terrainComponent.getTerrain().getTerrainDataManager();
             
             if (dataManager != null) {
-                System.out.println("🎯 ViewPort Sculpting: " + hitPoint.x + ", " + hitPoint.z + " with " + brush.getBrushType());
+                TerrainDebug.printf("✅ Applying sculpting at local coordinates: (%.1f, %.1f)", localX, localZ);
+                TerrainDebug.printf("Brush: %s, Size: %.1f, Strength: %.3f", 
+                    brush.getBrushType(), brush.getSize(), brush.getStrength());
+                
                 dataManager.applyBrushModification(
-                    hitPoint.x, 
-                    hitPoint.z, 
+                    localX, 
+                    localZ, 
                     brush, 
                     brush.getBrushType(), 
                     0.016f
@@ -390,7 +462,55 @@ public class ViewPort implements ImguiLayer {
                 
                 sculptingComponent.setCurrentlySculpting(true);
                 sculptingComponent.incrementModifications();
+            } else {
+                TerrainDebug.println("❌ TerrainDataManager is null");
             }
         }
+    }
+    
+    private void updateSculptingMouseCoordinates() {
+        if (EditorRenderer.getSculptingIntegration() == null) {
+            System.out.println("❌ SculptingIntegration is null");
+            return;
+        }
+        if (!EditorRenderer.getSculptingIntegration().isInitialized()) {
+            System.out.println("❌ SculptingIntegration not initialized");
+            return;
+        }
+        System.out.println("✅ SculptingIntegration available and initialized");
+        
+        // Get current mouse position (ImGui.getMousePos() gives window-relative coordinates)
+        ImVec2 mousePos = ImGui.getMousePos();
+        ImVec2 windowSize = ImGui.getWindowSize();
+        
+        // The image rendering uses: ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 50, 0, 1, 1, 0);
+        // So the image occupies the full window width and (windowSize.y - 50) height, starting 50px from the top
+        
+        // Convert to viewport-relative coordinates (same as existing ViewPort logic)
+        float viewportMouseX = mousePos.x;  // Full window width
+        float viewportMouseY = mousePos.y - 50;  // Subtract toolbar height (50px)
+        
+        // Image dimensions
+        float imageWidth = windowSize.x;
+        float imageHeight = windowSize.y - 50;
+        
+        // Check if mouse is actually inside the viewport bounds
+        if (viewportMouseX < 0 || viewportMouseX >= imageWidth || 
+            viewportMouseY < 0 || viewportMouseY >= imageHeight) {
+            TerrainDebug.printf("⚠️ Mouse outside viewport bounds: (%.1f, %.1f) not in (0,0)-(%.1f,%.1f)", 
+                viewportMouseX, viewportMouseY, imageWidth, imageHeight);
+            // Set invalid coordinates to prevent sculpting when mouse is outside viewport
+            EditorRenderer.getSculptingIntegration().getSculptingSystem().setViewportRelativeMousePosition(-1, -1);
+            return; 
+        }
+        
+        // Mouse is inside viewport, no need to clamp
+        
+        // Update the sculpting system with viewport-relative coordinates
+        EditorRenderer.getSculptingIntegration().getSculptingSystem().setViewportRelativeMousePosition(viewportMouseX, viewportMouseY);
+        
+        // Debug output to verify coordinate calculation
+        TerrainDebug.printf("🖱️ ViewPort mouse: raw(%.1f,%.1f) -> viewport(%.1f,%.1f) in (%.1f x %.1f)", 
+            mousePos.x, mousePos.y, viewportMouseX, viewportMouseY, imageWidth, imageHeight);
     }
 }

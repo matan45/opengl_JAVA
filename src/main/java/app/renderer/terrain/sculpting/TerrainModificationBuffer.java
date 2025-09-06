@@ -11,7 +11,7 @@ public class TerrainModificationBuffer {
     private final int height;
     private final FloatBuffer modificationData;
     private final boolean[] dirtyRegions;
-    private final int regionSize = 32;
+    private final int regionSize = 64;
     private final int regionsX;
     private final int regionsY;
     private final List<ModificationRegion> pendingUpdates;
@@ -53,8 +53,10 @@ public class TerrainModificationBuffer {
         System.out.println("   Texture coords: (" + textureCoords.x + ", " + textureCoords.y + ")");
         System.out.println("   Center texel: (" + centerX + ", " + centerY + ")");
         
-        float brushRadiusTexels = (brush.getSize() / terrainScale) * width;
-        System.out.println("   Brush radius in texels: " + brushRadiusTexels);
+        // Convert brush size from SculptingSystem's 8192 world space to texture texels
+        float actualTerrainSize = 2048.0f; // This matches SculptingSystem terrain size
+        float brushRadiusTexels = (brush.getSize() / actualTerrainSize) * width;
+        System.out.println("   Brush radius in texels: " + brushRadiusTexels + " (brush size: " + brush.getSize() + " world units)");
         
         int minX = Math.max(0, (int) (centerX - brushRadiusTexels));
         int maxX = Math.min(width - 1, (int) (centerX + brushRadiusTexels));
@@ -103,7 +105,9 @@ public class TerrainModificationBuffer {
         int centerX = (int) (textureCoords.x * width);
         int centerY = (int) (textureCoords.y * height);
         
-        float brushRadiusTexels = (brush.getSize() / terrainScale) * width;
+        // Convert brush size from SculptingSystem's 8192 world space to texture texels
+        float actualTerrainSize = 2048.0f; // This matches SculptingSystem terrain size
+        float brushRadiusTexels = (brush.getSize() / actualTerrainSize) * width;
         
         int minX = Math.max(1, (int) (centerX - brushRadiusTexels));
         int maxX = Math.min(width - 2, (int) (centerX + brushRadiusTexels));
@@ -163,10 +167,12 @@ public class TerrainModificationBuffer {
     }
 
     private OLVector2f worldToTextureCoords(float worldX, float worldZ, float terrainScale) {
-        // Terrain coordinates are already in 0-terrainScale range, no need to center
+        // SculptingSystem now uses quadtree-aligned coordinates (0-2048 range after center-based conversion)
+        // World coordinates from SculptingSystem are in 0-2048 range, map to 0-1 texture coords
+        float actualTerrainSize = 2048.0f; // This matches SculptingSystem terrain size
         return new OLVector2f(
-            worldX / terrainScale,
-            worldZ / terrainScale
+            worldX / actualTerrainSize,
+            worldZ / actualTerrainSize
         );
     }
 

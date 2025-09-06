@@ -11,6 +11,8 @@ import app.math.components.Camera;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
 import app.utilities.logger.Logger;
+import imgui.ImGui;
+import imgui.ImVec2;
 
 public class TerrainSculptingIntegration {
     private SculptingSystem sculptingSystem;
@@ -99,6 +101,12 @@ public class TerrainSculptingIntegration {
         if (!isInitialized || sculptingSystem == null) return;
 
         sculptingSystem.onMouseScroll(xOffset, yOffset);
+    }
+    
+    public void handleMouseMove(double xpos, double ypos) {
+        if (!isInitialized || sculptingSystem == null) return;
+
+        sculptingSystem.onMouseMove(xpos, ypos);
     }
 
     public void handleKeyboard(int key, int scancode, int action, int mods) {

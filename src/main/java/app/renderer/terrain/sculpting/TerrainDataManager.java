@@ -2,6 +2,7 @@ package app.renderer.terrain.sculpting;
 
 import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
+import app.utilities.debug.TerrainDebug;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -40,18 +41,6 @@ public class TerrainDataManager {
         LogInfo.println("TerrainDataManager initialized: " + width + "x" + height);
     }
 
-    public TerrainDataManager(TerrainQuadtreeRenderer terrainRenderer) {
-        // Default size for terrain - you may want to get this from the renderer
-        this.terrainWidth = 512;
-        this.terrainHeight = 512;
-        this.terrainScale = 1.0f;
-        
-        initializeTextures();
-        this.modificationBuffer = new TerrainModificationBuffer(terrainWidth, terrainHeight);
-        this.actionManager = new TerrainActionManager();
-        
-        LogInfo.println("TerrainDataManager initialized for terrain renderer: " + terrainWidth + "x" + terrainHeight);
-    }
 
     private void initializeTextures() {
         baseHeightmapTexture = glGenTextures();
@@ -81,54 +70,42 @@ public class TerrainDataManager {
 
     public void applyBrushModification(float worldX, float worldZ, BrushSettings brush, 
                                      BrushType operation, float deltaTime) {
-        System.out.println("🌍 TerrainDataManager.applyBrushModification called:");
-        System.out.println("   📍 Position: (" + worldX + ", " + worldZ + ")");
-        System.out.println("   🖌️ Operation: " + operation);
-        System.out.println("   📏 Brush size: " + brush.getSize());
-        System.out.println("   💪 Brush strength: " + brush.getStrength());
+        TerrainDebug.printf("Sculpting at (%.1f, %.1f) - %s", worldX, worldZ, operation);
         
         TerrainEditAction action = new TerrainEditAction(worldX, worldZ, brush, operation);
         
         float heightDelta = calculateHeightDelta(operation, brush, deltaTime);
-        
-        System.out.println("⚡ Height delta calculated: " + heightDelta);
+        // TerrainDebug.printf("Height delta calculated: %.4f", heightDelta);
         
         switch (operation) {
             case RAISE, LOWER -> {
-                System.out.println("📈 Applying height modification: " + operation);
                 modificationBuffer.applyHeightModification(worldX, worldZ, heightDelta, brush, terrainScale);
             }
             case SMOOTH -> {
-                System.out.println("🌊 Applying smooth operation");
                 if (baseHeightData != null) {
                     modificationBuffer.smoothTerrain(worldX, worldZ, brush, terrainScale, baseHeightData);
                 } else {
-                    System.out.println("❌ Base height data is null - cannot smooth");
+                    TerrainDebug.println("❌ Base height data is null - cannot smooth");
                 }
             }
             case FLATTEN -> {
-                System.out.println("📏 Applying flatten operation");
                 float targetHeight = brush.getTargetHeight();
                 float currentHeight = getCurrentHeightAtPosition(worldX, worldZ);
                 float delta = (targetHeight - currentHeight) * brush.getStrength() * deltaTime;
-                System.out.println("   Target: " + targetHeight + ", Current: " + currentHeight + ", Delta: " + delta);
                 modificationBuffer.applyHeightModification(worldX, worldZ, delta, brush, terrainScale);
             }
             case NOISE -> {
-                System.out.println("🎲 Applying noise operation");
                 float noiseDelta = (float) (Math.random() - 0.5) * 2.0f * brush.getStrength() * deltaTime;
-                System.out.println("   Noise delta: " + noiseDelta);
                 modificationBuffer.applyHeightModification(worldX, worldZ, noiseDelta, brush, terrainScale);
             }
         }
         
         actionManager.addAction(action);
         needsTextureUpdate = true;
-        System.out.println("🔄 Texture update needed - flag set to true");
         
         // CRITICAL: Actually update the texture!
         updateModificationTexture();
-        System.out.println("✅ Modification texture updated!");
+        TerrainDebug.println("✅ Modification applied successfully");
     }
 
     private float calculateHeightDelta(BrushType operation, BrushSettings brush, float deltaTime) {
@@ -141,7 +118,7 @@ public class TerrainDataManager {
         };
     }
 
-    private float getCurrentHeightAtPosition(float worldX, float worldZ) {
+    public float getCurrentHeightAtPosition(float worldX, float worldZ) {
         if (baseHeightData == null) return 0.0f;
         
         float u = (worldX + terrainScale * 0.5f) / terrainScale;
