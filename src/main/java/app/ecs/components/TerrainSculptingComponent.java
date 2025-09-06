@@ -14,7 +14,7 @@ import imgui.type.ImInt;
 public class TerrainSculptingComponent extends Component {
     private boolean isActive = false;
     private BrushSettings brushSettings;
-    private OLVector3f lastSculptPosition;
+    private final OLVector3f lastSculptPosition;
     private boolean isCurrentlySculpting = false;
     private float sculptingTimer = 0.0f;
     private int modificationsCount = 0;
@@ -71,7 +71,7 @@ public class TerrainSculptingComponent extends Component {
         }
 
         ImFloat falloffRef = new ImFloat(brushSettings.getFalloff());
-        if (ImGui.sliderFloat("Falloff", falloffRef.getData(), 0.1f, 1.0f, "%.2f")) {
+        if (ImGui.sliderFloat("FalloffAmount", falloffRef.getData(), 0.1f, 1.0f, "%.2f")) {
             brushSettings.setFalloff(falloffRef.get());
         }
 
@@ -88,7 +88,7 @@ public class TerrainSculptingComponent extends Component {
         ImInt shapeRef = new ImInt(brushSettings.getShape().ordinal());
         String[] shapeDisplayNames = {"Circle", "Square"};
 
-        if (ImGui.combo("Shape", shapeRef, shapeDisplayNames)) {
+        if (ImGui.combo("Shape2", shapeRef, shapeDisplayNames)) {
             brushSettings.setShape(BrushShape.values()[shapeRef.get()]);
         }
 
