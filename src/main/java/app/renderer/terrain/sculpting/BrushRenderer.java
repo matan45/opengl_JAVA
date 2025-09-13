@@ -24,26 +24,20 @@ public class BrushRenderer {
     private float currentTime = 0.0f;
     
     public BrushRenderer() {
-        System.out.println("🖌️ BrushRenderer: Initializing 3D brush visualization");
     }
     
     public void initialize() {
         if (initialized) {
-            System.out.println("🖌️ BrushRenderer: Already initialized, skipping");
             return;
         }
         
         try {
-            System.out.println("🖌️ BrushRenderer: Loading brush shader from brush.glsl");
             shader = new ShaderBrush(Path.of("src/main/resources/shaders/terrain/brush.glsl"));
             
-            System.out.println("🖌️ BrushRenderer: Creating brush geometry");
             createBrushGeometry();
             
             initialized = true;
-            System.out.println("✅ BrushRenderer: Successfully initialized");
         } catch (Exception e) {
-            System.out.println("❌ BrushRenderer: Failed to initialize - " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -65,9 +59,7 @@ public class BrushRenderer {
         };
         
         vertexCount = indices.length;
-        
-        System.out.println("🖌️ BrushRenderer: Creating OpenGL buffers");
-        
+
         // Generate VAO, VBO, EBO
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
@@ -95,12 +87,10 @@ public class BrushRenderer {
         
         glBindVertexArray(0);
         
-        System.out.println("✅ BrushRenderer: Geometry created - VAO: " + vao + ", VBO: " + vbo + ", EBO: " + ebo + ", Vertices: " + vertexCount);
     }
     
     public void render(OLVector3f brushPosition, BrushSettings brush, OLMatrix4f viewMatrix, OLMatrix4f projectionMatrix) {
         if (!initialized) {
-            System.out.println("⚠️ BrushRenderer: Not initialized, skipping render");
             return;
         }
         
@@ -110,10 +100,7 @@ public class BrushRenderer {
         
         // Update time for pulsing effect
         currentTime += 0.016f; // Approximate 60 FPS delta time
-        
-        System.out.println("🎨 BrushRenderer: Rendering brush at (" + brushPosition.x + ", " + brushPosition.z + ") with size " + brush.getSize());
-        System.out.println("   📊 Brush details - Type: " + brush.getBrushType() + ", Shape: " + brush.getShape() + ", Alpha: " + brush.getStrength() + ", Falloff: " + brush.getFalloff());
-        
+
         // Enable blending for transparent brush
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -131,7 +118,6 @@ public class BrushRenderer {
         
         // Ensure minimum visible size (50 units minimum for terrain that spans 8192 units)
         float renderSize = Math.max(brush.getSize(), 50.0f);
-        System.out.println("   📏 Rendering with enhanced size: " + renderSize + " (original: " + brush.getSize() + ")");
         shader.loadBrushSize(renderSize);
         
         shader.loadBrushFalloff(brush.getFalloff());
@@ -144,8 +130,7 @@ public class BrushRenderer {
         
         // Override alpha for better visibility
         shader.loadBrushAlpha(0.9f);
-        System.out.println("   🎨 Using color: " + getBrushColorName(brush.getBrushType()) + " with alpha 0.9");
-        
+
         // Create model matrix (identity since we position via uniform)
         OLMatrix4f modelMatrix = new OLMatrix4f();
         modelMatrix.identity();
@@ -162,13 +147,11 @@ public class BrushRenderer {
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
         
-        System.out.println("✅ BrushRenderer: Brush rendered successfully");
     }
     
     public void cleanUp() {
         if (initialized) {
-            System.out.println("🧹 BrushRenderer: Cleaning up resources");
-            
+
             if (vao != 0) {
                 glDeleteVertexArrays(vao);
             }
@@ -183,7 +166,6 @@ public class BrushRenderer {
             }
             
             initialized = false;
-            System.out.println("✅ BrushRenderer: Cleanup completed");
         }
     }
     
@@ -198,16 +180,6 @@ public class BrushRenderer {
             case SMOOTH -> new OLVector3f(0.2f, 0.6f, 1.0f);    // Blue
             case FLATTEN -> new OLVector3f(1.0f, 1.0f, 0.2f);   // Yellow
             case NOISE -> new OLVector3f(1.0f, 0.6f, 0.2f);     // Orange
-        };
-    }
-    
-    private String getBrushColorName(BrushType brushType) {
-        return switch (brushType) {
-            case RAISE -> "Green";
-            case LOWER -> "Red";
-            case SMOOTH -> "Blue";
-            case FLATTEN -> "Yellow";
-            case NOISE -> "Orange";
         };
     }
 }

@@ -1,9 +1,7 @@
 package app.renderer.terrain.sculpting;
 
-import app.utilities.debug.TerrainDebug;
 import app.utilities.logger.LogInfo;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL13;
 
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -17,7 +15,6 @@ public class TerrainDataManager {
     private final int terrainHeight;
     private final float terrainScale;
 
-    private int baseHeightmapTexture;
     private int modificationTexture;
     private FloatBuffer baseHeightData;
     private final TerrainModificationBuffer modificationBuffer;
@@ -39,7 +36,6 @@ public class TerrainDataManager {
 
 
     private void initializeTextures() {
-        baseHeightmapTexture = glGenTextures();
         modificationTexture = glGenTextures();
 
         glBindTexture(GL_TEXTURE_2D, modificationTexture);
@@ -59,19 +55,16 @@ public class TerrainDataManager {
     }
 
     public void setBaseHeightmap(int textureId, FloatBuffer heightData) {
-        this.baseHeightmapTexture = textureId;
         this.baseHeightData = heightData;
         LogInfo.println("Base heightmap set for terrain data manager");
     }
 
     public void applyBrushModification(float worldX, float worldZ, BrushSettings brush,
                                        BrushType operation, float deltaTime) {
-        TerrainDebug.printf("Sculpting at (%.1f, %.1f) - %s", worldX, worldZ, operation);
 
         TerrainEditAction action = new TerrainEditAction(worldX, worldZ, brush, operation);
 
         float heightDelta = calculateHeightDelta(operation, brush, deltaTime);
-        // TerrainDebug.printf("Height delta calculated: %.4f", heightDelta);
 
         switch (operation) {
             case RAISE, LOWER -> {
@@ -80,8 +73,6 @@ public class TerrainDataManager {
             case SMOOTH -> {
                 if (baseHeightData != null) {
                     modificationBuffer.smoothTerrain(worldX, worldZ, brush, terrainScale, baseHeightData);
-                } else {
-                    TerrainDebug.println("❌ Base height data is null - cannot smooth");
                 }
             }
             case FLATTEN -> {
@@ -101,7 +92,6 @@ public class TerrainDataManager {
 
         // CRITICAL: Actually update the texture!
         updateModificationTexture();
-        TerrainDebug.println("✅ Modification applied successfully");
     }
 
     private float calculateHeightDelta(BrushType operation, BrushSettings brush, float deltaTime) {
@@ -132,44 +122,35 @@ public class TerrainDataManager {
     }
 
     public void updateModificationTexture() {
-        System.out.println("🔄 updateModificationTexture() called");
-        System.out.println("   needsTextureUpdate: " + needsTextureUpdate);
-        System.out.println("   hasDirtyRegions: " + modificationBuffer.hasDirtyRegions());
-
         if (!needsTextureUpdate || !modificationBuffer.hasDirtyRegions()) {
-            System.out.println("❌ Skipping texture update - no changes or no dirty regions");
             return;
         }
 
-        System.out.println("🖼️ Binding modification texture ID: " + modificationTexture);
         glBindTexture(GL_TEXTURE_2D, modificationTexture);
 
         List<TerrainModificationBuffer.ModificationRegion> updates = modificationBuffer.getPendingUpdates();
 
         if (updates.isEmpty()) {
-            System.out.println("📤 Updating entire modification texture (" + terrainWidth + "x" + terrainHeight + ")");
             FloatBuffer data = modificationBuffer.getModificationData();
-            System.out.println("🗂️ Modification buffer has " + data.remaining() + " floats");
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, terrainWidth, terrainHeight,
                     GL_RED, GL_FLOAT, data);
         } else {
-            System.out.println("📦 Updating " + updates.size() + " texture regions");
             FloatBuffer tempBuffer = BufferUtils.createFloatBuffer(terrainWidth);
 
             for (TerrainModificationBuffer.ModificationRegion region : updates) {
-                int regionWidth = Math.min(region.width, terrainWidth - region.x);
-                int regionHeight = Math.min(region.height, terrainHeight - region.y);
+                int regionWidth = Math.min(region.width(), terrainWidth - region.x());
+                int regionHeight = Math.min(region.height(), terrainHeight - region.y());
 
                 if (regionWidth <= 0 || regionHeight <= 0) continue;
 
                 for (int row = 0; row < regionHeight; row++) {
-                    int sourceY = region.y + row;
+                    int sourceY = region.y() + row;
                     if (sourceY >= terrainHeight) break;
 
                     tempBuffer.clear();
 
                     for (int col = 0; col < regionWidth; col++) {
-                        int sourceX = region.x + col;
+                        int sourceX = region.x() + col;
                         if (sourceX >= terrainWidth) break;
 
                         int index = sourceY * terrainWidth + sourceX;
@@ -178,7 +159,7 @@ public class TerrainDataManager {
 
                     tempBuffer.flip();
 
-                    glTexSubImage2D(GL_TEXTURE_2D, 0, region.x, sourceY, regionWidth, 1,
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, region.x(), sourceY, regionWidth, 1,
                             GL_RED, GL_FLOAT, tempBuffer);
                 }
             }
@@ -190,15 +171,6 @@ public class TerrainDataManager {
         needsTextureUpdate = false;
     }
 
-    public void bindTextures(int baseUnit, int modificationUnit) {
-        GL13.glActiveTexture(GL13.GL_TEXTURE0 + baseUnit);
-        glBindTexture(GL_TEXTURE_2D, baseHeightmapTexture);
-
-        GL13.glActiveTexture(GL13.GL_TEXTURE0 + modificationUnit);
-        glBindTexture(GL_TEXTURE_2D, modificationTexture);
-
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-    }
 
     public void undo() {
         TerrainEditAction lastAction = actionManager.undo();
@@ -246,16 +218,8 @@ public class TerrainDataManager {
         return actionManager.canRedo();
     }
 
-    public int getBaseHeightmapTexture() {
-        return baseHeightmapTexture;
-    }
-
     public int getModificationTexture() {
         return modificationTexture;
-    }
-
-    public TerrainModificationBuffer getModificationBuffer() {
-        return modificationBuffer;
     }
 
     public int getTerrainWidth() {
@@ -266,14 +230,9 @@ public class TerrainDataManager {
         return terrainHeight;
     }
 
-    public float getTerrainScale() {
-        return terrainScale;
-    }
-
     public void cleanUp() {
         if (modificationTexture != 0) {
             glDeleteTextures(modificationTexture);
         }
-        LogInfo.println("TerrainDataManager cleaned up");
     }
 }

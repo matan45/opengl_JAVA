@@ -4,7 +4,6 @@ import app.audio.Audio;
 import app.ecs.EntitySystem;
 import app.editor.imgui.*;
 import app.renderer.draw.EditorRenderer;
-import app.utilities.FileUtil;
 import app.utilities.logger.Logger;
 import app.utilities.resource.ResourceManager;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -90,7 +89,6 @@ public class GlfwWindow {
         
         // Set up input callbacks for sculpting system
         glfwSetMouseButtonCallback(window, this::mouseButtonCallback);
-        glfwSetCursorPosCallback(window, this::cursorPosCallback);
         glfwSetScrollCallback(window, this::scrollCallback);
         glfwSetKeyCallback(window, this::keyCallback);
 
@@ -117,12 +115,6 @@ public class GlfwWindow {
         }
     }
 
-    private void cursorPosCallback(long window, double xpos, double ypos) {
-        // Forward cursor position events to sculpting system
-        if (EditorRenderer.getSculptingIntegration() != null) {
-            EditorRenderer.getSculptingIntegration().handleMouseMove(xpos, ypos);
-        }
-    }
 
     private void scrollCallback(long window, double xOffset, double yOffset) {
         // Forward scroll events to sculpting system
@@ -162,7 +154,7 @@ public class GlfwWindow {
 
         imgui = new ImguiHandler("#version 460", window);
 
-        mainImgui = new MainImgui(title, width, height);
+        MainImgui mainImgui = new MainImgui(title, width, height);
         ImguiLayerHandler.addLayer(mainImgui);
         ImguiLayerHandler.addLayer(new Inspector());
         ImguiLayerHandler.addLayer(new SceneGraph());
@@ -184,7 +176,7 @@ public class GlfwWindow {
             dt = frame;
 
             EntitySystem.updateEntities(deltaTime);
-            
+
             // Update sculpting system
             if (EditorRenderer.getSculptingIntegration() != null) {
                 EditorRenderer.getSculptingIntegration().update(deltaTime, width, height);

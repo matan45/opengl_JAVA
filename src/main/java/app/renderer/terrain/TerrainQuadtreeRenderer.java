@@ -9,9 +9,13 @@ import app.renderer.ibl.SkyBox;
 import app.renderer.shaders.UniformsNames;
 import app.renderer.terrain.sculpting.TerrainDataManager;
 import app.utilities.logger.LogInfo;
-import app.utilities.debug.TerrainDebug;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -69,7 +73,7 @@ public class TerrainQuadtreeRenderer {
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
-        terrainMaterial=new TerrainMaterial(textures);
+        terrainMaterial = new TerrainMaterial(textures);
         wireframe = false;
         displacementFactor = 200f;
 
@@ -78,16 +82,10 @@ public class TerrainQuadtreeRenderer {
     }
 
     public void init(Path path) {
-        LogInfo.println("🔍 Terrain init() called with path: " + path);
         texture = textures.loadTexture(path);
-        LogInfo.println("   Loaded texture ID: " + texture);
-        
+
         // Store the heightmap path for later use when sculpting is enabled
         this.heightmapPath = path;
-        LogInfo.println("   Stored heightmapPath: " + this.heightmapPath);
-        
-        // TerrainDataManager will be initialized on-demand by enableSculpting()
-        LogInfo.println("✅ Terrain renderer initialized - sculpting will be enabled on demand");
 
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
@@ -110,12 +108,8 @@ public class TerrainQuadtreeRenderer {
 
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
-            // TerrainDebug.printf("TerrainHeightOffset (displacement factor): %.1f", displacementFactor);
-            
-            // CRITICAL FIX: Load modification texture uniform
-            shaderTerrainQuadtree.loadTexModificationMap();
-            // TerrainDebug.println("Loaded TexTerrainModification uniform to texture unit 1");
 
+            shaderTerrainQuadtree.loadTexModificationMap();
 
             if (fog != null) {
                 shaderTerrainQuadtree.loadIsFog(true);
@@ -132,17 +126,14 @@ public class TerrainQuadtreeRenderer {
             // Bind base heightmap
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
-            
+
             // Bind modification texture if sculpting is enabled
             if (terrainDataManager != null) {
-                // TerrainDebug.println("Binding modification texture - TerrainDataManager exists");
                 terrainDataManager.updateModificationTexture();
                 glActiveTexture(GL_TEXTURE1);
                 int modTexture = terrainDataManager.getModificationTexture();
                 glBindTexture(GL_TEXTURE_2D, modTexture);
-                // TerrainDebug.printf("Bound modification texture ID: %d to GL_TEXTURE1", modTexture);
-            } else {
-                TerrainDebug.println("❌ No TerrainDataManager - sculpting not enabled");
+
             }
 
             glActiveTexture(GL_TEXTURE2);
@@ -155,15 +146,7 @@ public class TerrainQuadtreeRenderer {
             glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap());
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
-            
-            // Quadtree debug info disabled to reduce log noise
-            // TerrainDebug.printSeparator("QUADTREE DEBUG INFO");
-            // TerrainDebug.printf("Terrain dimensions: %d x %d", WIDTH, LENGTH);
-            // TerrainDebug.printf("Quadtree render depth: %d", terrainQuadtree.getRenderDepth());
-            // TerrainDebug.printf("Number of terrain nodes: %d", terrainQuadtree.getNumTerrainNodes());
-            // TerrainDebug.printf("Camera position: %s", camera.getPosition().toString());
-            // TerrainDebug.printf("Wireframe mode: %s", wireframe ? "enabled" : "disabled");
-            
+
             terrainQuadtree.terrainRender();
 
             glDisableVertexAttribArray(0);
@@ -206,44 +189,40 @@ public class TerrainQuadtreeRenderer {
     public TerrainMaterial getTerrainMaterial() {
         return terrainMaterial;
     }
-    
+
     public TerrainDataManager getTerrainDataManager() {
         return terrainDataManager;
     }
-    
+
     private FloatBuffer loadHeightmapData(Path heightmapPath, int resolution) {
-        try {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             // Use STB to load the heightmap image
-            org.lwjgl.system.MemoryStack stack = org.lwjgl.system.MemoryStack.stackPush();
-            java.nio.IntBuffer width = stack.mallocInt(1);
-            java.nio.IntBuffer height = stack.mallocInt(1);
-            java.nio.IntBuffer channels = stack.mallocInt(1);
-            
+            IntBuffer width = stack.mallocInt(1);
+            IntBuffer height = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
+
             // Load image data
-            java.nio.ByteBuffer imageData = org.lwjgl.stb.STBImage.stbi_load(
-                heightmapPath.toString(), width, height, channels, 1);
-            
+            ByteBuffer imageData = STBImage.stbi_load(
+                    heightmapPath.toString(), width, height, channels, 1);
+
             if (imageData == null) {
                 LogInfo.println("❌ Failed to load heightmap: " + heightmapPath);
                 return null;
             }
-            
+
             int imageWidth = width.get(0);
             int imageHeight = height.get(0);
-            
-            LogInfo.println("Loaded heightmap: " + imageWidth + "x" + imageHeight + 
-                          " -> " + resolution + "x" + resolution);
-            
+
             // Create FloatBuffer with the desired resolution
-            FloatBuffer heightBuffer = org.lwjgl.BufferUtils.createFloatBuffer(resolution * resolution);
-            
+            FloatBuffer heightBuffer = BufferUtils.createFloatBuffer(resolution * resolution);
+
             // Sample the image data to fit the resolution
             for (int y = 0; y < resolution; y++) {
                 for (int x = 0; x < resolution; x++) {
                     // Map resolution coordinates to image coordinates
                     int imgX = (x * imageWidth) / resolution;
                     int imgY = (y * imageHeight) / resolution;
-                    
+
                     // Get pixel value (0-255) and convert to float (0.0-1.0)
                     int pixelIndex = imgY * imageWidth + imgX;
                     if (pixelIndex < imageData.capacity()) {
@@ -254,59 +233,36 @@ public class TerrainQuadtreeRenderer {
                     }
                 }
             }
-            
+
             heightBuffer.flip();
-            
+
             // Free the image data
-            org.lwjgl.stb.STBImage.stbi_image_free(imageData);
+            STBImage.stbi_image_free(imageData);
             stack.pop();
-            
-            LogInfo.println("✅ Heightmap data loaded: " + heightBuffer.capacity() + " values");
+
             return heightBuffer;
-            
+
         } catch (Exception e) {
-            LogInfo.println("❌ Error loading heightmap data: " + e.getMessage());
             return null;
         }
     }
-    
+
     public void enableSculpting() {
-        LogInfo.println("🔍 enableSculpting() called");
-        LogInfo.println("   terrainDataManager: " + (terrainDataManager == null ? "null" : "exists"));
-        
+
         if (terrainDataManager == null) {
-            LogInfo.println("🔧 Creating new TerrainDataManager");
 
             // Use full terrain resolution (2048x2048) to match quadtree scale
             int textureResolution = 2048;
             terrainDataManager = new TerrainDataManager(textureResolution, textureResolution, WIDTH);
-            
-            LogInfo.println("   texture ID: " + texture);
-            LogInfo.println("   heightmapPath: " + (heightmapPath != null ? heightmapPath.toString() : "null"));
-            
+
             // Set base heightmap texture and data for sculpting reference
             if (texture != 0 && heightmapPath != null) {
-                LogInfo.println("🔍 Loading heightmap data from: " + heightmapPath);
                 FloatBuffer heightData = loadHeightmapData(heightmapPath, textureResolution);
                 terrainDataManager.setBaseHeightmap(texture, heightData);
-                LogInfo.println("✅ Loaded heightmap data: " + (heightData != null ? heightData.capacity() + " values" : "null"));
-            } else {
-                LogInfo.println("❌ Cannot load heightmap - texture: " + texture + ", path: " + heightmapPath);
             }
-            
-            LogInfo.println("✅ Terrain sculpting enabled - Texture: " + textureResolution + "x" + textureResolution + ", Scale: " + WIDTH);
-        } else {
-            LogInfo.println("⚠️ TerrainDataManager already exists - sculpting already enabled");
         }
     }
-    
-    public void disableSculpting() {
-        if (terrainDataManager != null) {
-            terrainDataManager.clearModifications();
-            LogInfo.println("Terrain sculpting disabled");
-        }
-    }
-    
+
     public void cleanUp() {
         if (terrainDataManager != null) {
             terrainDataManager.cleanUp();

@@ -13,7 +13,7 @@ import imgui.type.ImInt;
 
 public class TerrainSculptingComponent extends Component {
     private boolean isActive = false;
-    private BrushSettings brushSettings;
+    private final BrushSettings brushSettings;
     private final OLVector3f lastSculptPosition;
     private boolean isCurrentlySculpting = false;
     private float sculptingTimer = 0.0f;
@@ -86,7 +86,7 @@ public class TerrainSculptingComponent extends Component {
         ImGui.text("Shape");
 
         ImInt shapeRef = new ImInt(brushSettings.getShape().ordinal());
-        String[] shapeDisplayNames = {"Circle", "Square"};
+        String[] shapeDisplayNames = {"Circle"};
 
         if (ImGui.combo("Shape2", shapeRef, shapeDisplayNames)) {
             brushSettings.setShape(BrushShape.values()[shapeRef.get()]);
@@ -126,7 +126,6 @@ public class TerrainSculptingComponent extends Component {
     public void setActive(boolean active) { this.isActive = active; }
 
     public BrushSettings getBrushSettings() { return brushSettings; }
-    public void setBrushSettings(BrushSettings brushSettings) { this.brushSettings = brushSettings; }
 
     public OLVector3f getLastSculptPosition() { return lastSculptPosition; }
     public void setLastSculptPosition(OLVector3f position) { 

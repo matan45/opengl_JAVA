@@ -40,11 +40,6 @@ public class TerrainModificationBuffer {
 
     public void applyHeightModification(float worldX, float worldZ, float heightDelta, 
                                       BrushSettings brush, float terrainScale) {
-        System.out.println("🌍 TerrainModificationBuffer.applyHeightModification:");
-        System.out.println("   World pos: (" + worldX + ", " + worldZ + ")");
-        System.out.println("   Height delta: " + heightDelta);
-        System.out.println("   Terrain scale: " + terrainScale);
-        System.out.println("   Brush size: " + brush.getSize());
         
         OLVector2f textureCoords = worldToTextureCoords(worldX, worldZ, terrainScale);
         int centerX = (int) (textureCoords.x * width);
@@ -180,14 +175,9 @@ public class TerrainModificationBuffer {
         int regionX = x / regionSize;
         int regionY = y / regionSize;
         int regionIndex = regionY * regionsX + regionX;
-        
-        System.out.println("   🟦 Marking region dirty: pixel(" + x + "," + y + ") -> region(" + regionX + "," + regionY + ") -> index " + regionIndex);
-        
+
         if (regionIndex >= 0 && regionIndex < dirtyRegions.length) {
             dirtyRegions[regionIndex] = true;
-            System.out.println("   ✅ Region " + regionIndex + " marked as dirty");
-        } else {
-            System.out.println("   ❌ Invalid region index " + regionIndex + " (array length: " + dirtyRegions.length + ")");
         }
     }
 
@@ -202,7 +192,7 @@ public class TerrainModificationBuffer {
             dirtyRegions[i] = false;
         }
         pendingUpdates.clear();
-        
+
         System.out.println("   🧹 Cleared " + clearedRegions + " dirty regions and " + pendingUpdates.size() + " pending updates");
     }
 
@@ -216,7 +206,6 @@ public class TerrainModificationBuffer {
             if (dirty) dirtyCount++;
         }
         
-        System.out.println("   🔍 Checking dirty regions: " + dirtyCount + " out of " + dirtyRegions.length + " regions are dirty");
         return dirtyCount > 0;
     }
 
@@ -224,14 +213,6 @@ public class TerrainModificationBuffer {
     public int getWidth() { return width; }
     public int getHeight() { return height; }
 
-    public static class ModificationRegion {
-        public final int x, y, width, height;
-
-        public ModificationRegion(int x, int y, int width, int height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-        }
+    public record ModificationRegion(int x, int y, int width, int height) {
     }
 }

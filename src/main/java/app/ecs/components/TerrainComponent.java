@@ -1,15 +1,13 @@
 package app.ecs.components;
 
 import app.ecs.Entity;
-import app.editor.imgui.ImguiLayerHandler;
 import app.renderer.draw.EditorRenderer;
 import app.renderer.terrain.TerrainMaterial;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
-import app.renderer.terrain.sculpting.TerrainDataManager;
 import app.renderer.terrain.sculpting.TerrainSculptingIntegration;
-import app.utilities.logger.LogInfo;
 import app.utilities.OpenFileDialog;
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
 import imgui.type.ImBoolean;
 
 import java.io.File;
@@ -20,7 +18,6 @@ public class TerrainComponent extends Component {
     private final TerrainQuadtreeRenderer terrain;
     private final ImBoolean wireframe;
     private final TerrainMaterial material;
-    private TerrainDataManager dataManager;
 
     private String path = "";
     private String prePath = "";
@@ -90,7 +87,7 @@ public class TerrainComponent extends Component {
         
         // Terrain Sculpting Section
         ImGui.separator();
-        ImGui.text("🏔️ Terrain Sculpting");
+        ImGui.text("Terrain Sculpting");
         
         boolean hasSculpting = ownerEntity.hasComponent(TerrainSculptingComponent.class);
         TerrainSculptingComponent sculptingComponent = ownerEntity.getComponent(TerrainSculptingComponent.class);
@@ -118,18 +115,13 @@ public class TerrainComponent extends Component {
                 ImGui.popStyleColor();
             }
             
-            ImGui.sameLine();
-            if (ImGui.button("Open Sculpting Window", 150, 25)) {
-                openSculptingWindow();
-            }
-            
             // Show quick stats
             if (isActive) {
-                ImGui.text("Status: ✅ Active");
+                ImGui.text("Status: Active");
                 ImGui.text("Modifications: " + sculptingComponent.getModificationsCount());
                 ImGui.text("Tool: " + sculptingComponent.getBrushSettings().getBrushType().getDisplayName());
             } else {
-                ImGui.textDisabled("Status: ⏸️ Paused");
+                ImGui.textDisabled("Status: Paused");
             }
         }
     }
@@ -148,47 +140,7 @@ public class TerrainComponent extends Component {
             sculptingIntegration.enableSculptingForTerrain(ownerEntity);
         }
     }
-    
-    private void openSculptingWindow() {
-        try {
-            TerrainSculptingIntegration sculptingIntegration = EditorRenderer.getSculptingIntegration();
-            if (sculptingIntegration == null) {
-                LogInfo.println("ERROR: SculptingIntegration is null - not initialized properly");
-                return;
-            }
-            
-            if (!sculptingIntegration.isInitialized()) {
-                LogInfo.println("ERROR: SculptingIntegration is not initialized - attempting to initialize");
-                EditorRenderer.initializeSculpting();
-                if (!sculptingIntegration.isInitialized()) {
-                    LogInfo.println("ERROR: Failed to initialize SculptingIntegration");
-                    return;
-                }
-            }
-            
-            if (sculptingIntegration.getSculptingWindow() == null) {
-                LogInfo.println("ERROR: SculptingWindow is null after initialization");
-                return;
-            }
-            
-            // Set window as open
-            sculptingIntegration.getSculptingWindow().setOpen(true);
-            
-            // Add the window to ImguiLayerHandler - now thread-safe with duplicate check
-            ImguiLayerHandler.addLayer(sculptingIntegration.getSculptingWindow());
-            
-            LogInfo.println("Sculpting window opened successfully");
-            
-        } catch (Exception e) {
-            LogInfo.println("ERROR: Exception while opening sculpting window: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    
-    // ImGui color constants
-    private static class ImGuiCol {
-        static final int Button = 21;
-    }
+
 
     @Override
     public void cleanUp() {
@@ -209,14 +161,6 @@ public class TerrainComponent extends Component {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public TerrainDataManager getDataManager() {
-        return dataManager;
-    }
-
-    public void setDataManager(TerrainDataManager dataManager) {
-        this.dataManager = dataManager;
     }
 
     private String materialPath(String buttonName) {

@@ -1,39 +1,28 @@
 package app.renderer.terrain.sculpting;
 
 import app.ecs.Entity;
-import app.ecs.EntitySystem;
 import app.ecs.components.TerrainComponent;
 import app.ecs.components.TerrainSculptingComponent;
 import app.ecs.systems.SculptingSystem;
 import app.editor.imgui.ImguiLayerHandler;
 import app.editor.imgui.TerrainSculptingWindow;
 import app.math.components.Camera;
-import app.renderer.terrain.TerrainQuadtreeRenderer;
 import app.utilities.logger.LogInfo;
-import app.utilities.logger.Logger;
-import imgui.ImGui;
-import imgui.ImVec2;
 
 public class TerrainSculptingIntegration {
     private SculptingSystem sculptingSystem;
     private TerrainSculptingWindow sculptingWindow;
     private boolean isInitialized = false;
 
-    public void initialize(Camera camera, EntitySystem entitySystem) {
+    public void initialize(Camera camera) {
         if (isInitialized) {
-            LogInfo.println("TerrainSculptingIntegration already initialized");
             return;
         }
 
         sculptingSystem = new SculptingSystem(camera);
         sculptingWindow = new TerrainSculptingWindow(sculptingSystem, null); // EntitySystem not needed in window
-        
+
         isInitialized = true;
-        LogInfo.println("TerrainSculptingIntegration initialized successfully");
-    }
-    
-    public void initialize(Camera camera) {
-        initialize(camera, null);
     }
 
     public void enableSculptingForTerrain(Entity terrainEntity) {
@@ -66,28 +55,16 @@ public class TerrainSculptingIntegration {
         LogInfo.println("Enabled sculpting for terrain entity: " + terrainEntity.getName());
     }
 
-    public void disableSculptingForTerrain(Entity terrainEntity) {
-        if (!isInitialized) return;
-
-        sculptingSystem.unregisterEntity(terrainEntity);
-
-        TerrainSculptingComponent sculptingComponent = terrainEntity.getComponent(TerrainSculptingComponent.class);
-        if (sculptingComponent != null) {
-            sculptingComponent.setActive(false);
-        }
-
-        LogInfo.println("Disabled sculpting for terrain entity: " + terrainEntity.getName());
-    }
 
     public void update(float deltaTime, float viewportWidth, float viewportHeight) {
         if (!isInitialized || sculptingSystem == null) return;
 
         sculptingSystem.update(deltaTime, viewportWidth, viewportHeight);
     }
-    
+
     public void renderBrushPreview(float viewportWidth, float viewportHeight) {
         if (!isInitialized || sculptingSystem == null) return;
-        
+
         sculptingSystem.renderBrushPreview(viewportWidth, viewportHeight);
     }
 
@@ -102,12 +79,6 @@ public class TerrainSculptingIntegration {
 
         sculptingSystem.onMouseScroll(xOffset, yOffset);
     }
-    
-    public void handleMouseMove(double xpos, double ypos) {
-        if (!isInitialized || sculptingSystem == null) return;
-
-        sculptingSystem.onMouseMove(xpos, ypos);
-    }
 
     public void handleKeyboard(int key, int scancode, int action, int mods) {
         if (!isInitialized || sculptingSystem == null) return;
@@ -115,20 +86,10 @@ public class TerrainSculptingIntegration {
         sculptingSystem.onKeyboard(key, scancode, action, mods);
     }
 
-    public void enableSculptingRenderer(TerrainQuadtreeRenderer terrainRenderer) {
-        if (terrainRenderer != null) {
-            terrainRenderer.enableSculpting();
-            LogInfo.println("Enabled sculpting renderer support");
-        }
-    }
-
     public SculptingSystem getSculptingSystem() {
         return sculptingSystem;
     }
 
-    public TerrainSculptingWindow getSculptingWindow() {
-        return sculptingWindow;
-    }
 
     public boolean isInitialized() {
         return isInitialized;
@@ -138,28 +99,11 @@ public class TerrainSculptingIntegration {
         if (sculptingSystem != null) {
             sculptingSystem.cleanUp();
         }
-        
+
         if (sculptingWindow != null) {
             sculptingWindow.setOpen(false);
         }
-        
+
         isInitialized = false;
-        LogInfo.println("TerrainSculptingIntegration cleaned up");
-    }
-
-    // Static helper methods for easy integration
-    public static TerrainSculptingIntegration createAndInitialize(Camera camera, EntitySystem entitySystem) {
-        TerrainSculptingIntegration integration = new TerrainSculptingIntegration();
-        integration.initialize(camera, entitySystem);
-        return integration;
-    }
-
-    public static void addSculptingToExistingTerrain(Entity terrainEntity, TerrainSculptingIntegration integration) {
-        integration.enableSculptingForTerrain(terrainEntity);
-        
-        TerrainComponent terrainComponent = terrainEntity.getComponent(TerrainComponent.class);
-        if (terrainComponent != null) {
-            LogInfo.println("Terrain sculpting system ready for entity: " + terrainEntity.getName());
-        }
     }
 }
