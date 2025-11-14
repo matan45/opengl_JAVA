@@ -80,6 +80,7 @@ public class EditorRenderer {
         
         // Render brush preview after terrain but before UI elements
         if (sculptingIntegration != null && sculptingIntegration.isInitialized()) {
+            //TODO to be fixed
             OLVector2f viewport = editorCamera.getViewPort();
             float viewportWidth = viewport != null ? viewport.x : 1920f;
             float viewportHeight = viewport != null ? (viewport.y - 50f) : 1030f; // Subtract toolbar height

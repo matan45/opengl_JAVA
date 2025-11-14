@@ -126,8 +126,6 @@ public class SculptingSystem {
 
         TerrainDataManager dataManager = getTerrainDataManager(terrainComponent);
         if (dataManager != null) {
-            System.out.printf("Applying brush at (%.1f, %.1f) with operation %s",
-                    intersection.worldPosition.x, intersection.worldPosition.z, operation);
             dataManager.applyBrushModification(
                     intersection.worldPosition.x,
                     intersection.worldPosition.z,
@@ -135,7 +133,6 @@ public class SculptingSystem {
                     operation,
                     deltaTime
             );
-
             sculptingComponent.setLastSculptPosition(intersection.worldPosition);
             sculptingComponent.setCurrentlySculpting(true);
             sculptingComponent.incrementModifications();
@@ -166,8 +163,7 @@ public class SculptingSystem {
         // Use iterative ray-terrain intersection with heightmap sampling
         TerrainDataManager dataManager = getTerrainDataManager(terrainComponent);
         if (dataManager == null) {
-            // Fallback to flat plane intersection
-            return calculateFlatPlaneIntersection(rayOrigin, rayDirection, terrainPosition);
+            return null;
         }
 
         // Ray marching approach - step along the ray and sample terrain height
@@ -386,12 +382,8 @@ public class SculptingSystem {
 
     private void renderBrushCircle(OLVector3f position, BrushSettings brush) {
         if (brushRenderer != null && brushRenderer.isInitialized()) {
-            // Get camera matrices for 3D rendering
-            OLMatrix4f viewMatrix = camera.createViewMatrix();
-            OLMatrix4f projectionMatrix = camera.getProjectionMatrix();
-
             // Render the 3D brush visualization
-            brushRenderer.render(position, brush, viewMatrix, projectionMatrix);
+            brushRenderer.render(position, brush);
         }
     }
 

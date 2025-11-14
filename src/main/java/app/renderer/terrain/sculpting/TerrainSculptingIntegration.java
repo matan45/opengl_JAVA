@@ -52,7 +52,6 @@ public class TerrainSculptingIntegration {
             ImguiLayerHandler.addLayer(sculptingWindow);
         }
 
-        LogInfo.println("Enabled sculpting for terrain entity: " + terrainEntity.getName());
     }
 
 

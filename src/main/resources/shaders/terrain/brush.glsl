@@ -5,7 +5,6 @@ layout (location = 0) in vec2 position;
 
 uniform vec3 brushPosition;
 uniform float brushSize;
-uniform mat4 model;
 
 layout (std140, binding = 0) uniform Matrices
 {
@@ -24,7 +23,7 @@ void main()
     vs_worldPos = worldPos;
     vs_texCoord = (position + 1.0) * 0.5;
     
-    gl_Position = projection * view * model * vec4(worldPos, 1.0);
+    gl_Position = projection * view * vec4(worldPos, 1.0);
 }
 
 

@@ -2,6 +2,7 @@ package app.renderer.terrain.sculpting;
 
 import app.math.OLMatrix4f;
 import app.math.OLVector3f;
+import app.utilities.logger.LogInfo;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;
 
@@ -38,7 +39,8 @@ public class BrushRenderer {
             
             initialized = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            LogInfo.println("ERROR: Failed to initialize BrushRenderer - " + e.getMessage());
+            initialized = false;
         }
     }
     
@@ -89,7 +91,7 @@ public class BrushRenderer {
         
     }
     
-    public void render(OLVector3f brushPosition, BrushSettings brush, OLMatrix4f viewMatrix, OLMatrix4f projectionMatrix) {
+    public void render(OLVector3f brushPosition, BrushSettings brush) {
         if (!initialized) {
             return;
         }
@@ -113,7 +115,7 @@ public class BrushRenderer {
         // Load brush data to shader uniforms with visibility modifications
         // Load individual uniforms with enhanced visibility
         // Raise brush significantly above terrain surface for visibility
-        OLVector3f elevatedPosition = new OLVector3f(brushPosition.x, brushPosition.y + 10.0f, brushPosition.z);
+        OLVector3f elevatedPosition = new OLVector3f(brushPosition.x, brushPosition.y + 1.0f, brushPosition.z);
         shader.loadBrushPosition(elevatedPosition);
         
         // Ensure minimum visible size (50 units minimum for terrain that spans 8192 units)
