@@ -143,17 +143,23 @@ public class SculptingSystem {
         if (terrainComponent.isPaintMode()) {
              TerrainPaintManager paintManager = terrainComponent.getTerrain().getTerrainPaintManager();
              if (paintManager != null) {
-                 // System.out.println("Painting at: " + intersection.worldPosition);
+                 // Convert World to Local for PaintManager (which expects 0..2048)
+                 float terrainSize = 2048.0f;
+                 OLVector3f terrainPosition = transformComponent.getOlTransform().getPosition();
+                 
+                 // Flip coordinates to match Shader's UV mapping (Left=1.0, Right=0.0)
+                 float localX = terrainSize - ((intersection.worldPosition.x - terrainPosition.x) + (terrainSize * 0.5f));
+                 float localZ = terrainSize - ((intersection.worldPosition.z - terrainPosition.z) + (terrainSize * 0.5f));
+
                  paintManager.applyPaint(
-                     intersection.worldPosition.x,
-                     intersection.worldPosition.z,
+                     localX,
+                     localZ,
                      terrainComponent.getPaintChannel(),
                      brush,
                      deltaTime
                  );
                  sculptingComponent.setLastSculptPosition(intersection.worldPosition);
                  sculptingComponent.setCurrentlySculpting(true);
-                 // We don't increment modifications count for painting to avoid spamming undo history (unless we implement painting undo)
              }
              return;
         }
@@ -234,9 +240,10 @@ public class SculptingSystem {
             float baseHeight = dataManager.getCurrentHeightAtPosition(localX, localZ);
 
             if (rayPos.y <= baseHeight) {
-                // Return the local coordinates for terrain modification
-                OLVector3f localHitPoint = new OLVector3f(localX, baseHeight, localZ);
-                return new TerrainIntersection(localHitPoint);
+                // Return the WORLD coordinates for brush preview rendering
+                // The brush shader needs world-space coordinates for proper view/projection transformation
+                OLVector3f worldHitPoint = new OLVector3f(rayPos.x, baseHeight, rayPos.z);
+                return new TerrainIntersection(worldHitPoint);
             }
         }
 
