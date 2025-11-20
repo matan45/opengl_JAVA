@@ -170,9 +170,21 @@ public class SculptingSystem {
 
         TerrainDataManager dataManager = getTerrainDataManager(terrainComponent);
         if (dataManager != null) {
+            // Flip coordinates to match Shader's UV mapping
+            // Convert World to Local for PaintManager (which expects 0..2048)
+            float terrainSize = 2048.0f;
+            OLVector3f terrainPosition = transformComponent.getOlTransform().getPosition();
+
+            // Flip coordinates to match Shader's UV mapping (Left=1.0, Right=0.0)
+            float localX = terrainSize - ((intersection.worldPosition.x - terrainPosition.x) + (terrainSize * 0.5f));
+            float localZ = terrainSize - ((intersection.worldPosition.z - terrainPosition.z) + (terrainSize * 0.5f));
+
+            //float targetX = -relX; // Equivalent to flipping 0..2048 and shifting back
+            //float targetZ = -relZ;
+
             dataManager.applyBrushModification(
-                    intersection.worldPosition.x,
-                    intersection.worldPosition.z,
+                    localX,
+                    localZ,
                     brush,
                     operation,
                     deltaTime
