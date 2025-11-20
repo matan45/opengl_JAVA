@@ -90,6 +90,10 @@ public class ViewPort implements ImguiLayer {
 
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 50, 0, 1, 1, 0);
+            
+            if (EditorRenderer.getSculptingIntegration() != null && EditorRenderer.getSculptingIntegration().isInitialized()) {
+                EditorRenderer.getSculptingIntegration().setViewportSize(windowSize.x, windowSize.y - 50);
+            }
 
             // Get image bounds
             ImVec2 imagePos = ImGui.getItemRectMin();
@@ -164,7 +168,7 @@ public class ViewPort implements ImguiLayer {
                 keyInputImGuizo();
                 cameraInput(dt);
 
-                updateSculptingMouseCoordinates();
+                updateSculptingMouseCoordinates(imagePos);
             }
 
             if (firstFrame) {
@@ -304,7 +308,7 @@ public class ViewPort implements ImguiLayer {
     }
 
 
-    private void updateSculptingMouseCoordinates() {
+    private void updateSculptingMouseCoordinates(ImVec2 imageMin) {
         if (EditorRenderer.getSculptingIntegration() == null) {
             return;
         }
@@ -312,15 +316,15 @@ public class ViewPort implements ImguiLayer {
             return;
         }
 
-        // Get current mouse position (ImGui.getMousePos() gives window-relative coordinates)
+        // Get current mouse position (ImGui.getMousePos() gives absolute screen coordinates)
         ImVec2 mousePos = ImGui.getMousePos();
 
-        // Convert to viewport-relative coordinates (same as existing ViewPort logic)
-        float viewportMouseX = mousePos.x;
-        float viewportMouseY = mousePos.y;
+        // Calculate coordinates relative to the top-left corner of the viewport image
+        float viewportMouseX = mousePos.x - imageMin.x;
+        float viewportMouseY = mousePos.y - imageMin.y;
 
-        // Update the sculpting system with viewport-relative coordinates
-        EditorRenderer.getSculptingIntegration().getSculptingSystem().setViewportRelativeMousePosition(viewportMouseX, viewportMouseY - 50); // Subtract toolbar height
+        // Update the sculpting system with correct relative coordinates
+        EditorRenderer.getSculptingIntegration().getSculptingSystem().setViewportRelativeMousePosition(viewportMouseX, viewportMouseY); 
 
     }
 }

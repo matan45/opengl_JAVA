@@ -13,6 +13,7 @@ import app.renderer.terrain.sculpting.BrushRenderer;
 import app.renderer.terrain.sculpting.BrushSettings;
 import app.renderer.terrain.sculpting.BrushType;
 import app.renderer.terrain.sculpting.TerrainDataManager;
+import app.renderer.terrain.sculpting.TerrainPaintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,19 @@ public class SculptingSystem {
     private float mouseWheelDelta = 0.0f;
     private float mouseX = 0.0f;
     private float mouseY = 0.0f;
+    private float currentViewportWidth = 1920.0f;
+    private float currentViewportHeight = 1080.0f;
 
     public SculptingSystem(Camera camera) {
         this.sculptingEntities = new ArrayList<>();
         this.camera = camera;
         this.brushRenderer = new BrushRenderer();
         this.brushRenderer.initialize();
+    }
+    
+    public void setViewportSize(float width, float height) {
+        this.currentViewportWidth = width;
+        this.currentViewportHeight = height;
     }
 
     public void registerEntity(Entity entity) {
@@ -57,14 +65,20 @@ public class SculptingSystem {
 
         for (Entity entity : sculptingEntities) {
             TerrainSculptingComponent sculptingComponent = entity.getComponent(TerrainSculptingComponent.class);
-            if (sculptingComponent == null || !sculptingComponent.isActive()) {
+            TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
+            
+            if (sculptingComponent == null) continue;
+            
+            boolean isPainting = terrainComponent != null && terrainComponent.isPaintMode();
+            
+            if (!sculptingComponent.isActive() && !isPainting) {
                 continue;
             }
 
             sculptingComponent.update(deltaTime);
 
             if (leftMousePressed) {
-                processSculpting(entity, sculptingComponent, deltaTime, viewportWidth, viewportHeight);
+                processSculpting(entity, sculptingComponent, deltaTime);
             } else {
                 sculptingComponent.setCurrentlySculpting(false);
             }
@@ -103,7 +117,7 @@ public class SculptingSystem {
         }
     }
 
-    private void processSculpting(Entity entity, TerrainSculptingComponent sculptingComponent, float deltaTime, float viewportWidth, float viewportHeight) {
+    private void processSculpting(Entity entity, TerrainSculptingComponent sculptingComponent, float deltaTime) {
 
         TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
         TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
@@ -115,13 +129,37 @@ public class SculptingSystem {
             return;
         }
 
-        TerrainIntersection intersection = calculateTerrainIntersection(entity, viewportWidth, viewportHeight);
+        TerrainIntersection intersection = calculateTerrainIntersection(entity);
         if (intersection == null) {
             sculptingComponent.setCurrentlySculpting(false);
             return;
         }
+        
+        // ... rest of method ...
 
         BrushSettings brush = sculptingComponent.getBrushSettings();
+        
+        // --- Painting Logic ---
+        if (terrainComponent.isPaintMode()) {
+             TerrainPaintManager paintManager = terrainComponent.getTerrain().getTerrainPaintManager();
+             if (paintManager != null) {
+                 // System.out.println("Painting at: " + intersection.worldPosition);
+                 paintManager.applyPaint(
+                     intersection.worldPosition.x,
+                     intersection.worldPosition.z,
+                     terrainComponent.getPaintChannel(),
+                     brush,
+                     deltaTime
+                 );
+                 sculptingComponent.setLastSculptPosition(intersection.worldPosition);
+                 sculptingComponent.setCurrentlySculpting(true);
+                 // We don't increment modifications count for painting to avoid spamming undo history (unless we implement painting undo)
+             }
+             return;
+        }
+        
+        // --- Sculpting Logic ---
+
         BrushType operation = determineOperation(brush.getBrushType());
 
         TerrainDataManager dataManager = getTerrainDataManager(terrainComponent);
@@ -139,7 +177,7 @@ public class SculptingSystem {
         }
     }
 
-    private TerrainIntersection calculateTerrainIntersection(Entity terrainEntity, float viewportWidth, float viewportHeight) {
+    private TerrainIntersection calculateTerrainIntersection(Entity terrainEntity) {
         TransformComponent transform = terrainEntity.getComponent(TransformComponent.class);
         TerrainComponent terrainComponent = terrainEntity.getComponent(TerrainComponent.class);
         if (transform == null || terrainComponent == null) {
@@ -152,7 +190,7 @@ public class SculptingSystem {
 
         // Calculate ray from camera through mouse cursor position
         OLVector3f rayOrigin = camera.getPosition();
-        OLVector3f rayDirection = calculateMouseRay(viewportWidth, viewportHeight);
+        OLVector3f rayDirection = calculateMouseRay();
 
         OLVector3f terrainPosition = transform.getOlTransform().getPosition();
 
@@ -205,10 +243,10 @@ public class SculptingSystem {
         return null;
     }
 
-    private OLVector3f calculateMouseRay(float viewportWidth, float viewportHeight) {
+    private OLVector3f calculateMouseRay() {
         // Convert viewport-relative mouse coordinates to normalized device coordinates (-1 to 1)
-        float normalizedX = (2.0f * mouseX) / viewportWidth - 1.0f;
-        float normalizedY = 1.0f - (2.0f * mouseY) / viewportHeight; // Flip Y for OpenGL
+        float normalizedX = (2.0f * mouseX) / currentViewportWidth - 1.0f;
+        float normalizedY = 1.0f - (2.0f * mouseY) / currentViewportHeight; // Flip Y for OpenGL
 
 
         // Create clip coordinates (NDC with z = -1 for near plane)
@@ -364,7 +402,14 @@ public class SculptingSystem {
 
         for (Entity entity : sculptingEntities) {
             TerrainSculptingComponent sculptingComponent = entity.getComponent(TerrainSculptingComponent.class);
-            if (sculptingComponent == null || !sculptingComponent.isActive()) {
+            TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
+            
+            if (sculptingComponent == null) continue;
+            
+            boolean isPainting = terrainComponent != null && terrainComponent.isPaintMode();
+            
+            if (!sculptingComponent.isActive() && !isPainting) {
+                // System.out.println("Skipping brush render: Not active and not painting");
                 continue;
             }
 
@@ -373,9 +418,11 @@ public class SculptingSystem {
                 continue;
             }
 
-            TerrainIntersection intersection = calculateTerrainIntersection(entity, viewportWidth, viewportHeight);
+            TerrainIntersection intersection = calculateTerrainIntersection(entity);
             if (intersection != null) {
                 renderBrushCircle(intersection.worldPosition, brush);
+            } else {
+               // System.out.println("Brush intersection failed (MouseX: " + mouseX + ", MouseY: " + mouseY + ")");
             }
         }
     }

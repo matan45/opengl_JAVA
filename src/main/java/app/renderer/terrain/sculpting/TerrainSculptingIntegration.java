@@ -60,6 +60,11 @@ public class TerrainSculptingIntegration {
 
         sculptingSystem.update(deltaTime, viewportWidth, viewportHeight);
     }
+    
+    public void setViewportSize(float width, float height) {
+        if (!isInitialized || sculptingSystem == null) return;
+        sculptingSystem.setViewportSize(width, height);
+    }
 
     public void renderBrushPreview(float viewportWidth, float viewportHeight) {
         if (!isInitialized || sculptingSystem == null) return;

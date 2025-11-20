@@ -8,6 +8,7 @@ import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.shaders.UniformsNames;
 import app.renderer.terrain.sculpting.TerrainDataManager;
+import app.renderer.terrain.sculpting.TerrainPaintManager;
 import app.utilities.logger.LogInfo;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImage;
@@ -57,6 +58,7 @@ public class TerrainQuadtreeRenderer {
 
     private final TerrainMaterial terrainMaterial;
     private TerrainDataManager terrainDataManager;
+    private TerrainPaintManager terrainPaintManager;
 
     private Fog fog;
     private final SkyBox skyBox;
@@ -138,12 +140,22 @@ public class TerrainQuadtreeRenderer {
 
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+            
+            // Bind Splat Map
+            if (terrainPaintManager != null) {
+                terrainPaintManager.updateSplatTexture();
+                glActiveTexture(GL_TEXTURE5);
+                glBindTexture(GL_TEXTURE_2D, terrainPaintManager.getSplatMapTexture());
+            }
 
-            glActiveTexture(GL_TEXTURE3);
-            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap());
-
-            glActiveTexture(GL_TEXTURE4);
-            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap());
+            // Bind Materials (Albedo 6-9, Normal 10-13)
+            for (int i = 0; i < 4; i++) {
+                glActiveTexture(GL_TEXTURE6 + i);
+                glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap(i));
+                
+                glActiveTexture(GL_TEXTURE10 + i);
+                glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap(i));
+            }
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
 
@@ -192,6 +204,10 @@ public class TerrainQuadtreeRenderer {
 
     public TerrainDataManager getTerrainDataManager() {
         return terrainDataManager;
+    }
+    
+    public TerrainPaintManager getTerrainPaintManager() {
+        return terrainPaintManager;
     }
 
     private FloatBuffer loadHeightmapData(Path heightmapPath, int resolution) {
@@ -249,10 +265,10 @@ public class TerrainQuadtreeRenderer {
 
     public void enableSculpting() {
 
-        if (terrainDataManager == null) {
+        int textureResolution = 2048;
 
+        if (terrainDataManager == null) {
             // Use full terrain resolution (2048x2048) to match quadtree scale
-            int textureResolution = 2048;
             terrainDataManager = new TerrainDataManager(textureResolution, textureResolution, WIDTH);
 
             // Set base heightmap texture and data for sculpting reference
@@ -261,11 +277,19 @@ public class TerrainQuadtreeRenderer {
                 terrainDataManager.setBaseHeightmap(texture, heightData);
             }
         }
+        
+        if (terrainPaintManager == null) {
+            terrainPaintManager = new TerrainPaintManager(textureResolution, textureResolution, WIDTH);
+        }
     }
 
     public void cleanUp() {
         if (terrainDataManager != null) {
             terrainDataManager.cleanUp();
         }
+        if (terrainPaintManager != null) {
+            terrainPaintManager.cleanUp();
+        }
     }
 }
+

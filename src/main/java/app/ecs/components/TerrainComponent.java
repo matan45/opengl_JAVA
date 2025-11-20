@@ -22,6 +22,9 @@ public class TerrainComponent extends Component {
     private String path = "";
     private String prePath = "";
     private File file;
+    
+    private int paintChannel = 0;
+    private boolean paintMode = false;
 
     public TerrainComponent(Entity ownerEntity) {
         super(ownerEntity);
@@ -59,32 +62,59 @@ public class TerrainComponent extends Component {
 
         ImGui.checkbox("Wireframe", wireframe);
         terrain.setWireframe(wireframe.get());
-
-        ImGui.textWrapped("Material");
-        ImGui.separator();
-        ImGui.columns(3, "", true);
-
-        material.setAlbedoMap(materialPath("Albedo"));
-        ImGui.nextColumn();
-        ImGui.textWrapped(material.getAlbedoFileName());
-        ImGui.nextColumn();
-        ImGui.pushID("Albedo");
-        if (ImGui.button("X"))
-            material.albedoMapRemove();
-        ImGui.popID();
-
-        ImGui.nextColumn();
-        material.setNormalMap(materialPath("Normal"));
-        ImGui.nextColumn();
-        ImGui.textWrapped(material.getNormalFileName());
-        ImGui.nextColumn();
-        ImGui.pushID("Normal");
-        if (ImGui.button("X"))
-            material.normalMapRemove();
-        ImGui.popID();
-
-        ImGui.columns(1);
         
+        // --- Texture Splatting & Painting ---
+        ImGui.separator();
+        ImGui.text("Texture Splatting");
+        
+        if (ImGui.checkbox("Paint Mode", paintMode)) {
+            paintMode = !paintMode;
+            // Disable sculpting if painting is enabled
+            if (paintMode) {
+                if (ownerEntity.hasComponent(TerrainSculptingComponent.class)) {
+                    ownerEntity.getComponent(TerrainSculptingComponent.class).setActive(false);
+                }
+            }
+        }
+
+        ImGui.separator();
+        
+        for (int i = 0; i < 4; i++) {
+            ImGui.pushID("Layer" + i);
+            
+            if (ImGui.radioButton("Select Layer " + (i + 1), paintChannel == i)) {
+                paintChannel = i;
+            }
+            
+            ImGui.columns(3, "LayerCols" + i, true);
+            
+            // Albedo
+            if (ImGui.button("Albedo")) {
+                Optional<Path> p = OpenFileDialog.openFile("png,tga,jpg", "Texture");
+                if (p.isPresent()) material.setAlbedoMap(i, p.get().toString());
+            }
+            ImGui.nextColumn();
+            ImGui.textWrapped(material.getAlbedoFileName(i).isEmpty() ? "Default" : material.getAlbedoFileName(i));
+            ImGui.nextColumn();
+            if (ImGui.button("X##Alb")) material.removeAlbedoMap(i);
+            
+            ImGui.nextColumn(); // Next row
+            
+            // Normal
+            if (ImGui.button("Normal")) {
+                Optional<Path> p = OpenFileDialog.openFile("png,tga,jpg", "Texture");
+                if (p.isPresent()) material.setNormalMap(i, p.get().toString());
+            }
+            ImGui.nextColumn();
+            ImGui.textWrapped(material.getNormalFileName(i).isEmpty() ? "Default" : material.getNormalFileName(i));
+            ImGui.nextColumn();
+            if (ImGui.button("X##Norm")) material.removeNormalMap(i);
+            
+            ImGui.columns(1);
+            ImGui.separator();
+            ImGui.popID();
+        }
+
         // Terrain Sculpting Section
         ImGui.separator();
         ImGui.text("Terrain Sculpting");
@@ -111,6 +141,8 @@ public class TerrainComponent extends Component {
                 ImGui.pushStyleColor(ImGuiCol.Button, 0.2f, 0.8f, 0.2f, 1.0f);
                 if (ImGui.button("Activate Sculpting", 150, 25)) {
                     sculptingComponent.setActive(true);
+                    // Disable paint mode if sculpting is activated
+                    paintMode = false; 
                 }
                 ImGui.popStyleColor();
             }
@@ -170,5 +202,14 @@ public class TerrainComponent extends Component {
         }
         return "";
     }
+    
+    public boolean isPaintMode() {
+        return paintMode;
+    }
+    
+    public int getPaintChannel() {
+        return paintChannel;
+    }
 
 }
+
