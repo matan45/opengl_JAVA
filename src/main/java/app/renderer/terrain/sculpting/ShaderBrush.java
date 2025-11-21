@@ -15,6 +15,12 @@ public class ShaderBrush extends ShaderProgram {
     private int brushShapeUniform;
     private int timeUniform;
     private int modelMatrixUniform;
+    private int terrainHeightTextureUniform;
+    private int terrainModificationTextureUniform;
+    private int terrainHeightOffsetUniform;
+    private int terrainLengthUniform;
+    private int terrainWidthUniform;
+    private int terrainOriginUniform;
 
     public ShaderBrush(Path shaderPath) {
         super(shaderPath);
@@ -30,6 +36,12 @@ public class ShaderBrush extends ShaderProgram {
         brushShapeUniform = getUniformLocation("brushShape");
         timeUniform = getUniformLocation("time");
         modelMatrixUniform = getUniformLocation("model");
+        terrainHeightTextureUniform = getUniformLocation("TexTerrainHeight");
+        terrainModificationTextureUniform = getUniformLocation("TexTerrainModification");
+        terrainHeightOffsetUniform = getUniformLocation("TerrainHeightOffset");
+        terrainLengthUniform = getUniformLocation("TerrainLength");
+        terrainWidthUniform = getUniformLocation("TerrainWidth");
+        terrainOriginUniform = getUniformLocation("TerrainOrigin");
     }
 
     public void loadBrushPosition(OLVector3f position) {
@@ -62,6 +74,30 @@ public class ShaderBrush extends ShaderProgram {
 
     public void loadModelMatrix(OLMatrix4f matrix) {
         loadMatrix(modelMatrixUniform, matrix);
+    }
+
+    public void loadTerrainHeightTexture(int textureUnit) {
+        loadInt(terrainHeightTextureUniform, textureUnit);
+    }
+
+    public void loadTerrainModificationTexture(int textureUnit) {
+        loadInt(terrainModificationTextureUniform, textureUnit);
+    }
+
+    public void loadTerrainHeightOffset(float offset) {
+        loadFloat(terrainHeightOffsetUniform, offset);
+    }
+
+    public void loadTerrainLength(float length) {
+        loadFloat(terrainLengthUniform, length);
+    }
+
+    public void loadTerrainWidth(float width) {
+        loadFloat(terrainWidthUniform, width);
+    }
+
+    public void loadTerrainOrigin(OLVector3f origin) {
+        load3DVector(terrainOriginUniform, origin);
     }
 
     public void loadBrushData(BrushSettings brush, OLVector3f position, float time) {

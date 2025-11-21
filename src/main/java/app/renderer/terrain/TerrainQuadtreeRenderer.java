@@ -210,6 +210,22 @@ public class TerrainQuadtreeRenderer {
         return terrainPaintManager;
     }
 
+    public int getHeightTexture() {
+        return texture;
+    }
+
+    public float getTerrainWidth() {
+        return WIDTH;
+    }
+
+    public float getTerrainLength() {
+        return LENGTH;
+    }
+
+    public OLVector3f getTerrainOrigin() {
+        return new OLVector3f(WIDTH / 2.0f, 0.0f, LENGTH / 2.0f);
+    }
+
     private FloatBuffer loadHeightmapData(Path heightmapPath, int resolution) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             // Use STB to load the heightmap image

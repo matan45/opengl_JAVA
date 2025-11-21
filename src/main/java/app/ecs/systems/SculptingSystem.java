@@ -422,11 +422,11 @@ public class SculptingSystem {
         for (Entity entity : sculptingEntities) {
             TerrainSculptingComponent sculptingComponent = entity.getComponent(TerrainSculptingComponent.class);
             TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
-            
+
             if (sculptingComponent == null) continue;
-            
+
             boolean isPainting = terrainComponent != null && terrainComponent.isPaintMode();
-            
+
             if (!sculptingComponent.isActive() && !isPainting) {
                 // System.out.println("Skipping brush render: Not active and not painting");
                 continue;
@@ -439,17 +439,34 @@ public class SculptingSystem {
 
             TerrainIntersection intersection = calculateTerrainIntersection(entity);
             if (intersection != null) {
-                renderBrushCircle(intersection.worldPosition, brush);
+                renderBrushCircle(entity, intersection.worldPosition, brush);
             } else {
                // System.out.println("Brush intersection failed (MouseX: " + mouseX + ", MouseY: " + mouseY + ")");
             }
         }
     }
 
-    private void renderBrushCircle(OLVector3f position, BrushSettings brush) {
+    private void renderBrushCircle(Entity entity, OLVector3f position, BrushSettings brush) {
         if (brushRenderer != null && brushRenderer.isInitialized()) {
-            // Render the 3D brush visualization
-            brushRenderer.render(position, brush);
+            TerrainComponent terrainComponent = entity.getComponent(TerrainComponent.class);
+            if (terrainComponent == null) return;
+
+            TerrainQuadtreeRenderer terrain = terrainComponent.getTerrain();
+            TerrainDataManager dataManager = terrain.getTerrainDataManager();
+
+            if (dataManager == null) return;
+
+            // Get terrain parameters
+            int heightTexture = terrain.getHeightTexture();
+            int modificationTexture = dataManager.getModificationTexture();
+            float heightOffset = terrain.getDisplacementFactor();
+            float terrainWidth = terrain.getTerrainWidth();
+            float terrainLength = terrain.getTerrainLength();
+            OLVector3f terrainOrigin = terrain.getTerrainOrigin();
+
+            // Render the 3D brush visualization with terrain blending
+            brushRenderer.render(position, brush, heightTexture, modificationTexture,
+                    heightOffset, terrainWidth, terrainLength, terrainOrigin);
         }
     }
 

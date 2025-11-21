@@ -5,6 +5,12 @@ layout (location = 0) in vec2 position;
 
 uniform vec3 brushPosition;
 uniform float brushSize;
+uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
+uniform float TerrainHeightOffset;
+uniform float TerrainLength;
+uniform float TerrainWidth;
+uniform vec3 TerrainOrigin;
 
 layout (std140, binding = 0) uniform Matrices
 {
@@ -15,14 +21,30 @@ layout (std140, binding = 0) uniform Matrices
 out vec2 vs_texCoord;
 out vec3 vs_worldPos;
 
+vec2 calcTerrainTexCoord(vec3 pos)
+{
+    return vec2(abs(pos.x - TerrainOrigin.x) / TerrainWidth, abs(pos.z - TerrainOrigin.z) / TerrainLength);
+}
+
 void main()
 {
     vec2 scaledPos = position * brushSize;
     vec3 worldPos = vec3(brushPosition.x + scaledPos.x, brushPosition.y, brushPosition.z + scaledPos.y);
-    
+
+    // Calculate terrain texture coordinates
+    vec2 terrainTexCoord = calcTerrainTexCoord(worldPos);
+
+    // Sample heightmap and modification texture to get terrain height
+    float baseHeight = texture(TexTerrainHeight, terrainTexCoord).r;
+    float modHeight = texture(TexTerrainModification, terrainTexCoord).r;
+    float combinedHeight = (baseHeight + modHeight) * TerrainHeightOffset;
+
+    // Apply terrain height to world position
+    worldPos.y = combinedHeight + 0.1; // Slight offset to prevent z-fighting
+
     vs_worldPos = worldPos;
     vs_texCoord = (position + 1.0) * 0.5;
-    
+
     gl_Position = projection * view * vec4(worldPos, 1.0);
 }
 

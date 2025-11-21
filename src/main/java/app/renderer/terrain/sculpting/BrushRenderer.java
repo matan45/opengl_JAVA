@@ -91,45 +91,58 @@ public class BrushRenderer {
         
     }
     
-    public void render(OLVector3f brushPosition, BrushSettings brush) {
+    public void render(OLVector3f brushPosition, BrushSettings brush, int heightTexture, int modificationTexture,
+                       float heightOffset, float terrainWidth, float terrainLength, OLVector3f terrainOrigin) {
         if (!initialized) {
             return;
         }
-        
+
         if (brushPosition == null || brush == null) {
             return;
         }
-        
+
         // Update time for pulsing effect
         currentTime += 0.016f; // Approximate 60 FPS delta time
 
         // Enable blending for transparent brush
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
         // Disable depth testing to ensure brush always renders on top
         glDisable(GL_DEPTH_TEST);
-        
+
         shader.start();
-        
-        // Load brush data to shader uniforms with visibility modifications
-        // Load individual uniforms with enhanced visibility
-        // Raise brush significantly above terrain surface for visibility
-        OLVector3f elevatedPosition = new OLVector3f(brushPosition.x, brushPosition.y + 1.0f, brushPosition.z);
-        shader.loadBrushPosition(elevatedPosition);
-        
-        // Ensure minimum visible size (50 units minimum for terrain that spans 8192 units)
-        float renderSize = Math.max(brush.getSize(), 50.0f);
+
+        // Bind terrain textures
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, heightTexture);
+        shader.loadTerrainHeightTexture(0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, modificationTexture);
+        shader.loadTerrainModificationTexture(1);
+
+        // Load terrain parameters
+        shader.loadTerrainHeightOffset(heightOffset);
+        shader.loadTerrainWidth(terrainWidth);
+        shader.loadTerrainLength(terrainLength);
+        shader.loadTerrainOrigin(terrainOrigin);
+
+        // Load brush data to shader uniforms
+        shader.loadBrushPosition(brushPosition);
+
+        // Ensure minimum visible size
+        float renderSize = Math.max(brush.getSize(), 10.0f);
         shader.loadBrushSize(renderSize);
-        
+
         shader.loadBrushFalloff(brush.getFalloff());
         shader.loadBrushShape(brush.getShape().ordinal());
         shader.loadTime(currentTime);
-        
+
         // Load color based on brush type
         OLVector3f brushColor = getBrushColor(brush.getBrushType());
         shader.loadBrushColor(brushColor);
-        
+
         // Override alpha for better visibility
         shader.loadBrushAlpha(0.9f);
 
@@ -137,18 +150,18 @@ public class BrushRenderer {
         OLMatrix4f modelMatrix = new OLMatrix4f();
         modelMatrix.identity();
         shader.loadModelMatrix(modelMatrix);
-        
+
         // Bind geometry and render
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
-        
+
         shader.stop();
-        
+
         // Restore OpenGL state
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
-        
+
     }
     
     public void cleanUp() {
