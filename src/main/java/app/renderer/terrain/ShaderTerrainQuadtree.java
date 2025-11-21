@@ -18,6 +18,8 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationTerrainLength;
     private int locationTerrainWidth;
     private int locationTexTerrainHeight;
+    private int locationTexTerrainModification;
+    private int locationTexSplatMap;
     private int locationToggleWireframe;
     private int locationTerrainOrigin;
     private int locationTerrainHeightOffset;
@@ -27,8 +29,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     private int locationFogColor;
     private int locationIsFog;
     private int locationIrradianceMap;
-    private int locationAlbedoMap;
-    private int locationNormalMap;
+    
+    private int[] locationAlbedoMaps;
+    private int[] locationNormalMaps;
     private int locationNodePosition;
 
     protected ShaderTerrainQuadtree(Path path) {
@@ -37,6 +40,9 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
     @Override
     protected void getAllUniformLocations() {
+        locationAlbedoMaps = new int[4];
+        locationNormalMaps = new int[4];
+
         locationModelMatrix = super.getUniformLocation(UniformsNames.MODEL.getUniformsName());
         locationCameraPosition = super.getUniformLocation(UniformsNames.CAMERA_POSITION.getUniformsName());
 
@@ -61,10 +67,15 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
 
         locationTerrainHeightOffset = super.getUniformLocation("TerrainHeightOffset");
         locationTexTerrainHeight = super.getUniformLocation("TexTerrainHeight");
+        locationTexTerrainModification = super.getUniformLocation("TexTerrainModification");
+        locationTexSplatMap = super.getUniformLocation("TexSplatMap");
+        
         locationIrradianceMap = super.getUniformLocation("irradianceMap");
 
-        locationAlbedoMap = super.getUniformLocation("albedoMap");
-        locationNormalMap = super.getUniformLocation("normalMap");
+        for (int i = 0; i < 4; i++) {
+            locationAlbedoMaps[i] = super.getUniformLocation("albedoMaps[" + i + "]");
+            locationNormalMaps[i] = super.getUniformLocation("normalMaps[" + i + "]");
+        }
 
     }
 
@@ -94,10 +105,24 @@ public class ShaderTerrainQuadtree extends ShaderProgram {
     public void loadTexHighMap() {
 
         super.loadInt(locationTexTerrainHeight, 0);
-        super.loadInt(locationIrradianceMap, 1);
+        super.loadInt(locationIrradianceMap, 2);
+        
+        // Splat map at 5
+        super.loadInt(locationTexSplatMap, 5);
 
-        super.loadInt(locationAlbedoMap, 2);
-        super.loadInt(locationNormalMap, 3);
+        // Albedos at 6, 7, 8, 9
+        for (int i = 0; i < 4; i++) {
+            super.loadInt(locationAlbedoMaps[i], 6 + i);
+        }
+        
+        // Normals at 10, 11, 12, 13
+        for (int i = 0; i < 4; i++) {
+            super.loadInt(locationNormalMaps[i], 10 + i);
+        }
+    }
+    
+    public void loadTexModificationMap() {
+        super.loadInt(locationTexTerrainModification, 1);
     }
 
     public void loadViewPort(OLVector2f viewPort) {

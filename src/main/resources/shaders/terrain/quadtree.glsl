@@ -55,6 +55,7 @@ layout (std140, binding = 0) uniform Matrices
 uniform mat4 model;
 
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 
 uniform float scaleNegx;
 uniform float scaleNegz;
@@ -158,6 +159,7 @@ layout (std140, binding = 0) uniform Matrices
 };
 
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 uniform float TerrainHeightOffset;
 
 
@@ -184,9 +186,11 @@ void main(){
 	vec2 terrainTexCoord = interpolate2(tcs_terrainTexCoord[0], tcs_terrainTexCoord[1], tcs_terrainTexCoord[2], tcs_terrainTexCoord[3]);
 	vec2 nodeTexCoord = interpolate2(tcs_nodeTexCoord[0], tcs_nodeTexCoord[1], tcs_nodeTexCoord[2], tcs_nodeTexCoord[3]);
 
-	// Sample the heightmap and offset y position of vertex
-	vec4 samp = texture(TexTerrainHeight, terrainTexCoord);
-	gl_Position.y = samp[0] * TerrainHeightOffset;
+	// Sample the heightmap and modification texture, combine them
+	vec4 baseSamp = texture(TexTerrainHeight, terrainTexCoord);
+	vec4 modSamp = texture(TexTerrainModification, terrainTexCoord);
+	float combinedHeight = baseSamp.r + modSamp.r;
+	gl_Position.y = combinedHeight * TerrainHeightOffset;
 
 	// Project the vertex to clip space and send it along
 	vec4 worldPosition = model * gl_Position;
@@ -294,13 +298,15 @@ out vec4 FragColor;
 
 uniform float ToggleWireframe;
 uniform sampler2D TexTerrainHeight;
+uniform sampler2D TexTerrainModification;
 uniform vec3 cameraPosition;
 uniform vec3 nodePosition;
 
 uniform samplerCube irradianceMap;
 
-uniform sampler2D albedoMap;
-uniform sampler2D normalMap;
+uniform sampler2D TexSplatMap;
+uniform sampler2D albedoMaps[4];
+uniform sampler2D normalMaps[4];
 
 vec3 colorMapping();
 
@@ -331,14 +337,52 @@ void main(){
 }
 
 vec3 colorMapping(){
+    
+    // Sample Splat Map (weights)
+    vec4 splat = texture(TexSplatMap, gs_terrainTexCoord);
+    
+    // Ensure weights sum to 1 (normalize if needed, though CPU should handle it)
+    // float sum = splat.r + splat.g + splat.b + splat.a;
+    // if (sum > 0.001) splat /= sum;
 
-	vec3 normal = texture(normalMap, gs_nodeTexCoord).xyz;
-	vec3 albedo = pow(texture(albedoMap, gs_nodeTexCoord).rgb, vec3(2.2));
+    // Blend Albedo and Normal
+    vec3 blendedAlbedo = vec3(0.0);
+    vec3 blendedNormal = vec3(0.0);
 
-	vec3 irradiance = texture(irradianceMap, normal).rgb;
-    vec3 diffuse    = irradiance * albedo;
+    // Layer 0 (Red)
+    if (splat.r > 0.001) {
+        blendedAlbedo += pow(texture(albedoMaps[0], gs_nodeTexCoord).rgb, vec3(2.2)) * splat.r;
+        blendedNormal += texture(normalMaps[0], gs_nodeTexCoord).xyz * splat.r;
+    }
+    // Layer 1 (Green)
+    if (splat.g > 0.001) {
+        blendedAlbedo += pow(texture(albedoMaps[1], gs_nodeTexCoord).rgb, vec3(2.2)) * splat.g;
+        blendedNormal += texture(normalMaps[1], gs_nodeTexCoord).xyz * splat.g;
+    }
+    // Layer 2 (Blue)
+    if (splat.b > 0.001) {
+        blendedAlbedo += pow(texture(albedoMaps[2], gs_nodeTexCoord).rgb, vec3(2.2)) * splat.b;
+        blendedNormal += texture(normalMaps[2], gs_nodeTexCoord).xyz * splat.b;
+    }
+    // Layer 3 (Alpha)
+    if (splat.a > 0.001) {
+        blendedAlbedo += pow(texture(albedoMaps[3], gs_nodeTexCoord).rgb, vec3(2.2)) * splat.a;
+        blendedNormal += texture(normalMaps[3], gs_nodeTexCoord).xyz * splat.a;
+    }
+
+    // Normalize normal (blending vectors can result in non-unit length)
+    if (length(blendedNormal) > 0.001) {
+        blendedNormal = normalize(blendedNormal);
+    } else {
+        blendedNormal = vec3(0, 1, 0); // Fallback
+    }
+
+	vec3 irradiance = texture(irradianceMap, blendedNormal).rgb;
+    vec3 diffuse    = irradiance * blendedAlbedo;
 	vec3 position;
-	position.y = texture(TexTerrainHeight, gs_terrainTexCoord).y;
+	vec4 baseHeight = texture(TexTerrainHeight, gs_terrainTexCoord);
+	vec4 modHeight = texture(TexTerrainModification, gs_terrainTexCoord);
+	position.y = baseHeight.r + modHeight.r;
 	position.xz = nodePosition.xz;
 
 	vec3 color;

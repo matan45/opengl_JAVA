@@ -1,6 +1,7 @@
 package app.renderer.draw;
 
 import app.audio.Audio;
+import app.math.OLVector2f;
 import app.math.components.Camera;
 import app.math.components.RayCast;
 import app.renderer.OpenGLObjects;
@@ -9,11 +10,11 @@ import app.renderer.debug.grid.Grid;
 import app.renderer.framebuffer.Framebuffer;
 import app.renderer.ibl.SkyBox;
 import app.renderer.lights.LightHandler;
-import app.renderer.particle.mesh.ParticleRendererHandler;
 import app.renderer.particle.mesh.ParticleSystemMesh;
 import app.renderer.particle.sprite.ParticleSystemSprite;
 import app.renderer.pbr.MeshRendererHandler;
 import app.renderer.terrain.TerrainQuadtreeRenderer;
+import app.renderer.terrain.sculpting.TerrainSculptingIntegration;
 import app.utilities.logger.LogInfo;
 
 import java.util.Objects;
@@ -30,9 +31,9 @@ public class EditorRenderer {
     private static LightHandler lightHandler;
     private static SkyBox skyBox;
     private static MeshRendererHandler meshRenderer;
-    private static ParticleRendererHandler particleRenderer;
     private static Grid grid;
     private static TerrainQuadtreeRenderer terrainQuadtreeRenderer;
+    private static TerrainSculptingIntegration sculptingIntegration;
 
     private EditorRenderer() {
     }
@@ -57,26 +58,11 @@ public class EditorRenderer {
 
         lightHandler = new LightHandler();
         meshRenderer = new MeshRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
-        particleRenderer = new ParticleRendererHandler(editorCamera, textures, openGLObjects, skyBox, lightHandler);
         ParticleSystemSprite.init(openGLObjects,textures);
         ParticleSystemMesh.init(editorCamera, openGLObjects, textures, skyBox, lightHandler);
 
-        /*ParticleEmitter particleEmitter = ParticleSystemSprite.createEmitter();
-        particleEmitter.setImage(textures.loadTexture(Path.of("C:\\matan\\test\\particle\\circle-256.png")));*/
-
-      /*  particleEmitter.createParticle(
-                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), 1.0f, 5.0f), 200
-        );
-
-        particleEmitter.createParticle(
-                new Particle(new OLVector3f(2.0f, 2.0f, 2.0f), new OLVector3f(),
-                        new OLVector3f(5.0f, 5.0f, 5.0f), new OLVector3f(), -1.0f, 5.0f), 200
-        );
-
-        particleEmitter.setInfinity(true);
-        particleEmitter.setPause(true);
-        particleEmitter.setPlay(true);*/
+        sculptingIntegration = new TerrainSculptingIntegration();
+        sculptingIntegration.initialize(editorCamera);
     }
 
     public static void draw(float dt) {
@@ -88,8 +74,19 @@ public class EditorRenderer {
         editorCamera.updateMatrices();
         ParticleSystemSprite.update(dt);
         ParticleSystemMesh.update(dt);
+        
         meshRenderer.renderers();
         terrainQuadtreeRenderer.render();
+        
+        // Render brush preview after terrain but before UI elements
+        if (sculptingIntegration != null && sculptingIntegration.isInitialized()) {
+            //TODO to be fixed
+            OLVector2f viewport = editorCamera.getViewPort();
+            float viewportWidth = viewport != null ? viewport.x : 1920f;
+            float viewportHeight = viewport != null ? (viewport.y - 50f) : 1030f; // Subtract toolbar height
+            sculptingIntegration.renderBrushPreview(viewportWidth, viewportHeight);
+        }
+        
         lightHandler.drawBillboards();
         skyBox.render();
         ParticleSystemSprite.render();
@@ -140,9 +137,6 @@ public class EditorRenderer {
         return meshRenderer;
     }
 
-    public static ParticleRendererHandler getParticleRenderer() {
-        return particleRenderer;
-    }
 
     public static LightHandler getLightHandler() {
         return lightHandler;
@@ -154,5 +148,15 @@ public class EditorRenderer {
 
     public static TerrainQuadtreeRenderer getTerrainQuadtreeRenderer() {
         return terrainQuadtreeRenderer;
+    }
+    
+    public static TerrainSculptingIntegration getSculptingIntegration() {
+        return sculptingIntegration;
+    }
+    
+    public static void initializeSculpting() {
+        if (sculptingIntegration != null && !sculptingIntegration.isInitialized()) {
+            sculptingIntegration.initialize(editorCamera);
+        }
     }
 }

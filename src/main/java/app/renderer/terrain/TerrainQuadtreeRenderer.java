@@ -7,7 +7,16 @@ import app.renderer.Textures;
 import app.renderer.fog.Fog;
 import app.renderer.ibl.SkyBox;
 import app.renderer.shaders.UniformsNames;
+import app.renderer.terrain.sculpting.TerrainDataManager;
+import app.renderer.terrain.sculpting.TerrainPaintManager;
+import app.utilities.logger.LogInfo;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,12 +57,15 @@ public class TerrainQuadtreeRenderer {
     private float displacementFactor;
 
     private final TerrainMaterial terrainMaterial;
+    private TerrainDataManager terrainDataManager;
+    private TerrainPaintManager terrainPaintManager;
 
     private Fog fog;
     private final SkyBox skyBox;
+    private Path heightmapPath;
 
-    private static final int WIDTH = 8192;
-    private static final int LENGTH = 8192;
+    private static final int WIDTH = 2048;
+    private static final int LENGTH = 2048;
 
     public TerrainQuadtreeRenderer(OpenGLObjects openGLObjects, Textures textures, Camera camera, SkyBox skyBox) {
 
@@ -63,7 +75,7 @@ public class TerrainQuadtreeRenderer {
         terrainQuadtree = new TerrainQuadtree(camera, shaderTerrainQuadtree);
         vao = openGLObjects.loadToVAO(quadData, quadPatchInd);
 
-        terrainMaterial=new TerrainMaterial(textures);
+        terrainMaterial = new TerrainMaterial(textures);
         wireframe = false;
         displacementFactor = 200f;
 
@@ -74,8 +86,12 @@ public class TerrainQuadtreeRenderer {
     public void init(Path path) {
         texture = textures.loadTexture(path);
 
+        // Store the heightmap path for later use when sculpting is enabled
+        this.heightmapPath = path;
+
         shaderTerrainQuadtree.start();
         shaderTerrainQuadtree.loadTexHighMap();
+        shaderTerrainQuadtree.loadTexModificationMap();
         shaderTerrainQuadtree.loadTerrainWidth(WIDTH);
         shaderTerrainQuadtree.loadTerrainLength(LENGTH);
         OLVector3f origin = new OLVector3f(WIDTH / 2.0f, 0.0f, LENGTH / 2.0f);
@@ -95,6 +111,7 @@ public class TerrainQuadtreeRenderer {
             shaderTerrainQuadtree.loadToggleWireframe(wireframe);
             shaderTerrainQuadtree.loadTerrainHeightOffset(displacementFactor);
 
+            shaderTerrainQuadtree.loadTexModificationMap();
 
             if (fog != null) {
                 shaderTerrainQuadtree.loadIsFog(true);
@@ -108,19 +125,40 @@ public class TerrainQuadtreeRenderer {
             glBindVertexArray(vao);
             glEnableVertexAttribArray(0);
 
+            // Bind base heightmap
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+            // Bind modification texture if sculpting is enabled
+            if (terrainDataManager != null) {
+                terrainDataManager.updateModificationTexture();
+                glActiveTexture(GL_TEXTURE1);
+                int modTexture = terrainDataManager.getModificationTexture();
+                glBindTexture(GL_TEXTURE_2D, modTexture);
+
+            }
 
             glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap());
+            glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.getIrradianceMap());
+            
+            // Bind Splat Map
+            if (terrainPaintManager != null) {
+                terrainPaintManager.updateSplatTexture();
+                glActiveTexture(GL_TEXTURE5);
+                glBindTexture(GL_TEXTURE_2D, terrainPaintManager.getSplatMapTexture());
+            }
 
-            glActiveTexture(GL_TEXTURE3);
-            glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap());
+            // Bind Materials (Albedo 6-9, Normal 10-13)
+            for (int i = 0; i < 4; i++) {
+                glActiveTexture(GL_TEXTURE6 + i);
+                glBindTexture(GL_TEXTURE_2D, terrainMaterial.getAlbedoMap(i));
+                
+                glActiveTexture(GL_TEXTURE10 + i);
+                glBindTexture(GL_TEXTURE_2D, terrainMaterial.getNormalMap(i));
+            }
 
             terrainQuadtree.terrainCreateTree(0, 0, 0, WIDTH, LENGTH);
+
             terrainQuadtree.terrainRender();
 
             glDisableVertexAttribArray(0);
@@ -163,4 +201,111 @@ public class TerrainQuadtreeRenderer {
     public TerrainMaterial getTerrainMaterial() {
         return terrainMaterial;
     }
+
+    public TerrainDataManager getTerrainDataManager() {
+        return terrainDataManager;
+    }
+    
+    public TerrainPaintManager getTerrainPaintManager() {
+        return terrainPaintManager;
+    }
+
+    public int getHeightTexture() {
+        return texture;
+    }
+
+    public float getTerrainWidth() {
+        return WIDTH;
+    }
+
+    public float getTerrainLength() {
+        return LENGTH;
+    }
+
+    public OLVector3f getTerrainOrigin() {
+        return new OLVector3f(WIDTH / 2.0f, 0.0f, LENGTH / 2.0f);
+    }
+
+    private FloatBuffer loadHeightmapData(Path heightmapPath, int resolution) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            // Use STB to load the heightmap image
+            IntBuffer width = stack.mallocInt(1);
+            IntBuffer height = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
+
+            // Load image data
+            ByteBuffer imageData = STBImage.stbi_load(
+                    heightmapPath.toString(), width, height, channels, 1);
+
+            if (imageData == null) {
+                LogInfo.println("❌ Failed to load heightmap: " + heightmapPath);
+                return null;
+            }
+
+            int imageWidth = width.get(0);
+            int imageHeight = height.get(0);
+
+            // Create FloatBuffer with the desired resolution
+            FloatBuffer heightBuffer = BufferUtils.createFloatBuffer(resolution * resolution);
+
+            // Sample the image data to fit the resolution
+            for (int y = 0; y < resolution; y++) {
+                for (int x = 0; x < resolution; x++) {
+                    // Map resolution coordinates to image coordinates
+                    int imgX = (x * imageWidth) / resolution;
+                    int imgY = (y * imageHeight) / resolution;
+
+                    // Get pixel value (0-255) and convert to float (0.0-1.0)
+                    int pixelIndex = imgY * imageWidth + imgX;
+                    if (pixelIndex < imageData.capacity()) {
+                        float heightValue = (imageData.get(pixelIndex) & 0xFF) / 255.0f;
+                        heightBuffer.put(heightValue);
+                    } else {
+                        heightBuffer.put(0.0f);
+                    }
+                }
+            }
+
+            heightBuffer.flip();
+
+            // Free the image data
+            STBImage.stbi_image_free(imageData);
+            stack.pop();
+
+            return heightBuffer;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void enableSculpting() {
+
+        int textureResolution = 2048;
+
+        if (terrainDataManager == null) {
+            // Use full terrain resolution (2048x2048) to match quadtree scale
+            terrainDataManager = new TerrainDataManager(textureResolution, textureResolution, WIDTH);
+
+            // Set base heightmap texture and data for sculpting reference
+            if (texture != 0 && heightmapPath != null) {
+                FloatBuffer heightData = loadHeightmapData(heightmapPath, textureResolution);
+                terrainDataManager.setBaseHeightmap(texture, heightData);
+            }
+        }
+        
+        if (terrainPaintManager == null) {
+            terrainPaintManager = new TerrainPaintManager(textureResolution, textureResolution, WIDTH);
+        }
+    }
+
+    public void cleanUp() {
+        if (terrainDataManager != null) {
+            terrainDataManager.cleanUp();
+        }
+        if (terrainPaintManager != null) {
+            terrainPaintManager.cleanUp();
+        }
+    }
 }
+

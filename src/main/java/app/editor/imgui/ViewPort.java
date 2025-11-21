@@ -6,7 +6,6 @@ import app.ecs.components.TransformComponent;
 import app.math.OLVector2f;
 import app.math.OLVector3f;
 import app.math.components.Camera;
-import app.math.components.RayCast;
 import app.renderer.Textures;
 import app.renderer.draw.EditorRenderer;
 import app.utilities.logger.LogInfo;
@@ -91,6 +90,10 @@ public class ViewPort implements ImguiLayer {
 
             ImVec2 windowSize = ImGui.getWindowSize();
             ImGui.image(EditorRenderer.getTexturesID(), windowSize.x, windowSize.y - 50, 0, 1, 1, 0);
+            
+            if (EditorRenderer.getSculptingIntegration() != null && EditorRenderer.getSculptingIntegration().isInitialized()) {
+                EditorRenderer.getSculptingIntegration().setViewportSize(windowSize.x, windowSize.y - 50);
+            }
 
             // Get image bounds
             ImVec2 imagePos = ImGui.getItemRectMin();
@@ -165,14 +168,7 @@ public class ViewPort implements ImguiLayer {
                 keyInputImGuizo();
                 cameraInput(dt);
 
-                if (80 < ImGui.getMousePos().y && ImGui.getMousePos().y < windowSize.y) {
-                    if (ImGui.isMouseClicked(GLFW_MOUSE_BUTTON_1)) {
-                        OLVector3f worldPos = RayCast.calculateMouseRay(windowSize.x, windowSize.y);
-                        OLVector3f dir = worldPos.sub(editorCamera.getPosition());
-                        LogInfo.println(worldPos.toString());
-                        LogInfo.println(dir.normalize().toString());
-                    }
-                }
+                updateSculptingMouseCoordinates(imagePos);
             }
 
             if (firstFrame) {
@@ -239,6 +235,7 @@ public class ViewPort implements ImguiLayer {
             snap = true;
         else if (ImGui.isKeyReleased(GLFW_KEY_LEFT_CONTROL))
             snap = false;
+
     }
 
     private void dragAndDropTargetEntity() {
@@ -274,8 +271,8 @@ public class ViewPort implements ImguiLayer {
                 }
                 float xOffset = mousePos.x - xLastPos;
                 float yOffset = mousePos.y - yLastPos;
-                rotation.y += xOffset * 0.1;
-                rotation.x += yOffset * 0.1;
+                rotation.y += (float) (xOffset * 0.1);
+                rotation.x += (float) (yOffset * 0.1);
 
                 if (rotation.y >= 360.0f || rotation.y <= -360.0f)
                     rotation.y = 0;
@@ -287,17 +284,17 @@ public class ViewPort implements ImguiLayer {
 
     private void cameraMovement(OLVector3f position, OLVector3f rotation, float dt, float speed) {
         if (ImGui.isKeyDown(GLFW_KEY_W)) {
-            position.x += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            position.z -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.x += (float) ((Math.sin(rotation.y / 180 * Math.PI)) * speed * dt);
+            position.z -= (float) ((Math.cos(rotation.y / 180 * Math.PI)) * speed * dt);
         } else if (ImGui.isKeyDown(GLFW_KEY_A)) {
-            position.x -= (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            position.z -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.x -= (float) ((Math.cos(rotation.y / 180 * Math.PI)) * speed * dt);
+            position.z -= (float) ((Math.sin(rotation.y / 180 * Math.PI)) * speed * dt);
         } else if (ImGui.isKeyDown(GLFW_KEY_D)) {
-            position.x += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
-            position.z += (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.x += (float) ((Math.cos(rotation.y / 180 * Math.PI)) * speed * dt);
+            position.z += (float) ((Math.sin(rotation.y / 180 * Math.PI)) * speed * dt);
         } else if (ImGui.isKeyDown(GLFW_KEY_S)) {
-            position.x -= (Math.sin(rotation.y / 180 * Math.PI)) * speed * dt;
-            position.z += (Math.cos(rotation.y / 180 * Math.PI)) * speed * dt;
+            position.x -= (float) ((Math.sin(rotation.y / 180 * Math.PI)) * speed * dt);
+            position.z += (float) ((Math.cos(rotation.y / 180 * Math.PI)) * speed * dt);
         } else if (ImGui.isKeyDown(GLFW_KEY_E)) {
             position.y += -1 * speed * dt;
         } else if (ImGui.isKeyDown(GLFW_KEY_Q)) {
@@ -308,5 +305,26 @@ public class ViewPort implements ImguiLayer {
     public void setCurrentGizmoOperation(int currentGizmoOperation) {
         this.currentGizmoOperation = currentGizmoOperation;
         snapValue = 0;
+    }
+
+
+    private void updateSculptingMouseCoordinates(ImVec2 imageMin) {
+        if (EditorRenderer.getSculptingIntegration() == null) {
+            return;
+        }
+        if (!EditorRenderer.getSculptingIntegration().isInitialized()) {
+            return;
+        }
+
+        // Get current mouse position (ImGui.getMousePos() gives absolute screen coordinates)
+        ImVec2 mousePos = ImGui.getMousePos();
+
+        // Calculate coordinates relative to the top-left corner of the viewport image
+        float viewportMouseX = mousePos.x - imageMin.x;
+        float viewportMouseY = mousePos.y - imageMin.y;
+
+        // Update the sculpting system with correct relative coordinates
+        EditorRenderer.getSculptingIntegration().getSculptingSystem().setViewportRelativeMousePosition(viewportMouseX, viewportMouseY); 
+
     }
 }

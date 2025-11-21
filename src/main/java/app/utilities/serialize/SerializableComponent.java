@@ -70,8 +70,12 @@ class SerializableComponent {
                 serializable.addProperty("Path", terrain.getPath());
                 serializable.addProperty("Wireframe", terrain.getWireframe().get());
                 serializable.addProperty("Displacement", terrain.getTerrain().getDisplacementFactor());
-                serializable.addProperty("MaterialTerrainAlbedo", terrain.getTerrain().getTerrainMaterial().getAlbedoMapPath());
-                serializable.addProperty("MaterialTerrainNormal", terrain.getTerrain().getTerrainMaterial().getNormalMapPath());
+                
+                // Serialize all 4 layers
+                for (int i = 0; i < 4; i++) {
+                    serializable.addProperty("MaterialTerrainAlbedo" + i, terrain.getTerrain().getTerrainMaterial().getAlbedoMapPath(i));
+                    serializable.addProperty("MaterialTerrainNormal" + i, terrain.getTerrain().getTerrainMaterial().getNormalMapPath(i));
+                }
             }
             case MusicComponent music -> {
                 serializable.addProperty(COMPONENT_NAME, MusicComponent.class.getSimpleName());
@@ -175,8 +179,25 @@ class SerializableComponent {
                 terrain.getTerrain().setDisplacementFactor(component.get("Displacement").getAsFloat());
                 terrain.getTerrain().init(Path.of(terrain.getPath()));
                 terrain.getTerrain().setActive(true);
-                terrain.getTerrain().getTerrainMaterial().setAlbedoMap(component.get("MaterialTerrainAlbedo").getAsString());
-                terrain.getTerrain().getTerrainMaterial().setNormalMap(component.get("MaterialTerrainNormal").getAsString());
+                
+                // Load all 4 layers
+                for (int i = 0; i < 4; i++) {
+                    if (component.has("MaterialTerrainAlbedo" + i)) {
+                        terrain.getTerrain().getTerrainMaterial().setAlbedoMap(i, component.get("MaterialTerrainAlbedo" + i).getAsString());
+                    }
+                    if (component.has("MaterialTerrainNormal" + i)) {
+                        terrain.getTerrain().getTerrainMaterial().setNormalMap(i, component.get("MaterialTerrainNormal" + i).getAsString());
+                    }
+                }
+                
+                // Backward compatibility for old save files (Targeting Layer 0)
+                if (component.has("MaterialTerrainAlbedo")) {
+                    terrain.getTerrain().getTerrainMaterial().setAlbedoMap(0, component.get("MaterialTerrainAlbedo").getAsString());
+                }
+                if (component.has("MaterialTerrainNormal")) {
+                    terrain.getTerrain().getTerrainMaterial().setNormalMap(0, component.get("MaterialTerrainNormal").getAsString());
+                }
+                
                 entity.addComponent(terrain);
             }
             case "MusicComponent" -> {

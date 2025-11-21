@@ -2,16 +2,19 @@ package app.editor.imgui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ImguiLayerHandler {
-    private static final List<ImguiLayer> imguiLayerList = new ArrayList<>();
+    private static final List<ImguiLayer> imguiLayerList = new CopyOnWriteArrayList<>();
 
     private ImguiLayerHandler() {
     }
 
     public static void renderImGui(float dt) {
-        for (ImguiLayer imguiLayer : imguiLayerList)
+        // CopyOnWriteArrayList allows safe iteration while the list is being modified
+        for (ImguiLayer imguiLayer : imguiLayerList) {
             imguiLayer.render(dt);
+        }
     }
 
     public static <T extends ImguiLayer> T getImguiLayer(Class<T> imguiLayerClass) {
@@ -31,11 +34,16 @@ public class ImguiLayerHandler {
     }
 
     public static void addLayer(ImguiLayer layer) {
-        imguiLayerList.add(layer);
+        if (layer != null && !imguiLayerList.contains(layer)) {
+            imguiLayerList.add(layer);
+            System.out.println("Added ImGui layer: " + layer.getClass().getSimpleName());
+        }
     }
 
     public static void removeLayer(ImguiLayer layer) {
-        imguiLayerList.remove(layer);
+        if (layer != null && imguiLayerList.remove(layer)) {
+            System.out.println("Removed ImGui layer: " + layer.getClass().getSimpleName());
+        }
     }
 
 }
