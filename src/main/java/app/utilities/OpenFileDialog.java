@@ -23,8 +23,11 @@ public class OpenFileDialog {
     public static Optional<Path> openFolder() {
         PointerBuffer outPath = memAllocPointer(1);
 
-        return checkResult(NFD_PickFolder(outPath, (ByteBuffer) null), outPath);
-
+        try {
+            return checkResult(NFD_PickFolder(outPath, (ByteBuffer) null), outPath);
+        } finally {
+            memFree(outPath);
+        }
     }
 
     public static Optional<Path> openFile(String filters, String name) {
@@ -36,8 +39,13 @@ public class OpenFileDialog {
 
             PointerBuffer outPath = memAllocPointer(1);
 
-            return checkResult(NFD_OpenDialog(outPath, filtersBuffer, (ByteBuffer) null), outPath);
-
+            try {
+                return checkResult(NFD_OpenDialog(outPath, filtersBuffer, (ByteBuffer) null), outPath);
+            } finally {
+                // Free allocated memory
+                memFree(outPath);
+                filtersBuffer.free();
+            }
         }
     }
 
@@ -49,7 +57,12 @@ public class OpenFileDialog {
                     .spec(stack.UTF8(filters));
             PointerBuffer savePath = memAllocPointer(1);
 
-            return checkResult(NFD_SaveDialog(savePath, filtersBuffer, null, ""), savePath);
+            try {
+                return checkResult(NFD_SaveDialog(savePath, filtersBuffer, null, ""), savePath);
+            } finally {
+                memFree(savePath);
+                filtersBuffer.free();
+            }
         }
     }
 
@@ -61,29 +74,32 @@ public class OpenFileDialog {
                     .spec(stack.UTF8(filters));
             PointerBuffer pathSet = stack.mallocPointer(1);
 
-            int result = NFD_OpenDialogMultiple(pathSet, filtersObj, "");
-            if (result == NFD_OKAY) {
-                long path = pathSet.get(0);
-                List<Path> paths = new ArrayList<>();
-                NFDPathSetEnum psEnum = NFDPathSetEnum.calloc(stack);
-                NFD_PathSet_GetEnum(path, psEnum);
+            try {
+                int result = NFD_OpenDialogMultiple(pathSet, filtersObj, "");
+                if (result == NFD_OKAY) {
+                    long path = pathSet.get(0);
+                    List<Path> paths = new ArrayList<>();
+                    NFDPathSetEnum psEnum = NFDPathSetEnum.calloc(stack);
+                    NFD_PathSet_GetEnum(path, psEnum);
 
-                while (NFD_PathSet_EnumNext(psEnum, pathSet) == NFD_OKAY && pathSet.get(0) != NULL) {
-                    paths.add(Path.of(Objects.requireNonNull(pathSet.getStringUTF8(0))));
-                    NFD_PathSet_FreePath(pathSet.get(0));
-                }
+                    while (NFD_PathSet_EnumNext(psEnum, pathSet) == NFD_OKAY && pathSet.get(0) != NULL) {
+                        paths.add(Path.of(Objects.requireNonNull(pathSet.getStringUTF8(0))));
+                        NFD_PathSet_FreePath(pathSet.get(0));
+                    }
 
-                NFD_PathSet_FreeEnum(psEnum);
-                NFD_PathSet_Free(path);
+                    NFD_PathSet_FreeEnum(psEnum);
+                    NFD_PathSet_Free(path);
 
-                return paths;
-            } else if (result == NFD_CANCEL)
+                    return paths;
+                } else if (result == NFD_CANCEL)
+                    return Collections.emptyList();
+
+                // NFD_ERROR
+                LogError.println("Error: " + NFD_GetError());
                 return Collections.emptyList();
-
-            // NFD_ERROR
-            LogError.println("Error: " + NFD_GetError());
-            return Collections.emptyList();
-
+            } finally {
+                filtersObj.free();
+            }
         }
     }
 
